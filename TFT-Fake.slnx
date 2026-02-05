@@ -1,0 +1,7 @@
+﻿<Solution>
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="KBCore.Refs.csproj" />
+  <Project Path="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+</Solution>

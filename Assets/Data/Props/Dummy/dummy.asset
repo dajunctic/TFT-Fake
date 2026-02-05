@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae2412630b46b074fba28c5d7fa5007b, type: 3}
+  m_Name: dummy
+  m_EditorClassIdentifier: 
+  id: 
+  movement:
+    moveSpeed: 3
+    rotateSpeed: 4
+    height: 1.2
+    radius: 0.25
+    acceleration: 16
+    movementType: 0
+  attribute:
+    maxHp: 0
+    physicalArmor: 0
+    magicalArmor: 0
+  skillAttribute:
+    energy: 0
+  combatStat:
+    radius: 0
+    atk: 0
+    atkSpd: 0
+    atkRange: 0
+    criticalChance: 0
+    criticalDmg: 0
+  skills: []
