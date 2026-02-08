@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: c9a55a54879ba0d40898a24d385fa03f
+timeCreated: 1493583037
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 94296
+  packageName: Pi UI
+  packageVersion: 1.3
+  assetPath: Assets/PiUi/Editor/PieUIManagerEditor.cs
+  uploadId: 279610

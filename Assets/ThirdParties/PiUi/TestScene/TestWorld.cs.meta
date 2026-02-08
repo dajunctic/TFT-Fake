@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: a3940b2159cc54a4aa36b0177174a0da
+timeCreated: 1497550934
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 94296
+  packageName: Pi UI
+  packageVersion: 1.3
+  assetPath: Assets/PiUi/TestScene/TestWorld.cs
+  uploadId: 279610

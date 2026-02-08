@@ -20,14 +20,7 @@ namespace Dajunctic
         {
             if (target == null)
             {
-                if (HeroCombatActor.Leader != null)
-                {
-                    target = HeroCombatActor.Leader.transform;
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
 
             Vector3 desiredPosition = target.position + offset;

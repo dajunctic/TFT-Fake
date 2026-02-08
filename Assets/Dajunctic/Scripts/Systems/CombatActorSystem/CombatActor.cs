@@ -12,15 +12,12 @@ namespace Dajunctic
     public class CombatActor: BaseView, ICombatActor
     {
         [SerializeField, Child] protected Animator animator;
-        [SerializeField] private List<FirePointEntry> firePoints;
         [SerializeField] protected LayerMask targetLayer;
         [SerializeField, Child] protected MidPoint midPoint;
         [SerializeField, Child] protected HeadPoint headPoint;
         [SerializeField] protected CombatActorData combatActorData;
         [SerializeField] private float patrolSpeed = 1f;
         [Header("Vfx")]
-        public GameObject vfxFollowPrefab;
-        [SerializeField] private string debugCurrentNodeName;
         public float PatrolSpeed => patrolSpeed;
 
         public virtual Vector3 Position {get; private set;}
@@ -32,7 +29,6 @@ namespace Dajunctic
 
         void OnValidate() => this.ValidateRefs();
         public CombatActor CurrentTarget { get; private set; }
-        public Transform FirePoint { get; private set; }
         public MidPoint MidPoint => midPoint;
         public HeadPoint HeadPoint => headPoint;
         public LayerMask TargetLayer => targetLayer;
@@ -52,7 +48,6 @@ namespace Dajunctic
         {
             base.Initialize();
             _viewLoaded = true;
-            InstantiateVfx();
             InitializedFirePoints();
             
             Position = CachedTransform.position;
@@ -103,16 +98,6 @@ namespace Dajunctic
         private void InitializedFirePoints()
         {
             _firePointMap = new Dictionary<string, Transform>();
-            foreach (var entry in firePoints)
-            {
-                if (entry.point != null)
-                {
-                    if (!_firePointMap.ContainsKey(entry.id))
-                    {
-                        _firePointMap.Add(entry.id, entry.point);
-                    }
-                }
-            }
         }
 
         #region Movement
@@ -369,19 +354,6 @@ namespace Dajunctic
         public void OnAnimFinished()
         {
             IsAnimFinished = true;
-        }
-        void InstantiateVfx()
-        {
-            if (vfxFollowPrefab != null)
-            {
-                var obj = Instantiate(vfxFollowPrefab, null); 
-                _vfxFollowInstance = obj.GetComponent<VFXFollowTarget>();
-                
-                if (_vfxFollowInstance != null)
-                {
-                    _vfxFollowInstance.SetTarget(transform);
-                }
-            }
         }
         #endregion
 

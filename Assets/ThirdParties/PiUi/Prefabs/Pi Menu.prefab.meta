@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f8d1463efe512bc4a90597e508985031
+timeCreated: 1496565839
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 94296
+  packageName: Pi UI
+  packageVersion: 1.3
+  assetPath: Assets/PiUi/Prefabs/Pi Menu.prefab
+  uploadId: 279610
