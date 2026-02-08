@@ -10,7 +10,7 @@ namespace Dajunctic
         private float _maxDuration = -1;
         private bool _isInitialized = false;
 
-        public void Play(PlayFxData data)
+        public void Play(PlayFxEvent data)
         {
             transform.position = data.Position;
             _maxDuration = data.duration;
@@ -36,7 +36,7 @@ namespace Dajunctic
             }
             else if (_maxDuration == -1)
             {
-                if (!particle.IsAlive(true))
+                if (particle == null || !particle.IsAlive(true))
                 {
                     DestroyFx();
                 }
@@ -50,8 +50,9 @@ namespace Dajunctic
         }
     }
 
-    public class PlayFxData
+    public class PlayFxEvent: IEvent
     {
+        public string Id;
         public Vector3 Position;
         public float duration = -1;
     }

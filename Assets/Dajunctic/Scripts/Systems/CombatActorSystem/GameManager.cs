@@ -13,7 +13,7 @@ namespace Dajunctic
             
         }
 
-        public void PlayFx(string fxId, PlayFxData playFxData)
+        public void PlayFx(string fxId, PlayFxEvent playFxData)
         {
             var position = playFxData.Position;
             var fxViewPrefab = gameManagerSO.fxLists.Find(f => f.Id == fxId).fxViewPrefab;

@@ -426,7 +426,7 @@ namespace Dajunctic
             }
             return logicNode;
         }
-        public void PlayFx(string fxId, PlayFxData playFxData, AnchorType anchorType)
+        public void PlayFx(string fxId, PlayFxEvent playFxData, AnchorType anchorType)
         {
             var position = GetAnchorPosition(anchorType);
             playFxData.Position = position;

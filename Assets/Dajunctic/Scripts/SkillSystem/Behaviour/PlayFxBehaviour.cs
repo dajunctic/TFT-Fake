@@ -33,7 +33,7 @@ namespace Dajunctic
                         {
                             if (actor != null && actor.gameObject.activeInHierarchy)
                             {
-                                var data = new PlayFxData();
+                                var data = new PlayFxEvent();
 
                                 data.Position = actor.GetAnchorPosition(Settings.anchorType) + Settings.offset;
                                 data.duration = Settings.duration;
@@ -45,7 +45,7 @@ namespace Dajunctic
                 }
                 else
                 {
-                    var data = new PlayFxData();
+                    var data = new PlayFxEvent();
                     if (Settings.isLocalPosition)
                     {
                         data.Position = combatActor.CachedTransform.TransformPoint(Settings.offset);

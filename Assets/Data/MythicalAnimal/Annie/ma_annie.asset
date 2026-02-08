@@ -15,10 +15,10 @@ MonoBehaviour:
   id: ma_annie
   movement:
     moveSpeed: 2
-    rotateSpeed: 4
+    rotateSpeed: 32
     height: 1.2
     radius: 0.25
-    acceleration: 16
+    acceleration: 24
     movementType: 0
   attribute:
     maxHp: 0

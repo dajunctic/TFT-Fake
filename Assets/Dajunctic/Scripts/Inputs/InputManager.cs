@@ -23,6 +23,8 @@ public class InputManager: Singleton<InputManager>
 
     public static event Action<Vector2> OnRightClickEvent;
 
+    private Camera _camera;
+
     protected override void Awake()
     {
         base.Awake();
@@ -36,6 +38,8 @@ public class InputManager: Singleton<InputManager>
 
         emotionAction.action.started += OnEmotionStarted;
         emotionAction.action.canceled += OnEmotionCanceled;
+
+        _camera = Camera.main;
     }
 
 
@@ -67,6 +71,20 @@ public class InputManager: Singleton<InputManager>
     private void OnRightClick(InputAction.CallbackContext context)
     {
         Vector2 mousePosition = pointAction.action.ReadValue<Vector2>();
+
+        var ray = _camera.ScreenPointToRay(mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo))
+            {
+                var targetPosition = hitInfo.point;
+
+                this.Raise(new PlayFxEvent
+                {
+                    Id = "fx_click_marker",
+                    Position = targetPosition,
+                });
+            }
+
+       
         OnRightClickEvent?.Invoke(mousePosition);
     }
 

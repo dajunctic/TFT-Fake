@@ -7,11 +7,6 @@ namespace Dajunctic
 {
     public class EventDispatcher : Singleton<EventDispatcher>
     {
-        void OnDestroy()
-        {
-            ClearAllListener();
-        }
-
         private readonly Dictionary<Type, Delegate> events = new Dictionary<Type, Delegate>();
 
         public void RegisterListener<T>(Action<T> callback) where T : IEvent

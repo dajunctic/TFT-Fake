@@ -21,7 +21,7 @@ namespace Dajunctic
         static void ChangeScene(string name)
         {
             EditorSceneManager.SaveOpenScenes();
-            EditorSceneManager.OpenScene(Application.dataPath + "/Panthera/Scenes/" + name + ".unity");
+            EditorSceneManager.OpenScene(Application.dataPath + "/Scenes/" + name + ".unity");
         }
 
         static bool CanChangeScene(string name)
@@ -31,7 +31,7 @@ namespace Dajunctic
 
         static bool HasScene(string name)
         {
-            return File.Exists(Application.dataPath + "/Panthera/Scenes/" + name + ".unity");
+            return File.Exists(Application.dataPath + "/Scenes/" + name + ".unity");
         }
 
         [MenuItem("Scenes/Prefab Scene", false, 11)]
@@ -58,17 +58,17 @@ namespace Dajunctic
             return CanChangeScene(DummyScene);
         }
         
-        // [MenuItem("Scenes/Initialize Scene", false, 22)]
-        // static void OpenInitializeScene()
-        // {
-        //     ChangeScene(InitializeScene);
-        // }
+        [MenuItem("Scenes/Initialize Scene", false, 22)]
+        static void OpenInitializeScene()
+        {
+            ChangeScene(InitializeScene);
+        }
 
-        // [MenuItem("Scenes/Initialize Scene", true, 22)]
-        // static bool CanOpenInitializeScene()
-        // {
-        //     return CanChangeScene(InitializeScene);
-        // }
+        [MenuItem("Scenes/Initialize Scene", true, 22)]
+        static bool CanOpenInitializeScene()
+        {
+            return CanChangeScene(InitializeScene);
+        }
         
         // [MenuItem("Scenes/Launcher Scene", false, 22)]
         // static void OpenLauncherScene()
@@ -82,17 +82,17 @@ namespace Dajunctic
         //     return CanChangeScene(LauncherScene);
         // }
         
-        // [MenuItem("Scenes/Home Scene", false, 22)]
-        // static void OpenHomeScene()
-        // {
-        //     ChangeScene(HomeScene);
-        // }
+        [MenuItem("Scenes/Home Scene", false, 22)]
+        static void OpenHomeScene()
+        {
+            ChangeScene(HomeScene);
+        }
 
-        // [MenuItem("Scenes/Home Scene", true, 22)]
-        // static bool CanOpenHomeScene()
-        // {
-        //     return CanChangeScene(HomeScene);
-        // }
+        [MenuItem("Scenes/Home Scene", true, 22)]
+        static bool CanOpenHomeScene()
+        {
+            return CanChangeScene(HomeScene);
+        }
 
         // [MenuItem("Scenes/Fading Scene", false, 22)]
         // static void OpenFadingScene()
