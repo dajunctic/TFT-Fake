@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7e2f4b17ef261474f8627657365315db
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 335800
+  packageName: VFX - Impact and Hit - Free
+  packageVersion: 1.0
+  assetPath: Assets/VFXPACK_IMPACT_WALLCOEUR_FreeVersion/Scripts/VfxController.cs
+  uploadId: 794602

@@ -37,7 +37,10 @@ namespace Dajunctic
 
                                 data.Position = actor.GetAnchorPosition(Settings.anchorType) + Settings.offset;
                                 data.duration = Settings.duration;
-                                GameManager.Instance.PlayFx(Settings.Id, data);
+
+                                data.Id = Settings.Id;
+
+                                EventDispatcher.Instance.Raise(data);
                             }
                         }
                     }
@@ -53,7 +56,9 @@ namespace Dajunctic
                     else {
                         data.Position = Settings.offset;
                     }
-                    GameManager.Instance.PlayFx(Settings.Id, data);
+                    
+                    data.Id = Settings.Id;
+                    EventDispatcher.Instance.Raise(data);
                     hasExecuted = true;
                 }
             }

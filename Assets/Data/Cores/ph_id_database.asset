@@ -14,5 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fxIds:
   - fx_click_marker
+  - fx_master_yi_atk_1_hit
   missileIds: []
-  timelineIds: []
+  timelineIds:
+  - tl_master_yi_atk_1
+  - tl_master_yi_skill_1

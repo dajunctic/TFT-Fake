@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c625fffdda2912d4cabfc8cdb4968dd4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 335800
+  packageName: VFX - Impact and Hit - Free
+  packageVersion: 1.0
+  assetPath: Assets/VFXPACK_IMPACT_WALLCOEUR_FreeVersion/Scripts/DropdownController.cs
+  uploadId: 794602

@@ -49,7 +49,6 @@ MonoBehaviour:
   initialize: 1
   tick: 2
   animator: {fileID: 0}
-  firePoints: []
   targetLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -57,8 +56,6 @@ MonoBehaviour:
   headPoint: {fileID: 0}
   combatActorData: {fileID: 11400000, guid: 50eaff33975a08c44860ec483e564173, type: 2}
   patrolSpeed: 1
-  vfxFollowPrefab: {fileID: 0}
-  debugCurrentNodeName: 
   isLeader: 0
   testSkillIds: []
   testSkill: 1

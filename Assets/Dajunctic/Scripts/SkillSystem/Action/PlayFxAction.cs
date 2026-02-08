@@ -48,7 +48,9 @@ namespace Dajunctic
 
                                 viewData.Position = actor.GetAnchorPosition(anchorType) + offset;
                                 viewData.duration = duration;
-                                GameManager.Instance.PlayFx(Id, viewData);
+                                viewData.Id = Id;
+
+                                EventDispatcher.Instance.Raise(viewData);
                             }
                         }
                     }
@@ -63,7 +65,8 @@ namespace Dajunctic
                     else {
                         viewData.Position = inOffset;
                     }
-                    GameManager.Instance.PlayFx(Id, viewData);
+                    viewData.Id = Id;
+                    EventDispatcher.Instance.Raise(viewData);
                 }
             }
         }
