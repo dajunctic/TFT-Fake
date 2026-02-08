@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using DG.Tweening;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -14,6 +16,8 @@ public class PiUI : MonoBehaviour
 
     [Tooltip("Default pi Slice to instantiate suggested to be a child gameobject to make adjusting values easier.")]
     public PiPiece piCut;
+
+    public Vector2 initialPosition;
 
     [Tooltip("Adjust this to match the inner radius of the piCut Sprite.")]
     public float innerRadius;
@@ -128,6 +132,8 @@ public class PiUI : MonoBehaviour
     [HideInInspector]
     public bool overMenu;
 
+    private RectTransform thisRect;
+
 
     private void Awake()
     {
@@ -152,7 +158,9 @@ public class PiUI : MonoBehaviour
         }
         innerRadius *= scaleModifier;
         outerRadius *= scaleModifier;
-        GeneratePi(new Vector2(-1000, -1000));
+
+        thisRect = GetComponent<RectTransform>( );
+        GeneratePi(initialPosition);
     }
 
 
@@ -167,7 +175,10 @@ public class PiUI : MonoBehaviour
         {
             ClearMenu( );
         }
-        transform.position = screenPosition;
+        
+
+        // transform.position = screenPosition;
+        thisRect.anchoredPosition = screenPosition;
         float lastRot = 0;
         if (syncColors)
         {
@@ -214,6 +225,9 @@ public class PiUI : MonoBehaviour
             currentPi.SetData(piData[i], innerRadius, outerRadius, this);
             piList.Add(currentPi);
         }
+
+        thisRect.anchoredPosition = screenPosition;
+
         openedMenu = false;
     }
 
@@ -287,6 +301,18 @@ public class PiUI : MonoBehaviour
     public void CloseMenu()
     {
         openedMenu = false;
+    }
+
+    public void ExecuteRelease()
+    {
+        foreach (PiPiece piece in piList)
+        {
+            if (piece.IsOver)
+            {
+                piece.OnReleased();
+                break; 
+            }
+        }
     }
 
     /// <summary>
@@ -390,6 +416,9 @@ public class PiUI : MonoBehaviour
             {
                 interactable = true;
             }
+
+            // transform.DOScale(Vector2.one * scaleModifier, 0.3f).SetEase(Ease.OutBack)
+            // .OnComplete(() => interactable = true);
         }
         else if (!openedMenu)
         {
@@ -402,6 +431,10 @@ public class PiUI : MonoBehaviour
                     pi.gameObject.SetActive(false);
                 }
             }
+            // transform.DOScale(Vector2.zero, 0.2f).SetEase(Ease.InBack)
+            // .OnComplete(() => {
+            //     foreach (var pi in piList) pi.gameObject.SetActive(false);
+            // });
         }
     }
 
@@ -618,6 +651,7 @@ public class PiUI : MonoBehaviour
         public Color highlightedColor;
         public Color disabledColor;
         public UnityEvent onSlicePressed;
+        public UnityEvent onSliceReleased;
         public int iconSize;
         public bool isInteractable = true;
         public bool hoverFunctions;
@@ -755,6 +789,7 @@ public class PiUI : MonoBehaviour
                 EditorGUILayout.PropertyField(sprop.FindPropertyRelative("onHoverExit"));
             }
             EditorGUILayout.PropertyField(sprop.FindPropertyRelative("onSlicePressed"));
+            EditorGUILayout.PropertyField(sprop.FindPropertyRelative("onSliceReleased"));
             GUILayout.Label(order.ToString( ), GUILayout.Width(10));
 
             GUILayout.EndVertical( );

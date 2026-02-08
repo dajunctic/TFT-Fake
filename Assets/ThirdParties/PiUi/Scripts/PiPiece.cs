@@ -36,6 +36,9 @@ public class PiPiece : MonoBehaviour
     [HideInInspector]
     [SerializeField]
     private UnityEvent onHoverExit;
+    [HideInInspector]
+    [SerializeField] 
+    private UnityEvent releaseEvent;
     [SerializeField]
     private bool onHoverEvents;
     [SerializeField]
@@ -51,6 +54,8 @@ public class PiPiece : MonoBehaviour
     private Image sliceIcon;
     private bool isInteractable;
     private bool lastFrameIsOver;
+
+    public bool IsOver => isOver;
 
     void OnEnable()
     {
@@ -227,6 +232,7 @@ public class PiPiece : MonoBehaviour
             onHoverEnter = piData.onHoverEnter;
             onHoverExit = piData.onHoverExit;
         }
+        releaseEvent = piData.onSliceReleased;
     }
 
     private void OnHoverEnter()
@@ -238,6 +244,14 @@ public class PiPiece : MonoBehaviour
     private void OnHoverExit()
     {
         onHoverExit.Invoke( );
+    }
+
+    public void OnReleased()
+    {
+        if (isOver && isInteractable)
+        {
+            releaseEvent?.Invoke();
+        }
     }
 
 }

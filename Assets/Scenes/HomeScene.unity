@@ -249,7 +249,10 @@ MonoBehaviour:
   ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
   initialize: 1
   tick: 2
+  duration: 2
   piUIManager: {fileID: 114494581081311467}
+  emotionViewPrefab: {fileID: 8379174434645732961, guid: c01e9023b123659448cab326f60c2757, type: 3}
+  spriteLists: {fileID: 11400000, guid: 593b605d0fe1da845884aa04c93c7f9d, type: 2}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1048,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1554813098613487
 GameObject:
   m_ObjectHideFlags: 0
@@ -1139,6 +1142,9 @@ MonoBehaviour:
   onHoverExit:
     m_PersistentCalls:
       m_Calls: []
+  releaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
   onHoverEvents: 0
   parent: {fileID: 0}
 --- !u!114 &114181108323628555
@@ -1188,7 +1194,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.1792453, g: 0.1792453, b: 0.1792453, a: 0.6862745}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1218,11 +1224,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   piCut: {fileID: 114068072743972997}
+  initialPosition: {x: -3840, y: 0}
   innerRadius: 125.6
   outerRadius: 315.8
   syncColors: 1
-  syncNormal: {r: 1, g: 1, b: 1, a: 1}
-  syncSelected: {r: 1, g: 0.5999999, b: 0, a: 1}
+  syncNormal: {r: 0.18039216, g: 0.18039216, b: 0.18039216, a: 0.6862745}
+  syncSelected: {r: 0, g: 0, b: 0, a: 0.90588236}
   syncDisabled: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
   outline: 1
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -1239,23 +1246,26 @@ MonoBehaviour:
   hoverScale: 1.1
   scaleModifier: 1
   interactable: 0
-  iconDistance: 1.66
+  iconDistance: 1.17
   equalSlices: 1
   sliceCount: 6
   piData:
   - angle: 74.5
-    sliceLabel: Emote 0
+    sliceLabel: 
     icon: {fileID: 21300000, guid: 33bae5c1a23c5db498f9fe4bd57fb8e1, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1264,7 +1274,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 1
     onHoverEnter:
@@ -1275,27 +1285,30 @@ MonoBehaviour:
         m_Calls: []
     order: 0
   - angle: 57.1
-    sliceLabel: Emote 1
+    sliceLabel: 
     icon: {fileID: 21300000, guid: 7a1e6d8dc2d370741aed93337b23d26e, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 1
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 0
     onHoverEnter:
@@ -1306,27 +1319,30 @@ MonoBehaviour:
         m_Calls: []
     order: 1
   - angle: 57.1
-    sliceLabel: Emote 2
+    sliceLabel: 
     icon: {fileID: 21300000, guid: f4a519d34646fd64ca73e9670048d714, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 2
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 0
     onHoverEnter:
@@ -1337,27 +1353,30 @@ MonoBehaviour:
         m_Calls: []
     order: 2
   - angle: 57.099995
-    sliceLabel: Emote 3
+    sliceLabel: 
     icon: {fileID: 21300000, guid: 490c208b31aa83940bfbabf622b5f34f, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 3
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 0
     onHoverEnter:
@@ -1368,27 +1387,30 @@ MonoBehaviour:
         m_Calls: []
     order: 3
   - angle: 57.1
-    sliceLabel: Emote 4
+    sliceLabel: 
     icon: {fileID: 21300000, guid: 45a1daa5214472e48a94f05ff602efc0, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 4
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 0
     onHoverEnter:
@@ -1399,27 +1421,30 @@ MonoBehaviour:
         m_Calls: []
     order: 4
   - angle: 57.100006
-    sliceLabel: Emote 5
+    sliceLabel: 
     icon: {fileID: 21300000, guid: f3d341dc41f28474fb7060b6fee8d6fa, type: 3}
     nonHighlightedColor: {r: 1, g: 1, b: 1, a: 1}
     highlightedColor: {r: 1, g: 0.5999999, b: 0, a: 1}
     disabledColor: {r: 0.19215688, g: 0.18823531, b: 0.18823531, a: 1}
     onSlicePressed:
       m_PersistentCalls:
+        m_Calls: []
+    onSliceReleased:
+      m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 216759852}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
-          m_Mode: 1
+          m_Mode: 3
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
+            m_IntArgument: 5
             m_FloatArgument: 0
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-    iconSize: 80
+    iconSize: 120
     isInteractable: 1
     hoverFunctions: 0
     onHoverEnter:
@@ -1472,7 +1497,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1554813098613487}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
   m_Name: 
@@ -1629,7 +1654,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -3840, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224913581399394961
@@ -1649,7 +1674,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &680594908498140262
 PrefabInstance:

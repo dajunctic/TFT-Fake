@@ -5,17 +5,15 @@ namespace Dajunctic
 {
     public class EmotionManager: BaseView
     {
+        [SerializeField] private float duration = 2f;
         [SerializeField, Child] private PiUIManager piUIManager;
+        [SerializeField] private EmotionView emotionViewPrefab;
+        [SerializeField] private SpriteLists spriteLists;
+
 
         public override void Initialize()
         {
             base.Initialize();
-        }
-
-
-        public override void Tick()
-        {
-            base.Tick();
         }
 
         override public void ListenEvents()
@@ -38,13 +36,39 @@ namespace Dajunctic
         private void SetEmotionUIActive(bool enable, Vector3 position)
         {
             piUIManager.gameObject.SetActive(enable);
-            piUIManager.ChangeMenuState("Emotion Menu", position);
+
+            if (!enable)
+            {
+                piUIManager.ExecuteReleaseEvent("Emotion Menu");
+                piUIManager.CloseMenu("Emotion Menu");
+            }
+            else
+            {
+                piUIManager.OpenMenuAtPosition("Emotion Menu", position);
+            }
         }
 
-        public void ShowEmotionView()
+
+        private float _timer = 0f;
+
+        public override void Tick()
         {
-            Debug.LogError("ShowEmotionView called on EmotionManager: " + name);
-            FindFirstObjectByType<MythicalAnimalCombatActor>()?.ShowEmotion();
+            base.Tick();
+            _timer -= Time.deltaTime;
+        }
+
+        public void ShowEmotionView(int emoteIndex)
+        {
+            if (_timer < 0f)
+            {
+                var combatActor = FindFirstObjectByType<MythicalAnimalCombatActor>();
+                var headPoint = combatActor?.HeadPoint;
+                var emotionView = Instantiate(emotionViewPrefab, combatActor.CachedTransform);
+            
+                emotionView.CachedTransform.position = headPoint.Position + Vector3.up * 0.3f;
+                emotionView.PlayEmotion(spriteLists.GetIndex(emoteIndex));
+                _timer = duration;
+            }
         }
     }
 

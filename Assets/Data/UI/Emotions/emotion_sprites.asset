@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd3cbd8c2e148ca4c95a940992ddd01e, type: 3}
+  m_Name: emotion_sprites
+  m_EditorClassIdentifier: 
+  id: emotion_sprites
+  sprites:
+  - {fileID: 21300000, guid: 33bae5c1a23c5db498f9fe4bd57fb8e1, type: 3}
+  - {fileID: 21300000, guid: 7a1e6d8dc2d370741aed93337b23d26e, type: 3}
+  - {fileID: 21300000, guid: f4a519d34646fd64ca73e9670048d714, type: 3}
+  - {fileID: 21300000, guid: 490c208b31aa83940bfbabf622b5f34f, type: 3}
+  - {fileID: 21300000, guid: 45a1daa5214472e48a94f05ff602efc0, type: 3}
+  - {fileID: 21300000, guid: f3d341dc41f28474fb7060b6fee8d6fa, type: 3}

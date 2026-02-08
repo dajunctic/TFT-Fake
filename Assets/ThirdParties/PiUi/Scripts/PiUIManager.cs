@@ -35,6 +35,30 @@ public class PiUIManager : MonoBehaviour
             currentPi.OpenMenu(pos);
         }
     }
+
+    public void OpenMenuAtPosition(string menuName, Vector2 pos = default(Vector2))
+    {
+        PiUI currentPi = GetPiUIOf(menuName);
+        if (!currentPi.openedMenu)
+        {
+            currentPi.OpenMenu(pos);
+        }
+    }
+
+    public void CloseMenu(string menuName)
+    {
+        PiUI currentPi = GetPiUIOf(menuName);
+        if (currentPi.openedMenu)
+        {
+            currentPi.CloseMenu( );
+        }
+    }
+
+    public void ExecuteReleaseEvent(string menuName)
+    {
+        PiUI currentPi = GetPiUIOf(menuName);
+        currentPi.ExecuteRelease();
+    }
    
     /// <summary>
     /// Gets if the passed in piUi is currently opened

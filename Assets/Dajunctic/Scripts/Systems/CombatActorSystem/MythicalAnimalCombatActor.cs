@@ -4,8 +4,6 @@ namespace Dajunctic
 {
     public class MythicalAnimalCombatActor: CombatActor
     {
-        [SerializeField] private EmotionView emotionViewPrefab;
-        private EmotionView _emotionViewInstance;
         public override string DataId => name;
 
         private Transform _cameraTransform;
@@ -77,17 +75,6 @@ namespace Dajunctic
 
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
             }
-        }
-
-        public void ShowEmotion()
-        {
-            if (_emotionViewInstance == null)
-            {
-                _emotionViewInstance = Instantiate(emotionViewPrefab, transform);
-                _emotionViewInstance.transform.localPosition = new Vector3(0, 1.1f, 0);
-                Debug.LogError("Instantiate EmotionView"); 
-            }
-            _emotionViewInstance.PlayEmotion();
         }
     }
 }

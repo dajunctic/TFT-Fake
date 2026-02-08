@@ -1,22 +1,14 @@
 using System.Collections;
+using DG.Tweening;
+using KBCore.Refs;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Dajunctic
 {
     public class EmotionView: BaseView
     {
-        [SerializeField] private float duration = 2f;
-
-        public override void Initialize()
-        {
-            base.Initialize();
-        }
-
-        public override void Tick()
-        {
-            base.Tick();
-
-        }
+        [SerializeField, Child] private Image icon;
 
         override public void ListenEvents()
         {
@@ -24,29 +16,28 @@ namespace Dajunctic
 
         }
 
-        public void PlayEmotion()
+        public void PlayEmotion(Sprite emoteSprite)
         {
-            Debug.LogError("PlayEmotion called on EmotionView: " + name); 
-
             gameObject.SetActive(true);
-            StartCoroutine(ShowEmotionCoroutine(duration));
-        }
+            icon.sprite = emoteSprite;
+            transform.localScale = Vector3.zero;
 
-        IEnumerator ShowEmotionCoroutine(float duration)
-        {
-            ShowEmotion();
-            yield return new WaitForSeconds(duration);
-            HideEmotion();
-        }
 
-        void ShowEmotion()
-        {
-            
-        }
+            transform.DOScale(1.2f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
+            {
+                DOVirtual.DelayedCall(1.5f, () =>
+                {
+                    transform.DOScale(0f, 0.3f).SetEase(Ease.InBack).OnComplete(() =>
+                    {
+                        HideEmotion();
+                    });
+                });
+            }); 
+        }        
 
         void HideEmotion()
         {
-            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
     }
 }
