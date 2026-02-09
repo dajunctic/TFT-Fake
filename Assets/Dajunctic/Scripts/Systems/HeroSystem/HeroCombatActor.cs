@@ -8,11 +8,40 @@ using UnityEngine.InputSystem;
 
 namespace Dajunctic
 {
-    public class HeroCombatActor: CombatActor
+    public class HeroCombatActor: CombatActor, IDraggable
     {
         [Header("Hero")]
         public static HeroCombatActor Leader;
         [SerializeField] protected bool isLeader;
+
+        private Vector3 originalPosition;
+
+        public void OnDragStart()
+        {
+            originalPosition = CachedTransform.position;
+            // Interrupt current actions (moving, attacking, etc.)
+            InterruptAction();
+            ForceStop();
+            if (MoveAgent != null) MoveAgent.SetEnable(false);
+        }
+
+        public void OnDragUpdate(Vector3 worldPos)
+        {
+            // Update visual position with offset
+            CachedTransform.position = worldPos + Vector3.up * 0.5f;
+        }
+
+        public void OnDrop(Vector3 finalPos)
+        {
+            CachedTransform.position = finalPos;
+            if (MoveAgent != null)
+            {
+                MoveAgent.SetEnable(true);
+                MoveAgent.Warp(finalPos);
+            }
+        }
+
+        public Transform GetTransform() => CachedTransform;
 
         public bool IsLeader => isLeader;
         public override string DataId => name;
