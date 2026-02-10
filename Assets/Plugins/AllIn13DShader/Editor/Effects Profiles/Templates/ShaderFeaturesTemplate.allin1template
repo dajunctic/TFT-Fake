@@ -1,0 +1,6 @@
+#ifndef ALLIN13DSHADER_SHADERFEATURES_<EffectsProfileID>
+#define ALLIN13DSHADER_SHADERFEATURES_<EffectsProfileID>
+
+<Content>
+
+#endif //ALLIN13DSHADER_SHADERFEATURES_<EffectsProfileID>

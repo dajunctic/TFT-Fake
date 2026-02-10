@@ -1,0 +1,6 @@
+Stencil
+{
+	 Ref [_StencilRef]
+	 Comp Always
+	 Pass Replace
+}

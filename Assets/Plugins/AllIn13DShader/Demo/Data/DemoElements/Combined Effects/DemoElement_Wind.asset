@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ddca8ef013926408780e6e292bad16, type: 3}
+  m_Name: DemoElement_Wind
+  m_EditorClassIdentifier: 
+  demoName: Wind and Stylized Fog
+  prefab: {fileID: 2481555142680936367, guid: f8a5a29aa2c7cb04d908ea23542b4353, type: 3}
+  environment: {fileID: 11400000, guid: 301d58fcd223fbb44a36be03b70d52d8, type: 2}
+  info: Stylized scene showcasing the wind and stylized colored fog
+  directionalLightEnabled: 1
+  mainLightIntensity: 1
+  skyboxEnabled: 1
+  postProcessEnabled: 1

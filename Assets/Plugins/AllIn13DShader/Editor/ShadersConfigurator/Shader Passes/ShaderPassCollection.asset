@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a88ccc1bdfb7ccb4788b6169f0e66225, type: 3}
+  m_Name: ShaderPassCollection
+  m_EditorClassIdentifier: AllIn13DShaderAssemebly.Editor::AllIn13DShader.ShaderPassCollection
+  mainPass: {fileID: 11400000, guid: a6c4bacf92f616e46b85269e8937d62e, type: 2}
+  outlinePass: {fileID: 11400000, guid: d9c53fb10098f244daafa27d2a34f6f1, type: 2}
+  shadowCasterPass: {fileID: 11400000, guid: cde35f88efc3915459308ded0813329c, type: 2}
+  depthOnlyPass: {fileID: 11400000, guid: 9c2d274c9d2cd92409f03df624fcc618, type: 2}
+  depthNormalsPass: {fileID: 11400000, guid: 9c0a77d626be93448a5f98ecd9139d5e, type: 2}
+  metaPass: {fileID: 11400000, guid: 225f11d6c5bca9e469fcc219041d7cc5, type: 2}
+  forwardAdd: {fileID: 11400000, guid: 1734ded193e10df49966d25f3bd36a26, type: 2}

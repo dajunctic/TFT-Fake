@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 592122c0ab3d6c04d85891bcd2f332bc, type: 3}
+  m_Name: GlobalConfiguration
+  m_EditorClassIdentifier: 
+  projectType: 2
+  standardBasicMaterial: {fileID: 2100000, guid: 1df0aef2ca6d85a4b9bb7478096c635a, type: 2}
+  standardPBRMaterial: {fileID: 2100000, guid: fed1698affe6c124c8eece7c36b256f0, type: 2}
+  toonMaterial: {fileID: 2100000, guid: deae43ec6cafe38498ce343202e24586, type: 2}
+  allIn13dDShaderLookMaterial: {fileID: 2100000, guid: c47ffb1264d98194ca46e4502b86c74f, type: 2}
+  defaultPreset: {fileID: 2100000, guid: fed1698affe6c124c8eece7c36b256f0, type: 2}
+  rootPluginPath: Assets\Plugins\AllIn13DShader
+  globalConfigFolderPath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig
+  exportFolderPath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export
+  materialSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Materials
+  renderImageSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Images
+  normalMapSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Normal
+    Maps
+  gradientSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Gradients
+  atlasesSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Atlases
+  noiseSavePath: Assets\Plugins\AllIn13DShader\AllIn3DShaderConfig\Export\Noises
+  renderImageScale: 0
+  projectConfiguredFirstTime: 1
+  urpConfiguredFirstTime: 1
+  lastPipelineConfiguredGUID: 
+  shStandard: {fileID: 4800000, guid: 0dde7f0097aeb2541aea684ca0ad0e3c, type: 3}
+  shStandardNoShadowCaster: {fileID: 4800000, guid: 3bc39c06ce1e4fb44bc21dcf24dde7fe, type: 3}
+  shOutline: {fileID: 4800000, guid: a4c8f68acf7c9844e97a36914026acb1, type: 3}
+  shOutlineNoShadowCaster: {fileID: 4800000, guid: 7fd6f68952c76af4c8005466df606651, type: 3}
+  effectsProfileCollection: {fileID: 11400000, guid: 017043fc1bcd28f49bd066c78eaea48f, type: 2}
+  shaderPassCollection: {fileID: 11400000, guid: 02697d53e5a592b43b0b78710cd1fd60, type: 2}

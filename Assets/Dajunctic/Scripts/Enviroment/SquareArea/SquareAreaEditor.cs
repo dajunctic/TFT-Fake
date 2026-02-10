@@ -28,6 +28,11 @@ namespace Dajunctic
                 _view.Data.Clear();
                 EditorUtility.SetDirty(_view.Data);
             }
+
+            if (GUILayout.Button("Spawn Tiles"))
+            {
+                _view.SpawnTiles();
+            }
         }
 
         private void OnSceneGUI()

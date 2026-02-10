@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d35b40778f5ef47a14fca4766c770a, type: 3}
+  m_Name: ShaderPass_ForwardAdd
+  m_EditorClassIdentifier: AllIn13DShaderAssemebly.Editor::AllIn13DShader.ShaderPassConfig
+  passType: 6
+  passNameURP: 
+  passNameBIRP: FORWARD_DELTA
+  lightModeTagURP: 
+  lightModeTagBIRP: ForwardAdd
+  passSymbol: FORWARD_ADD_PASS
+  vertexProgramName: BasicVertex
+  fragmentProgramName: BasicFragmentAdd
+  blendCommand:
+    shaderCommandValue: 1
+    srcBlending: 1
+    dstBlending: 1
+  cullCommand:
+    shaderCommandValue: 2
+    cullMode: 0
+  zWriteCommand:
+    shaderCommandValue: 1
+    zWriteOn: 0
+  zTestCommand:
+    shaderCommandValue: 1
+    zTestMode: 4
+  colorMaskCommand:
+    shaderCommandValue: 0
+    colorWriteMask: 0
+  extraPragmaLinesBIRP: "#pragma multi_compile_fwdadd_fullshadows\r\n#pragma multi_compile_fog\r\n#pragma
+    multi_compile_instancing\r\n#pragma multi_compile _ DOTS_INSTANCING_ON\r"
+  extraPragmaLinesURP: 

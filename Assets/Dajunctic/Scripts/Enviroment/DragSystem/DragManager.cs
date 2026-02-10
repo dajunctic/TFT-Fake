@@ -12,6 +12,7 @@ namespace Dajunctic
         private IDraggable currentDragged;
         private Camera mainCamera;
         private List<IDragTarget> allTargets = new List<IDragTarget>();
+        private Vector3 _dragOffset; // To fix the perspective issue you mentioned
 
         private void Awake()
         {
@@ -56,8 +57,22 @@ namespace Dajunctic
                 var draggable = hit.collider.GetComponentInParent<IDraggable>();
                 if (draggable != null)
                 {
+                    // Calculate the offset once when we start dragging
+                    // We check where the mouse is on the ground to find the relative offset to the unit's pivot
+                    if (Physics.Raycast(ray, out RaycastHit groundHit, 100f, groundLayer))
+                    {
+                        _dragOffset = draggable.GetTransform().position - groundHit.point;
+                    }
+                    else
+                    {
+                        _dragOffset = Vector3.zero;
+                    }
+
                     currentDragged = draggable;
                     currentDragged.OnDragStart();
+                    
+                    foreach (var target in allTargets) target.OnDragStart();
+                    
                     Debug.Log($"Started dragging: {hit.collider.name}");
                 }
             }
@@ -68,17 +83,15 @@ namespace Dajunctic
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
             {
-                Vector3 worldPos = hit.point;
+                // Apply the offset to keep the unit at the same relative position to the cursor
+                Vector3 worldPos = hit.point + _dragOffset;
                 Vector3 targetPos = worldPos;
 
-                // Try to find a snap position
+                // HIGH-LEVEL CHANGE: The unit follows the mouse FREELY during drag.
+                // We only call SnapPosition to trigger the "Highlight" visual on the tiles.
                 foreach (var target in allTargets)
                 {
-                    if (target.TryGetSnapPosition(worldPos, out Vector3 snappedPos))
-                    {
-                        targetPos = snappedPos;
-                        break;
-                    }
+                    target.TryGetSnapPosition(worldPos, out _); 
                 }
 
                 currentDragged.OnDragUpdate(targetPos);
@@ -92,18 +105,32 @@ namespace Dajunctic
             
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
             {
-                Vector3 worldPos = hit.point;
+                // We use the unit's pivot position (hit point + original offset) to find the target tile
+                Vector3 worldPos = hit.point + _dragOffset;
+                bool snapped = false;
+
                 foreach (var target in allTargets)
                 {
                     if (target.TryGetSnapPosition(worldPos, out Vector3 snappedPos))
                     {
                         finalPos = snappedPos;
+                        snapped = true;
                         break;
                     }
+                }
+
+                // If no valid tile found, TFT usually returns the unit to its original position
+                if (!snapped)
+                {
+                    currentDragged.ResetPosition();
+                    foreach (var target in allTargets) target.OnDragEnd();
+                    currentDragged = null;
+                    return;
                 }
             }
 
             currentDragged.OnDrop(finalPos);
+            foreach (var target in allTargets) target.OnDragEnd();
             currentDragged = null;
         }
     }

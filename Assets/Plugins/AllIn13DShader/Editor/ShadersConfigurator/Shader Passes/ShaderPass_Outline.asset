@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0d35b40778f5ef47a14fca4766c770a, type: 3}
+  m_Name: ShaderPass_Outline
+  m_EditorClassIdentifier: AllIn13DShaderAssemebly.Editor::AllIn13DShader.ShaderPassConfig
+  passType: 1
+  passNameURP: AllIn13D_Outline_URP
+  passNameBIRP: AllIn13D_Outline
+  lightModeTagURP: OutlinePass
+  lightModeTagBIRP: 
+  passSymbol: ALLIN1_OUTLINE_PASS
+  vertexProgramName: OutlinePass_Vertex
+  fragmentProgramName: OutlinePass_Fragment
+  blendCommand:
+    shaderCommandValue: 2
+    srcBlending: 0
+    dstBlending: 0
+  cullCommand:
+    shaderCommandValue: 1
+    cullMode: 1
+  zWriteCommand:
+    shaderCommandValue: 0
+    zWriteOn: 0
+  zTestCommand:
+    shaderCommandValue: 0
+    zTestMode: 0
+  colorMaskCommand:
+    shaderCommandValue: 0
+    colorWriteMask: 0
+  extraPragmaLinesBIRP: "#pragma multi_compile_instancing\r\n#pragma multi_compile_fog\r\n#pragma
+    multi_compile _ DOTS_INSTANCING_ON\r"
+  extraPragmaLinesURP: 

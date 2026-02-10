@@ -15,10 +15,16 @@ namespace Dajunctic
         [SerializeField] protected bool isLeader;
 
         private Vector3 originalPosition;
+        private Vector3 _targetPosition;
+        private Vector3 _moveVelocity;
+        private bool _isDragging = false;
 
         public void OnDragStart()
         {
+            _isDragging = true;
             originalPosition = CachedTransform.position;
+            _targetPosition = originalPosition;
+
             // Interrupt current actions (moving, attacking, etc.)
             InterruptAction();
             ForceStop();
@@ -27,17 +33,54 @@ namespace Dajunctic
 
         public void OnDragUpdate(Vector3 worldPos)
         {
-            // Update visual position with offset
-            CachedTransform.position = worldPos + Vector3.up * 0.5f;
+            _targetPosition = worldPos;
         }
 
         public void OnDrop(Vector3 finalPos)
         {
-            CachedTransform.position = finalPos;
+            _isDragging = false;
+            _targetPosition = finalPos;
+            
+            // Update the core CombatActor position state so it doesn't snap back
+            Teleport(finalPos, false);
+            
             if (MoveAgent != null)
             {
                 MoveAgent.SetEnable(true);
                 MoveAgent.Warp(finalPos);
+            }
+        }
+
+        public void ResetPosition()
+        {
+            _isDragging = false;
+            Teleport(originalPosition, false);
+            
+            CachedTransform.position = originalPosition;
+            _targetPosition = originalPosition;
+            if (MoveAgent != null)
+            {
+                MoveAgent.SetEnable(true);
+                MoveAgent.Warp(originalPosition);
+            }
+        }
+
+        protected override void SyncEntity()
+        {
+            // IMPORTANT: Disable the base class position sync while dragging
+            // to prevent the jittering/fighting between mice position and actor logic
+            if (_isDragging) return;
+            base.SyncEntity();
+        }
+
+        private void Update()
+        {
+            if (_isDragging)
+            {
+                // Instant follow for responsive "sticky" feel
+                Vector3 targetWithHeight = _targetPosition + Vector3.up * 0.5f;
+                CachedTransform.position = targetWithHeight;
+                _moveVelocity = Vector3.zero;
             }
         }
 
