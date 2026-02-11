@@ -26,7 +26,7 @@ namespace Dajunctic
                 var proj = PoolableObject.Pool.Spawn(validProj, spawnPos, spawnRot);
                 CombineDamage finalDamage = step.combineDamage;
                 finalDamage.damage *= evt.damageMultiplier;
-                proj.Initialize(finalDamage, combatActor.TargetLayer, target, data.hitPrefab);
+                proj.Initialize(combatActor, finalDamage, target, hitPrefab);
             }
         }
 
@@ -54,8 +54,7 @@ namespace Dajunctic
             {
                 Vector3 spawnPos = target.Position;
                 var spawnedObj = PoolableObject.Pool.Spawn(validEffect, spawnPos, Quaternion.identity);
-                spawnedObj.Initialize(combatActor, step.combineDamage,
-                    combatActor.TargetLayer, data.duration, hitPrefab);
+                spawnedObj.Initialize(combatActor, step.combineDamage, data.duration, hitPrefab);
             }
         }
     }

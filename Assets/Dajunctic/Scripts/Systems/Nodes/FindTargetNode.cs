@@ -23,17 +23,7 @@ namespace Dajunctic
                 }
             }
 
-            Collider[] hits = Physics.OverlapSphere(combatActor.Position, _range, combatActor.TargetLayer);
-            List<CombatActor> potentialTargets = new List<CombatActor>();
-            
-            foreach(var hit in hits)
-            {
-                var targetActor = hit.GetComponent<CombatActor>();
-                if (targetActor != null && targetActor != combatActor)
-                {
-                    potentialTargets.Add(targetActor);
-                }
-            }
+            SkillHelper.ScanTargetInRadius(combatActor, _range, out List<CombatActor> potentialTargets);
 
             CombatActor bestTarget = SkillHelper.FindNearestTarget(combatActor.Position, potentialTargets);
 

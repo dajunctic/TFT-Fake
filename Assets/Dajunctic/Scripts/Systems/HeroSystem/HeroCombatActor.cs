@@ -1,10 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Mono.Cecil.Cil;
-using Dajunctic;
 using UnityEngine;
-using UnityEngine.AI;
-using UnityEngine.InputSystem;
 
 namespace Dajunctic
 {
@@ -12,7 +7,6 @@ namespace Dajunctic
     {
         [Header("Hero")]
         public static HeroCombatActor Leader;
-        [SerializeField] protected bool isLeader;
 
         private Vector3 originalPosition;
         private Vector3 _targetPosition;
@@ -86,7 +80,6 @@ namespace Dajunctic
 
         public Transform GetTransform() => CachedTransform;
 
-        public bool IsLeader => isLeader;
         public override string DataId => name;
         public bool IsMovingByInput { get; set; }
 
@@ -96,10 +89,7 @@ namespace Dajunctic
         public override void Initialize()
         {
             base.Initialize();
-            if (isLeader)
-            {
-                Leader = this;
-            }
+           
             if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
@@ -110,8 +100,7 @@ namespace Dajunctic
         {
             get
             {
-                if (isLeader) return MovementPriority.Controller;
-                else return MovementPriority.Controlled;
+                return MovementPriority.Controlled;
             }
         }
         
@@ -119,21 +108,9 @@ namespace Dajunctic
         {
             List<Node> rootNodes = new List<Node>();
 
-            if (isLeader)
-            {
-                rootNodes.Add(new InputMoveNode(this));
-            }
-            else
-            {
-                rootNodes.Add(new ForceFollowNode(this));
-            }
+            rootNodes.Add(new ForceFollowNode(this));
  
             rootNodes.Add(CreateCombatBranch());
-
-            if (!isLeader)
-            {
-                rootNodes.Add(new FollowLeaderNode(this));
-            }
 
             root = new Selector(rootNodes);
         }
@@ -154,16 +131,23 @@ namespace Dajunctic
                 new SelectorWithMemory(skillNodes)
             });
             
-            if (isLeader)
-            {
-                return new Sequence(new List<Node>()
-                {
-                    coreCombatLogic                   
-                });
-            }
-            
             return coreCombatLogic;
         }
+
+        public override void ListenEvents()
+        {
+            base.ListenEvents();
+
+            InputManager.OnTestFirstSkill += OnTestFirstSkill;
+        }
+
+        [SerializeField, GuidReference("tl", typeof(IDummyId))] List<string> testSkillIds;
+
+        public void OnTestFirstSkill()
+        {
+            this.Raise(new PlayTimelineEvent{ Id= testSkillIds[0]});
+        }
     }
+    
     
 }

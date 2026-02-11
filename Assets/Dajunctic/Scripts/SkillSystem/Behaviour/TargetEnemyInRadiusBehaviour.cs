@@ -10,7 +10,6 @@ namespace Dajunctic
     public class TargetEnemyInRadiusSetting
     {
         public float radius;
-        public LayerMask targetLayer;
         public TargetRadiusType targetType;
         
         public bool targetAll = true;
@@ -28,18 +27,7 @@ namespace Dajunctic
 
             context.EnemyTargets.Clear();
 
-            var colliders = Physics.OverlapSphere(combatActor.Position, Settings.radius, Settings.targetLayer);
-            List<CombatActor> foundActors = new List<CombatActor>();
-
-            foreach (var collider in colliders)
-            {
-                var actor = collider.gameObject.GetComponent<CombatActor>();
-                
-                if (actor != null && actor != combatActor)
-                {
-                    foundActors.Add(actor);
-                }
-            }
+            SkillHelper.ScanTargetInRadius(combatActor, Settings.radius, out var foundActors);
 
             if (foundActors.Count > 0)
             {

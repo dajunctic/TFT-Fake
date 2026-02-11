@@ -12,13 +12,12 @@ namespace Dajunctic
     public class CombatActor: BaseView, ICombatActor
     {
         [SerializeField, Child] protected Animator animator;
-        [SerializeField] protected LayerMask targetLayer;
         [SerializeField, Child] protected MidPoint midPoint;
         [SerializeField, Child] protected HeadPoint headPoint;
         [SerializeField] protected CombatActorData combatActorData;
-        [SerializeField] private float patrolSpeed = 1f;
+        [SerializeField] private Team team;
         [Header("Vfx")]
-        public float PatrolSpeed => patrolSpeed;
+        public Team Team => team;
 
         public virtual Vector3 Position {get; private set;}
         public virtual Vector3 Forward {get; private set;}
@@ -31,7 +30,6 @@ namespace Dajunctic
         public CombatActor CurrentTarget { get; private set; }
         public MidPoint MidPoint => midPoint;
         public HeadPoint HeadPoint => headPoint;
-        public LayerMask TargetLayer => targetLayer;
         public float Speed => combatActorData.movement.moveSpeed;
         public float RotateSpeed => combatActorData.movement.rotateSpeed;
         public float AtkSpd => combatActorData.combatStat.atkSpd;

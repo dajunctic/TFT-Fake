@@ -10,7 +10,6 @@ namespace Dajunctic
         [SerializeField] public float radius = 0.1f;
         [SerializeField] public float speed = 10f;
         [SerializeField] AnchorType anchorType;
-        [SerializeField] LayerMask targetLayer;
         [SerializeField] public AnimationCurve horizontal;
         [SerializeField] public AnimationCurve vertical;
         [SerializeField] public float duration = -1;

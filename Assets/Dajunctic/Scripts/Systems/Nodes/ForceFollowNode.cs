@@ -11,7 +11,6 @@ namespace Dajunctic
             if (combatActor.IsCasting) return NodeState.Failure;
             
             var me = combatActor as HeroCombatActor;
-            if (me != null && me.IsLeader) return NodeState.Failure;
 
             var leader = HeroCombatActor.Leader;
             if (leader == null) return NodeState.Failure;

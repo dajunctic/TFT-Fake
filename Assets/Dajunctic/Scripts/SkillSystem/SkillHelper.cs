@@ -5,16 +5,21 @@ namespace Dajunctic
 {
     public static class SkillHelper
     {
-        public static void ScanTargetInRadius(Vector3 finderPos, float radius, LayerMask targetLayer, out List<CombatActor> foundActors)
+        public static void ScanTargetInRadius(CombatActor finder, float radius, out List<CombatActor> foundActors)
         {
-             var colliders = Physics.OverlapSphere(finderPos, radius, targetLayer);
+             ScanTargetInRadius(finder, finder.Position, radius, out foundActors);
+        }
+
+        public static void ScanTargetInRadius(CombatActor finder, Vector3 position, float radius, out List<CombatActor> foundActors)
+        {
+            var colliders = Physics.OverlapSphere(position, radius, LayerMask.GetMask(Gameplay.HeroLayerName));
             foundActors = new List<CombatActor>();
 
             foreach (var collider in colliders)
             {
                 var actor = collider.gameObject.GetComponent<CombatActor>();
                 
-                if (actor != null)
+                if (actor != null && actor != finder && actor.Team != finder.Team)
                 {
                     foundActors.Add(actor);
                 }

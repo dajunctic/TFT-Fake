@@ -9,7 +9,6 @@ namespace Dajunctic
     public class TargetPositionMostEnemySetting
     {
         public float radius;
-        public LayerMask targetLayer;
         public float areaRadius;
     }
 
@@ -23,7 +22,7 @@ namespace Dajunctic
         {
             if (combatActor == null) return;
             
-            SkillHelper.ScanTargetInRadius(combatActor.Position, Settings.areaRadius, Settings.targetLayer, out var foundActors);
+            SkillHelper.ScanTargetInRadius(combatActor, Settings.areaRadius, out var foundActors);
 
             _enemiesInRange = foundActors;
 

@@ -25,7 +25,6 @@ namespace Dajunctic
             if (combatActor.MoveAgent.Velocity.magnitude < 0.1f)
             {
                 _targetPosition = _hexAreaView.GetRandomPosition();
-                combatActor.MovePosition(_targetPosition, combatActor.PatrolSpeed, combatActor.RotateSpeed);
             }
 
             return NodeState.Success;

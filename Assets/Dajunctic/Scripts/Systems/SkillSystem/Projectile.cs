@@ -13,14 +13,14 @@ namespace Dajunctic
         [SerializeField] public float stoppingDistance = 0.1f;
         
         private CombineDamage _combineDamage;
+        private CombatActor _source;
         private CombatActor _target;
-        private LayerMask _targetLayer;
         private PoolableObject _hitPrefab;
 
-        public void Initialize(CombineDamage combineDamage, LayerMask hitLayer, CombatActor target, PoolableObject hitPrefab)
+        public void Initialize(CombatActor source, CombineDamage combineDamage, CombatActor target, PoolableObject hitPrefab)
         {
+            _source = source;
             _combineDamage = combineDamage;
-            _targetLayer = hitLayer;
             _target = target;
             _hitPrefab = hitPrefab;
             ResetVisuals();
@@ -58,12 +58,15 @@ namespace Dajunctic
         {
             if (attackRadius > 0)
             {
-                Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, _targetLayer);
+                Collider[] hits = Physics.OverlapSphere(transform.position, attackRadius, LayerMask.GetMask(Gameplay.HeroLayerName));
                 foreach (var hit in hits)
                 {
                     if (hit.TryGetComponent<CombatActor>(out var damageable))
                     {
-                        damageable.TakeDamage(_combineDamage);
+                        if (damageable != _source && damageable.Team != _source.Team)
+                        {
+                            damageable.TakeDamage(_combineDamage);
+                        }
                     }
                 }
             }

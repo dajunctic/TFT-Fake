@@ -7,7 +7,6 @@ namespace Dajunctic
                                 PlayFxAction.ISubActionSource
     {
         [SerializeField] public float radius;
-        [SerializeField] public LayerMask targetLayer;
         [SerializeField] CombineDamage combineDamage;
         [SerializeReference] List<SkillAction> hitActions;
 
@@ -21,7 +20,7 @@ namespace Dajunctic
 
             var data = ((ISubActionSource)source).GetData();
 
-            SkillHelper.ScanTargetInRadius(data.position, radius, targetLayer, out var foundActors);
+            SkillHelper.ScanTargetInRadius(combatActor, data.position, radius, out var foundActors);
 
             foreach (var actor in foundActors)
             {
