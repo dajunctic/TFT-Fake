@@ -47,7 +47,7 @@ namespace Dajunctic
 
         public string Id => name;
 
-        void Awake()
+        protected virtual void Awake()
         {
             if (initialize) Initialize(); 
         }
