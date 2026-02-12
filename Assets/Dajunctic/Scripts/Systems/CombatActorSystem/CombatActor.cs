@@ -409,21 +409,9 @@ namespace Dajunctic
             var skill = GetSkill(slot);
             if (skill == null) return null;
 
-            BaseSkillNode logicNode = null;
-            
-            switch (skill.Data.executionType)
-            {
-                
-                case SkillExecutionType.Timeline:
-                    logicNode = new TimelineSkillNode(this, slot);
-                    break;
-                
-                default:
-                    logicNode = new BaseSkillNode(this, slot);
-                    break;
-            }
-            return logicNode;
+            return new BaseSkillNode(this, slot);
         }
+
 
         public Vector3 GetAnchorPosition(AnchorType anchorType)
         {

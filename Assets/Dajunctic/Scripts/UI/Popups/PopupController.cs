@@ -31,11 +31,22 @@ namespace Dajunctic
             if (_instance == null)
             {
                 _instance = this;
+                ClearChildren();
                 InitializeDictionary();
             }
             else if (_instance != this)
             {
                 Destroy(gameObject);
+            }
+
+        }
+
+        private void ClearChildren()
+        {
+            if (popupParent == null) return;
+            foreach (Transform child in popupParent)
+            {
+                Destroy(child.gameObject);
             }
         }
 

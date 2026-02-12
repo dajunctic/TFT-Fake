@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
   m_Name: hero_kayn
   m_EditorClassIdentifier: 
-  id: hero_akali
+  id: hero_kayn
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -21,16 +21,17 @@ MonoBehaviour:
     acceleration: 16
     movementType: 0
   attribute:
-    maxHp: 0
+    maxHp: 1000
     physicalArmor: 0
     magicalArmor: 0
   skillAttribute:
     energy: 0
   combatStat:
-    radius: 0
-    atk: 0
-    atkSpd: 0
-    atkRange: 0
-    criticalChance: 0
-    criticalDmg: 0
-  skills: []
+    radius: 1
+    atk: 1
+    atkSpd: 1
+    atkRange: 6
+    criticalChance: 1
+    criticalDmg: 10
+  skills:
+  - {fileID: 11400000, guid: 7383b51fba032604d817d09652f2f876, type: 2}

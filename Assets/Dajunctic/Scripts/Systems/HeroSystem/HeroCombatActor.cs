@@ -6,8 +6,7 @@ namespace Dajunctic
     public class HeroCombatActor: CombatActor, IDraggable
     {
         [Header("Hero")]
-        public static HeroCombatActor Leader;
-
+        public Vector2Int CurrentBenchCoord { get; set; } = new Vector2Int(-1, -1);
         private Vector3 originalPosition;
         private Vector3 _targetPosition;
         private Vector3 _moveVelocity;
@@ -34,6 +33,13 @@ namespace Dajunctic
         {
             _isDragging = false;
             _targetPosition = finalPos;
+
+            // If we move from bench to field, notify BenchManager
+            if (CurrentBenchCoord.x != -1)
+            {
+                BenchManager.Instance.RemoveHeroFromTile(CurrentBenchCoord);
+                CurrentBenchCoord = new Vector2Int(-1, -1);
+            }
             
             // Update the core CombatActor position state so it doesn't snap back
             Teleport(finalPos, false);
@@ -108,12 +114,17 @@ namespace Dajunctic
         {
             List<Node> rootNodes = new List<Node>();
 
-            rootNodes.Add(new ForceFollowNode(this));
- 
-            rootNodes.Add(CreateCombatBranch());
+            // 1. Combat Branch (Only active in Combat phase)
+            // In Planning phase, the BT returns Failure, which is equivalent to "Idle"
+            rootNodes.Add(new Sequence(new List<Node>()
+            {
+                new IsInPhaseNode(GameplayPhase.Combat),
+                CreateCombatBranch()
+            }));
 
             root = new Selector(rootNodes);
         }
+
         protected override Node CreateCombatBranch()
         {
             List<Node> skillNodes = new List<Node>();
@@ -122,17 +133,15 @@ namespace Dajunctic
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.BasicAttack);
         
             List<Node> targetingNodes = new List<Node>();
-            targetingNodes.Add(new AssistSquadNode(this));
             targetingNodes.Add(new FindTargetNode(this, combatActorData.combatStat.atkRange));
         
-            var coreCombatLogic =  new Sequence(new List<Node>()
+            return new Sequence(new List<Node>()
             {
                 new Selector(targetingNodes),
                 new SelectorWithMemory(skillNodes)
             });
-            
-            return coreCombatLogic;
         }
+
 
         public override void ListenEvents()
         {

@@ -30,14 +30,9 @@ namespace Dajunctic
             if (bestTarget != null)
             {
                 combatActor.SetTarget(bestTarget);
-                
-                if (SquadManager.Instance != null)
-                {
-                    SquadManager.Instance.SetSharedTarget(bestTarget);
-                }
-
                 return NodeState.Success;
             }
+
             
             combatActor.SetTarget(null);
             return NodeState.Failure;

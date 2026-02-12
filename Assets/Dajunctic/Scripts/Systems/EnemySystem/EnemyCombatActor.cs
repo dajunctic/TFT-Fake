@@ -21,9 +21,13 @@ namespace Dajunctic
         {
             root = new Selector(new List<Node>()
             {
-                CreateCombatBranch(),
-                new PatrolNode(this, hexAreaView)
+                new Sequence(new List<Node>()
+                {
+                    new IsInPhaseNode(GameplayPhase.Combat),
+                    CreateCombatBranch()
+                })
             });
         }
+
     }
 }
