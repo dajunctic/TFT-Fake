@@ -20,7 +20,8 @@ namespace Dajunctic
         public static event Action<int, int> OnXPChanged; // currentXP, requiredXP
         public static event Action<int> OnLevelChanged;
 
-        private readonly int[] _xpRequirements = { 0, 2, 2, 6, 10, 20, 36, 56, 80, 100 }; // Index 0-1 unused, 2 is level 2 -> 3 etc.
+        public const int MAX_LEVEL = 10;
+        private readonly int[] _xpRequirements = { 0, 2, 2, 6, 10, 20, 36, 56, 80, 100 }; // Index 1 is level 1 -> 2, etc.
 
         protected override void Awake()
         {
@@ -51,31 +52,50 @@ namespace Dajunctic
 
         public void AddXP(int amount)
         {
+            if (_level >= MAX_LEVEL) return;
+            
             _xp += amount;
             CheckLevelUp();
             OnXPChanged?.Invoke(_xp, GetXPRequired());
+            this.Raise(new XPChangedEvent { NewXP = _xp, RequiredXP = GetXPRequired() });
         }
 
         private void CheckLevelUp()
         {
+            if (_level >= MAX_LEVEL)
+            {
+                _xp = 0;
+                return;
+            }
+
             int required = GetXPRequired();
-            while (_xp >= required && _level < 9)
+            while (required > 0 && _xp >= required && _level < MAX_LEVEL)
             {
                 _xp -= required;
                 _level++;
                 OnLevelChanged?.Invoke(_level);
                 this.Raise(new LevelChangedEvent { NewLevel = _level });
+                
+                if (_level >= MAX_LEVEL)
+                {
+                    _xp = 0;
+                    break;
+                }
                 required = GetXPRequired();
             }
         }
 
         public int GetXPRequired()
         {
+            if (_level >= MAX_LEVEL) return 0;
             if (_level >= _xpRequirements.Length) return 0;
             return _xpRequirements[_level];
         }
+        
+        public bool IsMaxLevel => _level >= MAX_LEVEL;
     }
 
     public struct GoldChangedEvent : IEvent { public int NewGold; }
     public struct LevelChangedEvent : IEvent { public int NewLevel; }
+    public struct XPChangedEvent : IEvent { public int NewXP; public int RequiredXP; }
 }

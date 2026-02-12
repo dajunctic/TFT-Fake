@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Em che
+  m_text: Kayn
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8cdfe910bd3c03346b294f22a552466a, type: 2}
   m_sharedMaterial: {fileID: 2639749295221132557, guid: 8cdfe910bd3c03346b294f22a552466a, type: 2}
@@ -146,6 +146,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5818355883486376715}
   - component: {fileID: 3432798256148847235}
+  - component: {fileID: 2434856108053515903}
+  - component: {fileID: 5313778904683251734}
   m_Layer: 0
   m_Name: card_ui
   m_TagString: Untagged
@@ -185,6 +187,79 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1494348234566146766}
   m_CullTransparentMesh: 1
+--- !u!114 &2434856108053515903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494348234566146766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21524fd64e428df45933fb04490e254b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heroIcon: {fileID: 4760437414758843505}
+  heroName: {fileID: 7908795290095072943}
+  costText: {fileID: 935489790814544160}
+  rarityBorder: {fileID: 4693010485299263740}
+  rarityBackground: {fileID: 1481154579546369002}
+--- !u!114 &5313778904683251734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1494348234566146766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 0
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2434856108053515903}
+        m_TargetAssemblyTypeName: Dajunctic.ShopSlotView, Assembly-CSharp
+        m_MethodName: OnClickBuy
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2297916599851582030
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,7 +325,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 389b6b594d5489f4b8b677f451c0bc24, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9d9b5357351864c4bb2a9d0169a5f30d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

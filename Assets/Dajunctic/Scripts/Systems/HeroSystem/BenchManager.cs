@@ -65,7 +65,7 @@ namespace Dajunctic
         private void CheckForUpgrades(HeroData heroData)
         {
             var sameHeroes = _heroOnTiles.Values
-                .Where(h => h != null && h.combatActorData.name == heroData.name)
+                .Where(h => h != null && h.CombatActorData != null && h.CombatActorData.name == heroData.name)
                 .ToList();
             
             if (sameHeroes.Count >= 3)

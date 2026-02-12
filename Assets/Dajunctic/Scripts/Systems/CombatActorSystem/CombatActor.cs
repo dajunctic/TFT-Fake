@@ -15,6 +15,7 @@ namespace Dajunctic
         [SerializeField, Child] protected MidPoint midPoint;
         [SerializeField, Child] protected HeadPoint headPoint;
         [SerializeField] protected CombatActorData combatActorData;
+        public CombatActorData CombatActorData => combatActorData;
         [SerializeField] private Team team;
         [Header("Vfx")]
         public Team Team => team;

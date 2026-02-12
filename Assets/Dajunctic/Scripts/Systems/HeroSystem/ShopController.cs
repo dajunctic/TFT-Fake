@@ -11,6 +11,7 @@ namespace Dajunctic
         
         private HeroData[] _currentShop = new HeroData[5];
         public HeroData[] CurrentShop => _currentShop;
+        public ShopData ShopData => shopData;
 
         public static event System.Action OnShopRefreshed;
 

@@ -35,3 +35,9 @@ MonoBehaviour:
     criticalDmg: 10
   skills:
   - {fileID: 11400000, guid: 7383b51fba032604d817d09652f2f876, type: 2}
+  displayName: Kayn
+  rarity: 5
+  shopIcon: {fileID: 21300000, guid: 9d9b5357351864c4bb2a9d0169a5f30d, type: 3}
+  traits:
+  - "\xC1c Qu\u1EF7"
+  prefab: {fileID: 8751957010843177244, guid: a990f9b83db563e4eae44077b9f93fc5, type: 3}
