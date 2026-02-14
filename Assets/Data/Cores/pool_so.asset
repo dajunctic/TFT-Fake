@@ -20,4 +20,6 @@ MonoBehaviour:
     fxViewPrefab: {fileID: 8815093249552624532, guid: 4970bf4e32ebf8a43ad27c0b0fec08bd, type: 3}
   - Id: fx_kayn_atk_1_hit
     fxViewPrefab: {fileID: 8815093249552624532, guid: 4970bf4e32ebf8a43ad27c0b0fec08bd, type: 3}
+  - Id: fx_braum_atk_1_hit
+    fxViewPrefab: {fileID: 8815093249552624532, guid: 4970bf4e32ebf8a43ad27c0b0fec08bd, type: 3}
   missileLists: []

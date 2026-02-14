@@ -15,6 +15,7 @@ namespace Dajunctic
         [Header("Shop References")]
         [SerializeField] private SpriteLists cardRarities;
         [SerializeField] private List<ShopSlotView> slots;
+        [SerializeField] private List<TMP_Text> rollRatesTexts; // Optional: To display roll rates for each rarity
 
         [Header("Economy References")]
         [SerializeField] private TMP_Text goldText;
@@ -103,6 +104,16 @@ namespace Dajunctic
                     slots[i].Setup(i, null);
                 }
             }
+
+            UpdateRollRates(ShopController.Instance.ShopData.GetChancesForLevel(EconomyManager.Instance.Level));
+        }
+
+        private void UpdateRollRates(float[] chances)
+        {
+            for (int i = 0; i < rollRatesTexts.Count && i < chances.Length; i++)
+            {
+                rollRatesTexts[i].text = $"{chances[i] * 100f}%";
+            }
         }
 
         private void UpdateEconomy()
@@ -134,6 +145,8 @@ namespace Dajunctic
                 if (buyXPButton != null) buyXPButton.SetActive(true);
                 if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
             }
+            UpdateRollRates(ShopController.Instance.ShopData.GetChancesForLevel(EconomyManager.Instance.Level));
+
         }
 
         public void OnClickReroll()
