@@ -79,7 +79,7 @@ namespace Dajunctic
             // Play Timeline/Skill
             if (!string.IsNullOrEmpty(data.timelineId))
             {
-                combatActor.Raise(new PlayTimelineEvent { Id = data.timelineId });
+                combatActor.Raise(new PlayTimelineEvent { Id = data.timelineId, Actor = combatActor });
             }
 
             if (data.duration > 0)

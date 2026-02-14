@@ -9,10 +9,10 @@ namespace Dajunctic
     {
         [SerializeField, GuidReference("tl", typeof(IDummyId))] public string Id;
         [SerializeField, Child] public PlayableDirector director;
+        [SerializeField, Parent] public CombatActor combatActor;
         [SerializeField] public GameObject[] timelineObject;
         public void Start()
         {
-            
             this.RegisterListener<PlayTimelineEvent>(param => OnPlayTimelineEvent(param));
             this.RegisterListener<StopTimelineEvent>(param => OnStopTimelineEvent(param));
             HideAllObject();
@@ -30,12 +30,14 @@ namespace Dajunctic
         private void OnPlayTimelineEvent(PlayTimelineEvent param)
         {
             if (param.Id != Id) return;
+            if (param.Actor != null && param.Actor != combatActor) return;
             director.Play();
         }
 
         private void OnStopTimelineEvent(StopTimelineEvent param)
         {
             if (param.Id != Id) return;
+            if (param.Actor != null && param.Actor != combatActor) return;
             director.Stop();
         }
 
@@ -44,10 +46,12 @@ namespace Dajunctic
     public class PlayTimelineEvent: IEvent
     {
         public string Id;
+        public CombatActor Actor;
     }
 
     public class StopTimelineEvent: IEvent
     {
         public string Id;
+        public CombatActor Actor;
     }
 }

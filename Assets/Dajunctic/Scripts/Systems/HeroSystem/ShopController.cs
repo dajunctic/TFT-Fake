@@ -101,8 +101,10 @@ namespace Dajunctic
                 BenchManager.Instance.AddHeroToBench(hero);
                 
                 Debug.Log($"Bought {hero.displayName}");
-                this.Raise(new HeroBoughtEvent { Hero = hero });
                 _currentShop[slotIndex] = null;
+                
+                this.Raise(new HeroBoughtEvent { Hero = hero });
+                this.Raise(new ShopRefreshedEvent());
                 OnShopRefreshed?.Invoke();
             }
         }

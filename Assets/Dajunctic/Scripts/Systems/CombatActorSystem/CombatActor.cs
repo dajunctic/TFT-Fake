@@ -25,6 +25,7 @@ namespace Dajunctic
 
         public bool IsViewLoaded => _viewLoaded;
         public virtual string DataId => string.Empty;
+        public virtual bool IsTargetable => true;
 
 
         void OnValidate() => this.ValidateRefs();
@@ -91,7 +92,7 @@ namespace Dajunctic
 
         public bool HasValidTarget()
         {
-            return CurrentTarget != null && CurrentTarget.gameObject.activeInHierarchy;
+            return CurrentTarget != null && CurrentTarget.gameObject.activeInHierarchy && CurrentTarget.IsTargetable;
         }
 
         private void InitializedFirePoints()

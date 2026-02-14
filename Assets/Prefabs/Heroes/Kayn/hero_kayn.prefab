@@ -132,6 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: tl_kayn_atk_1
   director: {fileID: 2199430179313147743}
+  combatActor: {fileID: 7866252056197508660}
   timelineObject: []
 --- !u!1 &8751957010843177244
 GameObject:

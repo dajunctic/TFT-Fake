@@ -143,6 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: tl_master_yi_atk_1
   director: {fileID: 6529916885418614496}
+  combatActor: {fileID: 5960957129209588342}
   timelineObject: []
 --- !u!1 &2321356439902560850
 GameObject:
@@ -329,8 +330,8 @@ MonoBehaviour:
   midPoint: {fileID: 6927783729123238328}
   headPoint: {fileID: 4205341153797325150}
   combatActorData: {fileID: 11400000, guid: 04dd751e6719dd749a887e268a7b9de2, type: 2}
-  patrolSpeed: 1
   team: 0
+  testSkillIds: []
 --- !u!1 &6719704215993768846
 GameObject:
   m_ObjectHideFlags: 0
