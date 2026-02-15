@@ -88,10 +88,10 @@ namespace Dajunctic
             HeroData hero = _currentShop[slotIndex];
             if (hero == null) return;
 
-            // Check if bench is full
-            if (!BenchManager.Instance.HasEmptySlot())
+            // Check if bench can accept this hero (has space or would trigger upgrade)
+            if (!BenchManager.Instance.CanAcceptHero(hero))
             {
-                Debug.LogWarning("Bench is full! Cannot buy hero.");
+                Debug.LogWarning("Bench is full and no upgrade possible!");
                 return;
             }
 
@@ -112,4 +112,5 @@ namespace Dajunctic
 
     public struct ShopRefreshedEvent : IEvent { }
     public struct HeroBoughtEvent : IEvent { public HeroData Hero; }
+    public struct HeroSoldEvent : IEvent { public HeroData Hero; public int GoldRefunded; }
 }

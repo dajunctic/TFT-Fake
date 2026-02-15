@@ -57,11 +57,13 @@ namespace Dajunctic
 
         public void RegisterHeroToTile(HeroCombatActor actor, Vector2Int coord)
         {
-            // Clean up any old references to this actor in the field
             UnregisterHero(actor);
+            // Cross-zone cleanup: moving to field means leaving bench
+            if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(actor);
             
             _heroOnTiles[coord] = actor;
             actor.CurrentFieldCoord = coord;
+            actor.CurrentBenchCoord = new Vector2Int(-1, -1);
         }
 
         public void RemoveHeroFromTile(Vector2Int coord)

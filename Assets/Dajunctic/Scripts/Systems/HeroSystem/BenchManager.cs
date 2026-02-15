@@ -14,12 +14,29 @@ namespace Dajunctic
             return GetFirstEmptyTileCoord().x != -1;
         }
 
+        /// <summary>
+        /// Check if we can accept a hero: either bench has space, or buying would trigger an upgrade.
+        /// </summary>
+        public bool CanAcceptHero(HeroData heroData, int starLevel = 1)
+        {
+            if (HasEmptySlot()) return true;
+            return WouldTriggerUpgrade(heroData, starLevel);
+        }
+
+        /// <summary>
+        /// Check if adding one more hero of this type/star would trigger a 3-to-1 merge.
+        /// </summary>
+        private bool WouldTriggerUpgrade(HeroData heroData, int starLevel)
+        {
+            if (starLevel >= 3) return false;
+            // Need 2 existing + 1 new (purchased) = 3 total
+            return GetMatchingHeroes(heroData, starLevel).Count >= 2;
+        }
+
         public Vector2Int GetFirstEmptyTileCoord()
         {
             if (benchArea == null || benchArea.Data == null) return new Vector2Int(-1, -1);
 
-            // Sort tiles: Primary by X (Left to Right), Secondary by Y (Bottom to Top)
-            // This ensures filling the first row from left to right.
             var sortedTiles = benchArea.Data.ActiveTiles
                 .OrderBy(t => t.coordinates.x)
                 .ThenBy(t => t.coordinates.y)
@@ -27,7 +44,6 @@ namespace Dajunctic
 
             foreach (var tile in sortedTiles)
             {
-                // Robust check: Tile is empty if key doesn't exist OR the actor registered there is null/destroyed
                 if (!_heroOnTiles.TryGetValue(tile.coordinates, out var occupant) || occupant == null)
                 {
                     return tile.coordinates;
@@ -39,8 +55,13 @@ namespace Dajunctic
         public void AddHeroToBench(HeroData heroData, int starLevel = 1)
         {
             Vector2Int coord = GetFirstEmptyTileCoord();
+
             if (coord.x == -1)
             {
+                // Bench is full — try direct upgrade without placing the hero
+                if (TryDirectUpgrade(heroData, starLevel))
+                    return;
+
                 Debug.LogWarning("Bench is full!");
                 return;
             }
@@ -51,7 +72,6 @@ namespace Dajunctic
                 return;
             }
 
-            // Get world position from bench area
             Vector3 localPos = benchArea.Data.SquareToWorld(Vector3.zero, coord);
             Vector3 worldPos = benchArea.CachedTransform.TransformPoint(localPos);
 
@@ -65,34 +85,59 @@ namespace Dajunctic
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
                 
-                // Check for upgrades (merging 3 same heroes of same star level)
                 CheckForUpgrades(heroData, starLevel);
             }
         }
 
-        private void CheckForUpgrades(HeroData heroData, int starLevel)
+        /// <summary>
+        /// Perform an upgrade when bench is full. The purchased hero is consumed
+        /// without being placed — we only need 2 existing copies on board.
+        /// </summary>
+        private bool TryDirectUpgrade(HeroData heroData, int starLevel)
         {
-            if (starLevel >= 3) return;
+            if (starLevel >= 3) return false;
 
-            // Find all matching heroes on BENCH by comparing the HeroData reference
+            var allMatching = GetMatchingHeroes(heroData, starLevel);
+
+            if (allMatching.Count >= 2)
+            {
+                // Take 2 existing — the purchased hero is the virtual 3rd
+                MergeHeroes(allMatching.Take(2).ToList(), heroData, starLevel + 1);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Find all heroes matching the given HeroData and star level across bench and field.
+        /// </summary>
+        private List<HeroCombatActor> GetMatchingHeroes(HeroData heroData, int starLevel)
+        {
             var heroesOnBench = _heroOnTiles.Values
                 .Where(h => h != null && h.CombatActorData is HeroData data && 
                             data == heroData && 
                             h.StarLevel == starLevel)
                 .ToList();
 
-            // Find all matching heroes on FIELD
             var heroesOnField = new List<HeroCombatActor>();
             if (FieldManager.Instance != null)
             {
                 heroesOnField = FieldManager.Instance.GetAllHeroes()
                     .Where(h => h != null && h.CombatActorData is HeroData data && 
-                            data == heroData && 
+                                data == heroData && 
                                 h.StarLevel == starLevel)
                     .ToList();
             }
 
-            var allMatching = heroesOnBench.Concat(heroesOnField).ToList();
+            return heroesOnBench.Concat(heroesOnField).ToList();
+        }
+
+        private void CheckForUpgrades(HeroData heroData, int starLevel)
+        {
+            if (starLevel >= 3) return;
+
+            var allMatching = GetMatchingHeroes(heroData, starLevel);
             
             if (allMatching.Count >= 3)
             {
@@ -104,23 +149,32 @@ namespace Dajunctic
         {
             Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars!");
 
-            // 1. Identify where to put the new unit (Preferably on field if one was there)
+            // 1. Identify where to put the upgraded unit (prefer field if one was there)
             HeroCombatActor primary = instances.FirstOrDefault(h => h.IsOnField);
             if (primary == null) primary = instances[0];
 
             bool wasOnField = primary.IsOnField;
             Vector2Int targetCoord = wasOnField ? primary.CurrentFieldCoord : primary.CurrentBenchCoord;
 
-            // 2. Remove all 3 from managers and destroy
+            // 2. Remove all instances from managers and destroy
             foreach (var hero in instances)
             {
                 if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(hero);
                 if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(hero);
                 
+                // Cleanup MoveAgent to prevent navigation errors
+                if (hero.MoveAgent != null)
+                {
+                    hero.MoveAgent.SetEnable(false);
+                    hero.MoveAgent = null;
+                }
+                hero.InterruptAction();
+                hero.ForceStop();
+                
                 Destroy(hero.gameObject);
             }
             
-            // 3. Spawn new unit at the primary location
+            // 3. Spawn upgraded unit at the primary location
             if (wasOnField)
             {
                 FieldManager.Instance.AddHeroToField(heroData, targetCoord, newStarLevel);
@@ -130,7 +184,7 @@ namespace Dajunctic
                 AddHeroToBenchAtCoord(heroData, targetCoord, newStarLevel);
             }
 
-            // 4. IMPORTANT: Check for upgrades again for the new level (e.g., 2rd star to 3rd star)
+            // 4. Chain upgrade check (e.g., three 2★ → one 3★)
             CheckForUpgrades(heroData, newStarLevel);
         }
 
@@ -166,7 +220,6 @@ namespace Dajunctic
             
             if (actor != null)
             {
-                actor.CurrentBenchCoord = coord;
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
                 RegisterHeroToTile(actor, coord);
@@ -176,8 +229,12 @@ namespace Dajunctic
         public void RegisterHeroToTile(HeroCombatActor actor, Vector2Int coord)
         {
             UnregisterHero(actor);
+            // Cross-zone cleanup: moving to bench means leaving field
+            if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(actor);
+            
             _heroOnTiles[coord] = actor;
             actor.CurrentBenchCoord = coord;
+            actor.CurrentFieldCoord = new Vector2Int(-1, -1);
         }
 
         public void UnregisterHero(HeroCombatActor actor)
@@ -194,7 +251,6 @@ namespace Dajunctic
             if (keyToRemove.x != -1) _heroOnTiles.Remove(keyToRemove);
         }
 
-        // Helper to find coord by actor
         public Vector2Int GetCoordOfActor(HeroCombatActor actor)
         {
             foreach (var kvp in _heroOnTiles)
@@ -203,6 +259,7 @@ namespace Dajunctic
             }
             return new Vector2Int(-1, -1);
         }
+
         public HeroCombatActor GetHeroAtTile(Vector2Int coord)
         {
             _heroOnTiles.TryGetValue(coord, out var actor);

@@ -65,10 +65,10 @@ namespace Dajunctic
             {
                 HandleFieldDrop(newFieldCoord);
             }
-            // 3. Invalid drop -> Return to original
+            // 3. Dropped outside both areas -> Sell the hero
             else
             {
-                ResetPosition();
+                SellSelf();
             }
         }
 
@@ -86,30 +86,14 @@ namespace Dajunctic
             // Swap logic
             if (occupant != null && occupant != this)
             {
-                // Move occupant to our old spot
-                if (IsOnBench)
-                {
-                    SwapWithBench(occupant, CurrentBenchCoord);
-                }
-                else if (IsOnField)
-                {
-                    SwapWithField(occupant, CurrentFieldCoord);
-                }
-                else // From shop or somewhere else? Usually shouldn't happen here
-                {
-                    ResetPosition();
-                    return;
-                }
+                SwapOccupant(occupant);
             }
             else
             {
-                // Clear old spot
                 ClearPreviousPlacement();
             }
 
-            // Move to new spot
-            CurrentBenchCoord = newBenchCoord;
-            CurrentFieldCoord = new Vector2Int(-1, -1);
+            // Move to new spot (RegisterHeroToTile handles coord cleanup)
             BenchManager.Instance.RegisterHeroToTile(this, newBenchCoord);
             FinalizePlacement(BenchManager.Instance.GetWorldPosition(newBenchCoord));
         }
@@ -136,29 +120,14 @@ namespace Dajunctic
             // Swap logic
             if (occupant != null && occupant != this)
             {
-                if (IsOnBench)
-                {
-                    SwapWithBench(occupant, CurrentBenchCoord);
-                }
-                else if (IsOnField)
-                {
-                    SwapWithField(occupant, CurrentFieldCoord);
-                }
-                else
-                {
-                    ResetPosition();
-                    return;
-                }
+                SwapOccupant(occupant);
             }
             else
             {
-                // Clear old spot
                 ClearPreviousPlacement();
             }
 
-            // Move to new spot
-            CurrentFieldCoord = newFieldCoord;
-            CurrentBenchCoord = new Vector2Int(-1, -1);
+            // Move to new spot (RegisterHeroToTile handles coord cleanup)
             FieldManager.Instance.RegisterHeroToTile(this, newFieldCoord);
             FinalizePlacement(FieldManager.Instance.GetWorldPosition(newFieldCoord));
         }
@@ -169,22 +138,22 @@ namespace Dajunctic
             if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(this);
         }
 
-        private void SwapWithBench(HeroCombatActor occupant, Vector2Int benchCoord)
+        /// <summary>
+        /// Move the occupant to where THIS unit was before dragging.
+        /// RegisterHeroToTile handles cross-zone coord cleanup automatically.
+        /// </summary>
+        private void SwapOccupant(HeroCombatActor occupant)
         {
-            // Occupant moves to where this unit WAS
-            if (IsOnBench) BenchManager.Instance.RegisterHeroToTile(occupant, CurrentBenchCoord);
-            else if (IsOnField) FieldManager.Instance.RegisterHeroToTile(occupant, CurrentFieldCoord);
-
-            occupant.Teleport(IsOnBench ? BenchManager.Instance.GetWorldPosition(CurrentBenchCoord) : FieldManager.Instance.GetWorldPosition(CurrentFieldCoord), true);
-        }
-
-        private void SwapWithField(HeroCombatActor occupant, Vector2Int fieldCoord)
-        {
-            // Occupant moves to where this unit WAS
-            if (IsOnBench) BenchManager.Instance.RegisterHeroToTile(occupant, CurrentBenchCoord);
-            else if (IsOnField) FieldManager.Instance.RegisterHeroToTile(occupant, CurrentFieldCoord);
-
-            occupant.Teleport(IsOnBench ? BenchManager.Instance.GetWorldPosition(CurrentBenchCoord) : FieldManager.Instance.GetWorldPosition(CurrentFieldCoord), true);
+            if (IsOnBench)
+            {
+                BenchManager.Instance.RegisterHeroToTile(occupant, CurrentBenchCoord);
+                occupant.Teleport(BenchManager.Instance.GetWorldPosition(CurrentBenchCoord), true);
+            }
+            else if (IsOnField)
+            {
+                FieldManager.Instance.RegisterHeroToTile(occupant, CurrentFieldCoord);
+                occupant.Teleport(FieldManager.Instance.GetWorldPosition(CurrentFieldCoord), true);
+            }
         }
 
         private void FinalizePlacement(Vector3 pos)
@@ -210,6 +179,51 @@ namespace Dajunctic
                 MoveAgent.SetEnable(true);
                 MoveAgent.Warp(originalPosition);
             }
+        }
+
+        /// <summary>
+        /// Sell this hero: unregister, refund gold, destroy.
+        /// </summary>
+        private void SellSelf()
+        {
+            if (CombatActorData is HeroData heroData)
+            {
+                int refundGold = GetSellValue(heroData);
+
+                // Unregister from all managers
+                if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(this);
+                if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(this);
+
+                // Cleanup MoveAgent to prevent navigation errors
+                if (MoveAgent != null)
+                {
+                    MoveAgent.SetEnable(false);
+                    MoveAgent = null;
+                }
+                InterruptAction();
+                ForceStop();
+
+                // Refund gold
+                if (EconomyManager.Instance != null) EconomyManager.Instance.AddGold(refundGold);
+
+                Debug.Log($"Sold {heroData.displayName} ({StarLevel}★) for {refundGold} gold");
+                this.Raise(new HeroSoldEvent { Hero = heroData, GoldRefunded = refundGold });
+                Destroy(gameObject);
+            }
+            else
+            {
+                // Not a sellable hero, return to original position
+                ResetPosition();
+            }
+        }
+
+        /// <summary>
+        /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9
+        /// </summary>
+        private int GetSellValue(HeroData heroData)
+        {
+            int multiplier = (int)Mathf.Pow(3, StarLevel - 1);
+            return heroData.rarity * multiplier;
         }
 
         protected override void SyncEntity()

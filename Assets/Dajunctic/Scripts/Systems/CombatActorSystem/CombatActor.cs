@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Dajunctic;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Serialization;
-using Dajunctic;
 
 namespace Dajunctic
 {
@@ -436,7 +433,7 @@ namespace Dajunctic
             SetAnimSpeed(1f);
             ResetAnim();
             SetTarget(null);
-            PlayAnim("locomotion");
+            PlayAnim("Locomotion");
         }
         #endregion
         

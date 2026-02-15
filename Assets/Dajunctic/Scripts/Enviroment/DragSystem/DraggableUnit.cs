@@ -5,7 +5,6 @@ namespace Dajunctic
     public class DraggableUnit : MonoBehaviour, IDraggable
     {
         [Header("Drag Settings")]
-        [SerializeField] private float smoothTime = 0.08f;
         [SerializeField] private float pickUpHeight = 0.5f;
         [SerializeField] private float scaleMultiplier = 1.1f;
 
