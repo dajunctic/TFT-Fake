@@ -1,247 +1,139 @@
 # TFT-Fake
 
-Một game clone Teamfight Tactics (TFT) được xây dựng bằng Unity, bao gồm hệ thống hero, combat, shop, và economy.
+Một game clone Teamfight Tactics (TFT) được xây dựng bằng Unity, với kiến trúc **System-Based** hiện đại, **Event-Driven**, giúp code decoupled và dễ mở rộng.
 
 ---
 
-## 📋 Tổng quan hệ thống
+## 🏗️ Kiến trúc & Design Pattern (New!)
 
-### 🎮 Core Systems
+Dự án đã được Refactor hoàn toàn từ mô hình **Manager Singleton** cũ sang mô hình **Centralized System Manager** kết hợp **Event-Driven Communication**.
 
-#### **Hero System** (`Assets/Dajunctic/Scripts/Systems/HeroSystem/`)
-Hệ thống quản lý hero, bao gồm mua bán, nâng cấp, và di chuyển giữa bench/field.
+### 1. **GameSystemManager (The Core Hub)**
+- Thay vì mỗi Manager là một Singleton (`BenchManager.Instance`, `FieldManager.Instance`...), giờ đây chỉ có **duy nhất 1 Singleton**: `GameSystemManager`.
+- `GameSystemManager` quản lý vòng đời (`Initialize`, `Shutdown`) của tất cả các System con.
 
-| File | Chức năng |
-|------|-----------|
-| `HeroCombatActor.cs` | Combat actor cho hero, hỗ trợ drag-drop, swap, và sell |
-| `HeroData.cs` | ScriptableObject chứa thông tin hero (rarity, traits, prefab) |
-| `BenchManager.cs` | Quản lý bench (khu vực dự bị), xử lý upgrade logic |
-| `FieldManager.cs` | Quản lý field (chiến trường), giới hạn số lượng unit theo level |
-| `ShopController.cs` | Quản lý shop, reroll, và mua hero |
-| `EconomyManager.cs` | Quản lý gold, XP, và level |
+### 2. **Các System (IGameSystem)**
+Các tính năng cốt lõi được tách thành các System độc lập, implement interface `IGameSystem`:
+- **`BenchSystem`**: Quản lý hàng chờ, logic merge/upgrade (thay thế `BenchManager`).
+- **`FieldSystem`**: Quản lý bàn cờ, giới hạn unit (thay thế `FieldManager`).
+- **`ShopSystem`**: Quản lý Shop, Reroll, xác suất tướng (thay thế `ShopController`).
+- **`EconomySystem`**: Quản lý Vàng, XP, Level (thay thế `EconomyManager`).
 
----
-
-## ✨ Tính năng đã implement
-
-### 1. **Hero Management**
-
-#### **Mua hero** 
-- Shop hiển thị 5 hero ngẫu nhiên dựa trên level và rarity
-- Chi phí = `hero.rarity` (1-5 gold)
-- Tự động refresh mỗi round Planning phase
-- Reroll thủ công tốn 2 gold
-
-#### **Bán hero** 
-- **Kéo hero ra ngoài bench/field** → bán tự động
-- Giá bán:
-  - **1★**: `rarity × 1` gold
-  - **2★**: `rarity × 3` gold  
-  - **3★**: `rarity × 9` gold
-
-#### **Nâng cấp tự động (3-to-1 merge)**
-- **3 hero giống nhau + cùng star level** → tự động merge thành hero star cao hơn
-- Ưu tiên giữ vị trí hero trên **field** (nếu có)
-- Hỗ trợ **chain upgrade**: 3x 1★ → 1x 2★ → (nếu đủ 3x 2★) → 1x 3★
-- **Cho phép mua khi bench full** nếu việc mua đó trigger upgrade (giống TFT)
-
-#### **Drag & Drop**
-- Kéo hero giữa **bench ↔ field**
-- **Swap** tự động khi thả lên ô đã có hero khác
-- **Cross-zone cleanup**: Tự động xóa coordinate cũ khi chuyển zone
+### 3. **Cơ chế giao tiếp (Decoupling)**
+- **Event-Driven Actions**: UI không gọi hàm trực tiếp của System để thay đổi dữ liệu. Thay vào đó, UI bắn **Request Event**:
+  ```csharp
+  // UI Code
+  this.Raise(new RequestBuyHeroEvent { SlotIndex = 0 });
+  this.Raise(new RequestRerollEvent());
+  ```
+  System lắng nghe và xử lý logic.
+- **Data Access**: Để lấy dữ liệu hiển thị (View), sử dụng Extension Method tiện lợi:
+  ```csharp
+  // Truy cập System bất kỳ đâu
+  var shop = this.GetSystem<ShopSystem>();
+  var gold = this.GetSystem<EconomySystem>().Gold;
+  ```
 
 ---
+
+## ✨ Tính năng chính
+
+### 1. **Hero System**
+- **Shop**: Random 5 tướng theo tỉ lệ Rarity/Level. Reroll tốn vàng.
+- **Mua/Bán**: Kéo thả để bán hoặc mua từ Shop.
+- **Upgrade**: Tự động ghép 3 tướng 1★ -> 2★, 3 tướng 2★ -> 3★ (Chain Upgrade).
+- **Bench & Field**: Logic quản lý slot thông minh, hỗ trợ swap vị trí đa dạng.
 
 ### 2. **Economy System**
+- **Gold**: Tài nguyên chính để mua tướng/XP.
+- **XP & Level**: Mua XP để lên cấp. Cấp độ quyết định số lượng tướng tối đa trên bàn cờ và tỉ lệ ra tướng xịn trong Shop.
 
-| Tính năng | Mô tả |
-|-----------|-------|
-| **Gold** | Dùng để mua hero, reroll shop |
-| **XP** | Tích lũy để tăng level |
-| **Level** | Quyết định số unit tối đa trên field và tỷ lệ rarity trong shop |
-
-**Level progression:**
-```
-Level 1→2: 2 XP
-Level 2→3: 2 XP
-Level 3→4: 6 XP
-Level 4→5: 10 XP
-...
-Level 9→10: 100 XP
-```
+### 3. **Combat UI/UX**
+- **Drag & Drop**: Kéo thả mượt mà giữa Bench và Field.
+- **Visuals**: Hiển thị thông tin, màu sắc theo Rarity (Xám, Lá, Dương, Tím, Vàng).
 
 ---
 
-### 3. **Combat System**
-
-#### **Field Placement**
-- Giới hạn số unit = `EconomyManager.Level`
-- Không thể thêm unit khi đã đạt giới hạn (trừ khi swap)
-- Hex-based grid cho chiến trường
-
-#### **Behavior Tree AI**
-- Hero chỉ hoạt động khi ở **field** và trong **Combat phase**
-- Tự động tìm target, di chuyển, và sử dụng skill
-- Hỗ trợ Ultimate, Skill, và Basic Attack
-
----
-
-## 🛠️ Kiến trúc code
-
-### **Manager Pattern**
-Tất cả manager đều kế thừa `Singleton<T>` để truy cập global:
-```csharp
-BenchManager.Instance.AddHeroToBench(heroData);
-FieldManager.Instance.CanAddUnit();
-EconomyManager.Instance.SpendGold(cost);
-```
-
-### **Event System**
-Sử dụng `IEvent` interface cho communication giữa các system:
-```csharp
-public struct HeroBoughtEvent : IEvent { public HeroData Hero; }
-public struct HeroSoldEvent : IEvent { public HeroData Hero; public int GoldRefunded; }
-public struct ShopRefreshedEvent : IEvent { }
-```
-
-### **Coordinate System**
-- **Bench**: `Vector2Int` square grid coordinates
-- **Field**: `Vector2Int` hex grid coordinates
-- Mỗi hero track cả 2 coords, chỉ 1 trong 2 valid tại 1 thời điểm
-
----
-
-## 🐛 Các bug đã fix
-
-### **Cross-zone coordinate bug**
-- **Vấn đề**: Hero swap từ bench → field vẫn giữ `CurrentBenchCoord`, dẫn đến `IsOnBench = true` sai
-- **Fix**: `RegisterHeroToTile()` tự động clear coordinate của zone cũ
-
-### **Bench full blocks upgrades**
-- **Vấn đề**: Không mua được hero thứ 3 để trigger upgrade khi bench full
-- **Fix**: `CanAcceptHero()` check xem việc mua có trigger upgrade không
-
-### **MoveAgent cleanup**
-- **Vấn đề**: Destroy hero khi merge/sell gây lỗi navigation system
-- **Fix**: Disable và null `MoveAgent` trước khi `Destroy()`
-
-### **Duplicate swap methods**
-- **Vấn đề**: `SwapWithBench()` và `SwapWithField()` code giống hệt nhau
-- **Fix**: Merge thành 1 method `SwapOccupant()`
-
----
-
-## 🎯 Workflow điển hình
-
-### **Mua và nâng cấp hero**
-1. Mua hero từ shop → hero xuất hiện trên bench
-2. Mua thêm 2 bản nữa (cùng hero, cùng star) → **auto merge 2★**
-3. Lặp lại để có 3x 2★ → **auto merge 3★**
-
-### **Quản lý bench khi full**
-1. **Kéo hero không cần thiết ra ngoài** → bán để lấy gold
-2. Hoặc **kéo hero lên field** để free slot bench
-3. Hoặc **mua hero để trigger upgrade** (nếu đã có 2 bản)
-
-### **Chiến đấu**
-1. Kéo hero từ bench lên field
-2. Chờ Combat phase → hero tự động combat theo Behavior Tree
-3. Planning phase → điều chỉnh đội hình, mua thêm hero
-
----
-
-## 📁 File structure
+## 📁 Cấu trúc thư mục (Refactored)
 
 ```
 Assets/Dajunctic/Scripts/
 ├── Systems/
-│   ├── HeroSystem/
-│   │   ├── BenchManager.cs          # Quản lý bench + upgrade logic
-│   │   ├── FieldManager.cs          # Quản lý field + unit limit
-│   │   ├── HeroCombatActor.cs       # Hero behavior + drag/drop/sell
-│   │   ├── HeroData.cs              # Hero ScriptableObject
-│   │   ├── ShopController.cs        # Shop + reroll + buy
-│   │   └── EconomyManager.cs        # Gold + XP + Level
-│   └── CombatActorSystem/
-│       └── GameManager.cs           # Game phase management
-├── Enviroment/
-│   └── DragSystem/
-│       └── DragManager.cs           # Drag & drop handler
-└── Inputs/
-    └── InputManager.cs              # Input handling
+│   ├── Core/                        # Lõi hệ thống mới
+│   │   ├── GameSystemManager.cs     # Manager tổng
+│   │   ├── GameSystemExtensions.cs  # Extension this.GetSystem<T>()
+│   │   ├── IGameSystem.cs           # Interface chung
+│   │   └── GameEvents.cs            # Định nghĩa các Request Event
+│   ├── HeroSystem/                  # Logic game cụ thể
+│   │   ├── BenchSystem.cs           # (Renamed from BenchManager)
+│   │   ├── FieldSystem.cs           # (Renamed from FieldManager)
+│   │   ├── ShopSystem.cs            # (Renamed from ShopController)
+│   │   ├── EconomySystem.cs         # (Renamed from EconomyManager)
+│   │   └── HeroCombatActor.cs       # Logic Unit
+├── UI/
+│   ├── Popups/
+│   │   └── GameplayPopup.cs         # UI chính (đã update dùng Event)
+│   └── Shop/
+│       └── ShopSlotView.cs          # UI Slot Shop
 ```
 
 ---
 
-## 🚀 Cách sử dụng
+## 🚀 Hướng dẫn Setup Scene (Quan trọng!)
 
-### **Setup Scene**
-1. Tạo `BenchManager` GameObject với `SquareAreaView` component
-2. Tạo `FieldManager` GameObject với `HexAreaView` component  
-3. Tạo `ShopController` GameObject, assign `ShopData` và list `HeroData`
-4. Tạo `EconomyManager` GameObject, set initial gold/level
+Do thay đổi kiến trúc, Scene cần được setup lại như sau:
 
-### **Tạo Hero mới**
-1. Tạo ScriptableObject `HeroData` (Right-click → Create → Panthera → HeroData)
-2. Set `heroId`, `displayName`, `rarity`, `traits`, `prefab`
-3. Hero prefab phải có `HeroCombatActor` component
-
-### **Testing**
-- Chạy game → Planning phase
-- Shop tự động refresh
-- Mua hero → xuất hiện trên bench
-- Kéo hero lên field → combat khi chuyển sang Combat phase
+1.  **Tạo GameObject**: Đặt tên `GameSystemManager`.
+2.  **Add Component**:
+    - Thêm script `GameSystemManager`.
+    - Thêm script `BenchSystem`.
+    - Thêm script `FieldSystem`.
+    - Thêm script `EconomySystem`.
+    - Thêm script `ShopSystem`.
+3.  **Link References (Inspector)**:
+    - Kéo các System (`Bench`, `Field`...) vào slot tương ứng trong component `GameSystemManager` (hoặc để nó tự tìm `GetComponentInChildren`).
+    - Trong `BenchSystem` / `FieldSystem`: Assign `AreaView` tương ứng.
+    - Trong `ShopSystem`: Assign `ShopData` và list `HeroData`.
 
 ---
 
-## 📝 Notes
+## 🐛 Các Bug đã fix gần đây
 
-### **Upgrade Logic**
-- Merge ưu tiên hero trên **field** làm primary (giữ vị trí)
-- Nếu không có hero nào trên field → lấy hero đầu tiên trong list
-- Chain upgrade tự động: 1★→2★→3★ trong 1 lần mua
+1.  **Architecture Refactor**: Loại bỏ Singleton rác, chuyển sang System Manager tập trung.
+2.  **Bench Full Logic Check**: Fix lỗi check tọa độ `x` gây sai logic khi bench full (đã chuyển sang check `y` hoặc valid coord chuẩn).
+3.  **UI Decoupling**: UI không còn phụ thuộc chặt vào logic game, giảm thiểu lỗi null reference khi khởi tạo sai thứ tự.
+4.  **Resource Loading**: Fix lỗi Shop không hiện tướng nếu chưa assign list HeroData (đã thêm fallback `Resources.LoadAll`).
 
-### **Sell Value Formula**
+---
+
+## 📝 Scripting Guide (Cho Dev)
+
+**1. Muốn gọi một System:**
 ```csharp
-int multiplier = (int)Mathf.Pow(3, StarLevel - 1);
-int sellValue = heroData.rarity * multiplier;
+// Cũ (Don't use): BenchManager.Instance.DoSomething();
+// Mới (Recommended):
+var bench = this.GetSystem<BenchSystem>();
+bench.DoSomething();
 ```
 
-### **Shop Rarity Chances**
-Xác định trong `ShopData.cs`, phụ thuộc vào `EconomyManager.Level`
+**2. Muốn thực hiện hành động (Mua, Reroll...):**
+```csharp
+// Bắn Event Request
+this.Raise(new RequestByHeroEvent { SlotIndex = 0 });
+this.Raise(new RequestRerollEvent());
+```
 
----
+**3. Muốn nghe sự kiện từ System:**
+```csharp
+// Trong method Initialization/ListenEvents
+this.RegisterListener<GoldChangedEvent>(OnGoldChanged);
 
-## 🔧 Dependencies
-
-- **Unity 2021.3+**
-- **Odin Inspector** (optional, cho better inspector)
-- **KBCore.Refs** (GuidReference system)
-- Custom packages: `CombatActor`, `SquareAreaView`, `HexAreaView`
-
----
-
-## 📌 TODO / Future Features
-
-- [ ] Trait system (synergies)
-- [ ] Item system (equip items cho hero)
-- [ ] AI opponent
-- [ ] Round progression + PvE/PvP
-- [ ] Health system + damage calculation
-- [ ] Visual effects cho upgrade/sell
-- [ ] Sound effects
-- [ ] Save/Load system
-
----
-
-## 👨‍💻 Development
-
-**Last Updated**: 2026-02-15  
-**Unity Version**: 2021.3+  
-**Status**: Core systems complete, combat AI functional
+private void OnGoldChanged(GoldChangedEvent evt) {
+    // Update UI
+}
+```
 
 ---
 
 ## 📄 License
-
-@2026 Copyright Dajunctic
+@2026 Dajunctic
