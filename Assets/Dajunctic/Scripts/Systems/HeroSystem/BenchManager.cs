@@ -11,7 +11,7 @@ namespace Dajunctic
 
         public bool HasEmptySlot()
         {
-            return GetFirstEmptyTileCoord().x != -1;
+            return GetFirstEmptyTileCoord().x != -10;
         }
 
         /// <summary>
@@ -35,15 +35,29 @@ namespace Dajunctic
 
         public Vector2Int GetFirstEmptyTileCoord()
         {
-            if (benchArea == null || benchArea.Data == null) return new Vector2Int(-1, -1);
+            if (benchArea == null || benchArea.Data == null) return new Vector2Int(-10, -10);
 
             var sortedTiles = benchArea.Data.ActiveTiles
                 .OrderBy(t => t.coordinates.x)
                 .ThenBy(t => t.coordinates.y)
                 .ToList();
 
+
+
+            Debug.LogError("<color=green>Checking bench tiles for empty slot.." + $" Total tiles: {sortedTiles.Count}, Occupied: {_heroOnTiles.Count}</color>");
+            
+            // Dump all dictionary entries
+            Debug.LogError("<color=magenta>=== DICTIONARY DUMP ===</color>");
+            foreach (var kvp in _heroOnTiles)
+            {
+                Debug.LogError($"<color=magenta>Dict Entry: {kvp.Key} -> {(kvp.Value != null ? kvp.Value.name : "NULL")}</color>");
+            }
+            Debug.LogError("<color=magenta>======================</color>");
+        
+
             foreach (var tile in sortedTiles)
             {
+                
                 if (!_heroOnTiles.TryGetValue(tile.coordinates, out var occupant) || occupant == null)
                 {
                     return tile.coordinates;
@@ -56,7 +70,7 @@ namespace Dajunctic
         {
             Vector2Int coord = GetFirstEmptyTileCoord();
 
-            if (coord.x == -1)
+            if (coord.x == -10)
             {
                 // Bench is full — try direct upgrade without placing the hero
                 if (TryDirectUpgrade(heroData, starLevel))
@@ -232,6 +246,13 @@ namespace Dajunctic
             // Cross-zone cleanup: moving to bench means leaving field
             if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(actor);
             
+            // Remove any existing entry at this coord (in case of stale data)
+            if (_heroOnTiles.ContainsKey(coord))
+            {
+                Debug.LogWarning($"Tile {coord} already has an entry! Removing stale data.");
+                _heroOnTiles.Remove(coord);
+            }
+            
             _heroOnTiles[coord] = actor;
             actor.CurrentBenchCoord = coord;
             actor.CurrentFieldCoord = new Vector2Int(-1, -1);
@@ -239,16 +260,20 @@ namespace Dajunctic
 
         public void UnregisterHero(HeroCombatActor actor)
         {
-            Vector2Int keyToRemove = new Vector2Int(-1, -1);
+            // Remove ALL entries for this actor (not just first one)
+            var keysToRemove = new List<Vector2Int>();
             foreach (var kvp in _heroOnTiles)
             {
-                if (kvp.Value == actor)
+                if (kvp.Value == actor || kvp.Value == null)
                 {
-                    keyToRemove = kvp.Key;
-                    break;
+                    keysToRemove.Add(kvp.Key);
                 }
             }
-            if (keyToRemove.x != -1) _heroOnTiles.Remove(keyToRemove);
+            
+            foreach (var key in keysToRemove)
+            {
+                _heroOnTiles.Remove(key);
+            }
         }
 
         public Vector2Int GetCoordOfActor(HeroCombatActor actor)

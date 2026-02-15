@@ -61,6 +61,13 @@ namespace Dajunctic
             // Cross-zone cleanup: moving to field means leaving bench
             if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(actor);
             
+            // Remove any existing entry at this coord (in case of stale data)
+            if (_heroOnTiles.ContainsKey(coord))
+            {
+                Debug.LogWarning($"Field tile {coord} already has an entry! Removing stale data.");
+                _heroOnTiles.Remove(coord);
+            }
+            
             _heroOnTiles[coord] = actor;
             actor.CurrentFieldCoord = coord;
             actor.CurrentBenchCoord = new Vector2Int(-1, -1);
@@ -76,16 +83,20 @@ namespace Dajunctic
 
         public void UnregisterHero(HeroCombatActor actor)
         {
-            Vector2Int keyToRemove = new Vector2Int(-1, -1);
+            // Remove ALL entries for this actor (not just first one)
+            var keysToRemove = new List<Vector2Int>();
             foreach (var kvp in _heroOnTiles)
             {
-                if (kvp.Value == actor)
+                if (kvp.Value == actor || kvp.Value == null)
                 {
-                    keyToRemove = kvp.Key;
-                    break;
+                    keysToRemove.Add(kvp.Key);
                 }
             }
-            if (keyToRemove.x != -1) _heroOnTiles.Remove(keyToRemove);
+            
+            foreach (var key in keysToRemove)
+            {
+                _heroOnTiles.Remove(key);
+            }
         }
 
         public HeroCombatActor GetHeroAtTile(Vector2Int coord)
