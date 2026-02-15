@@ -157,6 +157,7 @@ MonoBehaviour:
   combatActorData: {fileID: 11400000, guid: 07098246d960603438c859527eeda62c, type: 2}
   team: 0
   <StarLevel>k__BackingField: 1
+  hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   testSkillIds: []
 --- !u!1 &8937652198380267230
 GameObject:

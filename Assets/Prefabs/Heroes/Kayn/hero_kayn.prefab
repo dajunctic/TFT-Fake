@@ -188,6 +188,8 @@ MonoBehaviour:
   headPoint: {fileID: 6858391024302874192}
   combatActorData: {fileID: 11400000, guid: bf91b46983f9d314c8bb20a55910f2bc, type: 2}
   team: 1
+  <StarLevel>k__BackingField: 1
+  hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   testSkillIds:
   - tl_kayn_atk_1
 --- !u!1001 &970784868376878491

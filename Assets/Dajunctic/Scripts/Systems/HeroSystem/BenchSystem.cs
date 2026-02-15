@@ -7,6 +7,7 @@ namespace Dajunctic
     public class BenchSystem : MonoBehaviour, IGameSystem
     {
         [SerializeField] private SquareAreaView benchArea;
+        [SerializeField, GuidReference("fx", typeof(IDummyId))] private string fxGuid;
         private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
         private GameSystemManager _manager;
 
@@ -41,7 +42,7 @@ namespace Dajunctic
         /// </summary>
         private bool WouldTriggerUpgrade(HeroData heroData, int starLevel)
         {
-            if (starLevel >= 3) return false;
+            if (starLevel >= 5) return false;
             // Need 2 existing + 1 new (purchased) = 3 total
             return GetMatchingHeroes(heroData, starLevel).Count >= 2;
         }
@@ -122,7 +123,7 @@ namespace Dajunctic
         /// </summary>
         private bool TryDirectUpgrade(HeroData heroData, int starLevel)
         {
-            if (starLevel >= 3) return false;
+            if (starLevel >= 5) return false;
 
             var allMatching = GetMatchingHeroes(heroData, starLevel);
 
@@ -162,7 +163,7 @@ namespace Dajunctic
 
         private void CheckForUpgrades(HeroData heroData, int starLevel)
         {
-            if (starLevel >= 3) return;
+            if (starLevel >= 5) return;
 
             var allMatching = GetMatchingHeroes(heroData, starLevel);
             
@@ -203,6 +204,8 @@ namespace Dajunctic
             }
             
             // 3. Spawn upgraded unit at the primary location
+            Vector3 spawnPos = wasOnField ? _manager.Field.GetWorldPosition(targetCoord) : GetWorldPosition(targetCoord);
+            
             if (wasOnField)
             {
                 _manager.Field.AddHeroToField(heroData, targetCoord, newStarLevel);
@@ -210,6 +213,17 @@ namespace Dajunctic
             else
             {
                 AddHeroToBenchAtCoord(heroData, targetCoord, newStarLevel);
+            }
+            
+            // 4. Spawn merge effect FX at the upgraded hero position
+            if (!string.IsNullOrEmpty(fxGuid))
+            {
+                this.Raise(new PlayFxEvent
+                {
+                    Id = fxGuid,
+                    Position = spawnPos,
+                    duration = 1f
+                });
             }
 
             // 4. Chain upgrade check (e.g., three 2★ → one 3★)

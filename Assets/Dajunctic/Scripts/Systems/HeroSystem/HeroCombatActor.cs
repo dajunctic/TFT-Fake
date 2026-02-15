@@ -10,6 +10,10 @@ namespace Dajunctic
         public Vector2Int CurrentFieldCoord { get; set; } = new Vector2Int(-1, -1);
         [field: SerializeField] public int StarLevel { get; private set; } = 1;
 
+        [Header("UI")]
+        [SerializeField] private HpView hpViewPrefab;
+        private HpView _hpView;
+
         private Vector3 originalPosition;
         private Vector3 _targetPosition;
         private Vector3 _moveVelocity;
@@ -27,6 +31,11 @@ namespace Dajunctic
             // Visual feedback for star level (e.g., scaling up)
             float scale = 1f + (level - 1) * 0.2f;
             CachedTransform.localScale = Vector3.one * scale;
+
+            if (_hpView != null)
+            {
+                _hpView.UpdateStarLevel(level);
+            }
             
             // In a real project, we would also update stats here
             // combatActorData.combatStat.hp *= 1.8f; etc.
@@ -260,7 +269,13 @@ namespace Dajunctic
             if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
-            }      
+            }
+
+            if (hpViewPrefab != null && _hpView == null)
+            {
+                _hpView = Instantiate(hpViewPrefab);
+                _hpView.Initialize(this, StarLevel);
+            }
         }
 
         public override MovementPriority AvoidancePriority
@@ -316,6 +331,14 @@ namespace Dajunctic
         public void OnTestFirstSkill()
         {
             this.Raise(new PlayTimelineEvent{ Id= testSkillIds[0], Actor = this});
+        }
+
+        protected virtual void OnDestroy()
+        {
+            if (_hpView != null)
+            {
+                Destroy(_hpView.gameObject);
+            }
         }
     }
     

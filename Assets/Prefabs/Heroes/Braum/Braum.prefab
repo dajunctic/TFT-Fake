@@ -125,6 +125,7 @@ MonoBehaviour:
   combatActorData: {fileID: 11400000, guid: 8a52c6fd8359edd4a9d6533b430e6b4e, type: 2}
   team: 0
   <StarLevel>k__BackingField: 1
+  hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   testSkillIds:
   - tl_braum_atk_1
 --- !u!1 &4398109839372965442

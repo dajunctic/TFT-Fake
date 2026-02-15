@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 986fd11beec5a51449a2c51d324c03df
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 238904
+  packageName: Status Effects FREE
+  packageVersion: 1.0.1
+  assetPath: Assets/Travis Game Assets/Status Effects/Demo Scene/AnimatorControllers/VillagerSkeletonController.controller
+  uploadId: 589331

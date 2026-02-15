@@ -33,6 +33,7 @@ namespace Dajunctic
         public float RotateSpeed => combatActorData.movement.rotateSpeed;
         public float AtkSpd => combatActorData.combatStat.atkSpd;
         public event Action<float> OnHpChanged;
+        public event Action<float> OnEnergyChanged;
         
         protected Node root = null;
 
@@ -52,6 +53,7 @@ namespace Dajunctic
 
             InitializeMoveAgent();
             InitializeSkills();
+            InitDamageTaker();
             
             SetupTree();
         }
@@ -266,9 +268,13 @@ namespace Dajunctic
         private float _physicalArmor;
         private float _magicalArmor;
         private float _maxHp;
+        private float _energy;
+        private float _maxEnergy;
         
         public float Hp => _hp;
         public float MaxHp => _maxHp;
+        public float Energy => _energy;
+        public float MaxEnergy => _maxEnergy;
 
         public void InitDamageTaker()
         {
@@ -276,6 +282,8 @@ namespace Dajunctic
             _hp = _maxHp;
             _physicalArmor = combatActorData.attribute.physicalArmor;
             _magicalArmor = combatActorData.attribute.magicalArmor;
+            _maxEnergy = combatActorData.skillAttribute.energy;
+            _energy = 0; // Start with 0 energy by default
         }
 
         public void TakeDamage(CombineDamage combineDamage)
@@ -301,6 +309,7 @@ namespace Dajunctic
 
 
             _hp = Mathf.Clamp(_hp - finalDamage, 0f, _maxHp);
+            OnHpChanged?.Invoke(_hp / _maxHp);
 
             if (_hp <= 0)
             {

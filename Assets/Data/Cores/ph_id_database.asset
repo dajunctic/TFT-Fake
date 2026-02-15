@@ -19,6 +19,7 @@ MonoBehaviour:
   - fx_braum_atk_1_hit
   - fx_yasuo_atk_1_hit
   - fx_briar_atk_1_hit
+  - fx_upgrade_hero
   missileIds: []
   timelineIds:
   - tl_master_yi_atk_1
