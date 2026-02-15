@@ -244,4 +244,4 @@ Xác định trong `ShopData.cs`, phụ thuộc vào `EconomyManager.Level`
 
 ## 📄 License
 
-[Your License Here]
+@2026 Copyright Dajunctic
