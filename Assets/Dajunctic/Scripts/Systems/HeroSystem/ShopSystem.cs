@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Dajunctic
 {
-    public class ShopController : Singleton<ShopController>
+    public class ShopSystem : MonoBehaviour, IGameSystem
     {
         [SerializeField] private ShopData shopData;
         [SerializeField] private List<HeroData> allHeroes; // Ideally populated from a database or folder
@@ -12,28 +12,52 @@ namespace Dajunctic
         private HeroData[] _currentShop = new HeroData[5];
         public HeroData[] CurrentShop => _currentShop;
         public ShopData ShopData => shopData;
+        private GameSystemManager _manager;
 
         public static event System.Action OnShopRefreshed;
 
-        protected override void Awake()
+        public void Initialize(GameSystemManager manager)
         {
-            base.Awake();
+            _manager = manager;
             if (allHeroes == null || allHeroes.Count == 0)
             {
-                allHeroes = Resources.LoadAll<HeroData>("").ToList();
+                allHeroes = Resources.LoadAll<HeroData>("").ToList(); 
+                // Commented out to prevent slow loading if not needed immediately
             }
 
-            Gameplay.OnPhaseChanged += OnPhaseChanged;
+            this.RegisterListener<RequestRerollEvent>(OnRequestReroll);
+            this.RegisterListener<RequestBuyHeroEvent>(OnRequestBuyHero);
+            this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            
+            Debug.Log("<color=cyan>ShopSystem initialized</color>");
+        }
+
+        private void OnRequestReroll(RequestRerollEvent evt)
+        {
+            Reroll();
+        }
+
+        private void OnRequestBuyHero(RequestBuyHeroEvent evt)
+        {
+            BuyHero(evt.SlotIndex);
+        }
+
+        public void Shutdown()
+        {
+            this.RemoveListener<RequestRerollEvent>(OnRequestReroll);
+            this.RemoveListener<RequestBuyHeroEvent>(OnRequestBuyHero);
+            this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            Debug.Log("<color=yellow>ShopSystem shutdown</color>");
         }
 
         private void OnDestroy()
         {
-            Gameplay.OnPhaseChanged -= OnPhaseChanged;
+            Shutdown();
         }
 
-        private void OnPhaseChanged(GameplayPhase phase)
+        private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
         {
-            if (phase == GameplayPhase.Planning)
+            if (evt.Phase == GameplayPhase.Planning)
             {
                 RefreshShop();
             }
@@ -41,7 +65,7 @@ namespace Dajunctic
 
         public void Reroll()
         {
-            if (EconomyManager.Instance.SpendGold(shopData.rerollCost))
+            if (_manager.Economy.SpendGold(shopData.rerollCost))
             {
                 RefreshShop();
             }
@@ -49,7 +73,7 @@ namespace Dajunctic
 
         public void RefreshShop()
         {
-            int level = EconomyManager.Instance.Level;
+            int level = _manager.Economy.Level;
             float[] chances = shopData.GetChancesForLevel(level);
 
             for (int i = 0; i < 5; i++)
@@ -89,16 +113,16 @@ namespace Dajunctic
             if (hero == null) return;
 
             // Check if bench can accept this hero (has space or would trigger upgrade)
-            if (!BenchManager.Instance.CanAcceptHero(hero))
+            if (!_manager.Bench.CanAcceptHero(hero))
             {
                 Debug.LogWarning("Bench is full and no upgrade possible!");
                 return;
             }
 
-            if (EconomyManager.Instance.SpendGold(hero.rarity))
+            if (_manager.Economy.SpendGold(hero.rarity))
             {
                 // Add hero to bench
-                BenchManager.Instance.AddHeroToBench(hero);
+                _manager.Bench.AddHeroToBench(hero);
                 
                 Debug.Log($"Bought {hero.displayName}");
                 _currentShop[slotIndex] = null;

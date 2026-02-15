@@ -4,14 +4,27 @@ using System.Linq;
 
 namespace Dajunctic
 {
-    public class BenchManager : Singleton<BenchManager>
+    public class BenchSystem : MonoBehaviour, IGameSystem
     {
         [SerializeField] private SquareAreaView benchArea;
         private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
+        private GameSystemManager _manager;
+
+        public void Initialize(GameSystemManager manager)
+        {
+            _manager = manager;
+            Debug.Log("<color=cyan>BenchSystem initialized</color>");
+        }
+
+        public void Shutdown()
+        {
+            _heroOnTiles.Clear();
+            Debug.Log("<color=yellow>BenchSystem shutdown</color>");
+        }
 
         public bool HasEmptySlot()
         {
-            return GetFirstEmptyTileCoord().x != -10;
+            return GetFirstEmptyTileCoord().y >= 0;
         }
 
         /// <summary>
@@ -44,15 +57,15 @@ namespace Dajunctic
 
 
 
-            Debug.LogError("<color=green>Checking bench tiles for empty slot.." + $" Total tiles: {sortedTiles.Count}, Occupied: {_heroOnTiles.Count}</color>");
+            // Debug.LogError("<color=green>Checking bench tiles for empty slot.." + $" Total tiles: {sortedTiles.Count}, Occupied: {_heroOnTiles.Count}</color>");
             
-            // Dump all dictionary entries
-            Debug.LogError("<color=magenta>=== DICTIONARY DUMP ===</color>");
-            foreach (var kvp in _heroOnTiles)
-            {
-                Debug.LogError($"<color=magenta>Dict Entry: {kvp.Key} -> {(kvp.Value != null ? kvp.Value.name : "NULL")}</color>");
-            }
-            Debug.LogError("<color=magenta>======================</color>");
+            // // Dump all dictionary entries
+            // Debug.LogError("<color=magenta>=== DICTIONARY DUMP ===</color>");
+            // foreach (var kvp in _heroOnTiles)
+            // {
+            //     Debug.LogError($"<color=magenta>Dict Entry: {kvp.Key} -> {(kvp.Value != null ? kvp.Value.name : "NULL")}</color>");
+            // }
+            // Debug.LogError("<color=magenta>======================</color>");
         
 
             foreach (var tile in sortedTiles)
@@ -70,7 +83,7 @@ namespace Dajunctic
         {
             Vector2Int coord = GetFirstEmptyTileCoord();
 
-            if (coord.x == -10)
+            if (coord.y < 0)
             {
                 // Bench is full — try direct upgrade without placing the hero
                 if (TryDirectUpgrade(heroData, starLevel))
@@ -135,9 +148,9 @@ namespace Dajunctic
                 .ToList();
 
             var heroesOnField = new List<HeroCombatActor>();
-            if (FieldManager.Instance != null)
+            if (_manager.Field != null)
             {
-                heroesOnField = FieldManager.Instance.GetAllHeroes()
+                heroesOnField = _manager.Field.GetAllHeroes()
                     .Where(h => h != null && h.CombatActorData is HeroData data && 
                                 data == heroData && 
                                 h.StarLevel == starLevel)
@@ -171,10 +184,11 @@ namespace Dajunctic
             Vector2Int targetCoord = wasOnField ? primary.CurrentFieldCoord : primary.CurrentBenchCoord;
 
             // 2. Remove all instances from managers and destroy
+
             foreach (var hero in instances)
             {
-                if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(hero);
-                if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(hero);
+                UnregisterHero(hero); // Call local method directly
+                if (_manager.Field != null) _manager.Field.UnregisterHero(hero);
                 
                 // Cleanup MoveAgent to prevent navigation errors
                 if (hero.MoveAgent != null)
@@ -191,7 +205,7 @@ namespace Dajunctic
             // 3. Spawn upgraded unit at the primary location
             if (wasOnField)
             {
-                FieldManager.Instance.AddHeroToField(heroData, targetCoord, newStarLevel);
+                _manager.Field.AddHeroToField(heroData, targetCoord, newStarLevel);
             }
             else
             {
@@ -244,7 +258,7 @@ namespace Dajunctic
         {
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to bench means leaving field
-            if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(actor);
+            if (_manager.Field != null) _manager.Field.UnregisterHero(actor);
             
             // Remove any existing entry at this coord (in case of stale data)
             if (_heroOnTiles.ContainsKey(coord))

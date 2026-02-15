@@ -3,7 +3,7 @@ using System;
 
 namespace Dajunctic
 {
-    public class EconomyManager : Singleton<EconomyManager>
+    public class EconomySystem : MonoBehaviour, IGameSystem
     {
         [SerializeField] private int initialGold = 10;
         [SerializeField] private int initialLevel = 1;
@@ -11,6 +11,7 @@ namespace Dajunctic
         private int _gold;
         private int _level;
         private int _xp;
+        private GameSystemManager _manager;
         
         public int Gold => _gold;
         public int Level => _level;
@@ -23,12 +24,48 @@ namespace Dajunctic
         public const int MAX_LEVEL = 10;
         private readonly int[] _xpRequirements = { 0, 2, 2, 6, 10, 20, 36, 56, 80, 100 }; // Index 1 is level 1 -> 2, etc.
 
-        protected override void Awake()
+        public void Initialize(GameSystemManager manager)
         {
-            base.Awake();
+            _manager = manager;
             _gold = initialGold;
             _level = initialLevel;
             _xp = 0;
+            
+            this.RegisterListener<RequestAddGoldEvent>(OnRequestAddGold);
+            this.RegisterListener<RequestBuyXPEvent>(OnRequestBuyXP);
+            
+            Debug.Log("<color=cyan>EconomySystem initialized</color>");
+        }
+
+        private void OnRequestAddGold(RequestAddGoldEvent evt)
+        {
+            AddGold(evt.Amount);
+        }
+
+        private void OnRequestBuyXP(RequestBuyXPEvent evt)
+        {
+            if (IsMaxLevel) return;
+
+            // Access ShopData via Manager
+            if (_manager.Shop == null) return;
+            
+            var shopData = _manager.Shop.ShopData;
+            if (SpendGold(shopData.buyXpCost))
+            {
+                AddXP(shopData.xpPerBuy);
+            }
+        }
+
+        public void Shutdown()
+        {
+            this.RemoveListener<RequestAddGoldEvent>(OnRequestAddGold);
+            this.RemoveListener<RequestBuyXPEvent>(OnRequestBuyXP);
+            Debug.Log("<color=yellow>EconomySystem shutdown</color>");
+        }
+
+        private void OnDestroy()
+        {
+            Shutdown();
         }
 
         public void AddGold(int amount)

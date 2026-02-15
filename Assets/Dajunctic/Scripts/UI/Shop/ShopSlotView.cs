@@ -10,7 +10,7 @@ namespace Dajunctic
         [SerializeField] private Image heroIcon;
         [SerializeField] private TMP_Text heroName;
         [SerializeField] private TMP_Text costText;
-        [SerializeField] private GameObject rarityBorder; // Optional color based on rarity
+        // [SerializeField] private GameObject rarityBorder; // Optional color based on rarity
         [SerializeField] private Image rarityBackground;
 
         private int _slotIndex;
@@ -38,14 +38,14 @@ namespace Dajunctic
             }
             
             // Set border color based on rarity (1-White, 2-Green, 3-Blue, 4-Purple, 5-Gold)
-            if (rarityBorder != null)
-            {
-                Image borderImage = rarityBorder.GetComponent<Image>();
-                if (borderImage != null)
-                {
-                    borderImage.color = GetRarityColor(data.rarity);
-                }
-            }
+            // if (rarityBorder != null)
+            // {
+            //     Image borderImage = rarityBorder.GetComponent<Image>();
+            //     if (borderImage != null)
+            //     {
+            //         borderImage.color = GetRarityColor(data.rarity);
+            //     }
+            // }
         }
 
         private Color GetRarityColor(int rarity)
@@ -63,7 +63,7 @@ namespace Dajunctic
 
         public void OnClickBuy()
         {
-            ShopController.Instance.BuyHero(_slotIndex);
+            this.Raise(new RequestBuyHeroEvent { SlotIndex = _slotIndex });
         }
     }
 }

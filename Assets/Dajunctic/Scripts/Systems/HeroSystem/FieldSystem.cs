@@ -4,15 +4,23 @@ using System.Linq;
 
 namespace Dajunctic
 {
-    public class FieldManager : Singleton<FieldManager>
+    public class FieldSystem : MonoBehaviour, IGameSystem
     {
         [SerializeField] private HexAreaView fieldArea;
         private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
+        private GameSystemManager _manager;
 
-        protected override void Awake()
+        public void Initialize(GameSystemManager manager)
         {
-            base.Awake();
+            _manager = manager;
             FindFieldArea();
+            Debug.Log("<color=cyan>FieldSystem initialized</color>");
+        }
+
+        public void Shutdown()
+        {
+            _heroOnTiles.Clear();
+            Debug.Log("<color=yellow>FieldSystem shutdown</color>");
         }
 
         private void FindFieldArea()
@@ -33,9 +41,9 @@ namespace Dajunctic
 
         public bool CanAddUnit()
         {
-            if (EconomyManager.Instance == null) return true;
-            bool canAdd = UnitCount < EconomyManager.Instance.Level;
-            if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached. Units: {UnitCount}, Level: {EconomyManager.Instance.Level}");
+            if (_manager.Economy == null) return true;
+            bool canAdd = UnitCount < _manager.Economy.Level;
+            if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached. Units: {UnitCount}, Level: {_manager.Economy.Level}");
             return canAdd;
         }
 
@@ -59,7 +67,7 @@ namespace Dajunctic
         {
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to field means leaving bench
-            if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(actor);
+            if (_manager.Bench != null) _manager.Bench.UnregisterHero(actor);
             
             // Remove any existing entry at this coord (in case of stale data)
             if (_heroOnTiles.ContainsKey(coord))

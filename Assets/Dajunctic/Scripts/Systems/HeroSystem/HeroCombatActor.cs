@@ -56,12 +56,12 @@ namespace Dajunctic
             _isDragging = false;
 
             // 1. Try to snap to Bench
-            if (BenchManager.Instance.TrySnapToBench(finalPos, out Vector2Int newBenchCoord))
+            if (GameSystemManager.Instance.Bench.TrySnapToBench(finalPos, out Vector2Int newBenchCoord))
             {
                 HandleBenchDrop(newBenchCoord);
             }
             // 2. Try to snap to Field
-            else if (FieldManager.Instance != null && FieldManager.Instance.TrySnapToField(finalPos, out Vector2Int newFieldCoord))
+            else if (GameSystemManager.Instance.Field != null && GameSystemManager.Instance.Field.TrySnapToField(finalPos, out Vector2Int newFieldCoord))
             {
                 HandleFieldDrop(newFieldCoord);
             }
@@ -77,11 +77,11 @@ namespace Dajunctic
             // If dropping on same spot, just teleport
             if (IsOnBench && CurrentBenchCoord == newBenchCoord)
             {
-                FinalizePlacement(BenchManager.Instance.GetWorldPosition(newBenchCoord));
+                FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(newBenchCoord));
                 return;
             }
 
-            var occupant = BenchManager.Instance.GetHeroAtTile(newBenchCoord);
+            var occupant = GameSystemManager.Instance.Bench.GetHeroAtTile(newBenchCoord);
             
             // Swap logic
             if (occupant != null && occupant != this)
@@ -94,8 +94,8 @@ namespace Dajunctic
             }
 
             // Move to new spot (RegisterHeroToTile handles coord cleanup)
-            BenchManager.Instance.RegisterHeroToTile(this, newBenchCoord);
-            FinalizePlacement(BenchManager.Instance.GetWorldPosition(newBenchCoord));
+            GameSystemManager.Instance.Bench.RegisterHeroToTile(this, newBenchCoord);
+            FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(newBenchCoord));
         }
 
         private void HandleFieldDrop(Vector2Int newFieldCoord)
@@ -103,14 +103,14 @@ namespace Dajunctic
             // If dropping on same spot, just teleport
             if (IsOnField && CurrentFieldCoord == newFieldCoord)
             {
-                FinalizePlacement(FieldManager.Instance.GetWorldPosition(newFieldCoord));
+                FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(newFieldCoord));
                 return;
             }
 
-            var occupant = FieldManager.Instance.GetHeroAtTile(newFieldCoord);
+            var occupant = GameSystemManager.Instance.Field.GetHeroAtTile(newFieldCoord);
 
             // Unit Limit Check: If moving from Bench to Field AND Field is full AND target is empty
-            if (IsOnBench && !FieldManager.Instance.CanAddUnit() && occupant == null)
+            if (IsOnBench && !GameSystemManager.Instance.Field.CanAddUnit() && occupant == null)
             {
                 Debug.LogWarning("Unit limit reached! Swap with an existing unit or pull one back.");
                 ResetPosition();
@@ -128,14 +128,14 @@ namespace Dajunctic
             }
 
             // Move to new spot (RegisterHeroToTile handles coord cleanup)
-            FieldManager.Instance.RegisterHeroToTile(this, newFieldCoord);
-            FinalizePlacement(FieldManager.Instance.GetWorldPosition(newFieldCoord));
+            GameSystemManager.Instance.Field.RegisterHeroToTile(this, newFieldCoord);
+            FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(newFieldCoord));
         }
 
         private void ClearPreviousPlacement()
         {
-            if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(this);
-            if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(this);
+            if (GameSystemManager.Instance.Bench != null) GameSystemManager.Instance.Bench.UnregisterHero(this);
+            if (GameSystemManager.Instance.Field != null) GameSystemManager.Instance.Field.UnregisterHero(this);
         }
 
         /// <summary>
@@ -146,13 +146,13 @@ namespace Dajunctic
         {
             if (IsOnBench)
             {
-                BenchManager.Instance.RegisterHeroToTile(occupant, CurrentBenchCoord);
-                occupant.Teleport(BenchManager.Instance.GetWorldPosition(CurrentBenchCoord), true);
+                GameSystemManager.Instance.Bench.RegisterHeroToTile(occupant, CurrentBenchCoord);
+                occupant.Teleport(GameSystemManager.Instance.Bench.GetWorldPosition(CurrentBenchCoord), true);
             }
             else if (IsOnField)
             {
-                FieldManager.Instance.RegisterHeroToTile(occupant, CurrentFieldCoord);
-                occupant.Teleport(FieldManager.Instance.GetWorldPosition(CurrentFieldCoord), true);
+                GameSystemManager.Instance.Field.RegisterHeroToTile(occupant, CurrentFieldCoord);
+                occupant.Teleport(GameSystemManager.Instance.Field.GetWorldPosition(CurrentFieldCoord), true);
             }
         }
 
@@ -191,8 +191,8 @@ namespace Dajunctic
                 int refundGold = GetSellValue(heroData);
 
                 // Unregister from all managers
-                if (BenchManager.Instance != null) BenchManager.Instance.UnregisterHero(this);
-                if (FieldManager.Instance != null) FieldManager.Instance.UnregisterHero(this);
+                if (GameSystemManager.Instance.Bench != null) GameSystemManager.Instance.Bench.UnregisterHero(this);
+                if (GameSystemManager.Instance.Field != null) GameSystemManager.Instance.Field.UnregisterHero(this);
 
                 // Cleanup MoveAgent to prevent navigation errors
                 if (MoveAgent != null)
@@ -204,7 +204,7 @@ namespace Dajunctic
                 ForceStop();
 
                 // Refund gold
-                if (EconomyManager.Instance != null) EconomyManager.Instance.AddGold(refundGold);
+                if (GameSystemManager.Instance.Economy != null) GameSystemManager.Instance.Economy.AddGold(refundGold);
 
                 Debug.Log($"Sold {heroData.displayName} ({StarLevel}★) for {refundGold} gold");
                 this.Raise(new HeroSoldEvent { Hero = heroData, GoldRefunded = refundGold });

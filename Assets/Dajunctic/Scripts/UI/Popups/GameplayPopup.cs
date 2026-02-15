@@ -85,8 +85,8 @@ namespace Dajunctic
 
         private void UpdateShop()
         {
-            if (ShopController.Instance == null) return;
-            var shop = ShopController.Instance.CurrentShop;
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Shop == null) return;
+            var shop = GameSystemManager.Instance.Shop.CurrentShop;
             for (int i = 0; i < slots.Count; i++)
             {
                 if (i < shop.Length && shop[i] != null)
@@ -105,7 +105,7 @@ namespace Dajunctic
                 }
             }
 
-            UpdateRollRates(ShopController.Instance.ShopData.GetChancesForLevel(EconomyManager.Instance.Level));
+            UpdateRollRates(GameSystemManager.Instance.Shop.ShopData.GetChancesForLevel(GameSystemManager.Instance.Economy.Level));
         }
 
         private void UpdateRollRates(float[] chances)
@@ -118,8 +118,8 @@ namespace Dajunctic
 
         private void UpdateEconomy()
         {
-            if (EconomyManager.Instance == null) return;
-            var eco = EconomyManager.Instance;
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Economy == null) return;
+            var eco = GameSystemManager.Instance.Economy;
             goldText.text = eco.Gold.ToString();
             levelText.text = "Lvl. " + eco.Level;
             
@@ -145,24 +145,19 @@ namespace Dajunctic
                 if (buyXPButton != null) buyXPButton.SetActive(true);
                 if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
             }
-            UpdateRollRates(ShopController.Instance.ShopData.GetChancesForLevel(EconomyManager.Instance.Level));
+            if (GameSystemManager.Instance.Shop != null)
+                UpdateRollRates(GameSystemManager.Instance.Shop.ShopData.GetChancesForLevel(eco.Level));
 
         }
 
         public void OnClickReroll()
         {
-            ShopController.Instance.Reroll();
+            this.Raise(new RequestRerollEvent());
         }
 
         public void OnClickBuyXP()
         {
-            if (EconomyManager.Instance.IsMaxLevel) return;
-
-            var shopData = ShopController.Instance.ShopData;
-            if (EconomyManager.Instance.SpendGold(shopData.buyXpCost))
-            {
-                EconomyManager.Instance.AddXP(shopData.xpPerBuy);
-            }
+            this.Raise(new RequestBuyXPEvent());
         }
 
     }

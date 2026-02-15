@@ -38,7 +38,6 @@ namespace Dajunctic
         void Start()
         {
             StartPhase(GameplayPhase.Planning);
-            EconomyManager.Instance.AddGold(1000);
         }
 
         public override void Tick()
