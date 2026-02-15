@@ -25,6 +25,13 @@ namespace Dajunctic
         [SerializeField] private GameObject buyXPButton;
         [SerializeField] private GameObject buyXPDisabledButton;
 
+        // Cached Systems
+        private ShopSystem _shopSystem;
+        private EconomySystem _economySystem;
+
+        private ShopSystem ShopSystem => _shopSystem ?? (_shopSystem = this.GetSystem<ShopSystem>());
+        private EconomySystem EconomySystem => _economySystem ?? (_economySystem = this.GetSystem<EconomySystem>());
+
         public override void ListenEvents()
         {
             base.ListenEvents();
@@ -85,8 +92,8 @@ namespace Dajunctic
 
         private void UpdateShop()
         {
-            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Shop == null) return;
-            var shop = GameSystemManager.Instance.Shop.CurrentShop;
+            if (ShopSystem == null) return;
+            var shop = ShopSystem.CurrentShop;
             for (int i = 0; i < slots.Count; i++)
             {
                 if (i < shop.Length && shop[i] != null)
@@ -105,7 +112,7 @@ namespace Dajunctic
                 }
             }
 
-            UpdateRollRates(GameSystemManager.Instance.Shop.ShopData.GetChancesForLevel(GameSystemManager.Instance.Economy.Level));
+            UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
         }
 
         private void UpdateRollRates(float[] chances)
@@ -118,8 +125,8 @@ namespace Dajunctic
 
         private void UpdateEconomy()
         {
-            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Economy == null) return;
-            var eco = GameSystemManager.Instance.Economy;
+            if (EconomySystem == null) return;
+            var eco = EconomySystem;
             goldText.text = eco.Gold.ToString();
             levelText.text = "Lvl. " + eco.Level;
             
@@ -145,8 +152,8 @@ namespace Dajunctic
                 if (buyXPButton != null) buyXPButton.SetActive(true);
                 if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
             }
-            if (GameSystemManager.Instance.Shop != null)
-                UpdateRollRates(GameSystemManager.Instance.Shop.ShopData.GetChancesForLevel(eco.Level));
+            if (ShopSystem != null)
+                UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
 
         }
 
