@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class BillboardEmote : MonoBehaviour
+    public class Billboard : MonoBehaviour
     {
         private Transform mainCameraTransform;
 
@@ -14,7 +14,7 @@ namespace Dajunctic
             }
             else
             {
-                Debug.LogError("BillboardEmote: Không tìm thấy Main Camera. Hãy đảm bảo camera của bạn có tag 'MainCamera'.");
+                Debug.LogError("Billboard: No main camera found. Billboard will not function.");
                 enabled = false; 
             }
         }
@@ -23,15 +23,6 @@ namespace Dajunctic
         {
             if (mainCameraTransform == null) return;
             transform.LookAt(transform.position + mainCameraTransform.forward);
-        }
-
-        public void SetEmoteSprite(Sprite newSprite)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null)
-            {
-                sr.sprite = newSprite;
-            }
         }
     }
 }

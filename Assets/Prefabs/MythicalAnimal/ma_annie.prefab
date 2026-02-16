@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 565250275084573456}
-  - component: {fileID: 7337369007748321506}
+  - component: {fileID: 6551470456041174059}
   m_Layer: 0
   m_Name: ma_annie
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 657832592990625389}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7337369007748321506
+--- !u!114 &6551470456041174059
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,21 +42,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4723916307773563682}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0304a942bc5e534eb072e88fc91b8fa, type: 3}
+  m_Script: {fileID: 11500000, guid: 3ad70fbfd3b528f44bd233f23f56644f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
   initialize: 1
   tick: 2
   animator: {fileID: 2775658259165444869}
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 0
   midPoint: {fileID: 3969182115181705674}
   headPoint: {fileID: 7544576544898428838}
-  combatActorData: {fileID: 11400000, guid: e25dadbde2db29b41bb137f49c4070b6, type: 2}
-  patrolSpeed: 1
-  emotionViewPrefab: {fileID: 8379174434645732961, guid: c01e9023b123659448cab326f60c2757, type: 3}
+  combatActorData: {fileID: 11400000, guid: 67bca5b3ec6530643bf8fb3b31c8d833, type: 2}
+  team: 2
 --- !u!1 &7739348347929920428
 GameObject:
   m_ObjectHideFlags: 0
@@ -299,6 +295,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 61f407983e4349d4d89648a7070fcab8, type: 2}
+    - target: {fileID: 5866666021909216657, guid: a29174c40c640f04891133e2f3e2188d, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7477672114596797951, guid: a29174c40c640f04891133e2f3e2188d, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

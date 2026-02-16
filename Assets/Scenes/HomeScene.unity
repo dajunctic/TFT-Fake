@@ -1371,7 +1371,7 @@ GameObject:
   - component: {fileID: 1285536707}
   - component: {fileID: 1285536706}
   m_Layer: 0
-  m_Name: Canvas (1)
+  m_Name: PlayerHpView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1384,17 +1384,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1285536704}
-  m_LocalRotation: {x: -0, y: -0.99923617, z: -0, w: 0.039078224}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.0005000001, y: 0.0005, z: 0.0005000001}
+  m_LocalScale: {x: 0.00050000014, y: 0.0005, z: 0.00050000014}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 719464468}
-  m_Father: {fileID: 680594908498140268}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.88}
+  m_AnchoredPosition: {x: 0, y: 1.025}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1285536706
@@ -1899,7 +1899,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d838fccc6e02cc248899e0b1ff5a9cbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveAction: {fileID: -8079792123986854999, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
   firstSkillAction: {fileID: -4947596761590491206, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
   secondSkillAction: {fileID: -2576192702093055972, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
   thirdSkillAction: {fileID: -7512347048491126717, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
@@ -4440,10 +4439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 565250275084573456, guid: 36b6f219aad91fd44a04bb1a0575a930, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1285536705}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 36b6f219aad91fd44a04bb1a0575a930, type: 3}
 --- !u!4 &680594908498140268 stripped
@@ -4867,6 +4863,7 @@ SceneRoots:
   - {fileID: 100116693}
   - {fileID: 1751959367}
   - {fileID: 4338316632139796023}
+  - {fileID: 1285536705}
   - {fileID: 680594908498140262}
   - {fileID: 1008279684421788397}
   - {fileID: 629319122}

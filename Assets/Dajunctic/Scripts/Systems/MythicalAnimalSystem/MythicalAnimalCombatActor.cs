@@ -1,23 +1,41 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Dajunctic
 {
-    public class MythicalAnimalCombatActor: CombatActor
+    public class MythicalAnimalCombatActor : CombatActor
     {
-        public override string DataId => name;
+        [Header("Mythical Animal")]
+        public int Tier { get; private set; } = 1;
+        public bool IsBoss { get; private set; } = false;
 
+        public override string DataId => name;
+        public override bool IsTargetable => true;
+
+        
         private Transform _cameraTransform;
         private Camera _camera;
-
         public override void Initialize()
         {
             base.Initialize();
-            if (Camera.main != null)
+
+            if (CombatActorData is MythicalAnimalActorData mythicalData)
+            {
+                Tier = mythicalData.tier;
+                IsBoss = mythicalData.isBoss;
+            }
+
+            if (MoveAgent != null)
+            {
+                MoveAgent.ToggleMoveCollision(false);
+            }
+
+             if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
                 _camera = Camera.main;
             }
-            
+        
         }
 
         public override void ListenEvents()
@@ -71,5 +89,7 @@ namespace Dajunctic
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
             }
         }
+
+      
     }
 }
