@@ -1907,6 +1907,8 @@ MonoBehaviour:
   rightClickAction: {fileID: 5851584103371606971, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
   pointAction: {fileID: -5076071917812675098, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
   emotionAction: {fileID: -6651081806395732133, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
+  buyXpAction: {fileID: -4761959960533045045, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
+  rerollAction: {fileID: -2947448301880006432, guid: c7cd25e94426b4d43b4e637f59721ee9, type: 3}
 --- !u!4 &1769465477
 Transform:
   m_ObjectHideFlags: 0

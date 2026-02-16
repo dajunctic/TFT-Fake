@@ -177,12 +177,27 @@ namespace Dajunctic
         {
             Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars!");
 
-            // 1. Identify where to put the upgraded unit (prefer field if one was there)
-            HeroCombatActor primary = instances.FirstOrDefault(h => h.IsOnField);
-            if (primary == null) primary = instances[0];
+            // 1. Determine placement: field merges stay on field, bench merges use leftmost merged hero position
+            HeroCombatActor fieldHero = instances.FirstOrDefault(h => h.IsOnField);
+            bool wasOnField = fieldHero != null;
+            
+            Vector2Int targetCoord;
+            if (wasOnField)
+            {
+                // Keep on field at the position of the field hero
+                targetCoord = fieldHero.CurrentFieldCoord;
+            }
+            else
+            {
+                // All on bench - find the leftmost position among merged heroes
+                // This ensures merging heroes at 1,2,3 results in merged hero at position 1
+                targetCoord = instances
+                    .Select(h => h.CurrentBenchCoord)
+                    .OrderBy(coord => coord.x)
+                    .ThenBy(coord => coord.y)
+                    .First();
+            }
 
-            bool wasOnField = primary.IsOnField;
-            Vector2Int targetCoord = wasOnField ? primary.CurrentFieldCoord : primary.CurrentBenchCoord;
 
             // 2. Remove all instances from managers and destroy
 
@@ -191,10 +206,17 @@ namespace Dajunctic
                 UnregisterHero(hero); // Call local method directly
                 if (_manager.Field != null) _manager.Field.UnregisterHero(hero);
                 
-                // Cleanup MoveAgent to prevent navigation errors
+                // Cleanup MoveAgent properly - return to pool if pooled, destroy if not
                 if (hero.MoveAgent != null)
                 {
                     hero.MoveAgent.SetEnable(false);
+                    
+                    // Call Cleanup if it's a pooled NavMeshMoveAgent to return it to pool
+                    if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
+                    {
+                        navMeshAgent.Cleanup();
+                    }
+                    
                     hero.MoveAgent = null;
                 }
                 hero.InterruptAction();

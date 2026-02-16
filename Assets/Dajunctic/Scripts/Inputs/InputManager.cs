@@ -14,6 +14,8 @@ public class InputManager: Singleton<InputManager>
     [SerializeField] private InputActionReference rightClickAction;
     [SerializeField] private InputActionReference pointAction;
     [SerializeField] private InputActionReference emotionAction;
+    [SerializeField] private InputActionReference buyXpAction;
+    [SerializeField] private InputActionReference rerollAction;
 
     
     public static event Action OnTestFirstSkill;
@@ -38,6 +40,17 @@ public class InputManager: Singleton<InputManager>
 
         emotionAction.action.started += OnEmotionStarted;
         emotionAction.action.canceled += OnEmotionCanceled;
+
+        buyXpAction.action.performed += context =>
+        {
+            this.Raise(new RequestBuyXPEvent());
+        };
+
+        rerollAction.action.performed += context =>
+        {
+            this.Raise(new RequestRerollEvent());
+        };
+
 
         _camera = Camera.main;
     }
