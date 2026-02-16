@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3961f894890942f48bf02629cf882059, type: 3}
+  m_Name: settings_data
+  m_EditorClassIdentifier: 
+  cursorNormal: {fileID: 2800000, guid: 81b81e9fd774aae44b3303cc8df6c814, type: 3}
+  cursorHover: {fileID: 2800000, guid: aed566bcd469cf642883d1fdc0649e16, type: 3}
+  cursorClick: {fileID: 2800000, guid: a69abe7899880e54a9a48f9b2128ef4e, type: 3}
+  cursorHotspot: {x: 0, y: 0}
+  defaultMasterVolume: 1
+  defaultMusicVolume: 0.7
+  defaultSFXVolume: 0.8
+  defaultQualityLevel: 2
+  defaultTargetFrameRate: 60
+  defaultVSync: 1
+  defaultCameraShake: 1
+  defaultShowDamageNumbers: 1

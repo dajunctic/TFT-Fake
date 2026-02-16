@@ -11,12 +11,14 @@ namespace Dajunctic
         public static GameSystemManager Instance { get; private set; }
 
         [Header("System References")]
+        [SerializeField] private SettingsSystem settingsSystem;
         [SerializeField] private BenchSystem benchSystem;
         [SerializeField] private FieldSystem fieldSystem;
         [SerializeField] private EconomySystem economySystem;
         [SerializeField] private ShopSystem shopSystem;
 
         // Public accessors
+        public SettingsSystem Settings => settingsSystem;
         public BenchSystem Bench => benchSystem;
         public FieldSystem Field => fieldSystem;
         public EconomySystem Economy => economySystem;
@@ -33,6 +35,7 @@ namespace Dajunctic
             Instance = this;
 
             // Find systems in children if not assigned
+            if (settingsSystem == null) settingsSystem = GetComponentInChildren<SettingsSystem>();
             if (benchSystem == null) benchSystem = GetComponentInChildren<BenchSystem>();
             if (fieldSystem == null) fieldSystem = GetComponentInChildren<FieldSystem>();
             if (economySystem == null) economySystem = GetComponentInChildren<EconomySystem>();
@@ -45,7 +48,8 @@ namespace Dajunctic
         {
             Debug.Log("<color=cyan>GameSystemManager: Initializing all systems...</color>");
 
-            // Initialize in dependency order
+            // Initialize in dependency order (Settings first!)
+            settingsSystem?.Initialize(this);
             economySystem?.Initialize(this);
             benchSystem?.Initialize(this);
             fieldSystem?.Initialize(this);
@@ -72,6 +76,7 @@ namespace Dajunctic
             fieldSystem?.Shutdown();
             benchSystem?.Shutdown();
             economySystem?.Shutdown();
+            settingsSystem?.Shutdown();
         }
 
         /// <summary>
@@ -79,6 +84,7 @@ namespace Dajunctic
         /// </summary>
         public T GetSystem<T>() where T : class, IGameSystem
         {
+            if (typeof(T) == typeof(SettingsSystem)) return settingsSystem as T;
             if (typeof(T) == typeof(BenchSystem)) return benchSystem as T;
             if (typeof(T) == typeof(FieldSystem)) return fieldSystem as T;
             if (typeof(T) == typeof(EconomySystem)) return economySystem as T;
