@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class InputManager: Singleton<InputManager>
 {
-    [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference firstSkillAction;
     [SerializeField] private InputActionReference secondSkillAction;
     [SerializeField] private InputActionReference thirdSkillAction;
@@ -41,18 +40,23 @@ public class InputManager: Singleton<InputManager>
         emotionAction.action.started += OnEmotionStarted;
         emotionAction.action.canceled += OnEmotionCanceled;
 
-        buyXpAction.action.performed += context =>
-        {
-            this.Raise(new RequestBuyXPEvent());
-        };
+        buyXpAction.action.performed += OnBuyXP;
 
-        rerollAction.action.performed += context =>
-        {
-            this.Raise(new RequestRerollEvent());
-        };
-
+        rerollAction.action.performed += OnReroll;
 
         _camera = Camera.main;
+    }
+
+    private void OnBuyXP(InputAction.CallbackContext context)
+    {
+        // Debug.LogError("Buy XP Clicked");
+        this.Raise(new RequestBuyXPEvent());
+    }
+
+    private void OnReroll(InputAction.CallbackContext context)
+    {
+        // Debug.LogError("Reroll Clicked");
+        this.Raise(new RequestRerollEvent());
     }
 
 
@@ -123,7 +127,6 @@ public class InputManager: Singleton<InputManager>
 
     private void OnEnable()
     {
-        moveAction.action.Enable();
         firstSkillAction.action.Enable();
         secondSkillAction.action.Enable();
         thirdSkillAction.action.Enable();
@@ -131,11 +134,12 @@ public class InputManager: Singleton<InputManager>
         pointAction.action.Enable();
         rightClickAction.action.Enable();
         emotionAction.action.Enable();
+        buyXpAction.action.Enable();
+        rerollAction.action.Enable();
     }
     
     private void OnDisable()
     {
-        moveAction.action.Disable();
         firstSkillAction.action.Disable();
         secondSkillAction.action.Disable();
         thirdSkillAction.action.Disable();
@@ -143,10 +147,9 @@ public class InputManager: Singleton<InputManager>
         pointAction.action.Disable();
         rightClickAction.action.Disable();
         emotionAction.action.Disable();
-    }
-    public Vector2 GetMoveInputVector()
-    {
-        return moveAction.action.ReadValue<Vector2>();
+        buyXpAction.action.Disable();
+        rerollAction.action.Disable();
+    
     }
 
 }

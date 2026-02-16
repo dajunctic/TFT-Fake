@@ -50,12 +50,7 @@ namespace Dajunctic
             {
                 inputDirection = VirtualJoystick.Instance.InputDirection;
             }
-
-            if (inputDirection.sqrMagnitude == 0f && InputManager.Instance != null)
-            {
-                inputDirection = InputManager.Instance.GetMoveInputVector();
-            }
-
+            
             if (inputDirection.sqrMagnitude > 0f)
             {
                 
