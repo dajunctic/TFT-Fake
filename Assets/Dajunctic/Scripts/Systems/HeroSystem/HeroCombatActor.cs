@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
+    [RequireComponent(typeof(CapsuleCollider))]
     public class HeroCombatActor: CombatActor, IDraggable
     {
         [Header("Hero")]
@@ -24,6 +25,7 @@ namespace Dajunctic
 
         private Vector2Int _originalBenchCoord;
         private Vector2Int _originalFieldCoord;
+        private CapsuleCollider _capsuleCollider;
 
         public void SetStarLevel(int level)
         {
@@ -53,6 +55,8 @@ namespace Dajunctic
             InterruptAction();
             ForceStop();
             if (MoveAgent != null) MoveAgent.SetEnable(false);
+
+            this.Raise(new HeroDragStartedEvent { Hero = this });
         }
 
         public void OnDragUpdate(Vector3 worldPos)
@@ -74,11 +78,18 @@ namespace Dajunctic
             {
                 HandleFieldDrop(newFieldCoord);
             }
-            // 3. Dropped outside both areas -> Sell the hero
-            else
+            // 3. Check if over sell zone
+            else if (SellZoneUI.IsPointerOverSellZone)
             {
                 SellSelf();
             }
+            // 4. Return to original position
+            else
+            {
+                ResetPosition();
+            }
+
+            this.Raise(new HeroDragEndedEvent { Hero = this });
         }
 
         private void HandleBenchDrop(Vector2Int newBenchCoord)
@@ -212,7 +223,22 @@ namespace Dajunctic
                 InterruptAction();
                 ForceStop();
 
-                // Refund gold
+                // 1. Return items to bench
+                var container = GetComponent<ItemContainer>();
+                if (container != null)
+                {
+                    var items = container.RemoveAllItems();
+                    var itemSystem = GameSystemManager.Instance.Items;
+                    if (itemSystem != null)
+                    {
+                        foreach (var item in items)
+                        {
+                            itemSystem.AddItemToBench(item);
+                        }
+                    }
+                }
+
+                // 2. Refund gold
                 if (GameSystemManager.Instance.Economy != null) GameSystemManager.Instance.Economy.AddGold(refundGold);
 
                 Debug.Log($"Sold {heroData.displayName} ({StarLevel}★) for {refundGold} gold");
@@ -227,12 +253,48 @@ namespace Dajunctic
         }
 
         /// <summary>
+        /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9 (using current hero data)
+        /// </summary>
+        public int GetSellValue()
+        {
+            if (CombatActorData is HeroData heroData)
+            {
+                return GetSellValue(heroData);
+            }
+            return 0;
+        }
+
+        /// <summary>
         /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9
         /// </summary>
-        private int GetSellValue(HeroData heroData)
+        public int GetSellValue(HeroData heroData)
         {
-            int multiplier = (int)Mathf.Pow(3, StarLevel - 1);
-            return heroData.rarity * multiplier;
+            // 1-star units always sell for full price (rarity)
+            if (StarLevel == 1) return heroData.rarity;
+
+            // Calculate total gold invested (3 units for 2*, 9 units for 3*)
+            int totalCost = (int)Mathf.Pow(3, StarLevel - 1) * heroData.rarity;
+
+            if (StarLevel == 2)
+            {
+                // 1-cost 2* sells for 3g (no loss)
+                // 2-cost 2* sells for 5g (1g loss) - as requested
+                // 3-cost 2* sells for 8g (1g loss), etc.
+                return (heroData.rarity == 1) ? 3 : (totalCost - 1);
+            }
+            else if (StarLevel >= 3)
+            {
+                // 3-star units in TFT usually have a higher loss
+                // 1-cost 3* sells for 5g (instead of 9g)
+                if (heroData.rarity == 1) return 5;
+                
+                // For others, we apply a steeper loss to discourage accidental selling/re-rolling value
+                // Example: 2-cost 3* (18g cost) -> 14g or 10g? 
+                // Let's use a simple formula for now:
+                return totalCost - (heroData.rarity * 2); 
+            }
+
+            return totalCost;
         }
 
         protected override void SyncEntity()
@@ -243,8 +305,9 @@ namespace Dajunctic
             base.SyncEntity();
         }
 
-        private void Update()
+        public override void Tick()
         {
+            base.Tick();
             if (_isDragging)
             {
                 // Instant follow for responsive "sticky" feel
@@ -276,6 +339,12 @@ namespace Dajunctic
                 _hpView = Instantiate(hpViewPrefab);
                 _hpView.Initialize(this, StarLevel);
             }
+
+            _capsuleCollider = GetComponent<CapsuleCollider>();
+
+            _capsuleCollider.radius = combatActorData.movement.radius;
+            _capsuleCollider.height = combatActorData.movement.height;
+            _capsuleCollider.center = Vector3.zero + Vector3.up * combatActorData.movement.height / 2f;
         }
 
         public override MovementPriority AvoidancePriority

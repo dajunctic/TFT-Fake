@@ -15,6 +15,7 @@ namespace Dajunctic
         [Header("Shop References")]
         [SerializeField] private SpriteLists cardRarities;
         [SerializeField] private List<ShopSlotView> slots;
+        [SerializeField] private GameObject cardListContent; // Container for the 5 slots
         [SerializeField] private List<TMP_Text> rollRatesTexts; // Optional: To display roll rates for each rarity
 
         [Header("Economy References")]
@@ -39,6 +40,8 @@ namespace Dajunctic
             this.RegisterListener<GoldChangedEvent>(OnGoldChanged);
             this.RegisterListener<LevelChangedEvent>(OnLevelChanged);
             this.RegisterListener<XPChangedEvent>(OnXPChanged);
+            this.RegisterListener<HeroDragStartedEvent>(OnHeroDragStarted);
+            this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
         }
 
         public override void StopListenEvents()
@@ -48,6 +51,8 @@ namespace Dajunctic
             this.RemoveListener<GoldChangedEvent>(OnGoldChanged);
             this.RemoveListener<LevelChangedEvent>(OnLevelChanged);
             this.RemoveListener<XPChangedEvent>(OnXPChanged);
+            this.RemoveListener<HeroDragStartedEvent>(OnHeroDragStarted);
+            this.RemoveListener<HeroDragEndedEvent>(OnHeroDragEnded);
         }
 
         public override void BeforeShow(object data = null)
@@ -155,6 +160,16 @@ namespace Dajunctic
             if (ShopSystem != null)
                 UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
 
+        }
+        
+        private void OnHeroDragStarted(HeroDragStartedEvent evt)
+        {
+            if (cardListContent != null) cardListContent.SetActive(false);
+        }
+
+        private void OnHeroDragEnded(HeroDragEndedEvent evt)
+        {
+            if (cardListContent != null) cardListContent.SetActive(true);
         }
 
         public void OnClickReroll()

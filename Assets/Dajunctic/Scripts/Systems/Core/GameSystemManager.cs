@@ -16,6 +16,7 @@ namespace Dajunctic
         [SerializeField] private FieldSystem fieldSystem;
         [SerializeField] private EconomySystem economySystem;
         [SerializeField] private ShopSystem shopSystem;
+        [SerializeField] private ItemSystem itemSystem;
 
         // Public accessors
         public SettingsSystem Settings => settingsSystem;
@@ -23,6 +24,7 @@ namespace Dajunctic
         public FieldSystem Field => fieldSystem;
         public EconomySystem Economy => economySystem;
         public ShopSystem Shop => shopSystem;
+        public ItemSystem Items => itemSystem;
 
         private void Awake()
         {
@@ -40,6 +42,7 @@ namespace Dajunctic
             if (fieldSystem == null) fieldSystem = GetComponentInChildren<FieldSystem>();
             if (economySystem == null) economySystem = GetComponentInChildren<EconomySystem>();
             if (shopSystem == null) shopSystem = GetComponentInChildren<ShopSystem>();
+            if (itemSystem == null) itemSystem = GetComponentInChildren<ItemSystem>();
 
             InitializeSystems();
         }
@@ -54,6 +57,7 @@ namespace Dajunctic
             benchSystem?.Initialize(this);
             fieldSystem?.Initialize(this);
             shopSystem?.Initialize(this);
+            itemSystem?.Initialize(this);
 
             Debug.Log("<color=green>GameSystemManager: All systems initialized!</color>");
         }
@@ -73,6 +77,7 @@ namespace Dajunctic
 
             // Shutdown in reverse order
             shopSystem?.Shutdown();
+            itemSystem?.Shutdown();
             fieldSystem?.Shutdown();
             benchSystem?.Shutdown();
             economySystem?.Shutdown();
@@ -89,6 +94,7 @@ namespace Dajunctic
             if (typeof(T) == typeof(FieldSystem)) return fieldSystem as T;
             if (typeof(T) == typeof(EconomySystem)) return economySystem as T;
             if (typeof(T) == typeof(ShopSystem)) return shopSystem as T;
+            if (typeof(T) == typeof(ItemSystem)) return itemSystem as T;
             
             Debug.LogError($"System of type {typeof(T).Name} not found!");
             return null;

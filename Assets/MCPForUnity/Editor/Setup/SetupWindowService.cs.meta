@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d1bf468667bb649989e3ef53dafddea6
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329908
+  packageName: MCP for Unity | AI Driven Development
+  packageVersion: 9.0.3
+  assetPath: Assets/MCPForUnity/Editor/Setup/SetupWindowService.cs
+  uploadId: 855486

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8f2b7b3e9c3e4a0f9b2a1d4c7e6f5a12
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329908
+  packageName: MCP for Unity | AI Driven Development
+  packageVersion: 9.0.3
+  assetPath: Assets/MCPForUnity/Editor/Helpers/ExecPath.cs
+  uploadId: 855486

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 98f702da6ca044be59a864a9419c4eab
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329908
+  packageName: MCP for Unity | AI Driven Development
+  packageVersion: 9.0.3
+  assetPath: Assets/MCPForUnity/Editor/MCPForUnity.Editor.asmdef
+  uploadId: 855486

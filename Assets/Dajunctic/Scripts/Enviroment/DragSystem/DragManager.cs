@@ -119,15 +119,7 @@ namespace Dajunctic
                     }
                 }
 
-                // If no valid tile found, TFT usually returns the unit to its original position
-                if (!snapped)
-                {
-                    currentDragged.ResetPosition();
-                    foreach (var target in allTargets) target.OnDragEnd();
-                    currentDragged = null;
-                    return;
                 }
-            }
 
             currentDragged.OnDrop(finalPos);
             foreach (var target in allTargets) target.OnDragEnd();

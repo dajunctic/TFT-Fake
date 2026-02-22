@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4964205faa8dd4f8a960e58fd8c0d4f7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329908
+  packageName: MCP for Unity | AI Driven Development
+  packageVersion: 9.0.3
+  assetPath: Assets/MCPForUnity/Editor/Helpers/GameObjectLookup.cs
+  uploadId: 855486

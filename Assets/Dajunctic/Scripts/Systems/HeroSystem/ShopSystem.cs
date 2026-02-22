@@ -137,4 +137,7 @@ namespace Dajunctic
     public struct ShopRefreshedEvent : IEvent { }
     public struct HeroBoughtEvent : IEvent { public HeroData Hero; }
     public struct HeroSoldEvent : IEvent { public HeroData Hero; public int GoldRefunded; }
+
+    public struct HeroDragStartedEvent : IEvent { public HeroCombatActor Hero; }
+    public struct HeroDragEndedEvent : IEvent { public HeroCombatActor Hero; }
 }

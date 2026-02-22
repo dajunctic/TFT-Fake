@@ -1,4 +1,5 @@
 ﻿<Solution>
+  <Project Path="MCPForUnity.Editor.csproj" />
   <Project Path="AllIn13DShaderAssemebly.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
   <Project Path="AllIn13DShaderDemoScriptsAssembly.csproj" />
@@ -6,6 +7,7 @@
   <Project Path="AllIn13DShaderAssemebly.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="AllIn1SpriteShaderAssembly.csproj" />
+  <Project Path="MCPForUnity.Runtime.csproj" />
   <Project Path="CFXRDemo.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj" />
   <Project Path="ToonyColorsPro.Demo.Editor.csproj" />

@@ -272,9 +272,20 @@ namespace Dajunctic
         private float _maxEnergy;
         
         public float Hp => _hp;
-        public float MaxHp => _maxHp;
+        public virtual float MaxHp => _maxHp + BonusMaxHp;
         public float Energy => _energy;
         public float MaxEnergy => _maxEnergy;
+
+        public float BonusMaxHp { get; set; }
+        public float BonusPhysicalArmor { get; set; }
+        public float BonusMagicalArmor { get; set; }
+        public float BonusAtk { get; set; }
+        public float BonusAtkSpd { get; set; }
+
+        public float GetTotalPhysicalArmor() => _physicalArmor + BonusPhysicalArmor;
+        public float GetTotalMagicalArmor() => _magicalArmor + BonusMagicalArmor;
+        public float GetTotalAtk() => combatActorData.combatStat.atk + BonusAtk;
+        public float GetTotalAtkSpd() => combatActorData.combatStat.atkSpd + BonusAtkSpd;
 
         public void InitDamageTaker()
         {
@@ -293,11 +304,11 @@ namespace Dajunctic
             switch (combineDamage.damageType)
             {
                 case DamageType.PhysicalDamage:
-                    finalDamage = combineDamage.damage * (100f / (100f + _physicalArmor));
+                    finalDamage = combineDamage.damage * (100f / (100f + GetTotalPhysicalArmor()));
                     break;
 
                 case DamageType.MagicalDamage:
-                    finalDamage = combineDamage.damage * (100f / (100f + _magicalArmor));
+                    finalDamage = combineDamage.damage * (100f / (100f + GetTotalMagicalArmor()));
                     break;
 
                 case DamageType.TrueDamage:
@@ -308,8 +319,8 @@ namespace Dajunctic
             Debug.Log(DataId + $" take {finalDamage} damage");
 
 
-            _hp = Mathf.Clamp(_hp - finalDamage, 0f, _maxHp);
-            OnHpChanged?.Invoke(_hp / _maxHp);
+            _hp = Mathf.Clamp(_hp - finalDamage, 0f, MaxHp);
+            OnHpChanged?.Invoke(_hp / MaxHp);
 
             if (_hp <= 0)
             {

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: b33f3e9c912b4f17a5a4374e4f6c2a91
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 329908
+  packageName: MCP for Unity | AI Driven Development
+  packageVersion: 9.0.3
+  assetPath: Assets/MCPForUnity/Runtime/Helpers/ScreenshotUtility.cs
+  uploadId: 855486

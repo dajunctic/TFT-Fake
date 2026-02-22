@@ -10,6 +10,7 @@ namespace Dajunctic
         [SerializeField] private Image bgRenderer;
         [SerializeField] private Image hpProgress;
         [SerializeField] private Image energyProgress;
+        [SerializeField] private Image[] itemIcons; // Array of 3 small icons
 
         [Header("Settings")]
         [SerializeField] private SpriteLists starBgSprites;
@@ -37,6 +38,8 @@ namespace Dajunctic
             // Initial sync
             UpdateHp(_owner.MaxHp > 0 ? _owner.Hp / _owner.MaxHp : 1f);
             UpdateEnergy(_owner.MaxEnergy > 0 ? _owner.Energy / _owner.MaxEnergy : 0f);
+
+            this.RegisterListener<HeroItemsChangedEvent>(OnItemsChanged);
         }
 
         public void UpdateStarLevel(int starLevel)
@@ -54,6 +57,7 @@ namespace Dajunctic
                 _owner.OnHpChanged -= UpdateHp;
                 _owner.OnEnergyChanged -= UpdateEnergy;
             }
+            this.RemoveListener<HeroItemsChangedEvent>(OnItemsChanged);
         }
 
         private void LateUpdate()
@@ -92,6 +96,26 @@ namespace Dajunctic
                 Vector3 scale = energyProgress.transform.localScale;
                 scale.x = ratio;
                 energyProgress.transform.localScale = scale;
+            }
+        }
+
+        private void OnItemsChanged(HeroItemsChangedEvent evt)
+        {
+            if (evt.Hero != _owner) return;
+
+            for (int i = 0; i < itemIcons.Length; i++)
+            {
+                if (itemIcons[i] == null) continue;
+
+                if (i < evt.Items.Count)
+                {
+                    itemIcons[i].gameObject.SetActive(true);
+                    itemIcons[i].sprite = evt.Items[i].icon;
+                }
+                else
+                {
+                    itemIcons[i].gameObject.SetActive(false);
+                }
             }
         }
     }
