@@ -19,17 +19,20 @@ namespace Dajunctic
         public bool TryAddItem(ItemData newItem, ItemRecipeDatabase recipes)
         {
             // 1. Check if we can combine with an existing component
-            for (int i = 0; i < _items.Count; i++)
+            if (recipes != null)
             {
-                if (_items[i].type == ItemType.Component && newItem.type == ItemType.Component)
+                for (int i = 0; i < _items.Count; i++)
                 {
-                    ItemData combined = recipes.GetCombinedItem(_items[i], newItem);
-                    if (combined != null)
+                    if (_items[i].type == ItemType.Component && newItem.type == ItemType.Component)
                     {
-                        Debug.Log($"Combined {_items[i].itemName} + {newItem.itemName} -> {combined.itemName}");
-                        _items[i] = combined;
-                        OnItemsChanged();
-                        return true;
+                        ItemData combined = recipes.GetCombinedItem(_items[i], newItem);
+                        if (combined != null)
+                        {
+                            Debug.Log($"Combined {_items[i].itemName} + {newItem.itemName} -> {combined.itemName}");
+                            _items[i] = combined;
+                            OnItemsChanged();
+                            return true;
+                        }
                     }
                 }
             }
@@ -51,7 +54,10 @@ namespace Dajunctic
             ApplyItemStats();
             
             // Raise event for UI update on the hero
-            _hero.Raise(new HeroItemsChangedEvent { Hero = _hero, Items = _items });
+            if (_hero != null)
+            {
+                _hero.Raise(new HeroItemsChangedEvent { Hero = _hero, Items = _items });
+            }
         }
 
         private void ApplyItemStats()

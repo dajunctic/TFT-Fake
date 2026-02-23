@@ -34,8 +34,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 4.0874023, y: -54.311302}
-  m_SizeDelta: {x: 191.8252, y: 28.4226}
+  m_AnchoredPosition: {x: -18.553, y: -56.423}
+  m_SizeDelta: {x: 146.5444, y: 32.646}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8505444321079331902
 CanvasRenderer:
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Kayn
+  m_text: Donald Trump
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8cdfe910bd3c03346b294f22a552466a, type: 2}
   m_sharedMaterial: {fileID: 2639749295221132557, guid: 8cdfe910bd3c03346b294f22a552466a, type: 2}
@@ -92,12 +92,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
+  m_fontSize: 23.1
   m_fontSizeBase: 26
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 26
   m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 256
@@ -202,7 +202,6 @@ MonoBehaviour:
   heroIcon: {fileID: 4760437414758843505}
   heroName: {fileID: 7908795290095072943}
   costText: {fileID: 935489790814544160}
-  rarityBorder: {fileID: 4693010485299263740}
   rarityBackground: {fileID: 1481154579546369002}
 --- !u!114 &5313778904683251734
 MonoBehaviour:
@@ -325,7 +324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9d9b5357351864c4bb2a9d0169a5f30d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c4d62b8c9fa36754b984eff1f7065f2c, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

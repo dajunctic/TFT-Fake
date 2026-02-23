@@ -11,6 +11,8 @@ namespace Dajunctic
         private Transform _originalParent;
         private Camera _mainCamera;
         
+        public ItemData ItemData => _itemData;
+        
         [SerializeField] private LayerMask heroLayer;
         [SerializeField] private Image iconImage;
 
@@ -76,7 +78,7 @@ namespace Dajunctic
                         var itemSystem = GameSystemManager.Instance.Items;
                         if (itemSystem != null)
                         {
-                            if (itemSystem.TryGiveItemToHero(_itemData, hero))
+                            if (itemSystem.TryGiveItemToHero(this, hero))
                             {
                                 // Item was given and the ItemSystem will destroy this GameObject.
                                 return;
@@ -93,7 +95,7 @@ namespace Dajunctic
         public void ResetPosition()
         {
             transform.SetParent(_originalParent);
-            transform.position = _originalPosition;
+            transform.localPosition = Vector3.zero;
         }
     }
 }

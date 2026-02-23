@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
-  m_Name: hero_braum
+  m_Name: hero_dajunctic
   m_EditorClassIdentifier: 
-  id: hero_braum
+  id: hero_dajunctic
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -34,9 +34,9 @@ MonoBehaviour:
     criticalChance: 1
     criticalDmg: 10
   skills:
-  - {fileID: 11400000, guid: 9049a490418db1a48a265b8d3600b5dc, type: 2}
-  displayName: Braum
-  rarity: 2
-  shopIcon: {fileID: 21300000, guid: dc9c92113ff75a74387274543c7080c3, type: 3}
+  - {fileID: 11400000, guid: 8b72682177897814693a1fae739994c4, type: 2}
+  displayName: Dajunctic
+  rarity: 5
+  shopIcon: {fileID: 21300000, guid: 21a370ad1da3ee94c96e7909204e2fab, type: 3}
   traits: []
-  prefab: {fileID: 3990057042886062043, guid: c85444d49d433ef4694bf5484725db8a, type: 3}
+  prefab: {fileID: 604641411015973459, guid: a26a975a503632c4db99b6de90dfecb1, type: 3}

@@ -13,7 +13,7 @@ namespace Dajunctic
         [SerializeField] private ItemData[] debugTestItems;
         
         private List<ItemData> _itemBench = new List<ItemData>();
-        private Dictionary<ItemData, DraggableItem> _spawnedItems = new Dictionary<ItemData, DraggableItem>();
+        private List<DraggableItem> _spawnedItems = new List<DraggableItem>();
         public List<ItemData> ItemBench => _itemBench;
 
         private GameSystemManager _manager;
@@ -70,7 +70,7 @@ namespace Dajunctic
             instance.transform.localScale = Vector3.one;
 
             instance.Initialize(item);
-            _spawnedItems[item] = instance;
+            _spawnedItems.Add(instance);
         }
 
         public void RefreshAllVisuals()
@@ -85,9 +85,9 @@ namespace Dajunctic
 
         public void ClearAllVisuals()
         {
-            foreach (var kvp in _spawnedItems)
+            foreach (var instance in _spawnedItems)
             {
-                if (kvp.Value != null) Destroy(kvp.Value.gameObject);
+                if (instance != null) Destroy(instance.gameObject);
             }
             _spawnedItems.Clear();
         }
@@ -96,12 +96,9 @@ namespace Dajunctic
         {
             if (index >= 0 && index < _itemBench.Count)
             {
-                ItemData item = _itemBench[index];
-                if (_spawnedItems.TryGetValue(item, out var instance))
-                {
-                    if (instance != null) Destroy(instance.gameObject);
-                    _spawnedItems.Remove(item);
-                }
+                DraggableItem instance = _spawnedItems[index];
+                if (instance != null) Destroy(instance.gameObject);
+                _spawnedItems.RemoveAt(index);
 
                 _itemBench.RemoveAt(index);
                 
@@ -117,23 +114,22 @@ namespace Dajunctic
             var benchPositions = GameplayPopup.Instance?.ItemBenchPositions;
             if (benchPositions == null || benchPositions.Length == 0) return;
 
-            for (int i = 0; i < _itemBench.Count; i++)
+            for (int i = 0; i < _spawnedItems.Count; i++)
             {
-                ItemData item = _itemBench[i];
-                if (_spawnedItems.TryGetValue(item, out var instance))
+                DraggableItem instance = _spawnedItems[i];
+                if (instance != null && i < benchPositions.Length)
                 {
-                    if (i < benchPositions.Length)
-                    {
-                        instance.transform.SetParent(benchPositions[i], false);
-                        instance.transform.localPosition = Vector3.zero;
-                    }
+                    instance.transform.SetParent(benchPositions[i], false);
+                    instance.transform.localPosition = Vector3.zero;
                 }
             }
         }
 
-        public bool TryGiveItemToHero(ItemData item, HeroCombatActor hero)
+        public bool TryGiveItemToHero(DraggableItem instance, HeroCombatActor hero)
         {
-            if (item == null || hero == null) return false;
+            if (instance == null || hero == null) return false;
+            ItemData item = instance.ItemData;
+            if (item == null) return false;
 
             // Logic for giving/combining items
             // 1. Get the hero's item container
@@ -141,19 +137,23 @@ namespace Dajunctic
             if (container == null)
             {
                 container = hero.gameObject.AddComponent<ItemContainer>();
-                container.Initialize(hero);
             }
+            // Always ensure it's initialized with the hero reference
+            container.Initialize(hero);
 
             // 2. Try to add or combine
             if (container.TryAddItem(item, recipeDatabase))
             {
-                // Item successfully consumed
-                _itemBench.Remove(item);
-                if (_spawnedItems.TryGetValue(item, out var instance))
+                // Find and remove from bench by instance to handle duplicates correctly
+                int index = _spawnedItems.IndexOf(instance);
+                if (index != -1)
                 {
-                    if (instance != null) Destroy(instance.gameObject);
-                    _spawnedItems.Remove(item);
+                    _itemBench.RemoveAt(index);
+                    _spawnedItems.RemoveAt(index);
                 }
+                
+                // Item successfully consumed
+                Destroy(instance.gameObject);
                 
                 RearrangeBench();
                 
@@ -183,7 +183,7 @@ namespace Dajunctic
             // Press 'I' to spawn a random item for testing
             if (Input.GetKeyDown(KeyCode.I))
             {
-                Debug.LogError("Spawning random item for testing...");
+                // Debug.LogError("Spawning random item for testing...");
                 DebugSpawnRandomItem();
             }
         }
