@@ -83,12 +83,9 @@ namespace Dajunctic
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
             {
-                // Apply the offset to keep the unit at the same relative position to the cursor
                 Vector3 worldPos = hit.point + _dragOffset;
                 Vector3 targetPos = worldPos;
 
-                // HIGH-LEVEL CHANGE: The unit follows the mouse FREELY during drag.
-                // We only call SnapPosition to trigger the "Highlight" visual on the tiles.
                 foreach (var target in allTargets)
                 {
                     target.TryGetSnapPosition(worldPos, out _); 
@@ -105,22 +102,17 @@ namespace Dajunctic
             
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
             {
-                // We use the unit's pivot position (hit point + original offset) to find the target tile
                 Vector3 worldPos = hit.point + _dragOffset;
-                bool snapped = false;
-
                 foreach (var target in allTargets)
                 {
                     if (target.TryGetSnapPosition(worldPos, out Vector3 snappedPos))
                     {
                         finalPos = snappedPos;
-                        snapped = true;
                         break;
                     }
                 }
-
-                }
-
+            }
+            
             currentDragged.OnDrop(finalPos);
             foreach (var target in allTargets) target.OnDragEnd();
             currentDragged = null;

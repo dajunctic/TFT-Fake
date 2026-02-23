@@ -1079,7 +1079,7 @@ GameObject:
   - component: {fileID: 3831561075864026275}
   - component: {fileID: 7393209067629438465}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: item_bench_slot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2183,6 +2183,23 @@ MonoBehaviour:
   xpProgress: {fileID: 2493401678057097176}
   buyXPButton: {fileID: 8355123804027416201}
   buyXPDisabledButton: {fileID: 6821285816916571320}
+  itemBenchPositions:
+  - {fileID: 1197957665626015029}
+  - {fileID: 9055930059680576239}
+  - {fileID: 5596608882226567114}
+  - {fileID: 5682423464249877034}
+  - {fileID: 4049296310117335219}
+  - {fileID: 2680342563814070358}
+  - {fileID: 3846807976108066047}
+  - {fileID: 6960795048049398090}
+  - {fileID: 2391908696645267024}
+  - {fileID: 4943331443208347038}
+  - {fileID: 1411986879810177780}
+  - {fileID: 3941920152471136905}
+  - {fileID: 292899378231422502}
+  - {fileID: 4151642139525307262}
+  - {fileID: 1536871840537370022}
+  - {fileID: 2229751937729678611}
 --- !u!1 &5729060490075618414
 GameObject:
   m_ObjectHideFlags: 0

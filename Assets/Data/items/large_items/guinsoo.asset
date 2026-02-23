@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d2ebf0abea89fb4584265a8b6016270, type: 3}
   m_Name: guinsoo
   m_EditorClassIdentifier: 
-  itemName: "G\u1EADy Ph\xE9p"
+  itemName: "Cu\u1ED3ng \u0111ao Guinsoo"
   description: "G\u1EADy ph\xE9p"
   icon: {fileID: 21300000, guid: 0bd69ec8db065a648a2c35ccfb56180f, type: 3}
-  type: 0
+  type: 1
   bonusHp: 1
   bonusAtk: 0
   bonusAtkSpd: 0

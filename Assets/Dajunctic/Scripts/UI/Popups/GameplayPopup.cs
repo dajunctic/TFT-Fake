@@ -25,6 +25,12 @@ namespace Dajunctic
         [SerializeField] private Image xpProgress;
         [SerializeField] private GameObject buyXPButton;
         [SerializeField] private GameObject buyXPDisabledButton;
+        
+        [Header("Item Bench")]
+        [SerializeField] private Transform[] itemBenchPositions;
+        public Transform[] ItemBenchPositions => itemBenchPositions;
+
+        public static GameplayPopup Instance { get; private set; }
 
         // Cached Systems
         private ShopSystem _shopSystem;
@@ -44,6 +50,24 @@ namespace Dajunctic
             this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
         }
 
+        public override void AfterShow()
+        {
+            base.AfterShow();
+            
+            var itemSystem = this.GetSystem<ItemSystem>();
+            if (itemSystem != null) itemSystem.RefreshAllVisuals();
+        }
+
+        public override void BeforeDismiss()
+        {
+            base.BeforeDismiss();
+            
+            var itemSystem = this.GetSystem<ItemSystem>();
+            if (itemSystem != null) itemSystem.ClearAllVisuals();
+            
+            if (Instance == this) Instance = null;
+        }
+
         public override void StopListenEvents()
         {
             base.StopListenEvents();
@@ -57,6 +81,7 @@ namespace Dajunctic
 
         public override void BeforeShow(object data = null)
         {
+            Instance = this;
             base.BeforeShow(data);
             UpdateUI();
             UpdateShop();

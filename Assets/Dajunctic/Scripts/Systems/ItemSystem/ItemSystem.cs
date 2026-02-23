@@ -7,8 +7,10 @@ namespace Dajunctic
     {
         [SerializeField] private ItemRecipeDatabase recipeDatabase;
         [SerializeField] private DraggableItem draggableItemPrefab;
-        [SerializeField] private Transform[] benchPositions; // 10 slots on the ground
         [SerializeField] private int maxBenchSlots = 10;
+        
+        [Header("Debug")]
+        [SerializeField] private ItemData[] debugTestItems;
         
         private List<ItemData> _itemBench = new List<ItemData>();
         private Dictionary<ItemData, DraggableItem> _spawnedItems = new Dictionary<ItemData, DraggableItem>();
@@ -43,12 +45,51 @@ namespace Dajunctic
 
         private void SpawnItemOnBench(ItemData item, int slotIndex)
         {
-            if (draggableItemPrefab == null || slotIndex >= benchPositions.Length) return;
+            if (GameplayPopup.Instance == null) return; // Don't spawn if UI is closed
+            
+            var benchPositions = GameplayPopup.Instance.ItemBenchPositions;
+            if (draggableItemPrefab == null)
+            {
+                Debug.LogWarning("DraggableItemPrefab is not assigned in ItemSystem!");
+                return;
+            }
+            if (benchPositions == null || benchPositions.Length == 0)
+            {
+                Debug.LogWarning("ItemBenchPositions in GameplayPopup is empty!");
+                return;
+            }
+            if (slotIndex >= benchPositions.Length) return;
 
-            Vector3 pos = benchPositions[slotIndex].position;
-            DraggableItem instance = Instantiate(draggableItemPrefab, pos, Quaternion.identity, transform);
+            Transform parentSlot = benchPositions[slotIndex];
+            
+            // Instantiate perfectly inside the UI slot
+            DraggableItem instance = Instantiate(draggableItemPrefab, parentSlot);
+            
+            // Reset local position and scale for UI elements
+            instance.transform.localPosition = Vector3.zero;
+            instance.transform.localScale = Vector3.one;
+
             instance.Initialize(item);
             _spawnedItems[item] = instance;
+        }
+
+        public void RefreshAllVisuals()
+        {
+            ClearAllVisuals();
+            
+            for (int i = 0; i < _itemBench.Count; i++)
+            {
+                SpawnItemOnBench(_itemBench[i], i);
+            }
+        }
+
+        public void ClearAllVisuals()
+        {
+            foreach (var kvp in _spawnedItems)
+            {
+                if (kvp.Value != null) Destroy(kvp.Value.gameObject);
+            }
+            _spawnedItems.Clear();
         }
 
         public void RemoveItemFromBench(int index)
@@ -73,19 +114,26 @@ namespace Dajunctic
 
         private void RearrangeBench()
         {
+            var benchPositions = GameplayPopup.Instance?.ItemBenchPositions;
+            if (benchPositions == null || benchPositions.Length == 0) return;
+
             for (int i = 0; i < _itemBench.Count; i++)
             {
                 ItemData item = _itemBench[i];
                 if (_spawnedItems.TryGetValue(item, out var instance))
                 {
-                    instance.transform.position = benchPositions[i].position;
+                    if (i < benchPositions.Length)
+                    {
+                        instance.transform.SetParent(benchPositions[i], false);
+                        instance.transform.localPosition = Vector3.zero;
+                    }
                 }
             }
         }
 
-        public void TryGiveItemToHero(ItemData item, HeroCombatActor hero)
+        public bool TryGiveItemToHero(ItemData item, HeroCombatActor hero)
         {
-            if (item == null || hero == null) return;
+            if (item == null || hero == null) return false;
 
             // Logic for giving/combining items
             // 1. Get the hero's item container
@@ -101,14 +149,45 @@ namespace Dajunctic
             {
                 // Item successfully consumed
                 _itemBench.Remove(item);
-                _spawnedItems.Remove(item); // The DraggableItem destroys itself in OnDrop or we handle it here
+                if (_spawnedItems.TryGetValue(item, out var instance))
+                {
+                    if (instance != null) Destroy(instance.gameObject);
+                    _spawnedItems.Remove(item);
+                }
                 
                 RearrangeBench();
                 
                 this.Raise(new ItemBenchChangedEvent());
                 Debug.Log($"Gave {item.itemName} to {hero.name}");
+                return true;
+            }
+            return false;
+        }
+
+        #region Debug
+        [ContextMenu("Spawn Random Test Item")]
+        public void DebugSpawnRandomItem()
+        {
+            if (debugTestItems == null || debugTestItems.Length == 0)
+            {
+                Debug.LogWarning("No debug test items assigned in ItemSystem!");
+                return;
+            }
+
+            int randomIndex = Random.Range(0, debugTestItems.Length);
+            AddItemToBench(debugTestItems[randomIndex]);
+        }
+
+        private void Update()
+        {
+            // Press 'I' to spawn a random item for testing
+            if (Input.GetKeyDown(KeyCode.I))
+            {
+                Debug.LogError("Spawning random item for testing...");
+                DebugSpawnRandomItem();
             }
         }
+        #endregion
     }
 
     public struct ItemBenchChangedEvent : IEvent { }

@@ -1,58 +1,87 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Dajunctic
 {
-    public class DraggableItem : MonoBehaviour, IDraggable
+    public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         private ItemData _itemData;
         private Vector3 _originalPosition;
-        private bool _isDragging;
+        private Transform _originalParent;
         private Camera _mainCamera;
         
         [SerializeField] private LayerMask heroLayer;
+        [SerializeField] private Image iconImage;
 
         public void Initialize(ItemData data)
         {
             _itemData = data;
-            _mainCamera = Camera.main;
-            // Set visuals based on data.icon or a 3D model
-        }
-
-        public void OnDragStart()
-        {
-            _isDragging = true;
-            _originalPosition = transform.position;
-        }
-
-        public void OnDragUpdate(Vector3 worldPos)
-        {
-            // Follow mouse with a slight height offset
-            transform.position = worldPos + Vector3.up * 0.5f;
             
-            // Optional: Raycast to find hero and show preview
-            CheckForHeroUnderMouse();
-        }
-
-        public void OnDrop(Vector3 finalPos)
-        {
-            _isDragging = false;
-            
-            // Check if dropped on a hero
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 100f, heroLayer))
+            if (iconImage == null)
             {
-                HeroCombatActor hero = hit.collider.GetComponentInParent<HeroCombatActor>();
-                if (hero != null)
+                TryGetComponent(out iconImage);
+            }
+            if (iconImage != null && data != null)
+            {
+                iconImage.sprite = data.icon;
+                // Ensure image is visible in case the prefab has it transparent
+                iconImage.color = Color.white; 
+            }
+        }
+
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            _originalPosition = transform.position;
+            _originalParent = transform.parent;
+            
+            // Move to the root of the canvas so it renders on top of everything and doesn't get clipped
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                transform.SetParent(canvas.transform, true);
+                transform.SetAsLastSibling();
+            }
+            
+            // Disable raycast block so the mouse raycast can go through it and hit the 3D world or heroes
+            if (iconImage != null)
+            {
+                iconImage.raycastTarget = false;
+            }
+        }
+
+        public void OnDrag(PointerEventData eventData)
+        {
+            transform.position = eventData.position;
+        }
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            if (iconImage != null)
+            {
+                iconImage.raycastTarget = true;
+            }
+
+            // Check if dropped on a hero
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            if (_mainCamera != null)
+            {
+                Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, 100f, heroLayer))
                 {
-                    // Try to give item
-                    var itemSystem = GameSystemManager.Instance.Items;
-                    if (itemSystem != null)
+                    HeroCombatActor hero = hit.collider.GetComponentInParent<HeroCombatActor>();
+                    if (hero != null)
                     {
-                        itemSystem.TryGiveItemToHero(_itemData, hero);
-                        // If successfully given, the ItemSystem will handle the bench logic
-                        // and this object should probably be destroyed or returned to pool
-                        Destroy(gameObject);
-                        return;
+                        // Try to give item
+                        var itemSystem = GameSystemManager.Instance.Items;
+                        if (itemSystem != null)
+                        {
+                            if (itemSystem.TryGiveItemToHero(_itemData, hero))
+                            {
+                                // Item was given and the ItemSystem will destroy this GameObject.
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -61,16 +90,10 @@ namespace Dajunctic
             ResetPosition();
         }
 
-        private void CheckForHeroUnderMouse()
-        {
-            // Visual feedback when hovering over hero
-        }
-
         public void ResetPosition()
         {
+            transform.SetParent(_originalParent);
             transform.position = _originalPosition;
         }
-
-        public Transform GetTransform() => transform;
     }
 }

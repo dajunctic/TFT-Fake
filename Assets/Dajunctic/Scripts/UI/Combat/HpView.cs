@@ -23,6 +23,10 @@ namespace Dajunctic
         private void Awake()
         {
             _cachedTransform = transform;
+            foreach (var icon in itemIcons)
+            {
+                icon.gameObject.SetActive(false);
+            }
         }
 
         public void Initialize(CombatActor owner, int starLevel)
