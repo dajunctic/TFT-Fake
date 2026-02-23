@@ -1,5 +1,15 @@
 {
   "dependencies": {
+    "com.coplaydev.coplay": {
+      "version": "https://github.com/CoplayDev/coplay-unity-plugin.git#beta",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.inputsystem": "1.1.1",
+        "com.unity.cloud.gltfast": "6.12.1"
+      },
+      "hash": "d4ebbc52458dc0f5e49dc288495ff30b303fb6a1"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

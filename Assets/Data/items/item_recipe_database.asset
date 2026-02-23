@@ -13,6 +13,135 @@ MonoBehaviour:
   m_Name: item_recipe_database
   m_EditorClassIdentifier: 
   recipes:
-  - componentA: {fileID: 11400000, guid: 78ba94251ab9083439b7344ba3ff2df5, type: 2}
-    componentB: {fileID: 11400000, guid: f6dba060b92e7bc489c4e2d31d7ed68c, type: 2}
-    result: {fileID: 11400000, guid: 5f98c62e9d865504c89680dbd09e7409, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 8e26f080113077b46b4844ceb1187615, type: 2}
+  - componentA: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 63369dca3cafe7a4bb31942d76237a8b, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 2a1d8386495d5e24781c2e30e5cdca95, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    result: {fileID: 11400000, guid: eaddbb5997545cb4c94b15dc24581d70, type: 2}
+  - componentA: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    componentB: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    result: {fileID: 11400000, guid: 8b61abeabad310b439469ce68cbf06fb, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 5597927e0d74ee046b13bf08a401b9ea, type: 2}
+  - componentA: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 16b453455b518864bbe7ad7be9d6dbb1, type: 2}
+  - componentA: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: 3dcd37fd689b7854b86f39abd9235657, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    result: {fileID: 11400000, guid: 85fe530994b45b34d8e251c41be02036, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    result: {fileID: 11400000, guid: acf008adc4e84fd4d843a3ea091914cd, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    result: {fileID: 11400000, guid: 37d270295ed56e246acedf33a34f5dc5, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    result: {fileID: 11400000, guid: 7b76ffc91d26e5a409aa648b7d8bcd60, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 8380c8ba02c94a542beda0cd5e47929c, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    result: {fileID: 11400000, guid: 29a21d549f168c743bfc9f3e1b9f3156, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 50dc02c9675ec97499073601993ea6ae, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 41df8b6069905ed4097804e662bef16b, type: 2}
+  - componentA: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 3075f997bb89dce4c96d00f9024c907b, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 94a1aaf92faa0f2448aa9c8b1160ae3d, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    result: {fileID: 11400000, guid: 02a7b6327cd5cbc448a3b54c44b2aad1, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    result: {fileID: 11400000, guid: c0330465886b26e4aafb82cb78e8cb0f, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    result: {fileID: 11400000, guid: 844c3b1dbbf07e14dad2653f55b39b29, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: 9d5e9f326d39d8848be0aef5c595b30e, type: 2}
+  - componentA: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: bb14707eee9c9bd428c3fe1b1e48b408, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    result: {fileID: 11400000, guid: bd84e401bc8422c46b6132a20429bd46, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    result: {fileID: 11400000, guid: 6355f2f7d8202f54881e10ba809e1b2a, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: d0ceed6c33ff60c4e9703be05836a521, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    result: {fileID: 11400000, guid: 084dd189f7cd2434fa4414bc34d12f48, type: 2}
+  - componentA: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: e2912e163954f67468b40c9ff9c54240, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    result: {fileID: 11400000, guid: ec782505940f40347867b70c97d88760, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    result: {fileID: 11400000, guid: c9070e81d714de448a3af5c4b82f16b3, type: 2}
+  - componentA: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: deb4673fc9e2c11458bc021707b65980, type: 2}
+  - componentA: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: e29ed5ef0eac3774eb6606ff7b966894, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    result: {fileID: 11400000, guid: f97897927f603a14e93f6bee3837e227, type: 2}
+  - componentA: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: b2359c7b7b59a354ba0bf5f108d824ad, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: 1dd85661ee6d66340bb1cb689ee84849, type: 2}
+  - componentA: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    componentB: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    result: {fileID: 11400000, guid: c381071e8f75b7b43a5c58df28e3666a, type: 2}
+  - componentA: {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: cd1417d813f29cd4089aeef27ef314e0, type: 2}
+  - componentA: {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: f0ae8765e7423004db04649ac57d7a2f, type: 2}
+  - componentA: {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: 5ac52dde85e4c44419f7a2fc36256b3a, type: 2}
+  - componentA: {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: 63f3840b0c0483248b331fc6cb1bd802, type: 2}
+  - componentA: {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: 2a8ae77aaa993f34998ed5a1e4ecc956, type: 2}
+  - componentA: {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: 535b1350149d4194e8b365711d8d39e0, type: 2}
+  - componentA: {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+    componentB: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    result: {fileID: 11400000, guid: f92bcd57de193d140897fbb07e00304b, type: 2}
+  - componentA: {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+    componentB: {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+    result: {fileID: 11400000, guid: 9857b016aab656e419edfc00cfb46d23, type: 2}

@@ -1344,8 +1344,15 @@ MonoBehaviour:
   draggableItemPrefab: {fileID: 1148981169544126570, guid: ca5504d5a4cf273438f53345359971de, type: 3}
   maxBenchSlots: 16
   debugTestItems:
-  - {fileID: 11400000, guid: f6dba060b92e7bc489c4e2d31d7ed68c, type: 2}
-  - {fileID: 11400000, guid: 78ba94251ab9083439b7344ba3ff2df5, type: 2}
+  - {fileID: 11400000, guid: 0768a1fac051ee842b1012dc9f1449bb, type: 2}
+  - {fileID: 11400000, guid: 44b4755683fc2844ca6eea439f66e078, type: 2}
+  - {fileID: 11400000, guid: 039e5371ba2bab741b4cad305d1b4f19, type: 2}
+  - {fileID: 11400000, guid: e6e523abef84be74ba467fa61dfd994d, type: 2}
+  - {fileID: 11400000, guid: 2c96fd457195e904194319dfd01c7ad8, type: 2}
+  - {fileID: 11400000, guid: 069dd1b68e56cec42b0a684c342fadde, type: 2}
+  - {fileID: 11400000, guid: 5453def705f87de4cbbb57a9519ebc02, type: 2}
+  - {fileID: 11400000, guid: 15c3672e71911984eb1f2870b0e6cef6, type: 2}
+  - {fileID: 11400000, guid: 3c77e7e7c6a361b4eb888e383e327db6, type: 2}
 --- !u!1 &1283003337
 GameObject:
   m_ObjectHideFlags: 0

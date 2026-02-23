@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d2ebf0abea89fb4584265a8b6016270, type: 3}
-  m_Name: needlessly_large_rod
+  m_Name: guinsooSRageblade
   m_EditorClassIdentifier: 
-  itemName: "G\u1EADy Ph\xE9p"
-  description: "G\u1EADy ph\xE9p"
-  icon: {fileID: 21300000, guid: ee58fd3f0cdd3e544be4be8b9c0c4ed4, type: 3}
-  type: 0
-  bonusHp: 1
+  itemName: Guinsoo S Rageblade
+  description: 
+  icon: {fileID: 21300000, guid: 0bd69ec8db065a648a2c35ccfb56180f, type: 3}
+  type: 1
+  bonusHp: 0
   bonusAtk: 0
   bonusAtkSpd: 0
   bonusArmor: 0
-  bonusMagicResist: 0.1
+  bonusMagicResist: 0
   bonusAbilityPower: 0
   bonusMana: 0
   bonusCritChance: 0
