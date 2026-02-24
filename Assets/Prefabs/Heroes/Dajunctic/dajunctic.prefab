@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 6403891472505509688}
   - component: {fileID: 6829343010303944486}
   - component: {fileID: 234713398088610929}
+  - component: {fileID: -5256077671712607872}
   m_Layer: 7
   m_Name: dajunctic
   m_TagString: Untagged
@@ -112,6 +113,20 @@ MonoBehaviour:
   <StarLevel>k__BackingField: 1
   hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   testSkillIds: []
+--- !u!114 &-5256077671712607872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 604641411015973459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e559fd6d45b6c374c8f337b69652d7dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  graph: {fileID: 11400000, guid: 9b0d753e800b57f4ebdcb0677c3da8a2, type: 2}
+  actor: {fileID: 234713398088610929}
 --- !u!1 &5108719794061738136
 GameObject:
   m_ObjectHideFlags: 0
