@@ -62,7 +62,7 @@ namespace Dajunctic
             if (sellPriceText != null && _currentDraggedHero != null)
             {
                 int gold = _currentDraggedHero.GetSellValue();
-                sellPriceText.text = $"+{gold}";
+                sellPriceText.text = $"+{gold}<sprite=0>";
             }
             
             Debug.Log("<color=orange>Mouse entered Sell Zone while dragging hero</color>");
