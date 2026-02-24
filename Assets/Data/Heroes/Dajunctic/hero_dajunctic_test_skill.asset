@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3514335573931769787
+--- !u!114 &-8065477161942224702
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,14 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66325352259352547901d017a3a30364, type: 3}
-  m_Name: TargetNode
+  m_Script: {fileID: 11500000, guid: cc8ee4c41eaa44b45a82618fb54416ad, type: 3}
+  m_Name: WaitNode
   m_EditorClassIdentifier: 
-  guid: d61e0c97-bbd1-4936-9952-651874976fc2
-  position: {x: 623, y: 371}
-  targetType: 0
-  radius: 5
---- !u!114 &-1001720956025309526
+  guid: a38e7b02-a52a-4d26-83df-aa34bcefbf3f
+  position: {x: 522, y: 204}
+  duration: 0
+--- !u!114 &-6359482410116455573
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,25 +27,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c28f214cf5d48540ad070ac90bd5363, type: 3}
   m_Name: StartNode
   m_EditorClassIdentifier: 
-  guid: 1c72ec57-dbc3-40af-965b-d8352bba8505
-  position: {x: 141, y: 198}
---- !u!114 &-379291909839289286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d207716f6f768254797c184feedb86d9, type: 3}
-  m_Name: ShootNode
-  m_EditorClassIdentifier: 
-  guid: 37200eb3-e499-4018-84cf-d6e8382f5efc
-  position: {x: 630, y: 579}
-  missileId: 
-  launcherOffset: {x: 0, y: 0, z: 0}
-  damageMultiplier: 1
+  guid: 7a2c664d-925c-465d-9d5e-dae92e200e84
+  position: {x: 153.91255, y: 197.63771}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,25 +42,6 @@ MonoBehaviour:
   m_Name: hero_dajunctic_test_skill
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -1001720956025309526}
-  - {fileID: 7945344214661172331}
-  - {fileID: -3514335573931769787}
-  - {fileID: -379291909839289286}
+  - {fileID: -6359482410116455573}
+  - {fileID: -8065477161942224702}
   links: []
---- !u!114 &7945344214661172331
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df41cc69ee351f84d9e0b6b8d961406c, type: 3}
-  m_Name: AnimationNode
-  m_EditorClassIdentifier: 
-  guid: 3605bfb3-2533-4b90-9503-673574921c45
-  position: {x: 607, y: 290}
-  animationName: 
-  transitionDuration: 0.1
-  waitForFinish: 1

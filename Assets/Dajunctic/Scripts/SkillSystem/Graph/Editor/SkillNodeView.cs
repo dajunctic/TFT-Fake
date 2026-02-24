@@ -50,7 +50,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateOutputPorts()
         {
-            outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+            outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
             outputPort.portName = "Out";
             outputContainer.Add(outputPort);
         }

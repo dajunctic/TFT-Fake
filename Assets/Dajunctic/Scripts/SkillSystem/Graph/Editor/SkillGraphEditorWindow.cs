@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph.Editor
 {
@@ -28,6 +29,9 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private PreviewRenderUtility _previewRenderUtility;
         private GameObject _previewInstance;
         private Vector2 _previewDir = new Vector2(120, -20);
+        private float _previewDistance = 6f;
+        private Vector3 _previewPivot = Vector3.up * 0.8f;
+        private Dictionary<string, int> _nodeTriggerCounts = new Dictionary<string, int>();
 
         [MenuItem("Dajunctic/Skill Graph Editor")]
         public static void OpenWindow()
@@ -72,8 +76,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 {
                     animator.Update(Time.deltaTime);
                 }
-                Repaint();
             }
+            Repaint();
         }
 
         private void ConstructGraphView()
@@ -155,21 +159,19 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void OnPreviewGUI()
         {
+            Rect rect = GUILayoutUtility.GetRect(200, 200, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+
             if (_previewInstance == null)
             {
-                GUI.Label(new Rect(10, 10, 200, 20), "No Preview Actor Selected");
-                return;
+                GUI.Label(new Rect(rect.x + 10, rect.y + 10, 200, 20), "No Preview Actor Selected");
             }
 
-            Rect rect = GUILayoutUtility.GetRect(200, 200, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-            
-            _previewDir = Drag2D(_previewDir, rect);
+            HandlePreviewInput(rect);
 
             _previewRenderUtility.BeginPreview(rect, GUIStyle.none);
 
-            _previewRenderUtility.camera.transform.position = Vector3.zero;
             _previewRenderUtility.camera.transform.rotation = Quaternion.Euler(-_previewDir.y, -_previewDir.x, 0);
-            _previewRenderUtility.camera.transform.position = _previewRenderUtility.camera.transform.forward * -6f + Vector3.up * 1.5f;
+            _previewRenderUtility.camera.transform.position = _previewPivot + _previewRenderUtility.camera.transform.forward * -_previewDistance;
 
             _previewRenderUtility.lights[0].intensity = 1.4f;
             _previewRenderUtility.lights[0].transform.rotation = Quaternion.Euler(40f, 40f, 0f);
@@ -177,14 +179,17 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             _previewRenderUtility.Render(true);
 
+            DrawPreviewGrid();
+
             Texture result = _previewRenderUtility.EndPreview();
             GUI.DrawTexture(rect, result);
         }
 
-        private Vector2 Drag2D(Vector2 scrollPos, Rect rect)
+        private void HandlePreviewInput(Rect rect)
         {
-            int controlID = GUIUtility.GetControlID("Slider".GetHashCode(), FocusType.Passive);
+            int controlID = GUIUtility.GetControlID("PreviewInput".GetHashCode(), FocusType.Passive);
             Event evt = Event.current;
+
             switch (evt.GetTypeForControl(controlID))
             {
                 case EventType.MouseDown:
@@ -205,14 +210,58 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 case EventType.MouseDrag:
                     if (GUIUtility.hotControl == controlID)
                     {
-                        scrollPos -= evt.delta * (evt.shift ? 3 : 1) / Mathf.Min(rect.width, rect.height) * 140f;
-                        scrollPos.y = Mathf.Clamp(scrollPos.y, -90f, 90f);
+                        if (evt.button == 1) // Right click - Rotate
+                        {
+                            _previewDir -= evt.delta * (evt.shift ? 3 : 1) / Mathf.Min(rect.width, rect.height) * 140f;
+                            _previewDir.y = Mathf.Clamp(_previewDir.y, -90f, 90f);
+                        }
+                        else if (evt.button == 0 || evt.button == 2) // Left click or Middle click - Pan
+                        {
+                            Vector3 camRight = _previewRenderUtility.camera.transform.right;
+                            Vector3 camUp = _previewRenderUtility.camera.transform.up;
+                            _previewPivot -= (camRight * evt.delta.x - camUp * evt.delta.y) * 0.01f * (_previewDistance / 6f);
+                        }
+                        evt.Use();
+                        GUI.changed = true;
+                    }
+                    break;
+                case EventType.ScrollWheel:
+                    if (rect.Contains(evt.mousePosition))
+                    {
+                        _previewDistance += evt.delta.y * 0.05f;
+                        _previewDistance = Mathf.Max(0.1f, _previewDistance);
                         evt.Use();
                         GUI.changed = true;
                     }
                     break;
             }
-            return scrollPos;
+        }
+
+        private void DrawPreviewGrid()
+        {
+            GL.PushMatrix();
+            GL.LoadProjectionMatrix(_previewRenderUtility.camera.projectionMatrix);
+            GL.modelview = _previewRenderUtility.camera.worldToCameraMatrix;
+
+            var mat = new Material(Shader.Find("Hidden/Internal-Colored"));
+            mat.SetPass(0);
+
+            GL.Begin(GL.LINES);
+            
+            // Draw Grid
+            GL.Color(new Color(0.7f, 0.7f, 0.7f, 0.5f));
+            float gridSize = 10f;
+            float step = 1f;
+            for (float i = -gridSize; i <= gridSize; i += step)
+            {
+                GL.Vertex(new Vector3(i, 0, -gridSize));
+                GL.Vertex(new Vector3(i, 0, gridSize));
+                GL.Vertex(new Vector3(-gridSize, 0, i));
+                GL.Vertex(new Vector3(gridSize, 0, i));
+            }
+
+            GL.End();
+            GL.PopMatrix();
         }
 
         public SkillGraph CurrentGraph => _currentGraph;
@@ -281,6 +330,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             }
 
             Debug.Log("Previewing Skill...");
+            _nodeTriggerCounts.Clear();
             
             var actor = _previewInstance.GetComponent<CombatActor>();
             if (actor == null) return;
@@ -302,11 +352,21 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         {
             node.Execute(context, () =>
             {
-                var link = _currentGraph.links.FirstOrDefault(l => l.baseNodeGuid == node.guid);
-                if (link != null)
+                var outgoingLinks = _currentGraph.links.Where(l => l.baseNodeGuid == node.guid).ToList();
+                
+                foreach (var link in outgoingLinks)
                 {
                     var nextNode = _currentGraph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
-                    if (nextNode != null)
+                    if (nextNode == null) continue;
+
+                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid))
+                        _nodeTriggerCounts[nextNode.guid] = 0;
+                    
+                    _nodeTriggerCounts[nextNode.guid]++;
+
+                    int totalIncoming = _currentGraph.links.Count(l => l.targetNodeGuid == nextNode.guid);
+
+                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming)
                     {
                         ExecuteNode(nextNode, context);
                     }
