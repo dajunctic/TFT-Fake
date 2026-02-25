@@ -4,26 +4,34 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class PlayFxNode : SkillNode
     {
-        public GameObject vfxPrefab;
-        public string attachPoint;
+        public string fxId;            // ID tra cứu qua ISkillServiceProvider
+        public GameObject vfxPrefab;   // Fallback: dùng trực tiếp khi không có services
+        public AnchorType spawnAnchor = AnchorType.FootPoint;
         public float duration = 2f;
 
         public override void Execute()
         {
-            if (vfxPrefab != null)
+            Vector3 spawnPos = _context.actor.GetAnchorPosition(spawnAnchor);
+            Quaternion spawnRot = Quaternion.LookRotation(_context.actor.Forward);
+
+            if (_context.Services != null && !string.IsNullOrEmpty(fxId))
             {
-                var vfx = Instantiate(vfxPrefab, _context.actor.Position, Quaternion.identity);
+                // Dùng service (cả runtime lẫn editor preview)
+                _context.Services.SpawnFx(fxId, spawnPos, spawnRot, duration);
+            }
+            else if (vfxPrefab != null)
+            {
+                // Fallback: Instantiate trực tiếp từ prefab (khi không có fxId)
+                var vfx = Object.Instantiate(vfxPrefab, spawnPos, spawnRot);
 
                 if (Application.isPlaying)
                 {
-                    Destroy(vfx, duration);
+                    Object.Destroy(vfx, duration);
                 }
+#if UNITY_EDITOR
                 else
                 {
-#if UNITY_EDITOR
-                    if (_context.onSpawnVFX != null)
-                        _context.onSpawnVFX(vfx);
-
+                    // Editor: tự dọn sau thời gian duration
                     float startTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
                     UnityEditor.EditorApplication.CallbackFunction update = null;
                     update = () =>
@@ -32,12 +40,12 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                         if ((float)UnityEditor.EditorApplication.timeSinceStartup - startTime >= duration)
                         {
                             UnityEditor.EditorApplication.update -= update;
-                            DestroyImmediate(vfx);
+                            Object.DestroyImmediate(vfx);
                         }
                     };
                     UnityEditor.EditorApplication.update += update;
-#endif
                 }
+#endif
             }
 
             TriggerComplete();

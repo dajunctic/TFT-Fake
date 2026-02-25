@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Dajunctic.SkillSystem.Graph;
 using UnityEngine;
 
 namespace Dajunctic
@@ -395,11 +396,19 @@ namespace Dajunctic
             InputManager.OnTestFirstSkill += OnTestFirstSkill;
         }
 
-        [SerializeField, GuidReference("tl", typeof(IDummyId))] List<string> testSkillIds;
-
         public void OnTestFirstSkill()
         {
-            this.Raise(new PlayTimelineEvent{ Id= testSkillIds[0], Actor = this});
+            // Test first skill using SkillGraph
+            if (CombatActorData != null && CombatActorData.skills.Count > 0)
+            {
+                var firstSkill = CombatActorData.skills[0];
+                if (firstSkill != null && firstSkill.skillGraph != null)
+                {
+                    var runner = GetSkillGraphRunner();
+                    runner.graph = firstSkill.skillGraph;
+                    runner.Run();
+                }
+            }
         }
 
         protected virtual void OnDestroy()

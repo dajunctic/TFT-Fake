@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Dajunctic.SkillSystem.Graph;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
@@ -328,8 +329,23 @@ namespace Dajunctic
 
         #endregion
 
-        #region Timeline
-        public TimelineSkill timelineSkill = new TimelineSkill();
+        #region SkillGraph
+        private SkillGraphRunner _skillGraphRunner;
+        public SkillGraphRunner GetSkillGraphRunner()
+        {
+            if (_skillGraphRunner == null)
+            {
+                _skillGraphRunner = GetComponentInChildren<SkillGraphRunner>();
+                if (_skillGraphRunner == null)
+                {
+                    var go = new GameObject("SkillGraphRunner");
+                    go.transform.SetParent(CachedTransform);
+                    _skillGraphRunner = go.AddComponent<SkillGraphRunner>();
+                    _skillGraphRunner.actor = this;
+                }
+            }
+            return _skillGraphRunner;
+        }
         #endregion
 
         #region Animation

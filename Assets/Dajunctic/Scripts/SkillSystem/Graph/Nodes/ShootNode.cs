@@ -8,29 +8,41 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         [SerializeField, GuidReference("missile", typeof(IDummyId))] public string missileId;
         public Vector3 launcherOffset;
         public float damageMultiplier = 1f;
+        public DamageType damageType = DamageType.PhysicalDamage;
 
-        [NodeInput] public List<CombatActor> targets;
+        [NodeInput] public List<IDamageTaker> targets;
 
         public override void Execute()
         {
-            targets = GetInputValue<List<CombatActor>>(nameof(targets));
-            var actorsToShoot = targets ?? new List<CombatActor>();
-            if (actorsToShoot.Count == 0)
+            targets = GetInputValue<List<IDamageTaker>>(nameof(targets));
+            var actorsToShoot = targets ?? new List<IDamageTaker>();
+
+            if (actorsToShoot.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
             {
                 TriggerComplete();
                 return;
             }
 
+            var casterCA = _context.actor.AsCombatActor();
+            Vector3 launchPos = casterCA != null
+                ? casterCA.CachedTransform.TransformPoint(launcherOffset)
+                : _context.actor.AsTransform().Position;
+
             foreach (var target in actorsToShoot)
             {
-                // var missileData = new MissileData
-                // {
-                //     launcher = _context.actor.CachedTransform.TransformPoint(launcherOffset),
-                //     targetActor = target,
-                //     combatActor = _context.actor,
-                //     combineDamage = new CombineDamage(DamageType.PhysicalDamage, _context.actor.GetTotalAtk() * damageMultiplier)
-                // };
-                // GameManager.Instance.SpawnMissile(missileId, missileData);
+                if (target == null) continue;
+
+                float totalAtk = _context.actor.GetTotalAtk();
+                var missileData = new MissileData
+                {
+                    launcher = launchPos,
+                    destination = target.AsTransform().Position,
+                    targetActor = target.AsCombatActor() as CombatActor,
+                    combatActor = casterCA as CombatActor,
+                    combineDamage = new CombineDamage(damageType, totalAtk * damageMultiplier)
+                };
+
+                _context.Services.SpawnMissile(missileId, missileData);
             }
 
             TriggerComplete();

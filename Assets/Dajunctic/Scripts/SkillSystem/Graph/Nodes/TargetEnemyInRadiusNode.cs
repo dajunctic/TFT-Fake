@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
@@ -18,8 +17,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public TargetType targetType;
         public float radius = 5f;
         public bool targetAll = true;
-        [ShowIf("@targetAll==false")]public int count = 1;
-
+        [ShowIf("@targetAll==false")] public int count = 1;
 
         [NodeOutput] public List<IDamageTaker> targets;
         [NodeOutput] public IDamageTaker mainTarget;
@@ -33,7 +31,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         }
 
         public override object GetValue(string portName)
-        {     
+        {
             FindTargets();
 
             if (portName == nameof(targets)) return targets;
@@ -44,12 +42,32 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         private void FindTargets()
         {
             if (mainTarget == null) isValid = false;
-
             if (isValid) return;
 
-            SkillHelper.ScanTargetInRadius(owner.AsDamageTaker(), radius, out var foundActors);
+            List<IDamageTaker> foundActors;
 
-            if (foundActors.Count > 0)
+            // ── Editor Preview: dummies injected vào context ─────────────────
+            if (!Application.isPlaying &&
+                _context.nodeOutputs.TryGetValue("__preview_dummies__", out var raw) &&
+                raw is List<IDamageTaker> previewDummies)
+            {
+                // Lọc theo team (khác team với caster)
+                var ownerCA = owner.AsCombatActor();
+                foundActors = previewDummies
+                    .Where(d =>
+                    {
+                        var dCA = d.AsCombatActor();
+                        return dCA == null || ownerCA == null || dCA.Team != ownerCA.Team;
+                    })
+                    .ToList();
+            }
+            else
+            {
+                // ── Runtime: scan bằng Physics ────────────────────────────────
+                SkillHelper.ScanTargetInRadius(owner.AsDamageTaker(), radius, out foundActors);
+            }
+
+            if (foundActors != null && foundActors.Count > 0)
             {
                 switch (targetType)
                 {
@@ -60,21 +78,18 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                         foundActors = foundActors.OrderByDescending(a => Vector3.Distance(owner.AsTransform().Position, a.AsTransform().Position)).ToList();
                         break;
                     case TargetType.Random:
-                        foundActors = foundActors.OrderBy(a => a).ToList();
-                        foundActors.Shuffle();
+                        foundActors = foundActors.OrderBy(_ => Random.value).ToList();
                         break;
                 }
 
                 if (!targetAll)
-                {
                     foundActors = foundActors.Take(count).ToList();
-                }
 
-                targets = new List<IDamageTaker>();
-                targets.AddRange(foundActors);
+                targets = new List<IDamageTaker>(foundActors);
+                mainTarget = targets.Count > 0 ? targets[0] : null;
             }
 
-            Debug.Log($"<color=green>[TargetInRadius<color=red><{owner.AsCombatActor().DataId}></color>]</color> Found: {targets.Count} targets.");
+            Debug.Log($"<color=green>[TargetInRadius<color=red><{owner.AsCombatActor()?.DataId}></color>]</color> Found: {targets?.Count ?? 0} targets.");
             isValid = true;
         }
 

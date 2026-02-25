@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45674d83aa474771be365ad913d0cb7e, type: 3}
   m_Name: hero_dajunctic_atk_1
   m_EditorClassIdentifier: 
-  id: hero_kayn_atk_1
+  id: hero_dajunctic_atk_1
   slot: 0
   castRange: 2
   duration: 4
   cooldown: 2
-  timelineId: tl_kayn_atk_1
+  skillGraph: {fileID: 11400000, guid: 9b0d753e800b57f4ebdcb0677c3da8a2, type: 2}

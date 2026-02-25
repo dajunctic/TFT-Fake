@@ -1,5 +1,6 @@
 ﻿using System;
 using Dajunctic;
+using Dajunctic.SkillSystem.Graph;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -16,8 +17,8 @@ public class SkillData : BaseSO
 {
     public SkillSlot slot;
     public float castRange;
-    public float duration;
     public float cooldown; 
 
-    [GuidReference("tl", typeof(IDummyId))] public string timelineId;
+    public SkillGraph skillGraph;
 }
+

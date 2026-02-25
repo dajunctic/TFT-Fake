@@ -6,18 +6,21 @@ namespace Dajunctic.SkillSystem.Graph
 {
     public class SkillExecutionContext
     {
-        /// <summary>
-        /// Actor đang thực thi skill (caster).
-        /// </summary>
+        /// <summary>Actor đang thực thi skill (caster).</summary>
         public ICombatActor actor;
+
+        /// <summary>
+        /// Service provider để spawn FX, missile, v.v.
+        /// Runtime: GameManager. Editor preview: PreviewSkillServiceProvider.
+        /// </summary>
+        public ISkillServiceProvider Services;
 
         public Dictionary<string, object> nodeOutputs = new();
 
-        public Action<GameObject> onSpawnVFX;
-
-        public SkillExecutionContext(ICombatActor actor)
+        public SkillExecutionContext(ICombatActor actor, ISkillServiceProvider services = null)
         {
             this.actor = actor;
+            this.Services = services;
         }
 
         public void SetOutput(string nodeGuid, string portName, object value)

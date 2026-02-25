@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
@@ -10,40 +11,64 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         public override void Execute()
         {
-            // _context.actor.PlayAnim(animationName, transitionDuration);
-
-            if (waitForFinish)
-            {
-                if (Application.isPlaying)
-                {
-                    // _context.actor.StartCoroutine(WaitForAnimation());
-                }
-                else
-                {
-#if UNITY_EDITOR
-                    UnityEditor.EditorApplication.CallbackFunction update = null;
-                    update = () =>
-                    {
-                        // if (_context.actor == null || _context.actor.IsAnimFinished)
-                        // {
-                        //     UnityEditor.EditorApplication.update -= update;
-                        //     TriggerComplete();
-                        // }
-                    };
-                    UnityEditor.EditorApplication.update += update;
-#endif
-                }
-            }
-            else
+            var actor = _context.actor.AsCombatActor();
+            if (actor == null)
             {
                 TriggerComplete();
+                return;
             }
+
+            actor.PlayAnim(animationName, transitionDuration);
+            actor.ResetAnim(); // kích hoạt lại IsAnimFinished = false
+
+            if (!waitForFinish)
+            {
+                TriggerComplete();
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                // Runtime: chạy qua SkillGraphRunner coroutine
+                var runner = actor.GetSkillGraphRunner();
+                if (runner != null)
+                {
+                    runner.StartCoroutine(WaitForAnimation((CombatActor)actor));
+                    return;
+                }
+                TriggerComplete();
+            }
+#if UNITY_EDITOR
+            else
+            {
+                // Editor Preview: poll qua EditorApplication.update
+                UnityEditor.EditorApplication.CallbackFunction update = null;
+                update = () =>
+                {
+                    if (actor == null)
+                    {
+                        UnityEditor.EditorApplication.update -= update;
+                        TriggerComplete();
+                        return;
+                    }
+                    if (actor.IsAnimFinished)
+                    {
+                        UnityEditor.EditorApplication.update -= update;
+                        TriggerComplete();
+                    }
+                };
+                UnityEditor.EditorApplication.update += update;
+            }
+#endif
         }
 
-        private System.Collections.IEnumerator WaitForAnimation()
+        private IEnumerator WaitForAnimation(CombatActor actor)
         {
-            // while (!_context.actor.IsAnimFinished)
+            yield return null; // Đợi 1 frame để animation bắt đầu
+            while (!actor.IsAnimFinished)
+            {
                 yield return null;
+            }
             TriggerComplete();
         }
     }

@@ -5,11 +5,9 @@ using UnityEngine;
 namespace Dajunctic
 {
     [CreateAssetMenu(fileName = "GameManagerSO", menuName = "Panthera/GameManagerSO")]
-    public class GameManagerSO: BaseSO
+    public class GameManagerSO : BaseSO
     {
-        [SerializeField] public List<FxEntity> fxLists;
-        [SerializeField] public List<MissileEntity> missileLists;
-            
+        [SerializeField] public List<FxEntity> fxLists = new();
+        [SerializeField] public List<MissileEntity> missileLists = new();
     }
-
 }
