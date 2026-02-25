@@ -30,8 +30,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void ApplyNodeStyle()
         {
-            if (nodeData is Nodes.StartNode) AddToClassList("start-node");
-            else if (nodeData is Nodes.AnimationNode) AddToClassList("animation-node");
+            if (nodeData is Nodes.EntryNode) AddToClassList("start-node");
+            else if (nodeData is Nodes.PlayAnimNode) AddToClassList("animation-node");
             else if (nodeData is Nodes.WaitNode) AddToClassList("wait-node");
             else if (nodeData is Nodes.VFXNode) AddToClassList("vfx-node");
             else if (nodeData is Nodes.DamageNode) AddToClassList("damage-node");
@@ -41,7 +41,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateInputPorts()
         {
-            if (nodeData is Nodes.StartNode) return;
+            if (nodeData is Nodes.EntryNode) return;
 
             inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "In";

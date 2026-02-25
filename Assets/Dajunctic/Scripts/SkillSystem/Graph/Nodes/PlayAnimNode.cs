@@ -3,7 +3,7 @@ using System;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
-    public class AnimationNode : SkillNode
+    public class PlayAnimNode : SkillNode
     {
         public string animationName;
         public float transitionDuration = 0.1f;

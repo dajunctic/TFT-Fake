@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class EventDispatcher : Singleton<EventDispatcher>
+    public class EventDispatcherView : Singleton<EventDispatcherView>
     {
         private readonly Dictionary<Type, Delegate> events = new Dictionary<Type, Delegate>();
 
@@ -53,17 +53,17 @@ namespace Dajunctic
     {
         public static void Raise<T>(this MonoBehaviour sender, T evt) where T : IEvent
         {
-            EventDispatcher.Instance.Raise(evt);
+            EventDispatcherView.Instance.Raise(evt);
         }
 
         public static void RegisterListener<T>(this MonoBehaviour listener, Action<T> action) where T : IEvent
         {
-            EventDispatcher.Instance.RegisterListener(action);
+            EventDispatcherView.Instance.RegisterListener(action);
         }
 
         public static void RemoveListener<T>(this MonoBehaviour listener, Action<T> action) where T : IEvent
         {
-            EventDispatcher.Instance.RemoveListener(action);
+            EventDispatcherView.Instance.RemoveListener(action);
         }
 
     }

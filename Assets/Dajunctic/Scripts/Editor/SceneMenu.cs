@@ -70,17 +70,17 @@ namespace Dajunctic
             return CanChangeScene(InitializeScene);
         }
         
-        // [MenuItem("Scenes/Launcher Scene", false, 22)]
-        // static void OpenLauncherScene()
-        // {
-        //     ChangeScene(LauncherScene);
-        // }
+        [MenuItem("Scenes/Launcher Scene", false, 22)]
+        static void OpenLauncherScene()
+        {
+            ChangeScene(LauncherScene);
+        }
 
-        // [MenuItem("Scenes/Launcher Scene", true, 22)]
-        // static bool CanOpenLauncherScene()
-        // {
-        //     return CanChangeScene(LauncherScene);
-        // }
+        [MenuItem("Scenes/Launcher Scene", true, 22)]
+        static bool CanOpenLauncherScene()
+        {
+            return CanChangeScene(LauncherScene);
+        }
         
         [MenuItem("Scenes/Home Scene", false, 22)]
         static void OpenHomeScene()

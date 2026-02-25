@@ -17,7 +17,7 @@ namespace Dajunctic.SkillSystem.Graph
 
             _nodeTriggerCounts.Clear();
             var context = new SkillExecutionContext(actor);
-            var startNode = graph.nodes.OfType<Nodes.StartNode>().FirstOrDefault();
+            var startNode = graph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
 
             if (startNode != null)
             {

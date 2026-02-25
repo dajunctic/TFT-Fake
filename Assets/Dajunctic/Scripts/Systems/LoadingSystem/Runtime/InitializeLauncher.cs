@@ -15,18 +15,20 @@ namespace Dajunctic
         void Awake()
         {
             ticker.Initialize();
-            var dispatcher = Instantiate(eventDispatcher);
-            dispatcher.name = "EventDispatcher";
+            eventDispatcher.Initialize();
 
             ServiceLocator.Register(ticker);
-            ServiceLocator.Register(dispatcher);
+            ServiceLocator.Register(eventDispatcher);
             
         }
 
         async void Start()
         {
-            await Addressables.LoadSceneAsync(fadingScene, LoadSceneMode.Single).Task;
-            this.Raise(new ShowFadingUIEvent());
+            if (fadingScene != null)
+            {
+                await Addressables.LoadSceneAsync(fadingScene, LoadSceneMode.Single).Task;
+                this.Raise(new ShowFadingUIEvent());
+            }
             
             AddressableUtils.LoadScene(launcherScene);
            

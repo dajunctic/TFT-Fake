@@ -50,7 +50,7 @@ namespace Dajunctic
                                 viewData.duration = duration;
                                 viewData.Id = Id;
 
-                                EventDispatcher.Instance.Raise(viewData);
+                                EventDispatcherView.Instance.Raise(viewData);
                             }
                         }
                     }
@@ -66,7 +66,7 @@ namespace Dajunctic
                         viewData.Position = inOffset;
                     }
                     viewData.Id = Id;
-                    EventDispatcher.Instance.Raise(viewData);
+                    EventDispatcherView.Instance.Raise(viewData);
                 }
             }
         }

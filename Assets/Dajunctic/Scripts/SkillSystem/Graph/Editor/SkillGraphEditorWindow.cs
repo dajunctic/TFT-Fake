@@ -341,7 +341,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 _previewRenderUtility.AddSingleGO(vfx);
             };
 
-            var startNode = _currentGraph.nodes.OfType<Nodes.StartNode>().FirstOrDefault();
+            var startNode = _currentGraph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
             if (startNode != null)
             {
                 ExecuteNode(startNode, context);

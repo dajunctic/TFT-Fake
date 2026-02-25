@@ -40,7 +40,7 @@ namespace Dajunctic
 
                                 data.Id = Settings.Id;
 
-                                EventDispatcher.Instance.Raise(data);
+                                EventDispatcherView.Instance.Raise(data);
                             }
                         }
                     }
@@ -58,7 +58,7 @@ namespace Dajunctic
                     }
                     
                     data.Id = Settings.Id;
-                    EventDispatcher.Instance.Raise(data);
+                    EventDispatcherView.Instance.Raise(data);
                     hasExecuted = true;
                 }
             }

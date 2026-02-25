@@ -145,8 +145,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             Vector2 mousePos = evt.mousePosition;
             Vector2 graphMousePos = contentViewContainer.WorldToLocal(mousePos);
 
-            evt.menu.AppendAction("Add Start Node", (a) => CreateNode<Nodes.StartNode>(graphMousePos));
-            evt.menu.AppendAction("Add Animation Node", (a) => CreateNode<Nodes.AnimationNode>(graphMousePos));
+            evt.menu.AppendAction("Add Start Node", (a) => CreateNode<Nodes.EntryNode>(graphMousePos));
+            evt.menu.AppendAction("Add Animation Node", (a) => CreateNode<Nodes.PlayAnimNode>(graphMousePos));
             evt.menu.AppendAction("Add Wait Node", (a) => CreateNode<Nodes.WaitNode>(graphMousePos));
             evt.menu.AppendAction("Add VFX Node", (a) => CreateNode<Nodes.VFXNode>(graphMousePos));
             evt.menu.AppendAction("Add Damage Node", (a) => CreateNode<Nodes.DamageNode>(graphMousePos));

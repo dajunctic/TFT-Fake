@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    [CreateAssetMenu(menuName = "Dajunctic/Ticker", fileName = "Ticker")]
+    [CreateAssetMenu(menuName = "Dajunctic/Core/Ticker", fileName = "Ticker")]
     public class Ticker: ScriptableObject
     {
         [SerializeField] private TickerView tickerMonoPrefab;
@@ -55,7 +55,7 @@ namespace Dajunctic
             if (tickerMono == null)
             {
                 tickerMono = Instantiate(tickerMonoPrefab);
-                tickerMono.name = "Ticker";
+                tickerMono.name = "[Ticker]";
                 tickerMono.SetTicker(this);
             }
             onValidateCallback?.Invoke();
