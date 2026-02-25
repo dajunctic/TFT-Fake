@@ -1,27 +1,38 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class TrackingNode : SkillNode
     {
-        [SerializeField, NodeInput] public IDamageTaker target;
+        [NodeInput] public IDamageTaker target;
+        
+        [SerializeField] private float duration;
+        [SerializeField] private bool isManual;
+        [SerializeField] private Vector3 direction;
+        [SerializeField] private bool immediately;
 
         public override void Execute()
         {
             target = GetInputValue<IDamageTaker>(nameof(target));
             if (target != null)
             {
-                Debug.Log($"[Tracking] Node {guid} is tracking target.");
-                // Thực hiện logic tracking ở đây...
+                duration = 1f;
+
             }
             else
             {
-                Debug.LogWarning($"[Tracking] Node {guid} has no targets to track.");
+                
             }
 
             TriggerComplete();
         }
+
+        // public override IEnumerator IECoroutine()
+        // {
+            
+        // }
 
         public override void Reset()
         {

@@ -23,6 +23,8 @@ namespace Dajunctic
         public virtual string DataId => string.Empty;
         public virtual bool IsTargetable => true;
 
+        public bool ActiveInHierarchy => gameObject.activeInHierarchy;
+        public bool ActiveSelf => gameObject.activeSelf;
 
         void OnValidate() => this.ValidateRefs();
         public CombatActor CurrentTarget { get; private set; }
