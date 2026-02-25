@@ -45,6 +45,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             {
                 OpenSearchWindow(evt.originalMousePosition, false);
             }
+
+            if (evt.ctrlKey && evt.keyCode == KeyCode.S)
+            {
+                _window.SaveData();
+                evt.StopPropagation();
+            }
         }
 
         private void AddSearchWindow()
@@ -121,18 +127,24 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
-            if (graphViewChange.elementsToRemove != null)
+            if (graphViewChange.elementsToRemove != null ||
+                graphViewChange.movedElements != null ||
+                graphViewChange.edgesToCreate != null)
             {
-                foreach (var element in graphViewChange.elementsToRemove)
+                _window.SetDirty(true);
+
+                if (graphViewChange.elementsToRemove != null)
                 {
-                    if (element is SkillNodeView nodeView)
+                    foreach (var element in graphViewChange.elementsToRemove)
                     {
-                        _window.CurrentGraph.nodes.Remove(nodeView.nodeData);
-                        AssetDatabase.RemoveObjectFromAsset(nodeView.nodeData);
-                        Undo.DestroyObjectImmediate(nodeView.nodeData);
+                        if (element is SkillNodeView nodeView)
+                        {
+                            _window.CurrentGraph.nodes.Remove(nodeView.nodeData);
+                            AssetDatabase.RemoveObjectFromAsset(nodeView.nodeData);
+                            Undo.DestroyObjectImmediate(nodeView.nodeData);
+                        }
                     }
                 }
-                AssetDatabase.SaveAssets();
             }
             return graphViewChange;
         }
@@ -147,8 +159,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             }
             _window.CurrentGraph.nodes.Clear();
             _window.CurrentGraph.links.Clear();
+
+            // Tạo các node mặc định
+            CreateNode(typeof(Nodes.EntryNode), new Vector2(100, 200));
+            CreateNode(typeof(Nodes.ExitNode), new Vector2(500, 200));
+
             PopulateView(_window.CurrentGraph);
             AssetDatabase.SaveAssets();
+            _window.SetDirty(true);
         }
 
         public void SaveGraph(SkillGraph graph)
@@ -199,8 +217,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             nodeData.name = type.Name;
             AssetDatabase.AddObjectToAsset(nodeData, _window.CurrentGraph);
             _window.CurrentGraph.nodes.Add(nodeData);
-            EditorUtility.SetDirty(_window.CurrentGraph);
-            AssetDatabase.SaveAssets();
+
+            _window.SetDirty(true);
             CreateNodeView(nodeData);
         }
     }

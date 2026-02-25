@@ -14,29 +14,24 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public SkillNodeView(SkillNode nodeData)
         {
             this.nodeData = nodeData;
-            title = nodeData.name;
+            title = nodeData.name.Replace("Node", "");
             viewDataKey = nodeData.guid;
 
             style.left = nodeData.position.x;
             style.top = nodeData.position.y;
 
             AddToClassList("skill-node");
-            ApplyNodeStyle();
 
             CreateInputPorts();
             CreateOutputPorts();
             CreateSettings();
-        }
 
-        private void ApplyNodeStyle()
-        {
-            if (nodeData is Nodes.EntryNode) AddToClassList("entry-node");
-            else if (nodeData is Nodes.PlayAnimNode) AddToClassList("playanim-node");
-            else if (nodeData is Nodes.DelayNode) AddToClassList("delay-node");
-            else if (nodeData is Nodes.PlayFxNode) AddToClassList("playfx-node");
-            else if (nodeData is Nodes.DamageNode) AddToClassList("damage-node");
-            else if (nodeData is Nodes.TargetNode) AddToClassList("target-node");
-            else if (nodeData is Nodes.ShootNode) AddToClassList("shoot-node");
+            var titleLabel = this.Q<Label>();
+            if (titleLabel != null)
+            {
+                titleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+                titleLabel.style.fontSize = 14;
+            }
         }
 
         private void CreateInputPorts()
@@ -50,6 +45,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateOutputPorts()
         {
+            if (nodeData is Nodes.ExitNode) return;
+
             outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
             outputPort.portName = "Out";
             outputContainer.Add(outputPort);

@@ -1,12 +1,9 @@
-using UnityEngine;
 using System;
-using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public enum TargetType
     {
-        CurrentTarget,
         NearestEnemy,
         FarthestEnemy,
         MostEnemiesInRadius
@@ -21,14 +18,11 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             context.targets.Clear();
 
-            switch (targetType)
-            {
-                case TargetType.CurrentTarget:
-                    if (context.actor.CurrentTarget != null)
-                        context.targets.Add(context.actor.CurrentTarget);
-                    break;
-                // Add other logic as needed
-            }
+            // switch (targetType)
+            // {
+               
+            //     // Add other logic as needed
+            // }
 
             if (context.targets.Count > 0)
             {

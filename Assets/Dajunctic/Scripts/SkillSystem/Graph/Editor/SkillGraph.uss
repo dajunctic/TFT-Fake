@@ -5,38 +5,6 @@ GridBackground {
     --spacing: 15;
 }
 
-/* .skill-node #title {
-    background-color: rgba(0, 128, 255, 0.8);
-}
-
-.delay-node #title {
-    background-color: rgba(0, 200, 0, 0.8);
-}
-
-.playanim-node #title {
-    background-color: rgba(200, 0, 200, 0.8);
-}
-
-.delay-node #title {
-    background-color: rgba(200, 200, 0, 0.8);
-}
-
-.playfx-node #title {
-    background-color: rgba(0, 200, 200, 0.8);
-}
-
-.damage-node #title {
-    background-color: rgba(200, 0, 0, 0.8);
-}
-
-.target-node #title {
-    background-color: rgba(100, 100, 255, 0.8);
-}
-
-.shoot-node #title {
-    background-color: rgba(255, 128, 0, 0.8);
-} */
-
 .node #extension {
     background-color: #3f3f3f;
     padding: 5px;

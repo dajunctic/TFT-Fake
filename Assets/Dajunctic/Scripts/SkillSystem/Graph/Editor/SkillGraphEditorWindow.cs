@@ -38,8 +38,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private VisualElement _divider;
         private bool _isDraggingDivider = false;
         private float _splitRatio = 0.5f; // Khởi tạo 50/50 để Preview rộng rãi hơn
+        private bool _isDirty = false;
 
-        [MenuItem("Dajunctic/Skill Graph Editor")]
         public static void OpenWindow()
         {
             var window = GetWindow<SkillGraphEditorWindow>();
@@ -295,39 +295,48 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         public SkillGraph CurrentGraph => _currentGraph;
 
+        public void SetDirty(bool dirty)
+        {
+            if (_isDirty == dirty) return;
+            _isDirty = dirty;
+            UpdateTitle();
+        }
+
+        private void UpdateTitle()
+        {
+            string graphName = (_currentGraph != null && !string.IsNullOrEmpty(_currentGraph.name)) ? _currentGraph.name : "Skill Graph Editor";
+            titleContent = new GUIContent(graphName + (_isDirty ? "*" : ""));
+        }
+
         public void LoadGraph(SkillGraph graph)
         {
             _currentGraph = graph;
             if (_graphView != null) _graphView.PopulateView(_currentGraph);
+            _isDirty = false;
+            UpdateTitle();
         }
 
         private void GenerateToolbar()
         {
             var toolbar = new Toolbar();
             toolbar.Add(new Button(() => { SaveData(); }) { text = "Save Graph" });
-            toolbar.Add(new Button(() => { LoadData(); }) { text = "Load Graph" });
             toolbar.Add(new Button(() => { PreviewSkill(); }) { text = "Preview Skill" });
             toolbar.Add(new Button(() => { UpdatePreviewInstance(); }) { text = "Reset Preview" });
             toolbar.Add(new Button(() => { _graphView.ClearGraph(); }) { text = "Clear Graph" });
             rootVisualElement.Insert(0, toolbar);
         }
 
-        private void SaveData()
+        public void SaveData()
         {
             if (_currentGraph == null) return;
             _graphView.SaveGraph(_currentGraph);
             EditorUtility.SetDirty(_currentGraph);
             AssetDatabase.SaveAssets();
+            _isDirty = false;
+            UpdateTitle();
+            Debug.Log("Graph Saved: " + _currentGraph.name);
         }
 
-        private void LoadData()
-        {
-            string path = EditorUtility.OpenFilePanel("Load Skill Graph", "Assets", "asset");
-            if (string.IsNullOrEmpty(path)) return;
-            path = FileUtil.GetProjectRelativePath(path);
-            var graph = AssetDatabase.LoadAssetAtPath<SkillGraph>(path);
-            if (graph != null) LoadGraph(graph);
-        }
 
         private void PreviewSkill()
         {
