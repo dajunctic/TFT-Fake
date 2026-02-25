@@ -73,7 +73,7 @@ namespace Dajunctic
                 direction.y = 0;
                 if (direction != Vector3.zero)
                 {
-                    combatActor.RotateRotation(direction, combatActor.RotateSpeed, 1f, true);
+                    combatActor.RotateDirection(direction, combatActor.RotateSpeed, 1f, true);
                 }
             }
 

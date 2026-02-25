@@ -13,10 +13,12 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         [SerializeField] private Vector3 direction;
         [SerializeField] private bool immediately;
 
+        private IDamageTaker _inTarget;
+
         public override void Execute()
         {
-            target = GetInputValue<IDamageTaker>(nameof(target));
-            if (target != null)
+            _inTarget = GetInputValue<IDamageTaker>(nameof(target));
+            if (_inTarget != null)
             {
                 duration = 1f;
 
@@ -29,10 +31,18 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             TriggerComplete();
         }
 
-        // public override IEnumerator IECoroutine()
-        // {
-            
-        // }
+        public override IEnumerator IECoroutine()
+        {
+            var actor = owner.AsCombatActor();
+            while (true)
+            {
+                
+
+                actor.RotatePosition(_inTarget.AsTransform().Position, actor.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
+                yield return null;
+            }
+        }
+
 
         public override void Reset()
         {

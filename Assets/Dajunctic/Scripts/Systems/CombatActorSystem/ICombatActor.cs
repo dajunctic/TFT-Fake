@@ -10,6 +10,11 @@ namespace Dajunctic
         public Team Team{ get; }
         public bool IsTargetable {get; }
 
+
+        // 
+        public float RotateSpeed {get;}
+        public float Speed {get;}
+
         // Animation
         public void PlayAnim(string animName, float transitionDuration = 0.1f);
         public void ResetAnim();
@@ -23,5 +28,8 @@ namespace Dajunctic
 
         // SkillGraph
         public SkillGraphRunner GetSkillGraphRunner();
+
+        public void RotatePosition(Vector3 position, float rotateSpeed, float deltaTime, bool immediately);
+        public void RotateDirection(Vector3 direction, float rotateSpeed,  float deltaTime, bool immediately);
     }
 }

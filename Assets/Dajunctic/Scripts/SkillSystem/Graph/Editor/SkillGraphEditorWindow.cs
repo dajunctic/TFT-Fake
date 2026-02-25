@@ -25,7 +25,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         [SerializeField] private SkillGraph _currentGraph;
         private SkillGraphView _graphView;
         [SerializeField] private CombatActor _previewActor;
-        [SerializeField] private GameManagerSO _gameManagerSO;
         private PreviewRenderUtility _previewRenderUtility;
         private GameObject _previewInstance;
         [SerializeField] private Vector2 _previewDir = new Vector2(120, -20);
@@ -33,10 +32,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         [SerializeField] private Vector3 _previewPivot = Vector3.up * 0.8f;
         private Dictionary<string, int> _nodeTriggerCounts = new();
 
-        // Dummy Combat Actors
+        // Dummy state
         [SerializeField] private List<DummySpawnEntry> _dummyEntries = new();
         private List<GameObject> _dummyInstances = new();
         private PreviewSkillServiceProvider _previewServices;
+
+        // Dummy rotation drag
+        private int _selectedDummyIndex = -1;   // which dummy is selected for rotate
+        private bool _isDraggingDummy = false;
 
         // Splitter
         private VisualElement _leftPane, _rightPane, _divider;
@@ -44,7 +47,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         [SerializeField] private float _splitRatio = 0.5f;
         [SerializeField] private bool _isDirty;
 
-        // Dummy list UI container (cached to rebuild on change)
         private VisualElement _dummyListContainer;
 
         public static void OpenWindow()
@@ -64,7 +66,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _previewRenderUtility.camera.farClipPlane = 1000;
             _previewRenderUtility.camera.nearClipPlane = 0.1f;
 
-            BuildPreviewServices();
+            _previewServices = new PreviewSkillServiceProvider(_previewRenderUtility);
 
             EditorApplication.update += OnEditorUpdate;
             Undo.undoRedoPerformed += OnUndoRedoPerformed;
@@ -89,12 +91,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             ClearDummyInstances();
         }
 
-        private void BuildPreviewServices()
-        {
-            _previewServices?.Cleanup();
-            _previewServices = new PreviewSkillServiceProvider(_previewRenderUtility, _gameManagerSO);
-        }
-
         private void OnEditorUpdate()
         {
             if (_previewInstance != null)
@@ -111,9 +107,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             Repaint();
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // UI CONSTRUCTION
-        // ────────────────────────────────────────────────────────────────────────
+        // ─── UI CONSTRUCTION ────────────────────────────────────────────────────
 
         private void ConstructGraphView()
         {
@@ -124,7 +118,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             contentArea.style.flexGrow = 1;
             rootVisualElement.Add(contentArea);
 
-            // Left: Graph view
+            // Left: Graph
             _leftPane = new VisualElement();
             _leftPane.style.flexGrow = _splitRatio;
             _leftPane.style.flexBasis = 0;
@@ -157,33 +151,32 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             AddSectionLabel(rightScroll, "▶ Preview Settings");
 
-            // Caster actor
             var actorField = new ObjectField("Caster Actor (Prefab)") { objectType = typeof(CombatActor) };
             actorField.value = _previewActor;
             actorField.RegisterValueChangedCallback(evt => { _previewActor = evt.newValue as CombatActor; UpdatePreviewInstance(); });
             rightScroll.Add(actorField);
 
-            // GameManagerSO (for FX/Missile lookup)
-            var soField = new ObjectField("GameManager SO") { objectType = typeof(GameManagerSO) };
-            soField.value = _gameManagerSO;
-            soField.RegisterValueChangedCallback(evt => { _gameManagerSO = evt.newValue as GameManagerSO; BuildPreviewServices(); });
-            rightScroll.Add(soField);
-
-            // ─── Dummy Targets ───────────────────────────────────────────────
+            // ─── Dummy Targets ─────────────────────────────────────────────
             AddSectionLabel(rightScroll, "▶ Dummy Targets");
+
+            var rotateHint = new Label("Tip: Click dummy marker in preview → drag left/right to rotate");
+            rotateHint.style.fontSize = 9;
+            rotateHint.style.color = new Color(0.5f, 0.8f, 0.5f, 1f);
+            rotateHint.style.marginBottom = 4;
+            rightScroll.Add(rotateHint);
 
             _dummyListContainer = new VisualElement();
             rightScroll.Add(_dummyListContainer);
             RebuildDummyUI();
 
-            var addDummyBtn = new Button(() =>
+            var addBtn = new Button(() =>
             {
                 _dummyEntries.Add(new DummySpawnEntry());
                 RebuildDummyUI();
                 RebuildDummyInstances();
             }) { text = "+ Add Dummy Target" };
-            addDummyBtn.style.marginTop = 5;
-            rightScroll.Add(addDummyBtn);
+            addBtn.style.marginTop = 5;
+            rightScroll.Add(addBtn);
 
             // Preview IMGUI
             var previewIMGUI = new IMGUIContainer(OnPreviewGUI);
@@ -203,6 +196,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             parent.Add(lbl);
         }
 
+        // ─── DUMMY UI ────────────────────────────────────────────────────────
+
         private void RebuildDummyUI()
         {
             _dummyListContainer.Clear();
@@ -219,30 +214,32 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 card.style.borderTopLeftRadius = card.style.borderTopRightRadius =
                     card.style.borderBottomLeftRadius = card.style.borderBottomRightRadius = 4;
 
+                // Header
                 var header = new VisualElement();
                 header.style.flexDirection = FlexDirection.Row;
                 header.style.justifyContent = Justify.SpaceBetween;
 
-                var lbl = new Label($"Dummy #{idx + 1}");
+                bool isSelected = _selectedDummyIndex == idx;
+                var lbl = new Label($"Dummy #{idx + 1}" + (isSelected ? "  ◀ SELECTED" : ""));
                 lbl.style.unityFontStyleAndWeight = FontStyle.Bold;
-                lbl.style.color = new Color(1f, 0.7f, 0.2f, 1f);
+                lbl.style.color = isSelected ? new Color(0.4f, 1f, 0.4f, 1f) : new Color(1f, 0.7f, 0.2f, 1f);
                 lbl.style.fontSize = 11;
 
                 var removeBtn = new Button(() =>
                 {
                     _dummyEntries.RemoveAt(idx);
+                    if (_selectedDummyIndex >= _dummyEntries.Count) _selectedDummyIndex = -1;
                     RebuildDummyUI();
                     RebuildDummyInstances();
                 }) { text = "✕" };
                 removeBtn.style.color = new Color(1f, 0.4f, 0.4f, 1f);
-                removeBtn.style.width = 22;
-                removeBtn.style.height = 22;
+                removeBtn.style.width = 22; removeBtn.style.height = 22;
 
                 header.Add(lbl); header.Add(removeBtn);
                 card.Add(header);
 
-                // Prefab field (accept DummyActor or CombatActor)
-                var prefabField = new ObjectField("Prefab (DummyActor)") { objectType = typeof(CombatActor) };
+                // Prefab
+                var prefabField = new ObjectField("Prefab") { objectType = typeof(CombatActor) };
                 prefabField.value = entry.actorPrefab;
                 prefabField.RegisterValueChangedCallback(evt =>
                 {
@@ -251,7 +248,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 });
                 card.Add(prefabField);
 
-                // Team field
+                // Team
                 var teamField = new EnumField("Team", entry.team);
                 teamField.RegisterValueChangedCallback(evt =>
                 {
@@ -260,7 +257,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 });
                 card.Add(teamField);
 
-                // Spawn position
+                // Position
                 var posField = new Vector3Field("Spawn Position");
                 posField.value = entry.spawnPosition;
                 posField.RegisterValueChangedCallback(evt =>
@@ -270,13 +267,45 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 });
                 card.Add(posField);
 
+                // Y Rotation slider
+                var rotRow = new VisualElement();
+                rotRow.style.flexDirection = FlexDirection.Row;
+                rotRow.style.alignItems = Align.Center;
+                rotRow.style.marginTop = 2;
+
+                var rotLbl = new Label("Y Rotation");
+                rotLbl.style.width = 80;
+                rotLbl.style.fontSize = 10;
+
+                var rotSlider = new Slider(0f, 360f) { value = entry.yRotation };
+                rotSlider.style.flexGrow = 1;
+                rotSlider.RegisterValueChangedCallback(evt =>
+                {
+                    _dummyEntries[idx].yRotation = evt.newValue;
+                    ApplyDummyRotation(idx);
+                });
+
+                var rotValLbl = new Label($"{entry.yRotation:F0}°");
+                rotValLbl.style.width = 32;
+                rotValLbl.style.fontSize = 10;
+                rotValLbl.style.unityTextAlign = TextAnchor.MiddleRight;
+                rotSlider.RegisterValueChangedCallback(evt => rotValLbl.text = $"{evt.newValue:F0}°");
+
+                rotRow.Add(rotLbl); rotRow.Add(rotSlider); rotRow.Add(rotValLbl);
+                card.Add(rotRow);
+
+                // Click to select
+                card.RegisterCallback<MouseDownEvent>(_ =>
+                {
+                    _selectedDummyIndex = idx;
+                    RebuildDummyUI();
+                });
+
                 _dummyListContainer.Add(card);
             }
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // DUMMY INSTANCES
-        // ────────────────────────────────────────────────────────────────────────
+        // ─── DUMMY INSTANCES ─────────────────────────────────────────────────
 
         private void ClearDummyInstances()
         {
@@ -296,22 +325,21 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
                 var inst = Instantiate(entry.actorPrefab.gameObject);
                 inst.hideFlags = HideFlags.HideAndDontSave;
-                inst.transform.SetPositionAndRotation(entry.spawnPosition, Quaternion.identity);
+                inst.transform.SetPositionAndRotation(entry.spawnPosition, Quaternion.Euler(0, entry.yRotation, 0));
 
-                // Disable non-essential scripts in preview
                 foreach (var mb in inst.GetComponentsInChildren<MonoBehaviour>())
                     if (mb is not CombatActor) mb.enabled = false;
 
                 var anim = inst.GetComponentInChildren<Animator>();
                 if (anim != null) { anim.enabled = true; anim.cullingMode = AnimatorCullingMode.AlwaysAnimate; }
 
-                // Set team via serialized field reflection
+                // Set team
                 var actor = inst.GetComponent<CombatActor>();
                 if (actor != null)
                 {
-                    var teamField = typeof(CombatActor).GetField("team",
+                    var tf = typeof(CombatActor).GetField("team",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                    teamField?.SetValue(actor, entry.team);
+                    tf?.SetValue(actor, entry.team);
                 }
 
                 _previewRenderUtility.AddSingleGO(inst);
@@ -319,32 +347,46 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             }
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // PREVIEW GUI
-        // ────────────────────────────────────────────────────────────────────────
+        /// <summary>Only updates rotation of an existing dummy instance without full rebuild.</summary>
+        private void ApplyDummyRotation(int idx)
+        {
+            if (idx < 0 || idx >= _dummyInstances.Count) return;
+            var inst = _dummyInstances[idx];
+            if (inst == null) return;
+            inst.transform.rotation = Quaternion.Euler(0, _dummyEntries[idx].yRotation, 0);
+        }
+
+        // ─── PREVIEW GUI ─────────────────────────────────────────────────────
 
         private void OnPreviewGUI()
         {
             Rect rect = GUILayoutUtility.GetRect(200, 200, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
 
-            // Overlay text
             if (_previewInstance == null)
-            {
-                GUI.Label(new Rect(rect.x + 8, rect.y + 8, 300, 20),
-                    "Set Caster Actor prefab →", EditorStyles.miniLabel);
-            }
+                GUI.Label(new Rect(rect.x + 8, rect.y + 8, 300, 20), "Set Caster Actor prefab →", EditorStyles.miniLabel);
 
+            // Bottom overlay: dummy info
             float yOff = 8;
             for (int i = 0; i < _dummyEntries.Count; i++)
             {
                 var e = _dummyEntries[i];
                 if (e.actorPrefab == null) continue;
-                string info = $"Dummy #{i + 1}  [{e.team}]  {e.actorPrefab.name}  @ {e.spawnPosition}";
-                GUI.Label(new Rect(rect.x + 8, rect.y + rect.height - 20 - yOff, 500, 18), info, EditorStyles.miniLabel);
+                bool sel = i == _selectedDummyIndex;
+                string info = $"{(sel ? "► " : "")}Dummy #{i + 1}  [{e.team}]  {e.actorPrefab.name}  @ {e.spawnPosition}  ↻{e.yRotation:F0}°";
+                GUI.Label(new Rect(rect.x + 8, rect.y + rect.height - 20 - yOff, 600, 18), info, EditorStyles.miniLabel);
                 yOff += 18;
             }
 
+            // Selection hint
+            if (_selectedDummyIndex >= 0 && _selectedDummyIndex < _dummyEntries.Count)
+            {
+                var style = new GUIStyle(EditorStyles.miniLabel) { normal = { textColor = new Color(0.4f, 1f, 0.4f, 1f) } };
+                GUI.Label(new Rect(rect.x + rect.width - 220, rect.y + 8, 210, 18),
+                    $"Dragging: Dummy #{_selectedDummyIndex + 1}  ↻{_dummyEntries[_selectedDummyIndex].yRotation:F0}°", style);
+            }
+
             HandlePreviewInput(rect);
+
             _previewRenderUtility.BeginPreview(rect, GUIStyle.none);
             _previewRenderUtility.camera.transform.SetPositionAndRotation(
                 _previewPivot + _previewRenderUtility.camera.transform.forward * -_previewDistance,
@@ -366,7 +408,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             var mat = new Material(Shader.Find("Hidden/Internal-Colored")); mat.SetPass(0);
             GL.Begin(GL.LINES);
             GL.Color(new Color(0.6f, 0.6f, 0.6f, 0.4f));
-            for (float i = -10f; i <= 10f; i += 1f)
+            for (float i = -10f; i <= 10f; i++)
             {
                 GL.Vertex(new Vector3(i, 0, -10)); GL.Vertex(new Vector3(i, 0, 10));
                 GL.Vertex(new Vector3(-10, 0, i)); GL.Vertex(new Vector3(10, 0, i));
@@ -382,23 +424,36 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             GL.modelview = _previewRenderUtility.camera.worldToCameraMatrix;
             var mat = new Material(Shader.Find("Hidden/Internal-Colored")); mat.SetPass(0);
 
-            // Caster marker (blue)
+            // Caster marker — blue circle + forward arrow
             DrawCircleGL(Vector3.zero, 0.35f, new Color(0.2f, 0.6f, 1f, 1f));
+            DrawArrowGL(Vector3.zero, Vector3.forward, 0.5f, new Color(0.2f, 0.6f, 1f, 1f));
 
-            // Dummy markers (orange)
-            foreach (var entry in _dummyEntries)
+            // Dummy markers
+            for (int i = 0; i < _dummyEntries.Count; i++)
             {
+                var entry = _dummyEntries[i];
                 if (entry.actorPrefab == null) continue;
-                DrawCircleGL(entry.spawnPosition, 0.35f, new Color(1f, 0.5f, 0.1f, 1f));
+
+                bool selected = i == _selectedDummyIndex;
+                Color col = selected ? new Color(0.4f, 1f, 0.4f, 1f) : new Color(1f, 0.5f, 0.1f, 1f);
+                float radius = selected ? 0.42f : 0.35f;
+
+                DrawCircleGL(entry.spawnPosition, radius, col);
+
                 // X cross
                 GL.Begin(GL.LINES);
-                GL.Color(new Color(1f, 0.5f, 0.1f, 1f));
+                GL.Color(col);
                 var p = entry.spawnPosition + Vector3.up * 0.01f;
                 float s = 0.2f;
                 GL.Vertex(p + new Vector3(-s, 0, -s)); GL.Vertex(p + new Vector3(s, 0, s));
                 GL.Vertex(p + new Vector3(-s, 0, s)); GL.Vertex(p + new Vector3(s, 0, -s));
                 GL.End();
+
+                // Forward arrow showing yRotation
+                Vector3 fwd = Quaternion.Euler(0, entry.yRotation, 0) * Vector3.forward;
+                DrawArrowGL(entry.spawnPosition, fwd, 0.6f, col);
             }
+
             GL.PopMatrix();
         }
 
@@ -417,42 +472,116 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             GL.End();
         }
 
+        private void DrawArrowGL(Vector3 origin, Vector3 dir, float length, Color color)
+        {
+            dir.y = 0; dir.Normalize();
+            if (dir == Vector3.zero) return;
+            Vector3 tip = origin + dir * length + Vector3.up * 0.01f;
+            Vector3 from = origin + Vector3.up * 0.01f;
+
+            GL.Begin(GL.LINES);
+            GL.Color(color);
+            GL.Vertex(from); GL.Vertex(tip);
+            // arrowhead
+            Vector3 right = Vector3.Cross(Vector3.up, dir).normalized * 0.15f;
+            GL.Vertex(tip); GL.Vertex(tip - dir * 0.2f + right);
+            GL.Vertex(tip); GL.Vertex(tip - dir * 0.2f - right);
+            GL.End();
+        }
+
+        // ─── INPUT ────────────────────────────────────────────────────────────
+
         private void HandlePreviewInput(Rect rect)
         {
             int cid = GUIUtility.GetControlID("PreviewInput".GetHashCode(), FocusType.Passive);
             Event evt = Event.current;
+
             switch (evt.GetTypeForControl(cid))
             {
-                case EventType.MouseDown:
-                    if (rect.Contains(evt.mousePosition)) { GUIUtility.hotControl = cid; evt.Use(); EditorGUIUtility.SetWantsMouseJumping(1); }
-                    break;
-                case EventType.MouseUp:
-                    if (GUIUtility.hotControl == cid) { GUIUtility.hotControl = 0; EditorGUIUtility.SetWantsMouseJumping(0); }
-                    break;
-                case EventType.MouseDrag:
-                    if (GUIUtility.hotControl == cid)
+                case EventType.MouseDown when rect.Contains(evt.mousePosition):
+                    GUIUtility.hotControl = cid;
+                    EditorGUIUtility.SetWantsMouseJumping(1);
+
+                    if (evt.button == 0)
                     {
-                        if (evt.button == 1)
+                        // Check if clicking near a dummy marker → select + start rotate drag
+                        int hit = HitTestDummyMarker(rect, evt.mousePosition);
+                        if (hit >= 0)
                         {
-                            _previewDir -= evt.delta * (evt.shift ? 3 : 1) / Mathf.Min(rect.width, rect.height) * 140f;
-                            _previewDir.y = Mathf.Clamp(_previewDir.y, -90f, 90f);
+                            _selectedDummyIndex = hit;
+                            _isDraggingDummy = true;
+                            RebuildDummyUI(); // refresh highlight
                         }
                         else
                         {
-                            var cam = _previewRenderUtility.camera.transform;
-                            _previewPivot -= (cam.right * evt.delta.x - cam.up * evt.delta.y) * 0.01f * (_previewDistance / 6f);
+                            _isDraggingDummy = false;
                         }
-                        evt.Use(); GUI.changed = true;
                     }
+                    evt.Use();
                     break;
-                case EventType.ScrollWheel:
-                    if (rect.Contains(evt.mousePosition))
+
+                case EventType.MouseUp when GUIUtility.hotControl == cid:
+                    GUIUtility.hotControl = 0;
+                    EditorGUIUtility.SetWantsMouseJumping(0);
+                    _isDraggingDummy = false;
+                    break;
+
+                case EventType.MouseDrag when GUIUtility.hotControl == cid:
+                    if (evt.button == 0 && _isDraggingDummy && _selectedDummyIndex >= 0 &&
+                        _selectedDummyIndex < _dummyEntries.Count)
                     {
-                        _previewDistance = Mathf.Max(0.1f, _previewDistance + evt.delta.y * 0.05f);
-                        evt.Use(); GUI.changed = true;
+                        // Horizontal drag → rotate dummy
+                        float sensitivity = 1.2f;
+                        _dummyEntries[_selectedDummyIndex].yRotation =
+                            (_dummyEntries[_selectedDummyIndex].yRotation + evt.delta.x * sensitivity + 360f) % 360f;
+                        ApplyDummyRotation(_selectedDummyIndex);
+                        RebuildDummyUI(); // update slider label
                     }
+                    else if (evt.button == 1)
+                    {
+                        // Right drag → orbit camera
+                        _previewDir -= evt.delta * (evt.shift ? 3 : 1) / Mathf.Min(rect.width, rect.height) * 140f;
+                        _previewDir.y = Mathf.Clamp(_previewDir.y, -90f, 90f);
+                    }
+                    else if (!_isDraggingDummy && (evt.button == 0 || evt.button == 2))
+                    {
+                        // Pan camera
+                        var cam = _previewRenderUtility.camera.transform;
+                        _previewPivot -= (cam.right * evt.delta.x - cam.up * evt.delta.y) * 0.01f * (_previewDistance / 6f);
+                    }
+                    evt.Use(); GUI.changed = true;
+                    break;
+
+                case EventType.ScrollWheel when rect.Contains(evt.mousePosition):
+                    _previewDistance = Mathf.Max(0.1f, _previewDistance + evt.delta.y * 0.05f);
+                    evt.Use(); GUI.changed = true;
                     break;
             }
+        }
+
+        /// <summary>Returns index of dummy whose marker was clicked (screen-space hit test), or -1.</summary>
+        private int HitTestDummyMarker(Rect previewRect, Vector2 mousePos)
+        {
+            var cam = _previewRenderUtility.camera;
+            float hitPixelRadius = 18f; // pixels
+
+            for (int i = 0; i < _dummyEntries.Count; i++)
+            {
+                if (_dummyEntries[i].actorPrefab == null) continue;
+
+                Vector3 worldPos = _dummyEntries[i].spawnPosition;
+                // Transform to viewport then to GUI rect
+                Vector3 vp = cam.WorldToViewportPoint(worldPos);
+                if (vp.z <= 0) continue;
+
+                Vector2 screenPos = new Vector2(
+                    previewRect.x + vp.x * previewRect.width,
+                    previewRect.y + (1f - vp.y) * previewRect.height);
+
+                if (Vector2.Distance(mousePos, screenPos) <= hitPixelRadius)
+                    return i;
+            }
+            return -1;
         }
 
         private void OnDividerDrag(MouseMoveEvent evt)
@@ -466,9 +595,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             evt.StopPropagation();
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // PREVIEW ACTOR
-        // ────────────────────────────────────────────────────────────────────────
+        // ─── CASTER PREVIEW ──────────────────────────────────────────────────
 
         private void UpdatePreviewInstance()
         {
@@ -488,9 +615,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _previewRenderUtility.AddSingleGO(_previewInstance);
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // GRAPH EXECUTION (Preview)
-        // ────────────────────────────────────────────────────────────────────────
+        // ─── GRAPH EXECUTION ─────────────────────────────────────────────────
 
         public void OnNodeSelectionChanged(SkillNode node)
         {
@@ -502,7 +627,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             var toolbar = new Toolbar();
             toolbar.Add(new Button(SaveData) { text = "Save Graph" });
             toolbar.Add(new Button(PreviewSkill) { text = "▶ Preview Skill" });
-            toolbar.Add(new Button(() => { _previewServices?.Cleanup(); UpdatePreviewInstance(); RebuildDummyInstances(); }) { text = "Reset Preview" });
+            toolbar.Add(new Button(() =>
+            {
+                _previewServices?.Cleanup();
+                UpdatePreviewInstance();
+                RebuildDummyInstances();
+            }) { text = "Reset Preview" });
             toolbar.Add(new Button(() => _graphView.ClearGraph()) { text = "Clear Graph" });
             rootVisualElement.Insert(0, toolbar);
         }
@@ -527,14 +657,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             var actor = _previewInstance.GetComponent<CombatActor>();
             if (actor == null) return;
 
-            // Inject dummy actors vào context thông qua TargetEnemyInRadiusNode
-            // → Dummy instances đã được tạo trong PreviewRenderUtility, SkillHelper sẽ find qua Physics overlap
-            // (không hoạt động trong editor render util vì không có physics scene)
-            // Nên ta inject trực tiếp qua context services
             var context = new SkillExecutionContext(actor, _previewServices);
-
-            // Ghi dummy targets vào context để TargetEnemyInRadiusNode có thể dùng nếu cần
-            // (trong runtime dùng Physics, trong preview ta override)
             InjectPreviewDummies(context);
 
             var entryNode = _currentGraph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
@@ -543,7 +666,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void InjectPreviewDummies(SkillExecutionContext context)
         {
-            // Lấy CombatActor từ các dummy instances và inject vào context
             var dummies = new List<IDamageTaker>();
             foreach (var inst in _dummyInstances)
             {
@@ -578,7 +700,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                     if (!_nodeTriggerCounts.ContainsKey(next.guid)) _nodeTriggerCounts[next.guid] = 0;
                     _nodeTriggerCounts[next.guid]++;
 
-                    int totalIn = _currentGraph.links.Count(l => l.targetNodeGuid == next.guid && l.targetPortName == "In");
+                    int totalIn = _currentGraph.links.Count(l =>
+                        l.targetNodeGuid == next.guid && l.targetPortName == "In");
                     if (_nodeTriggerCounts[next.guid] >= totalIn)
                         ExecuteNodePreview(next, context);
                 }
@@ -587,9 +710,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             node.Execute();
         }
 
-        // ────────────────────────────────────────────────────────────────────────
-        // GRAPH MANAGEMENT
-        // ────────────────────────────────────────────────────────────────────────
+        // ─── GRAPH MANAGEMENT ────────────────────────────────────────────────
 
         public SkillGraph CurrentGraph => _currentGraph;
 
@@ -602,9 +723,9 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void UpdateTitle()
         {
-            string name = (_currentGraph != null && !string.IsNullOrEmpty(_currentGraph.name))
+            string n = (_currentGraph != null && !string.IsNullOrEmpty(_currentGraph.name))
                 ? _currentGraph.name : "Skill Graph Editor";
-            titleContent = new GUIContent(name + (_isDirty ? "*" : ""));
+            titleContent = new GUIContent(n + (_isDirty ? "*" : ""));
         }
 
         public void LoadGraph(SkillGraph graph)
@@ -621,9 +742,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────────
-    // Data
-    // ────────────────────────────────────────────────────────────────────────────
+    // ─── DATA ─────────────────────────────────────────────────────────────────
 
     [System.Serializable]
     public class DummySpawnEntry
@@ -631,5 +750,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public CombatActor actorPrefab;
         public Team team = Team.Opponent;
         public Vector3 spawnPosition = new Vector3(3f, 0f, 0f);
+        [Range(0f, 360f)]
+        public float yRotation = 180f; // mặc định quay mặt về phía caster
     }
 }

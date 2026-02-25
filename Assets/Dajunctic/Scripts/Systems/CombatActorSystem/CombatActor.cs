@@ -179,7 +179,7 @@ namespace Dajunctic
 
         public void RotatePosition(Vector3 position, float rotateSpeed, float deltaTime, bool immediately)
         {
-            RotateRotation(position - Position, rotateSpeed, deltaTime, immediately);
+            RotateDirection(position - Position, rotateSpeed, deltaTime, immediately);
         }
 
         public void Teleport(Vector3 position, bool checkNavMesh, bool fx=false)
@@ -201,7 +201,7 @@ namespace Dajunctic
             }
         }
             
-        public void RotateRotation(Vector3 direction, float rotateSpeed, float deltaTime, bool immediately)
+        public void RotateDirection(Vector3 direction, float rotateSpeed, float deltaTime, bool immediately)
         {
             direction.y = 0;
             direction.Normalize();
