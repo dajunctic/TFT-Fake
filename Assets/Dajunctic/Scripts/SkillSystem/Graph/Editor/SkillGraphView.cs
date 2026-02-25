@@ -73,21 +73,27 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             DeleteElements(graphElements);
             graphViewChanged += OnGraphViewChanged;
 
+            Dictionary<string, SkillNodeView> nodeViewMap = new();
+
             foreach (var nodeData in graph.nodes)
             {
                 nodeData.graph = graph;
-                CreateNodeView(nodeData);
+                var nodeView = new SkillNodeView(nodeData);
+                AddElement(nodeView);
+                nodeViewMap[nodeData.guid] = nodeView;
             }
 
             foreach (var link in graph.links)
             {
-                SkillNodeView baseNodeView = GetNodeByGuid(link.baseNodeGuid);
-                SkillNodeView targetNodeView = GetNodeByGuid(link.targetNodeGuid);
-
-                if (baseNodeView != null && targetNodeView != null)
+                if (nodeViewMap.TryGetValue(link.baseNodeGuid, out var baseNodeView) &&
+                    nodeViewMap.TryGetValue(link.targetNodeGuid, out var targetNodeView))
                 {
-                    var outputPort = baseNodeView.outputContainer.Query<Port>().ToList().FirstOrDefault(p => p.portName == link.portName);
-                    var inputPort = targetNodeView.inputContainer.Query<Port>().ToList().FirstOrDefault(p => p.portName == link.targetPortName || (string.IsNullOrEmpty(link.targetPortName) && p.portName == "In"));
+                    var outputPort = baseNodeView.outputContainer.Query<Port>()
+                        .ToList().FirstOrDefault(p => p.portName == link.portName);
+
+                    var inputPort = targetNodeView.inputContainer.Query<Port>()
+                        .ToList().FirstOrDefault(p => p.portName == link.targetPortName ||
+                                                     (p.portName == "In" && string.IsNullOrEmpty(link.targetPortName)));
 
                     if (outputPort != null && inputPort != null)
                     {
@@ -142,6 +148,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             {
                 Undo.RecordObject(_window.CurrentGraph, "Change Graph");
                 _window.SetDirty(true);
+                EditorUtility.SetDirty(_window.CurrentGraph);
 
                 if (graphViewChange.elementsToRemove != null)
                 {
@@ -217,15 +224,22 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         public void SaveGraph(SkillGraph graph)
         {
+            if (graph == null) return;
+
             graph.nodes.Clear();
             graph.links.Clear();
-            var nodeViews = nodes.ToList().Cast<SkillNodeView>();
+
+            // Lấy tất cả node đang hiển thị
+            var nodeViews = graphElements.ToList().OfType<SkillNodeView>();
             foreach (var nodeView in nodeViews)
             {
-                nodeView.nodeData.position = nodeView.GetPosition().position;
+                nodeView.nodeData.gridPosition = nodeView.GetPosition().position;
                 graph.nodes.Add(nodeView.nodeData);
+                EditorUtility.SetDirty(nodeView.nodeData); // Đánh dấu node đã thay đổi (vị trí)
             }
-            var edges = this.edges.ToList();
+
+            // Lấy tất cả dây nối đang hiển thị
+            var edges = graphElements.ToList().OfType<Edge>();
             foreach (var edge in edges)
             {
                 if (edge.output.node is SkillNodeView baseNodeView && edge.input.node is SkillNodeView targetNodeView)
@@ -239,6 +253,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                     });
                 }
             }
+
+            EditorUtility.SetDirty(graph);
         }
 
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
@@ -275,7 +291,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             Undo.RecordObject(_window.CurrentGraph, "Create Node");
             var nodeData = ScriptableObject.CreateInstance(type) as SkillNode;
             nodeData.guid = System.Guid.NewGuid().ToString();
-            nodeData.position = position;
+            nodeData.gridPosition = position;
             nodeData.name = type.Name.Replace("Node", ""); // "TrackingNode" -> "Tracking"
             nodeData.graph = _window.CurrentGraph;
             AssetDatabase.AddObjectToAsset(nodeData, _window.CurrentGraph);

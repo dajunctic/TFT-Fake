@@ -19,27 +19,29 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         [SerializeField, NodeOutput] public List<IDamageTaker> targets;
         [SerializeField, NodeOutput] public IDamageTaker mainTarget;
 
-        public override void Execute()
-        {
-            targets = new List<IDamageTaker>();
-
-            // TODO: thực hiện logic tìm enemy trong bán kính
-            // logic implementation here...
-
-            TriggerComplete();
-        }
+        public bool isValid;
 
         public override object GetValue(string portName)
-        {
+        {     
+         
+            ClearTargets();
+
             if (portName == nameof(targets)) return targets;
             if (portName == nameof(mainTarget)) return mainTarget;
             return base.GetValue(portName);
+        }
+
+        public void ClearTargets()
+        {
+            targets = new List<IDamageTaker>();
+            mainTarget = null;
         }
 
         public override void Reset()
         {
             base.Reset();
             targets = null;
+            mainTarget = null;
         }
     }
 }

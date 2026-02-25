@@ -7,7 +7,7 @@ namespace Dajunctic.SkillSystem.Graph
     public abstract class SkillNode : ScriptableObject
     {
         [HideInInspector] public string guid;
-        [HideInInspector] public Vector2 position;
+        [HideInInspector] public Vector2 gridPosition;
         [HideInInspector] public SkillGraph graph;
 
         protected SkillExecutionContext _context;
@@ -70,10 +70,8 @@ namespace Dajunctic.SkillSystem.Graph
     }
 
     [AttributeUsage(AttributeTargets.Field)]
-    [HideInInspector]
     public class NodeInputAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Field)]
-    [HideInInspector]
     public class NodeOutputAttribute : Attribute { }
 }

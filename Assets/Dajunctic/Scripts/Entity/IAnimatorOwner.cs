@@ -1,6 +1,6 @@
 namespace Dajunctic
 {
-    public interface IAnimatorOwner: IEntity
+    public interface IAnimator: IEntity
     {
        
     

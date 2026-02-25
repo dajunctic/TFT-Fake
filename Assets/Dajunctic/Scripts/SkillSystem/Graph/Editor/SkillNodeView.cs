@@ -19,8 +19,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             title = nodeData.name.Replace("Node", "");
             viewDataKey = nodeData.guid;
 
-            style.left = nodeData.position.x;
-            style.top = nodeData.position.y;
+            style.left = nodeData.gridPosition.x;
+            style.top = nodeData.gridPosition.y;
 
             AddToClassList("skill-node");
 
@@ -47,7 +47,11 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             inputContainer.Add(inputPort);
 
             // Data Inputs
-            var fields = nodeData.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            var fields = nodeData.GetType().GetFields(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
             foreach (var field in fields)
             {
                 if (System.Attribute.IsDefined(field, typeof(Dajunctic.SkillSystem.Graph.NodeInputAttribute)))
@@ -71,7 +75,11 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             outputContainer.Add(outputPort);
 
             // Data Outputs
-            var fields = nodeData.GetType().GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            var fields = nodeData.GetType().GetFields(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
             foreach (var field in fields)
             {
                 if (System.Attribute.IsDefined(field, typeof(Dajunctic.SkillSystem.Graph.NodeOutputAttribute)))
@@ -89,11 +97,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         /// </summary>
         private void SetPortLabel(Port port, string displayName)
         {
-            port.schedule.Execute(() =>
-            {
-                var label = port.Q<Label>();
-                if (label != null) label.text = displayName;
-            });
+            var label = port.Q<Label>();
+            if (label != null) label.text = displayName;
         }
 
         private void CreateSettings()
