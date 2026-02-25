@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public interface ICombatActor: IEntity, IDamageTaker
+    public interface ICombatActor: IDamageTaker, ISkillOwner, ITransform, IAnimatorOwner, IDamageOwner
     {
         public string DataId {get;}
-        public Vector3 Position { get; }
-        public Vector3 Forward { get; }
+
+        
     }
 }

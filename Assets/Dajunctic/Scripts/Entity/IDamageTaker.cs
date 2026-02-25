@@ -2,7 +2,7 @@ using System;
 
 namespace Dajunctic
 {
-    public interface IDamageTaker
+    public interface IDamageTaker: IEntity
     {
         public float Hp {get; }
         public float MaxHp {get; }

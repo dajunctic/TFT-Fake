@@ -10,13 +10,13 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         public override void Execute()
         {
-            _context.actor.PlayAnim(animationName, transitionDuration);
+            // _context.actor.PlayAnim(animationName, transitionDuration);
 
             if (waitForFinish)
             {
                 if (Application.isPlaying)
                 {
-                    _context.actor.StartCoroutine(WaitForAnimation());
+                    // _context.actor.StartCoroutine(WaitForAnimation());
                 }
                 else
                 {
@@ -24,11 +24,11 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     UnityEditor.EditorApplication.CallbackFunction update = null;
                     update = () =>
                     {
-                        if (_context.actor == null || _context.actor.IsAnimFinished)
-                        {
-                            UnityEditor.EditorApplication.update -= update;
-                            TriggerComplete();
-                        }
+                        // if (_context.actor == null || _context.actor.IsAnimFinished)
+                        // {
+                        //     UnityEditor.EditorApplication.update -= update;
+                        //     TriggerComplete();
+                        // }
                     };
                     UnityEditor.EditorApplication.update += update;
 #endif
@@ -42,7 +42,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         private System.Collections.IEnumerator WaitForAnimation()
         {
-            while (!_context.actor.IsAnimFinished)
+            // while (!_context.actor.IsAnimFinished)
                 yield return null;
             TriggerComplete();
         }

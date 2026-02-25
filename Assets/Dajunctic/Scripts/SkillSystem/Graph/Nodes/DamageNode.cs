@@ -8,11 +8,12 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public float damage = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
-        [NodeInput] public List<CombatActor> targets;
+        [SerializeField, NodeInput] private List<IDamageTaker> targets;
 
         public override void Execute()
         {
-            var actorsToHit = targets ?? new List<CombatActor>();
+            targets = GetInputValue<List<IDamageTaker>>(nameof(targets));
+            var actorsToHit = targets ?? new List<IDamageTaker>();
 
             foreach (var target in actorsToHit)
             {

@@ -43,7 +43,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         {
             if (evt.keyCode == KeyCode.Space && !evt.ctrlKey && !evt.commandKey)
             {
-                OpenSearchWindow(evt.originalMousePosition, false);
+                Vector2 screenPos = GUIUtility.GUIToScreenPoint(_lastMousePosition);
+                OpenSearchWindow(_lastMousePosition, screenPos, false);
             }
 
             if (evt.ctrlKey && evt.keyCode == KeyCode.S)
@@ -74,6 +75,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             foreach (var nodeData in graph.nodes)
             {
+                nodeData.graph = graph;
                 CreateNodeView(nodeData);
             }
 
@@ -132,10 +134,13 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange graphViewChange)
         {
+            if (_window.CurrentGraph == null) return graphViewChange;
+
             if (graphViewChange.elementsToRemove != null ||
                 graphViewChange.movedElements != null ||
                 graphViewChange.edgesToCreate != null)
             {
+                Undo.RecordObject(_window.CurrentGraph, "Change Graph");
                 _window.SetDirty(true);
 
                 if (graphViewChange.elementsToRemove != null)
@@ -145,8 +150,43 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                         if (element is SkillNodeView nodeView)
                         {
                             _window.CurrentGraph.nodes.Remove(nodeView.nodeData);
+
+                            // Xoá các link liên quan đến node này
+                            _window.CurrentGraph.links.RemoveAll(l =>
+                                l.baseNodeGuid == nodeView.nodeData.guid ||
+                                l.targetNodeGuid == nodeView.nodeData.guid);
+
                             AssetDatabase.RemoveObjectFromAsset(nodeView.nodeData);
                             Undo.DestroyObjectImmediate(nodeView.nodeData);
+                        }
+                        else if (element is Edge edge)
+                        {
+                            // Xoá link cụ thể khi edge bị xoá (Disconnect hoặc Delete)
+                            if (edge.output?.node is SkillNodeView source && edge.input?.node is SkillNodeView target)
+                            {
+                                _window.CurrentGraph.links.RemoveAll(l =>
+                                    l.baseNodeGuid == source.nodeData.guid &&
+                                    l.portName == edge.output.portName &&
+                                    l.targetNodeGuid == target.nodeData.guid &&
+                                    l.targetPortName == edge.input.portName);
+                            }
+                        }
+                    }
+                }
+
+                if (graphViewChange.edgesToCreate != null)
+                {
+                    foreach (var edge in graphViewChange.edgesToCreate)
+                    {
+                        if (edge.output?.node is SkillNodeView source && edge.input?.node is SkillNodeView target)
+                        {
+                            _window.CurrentGraph.links.Add(new NodeLink
+                            {
+                                baseNodeGuid = source.nodeData.guid,
+                                portName = edge.output.portName,
+                                targetNodeGuid = target.nodeData.guid,
+                                targetPortName = edge.input.portName
+                            });
                         }
                     }
                 }
@@ -157,6 +197,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public void ClearGraph()
         {
             if (_window.CurrentGraph == null) return;
+            Undo.RecordObject(_window.CurrentGraph, "Clear Graph");
             foreach (var node in _window.CurrentGraph.nodes.ToList())
             {
                 AssetDatabase.RemoveObjectFromAsset(node);
@@ -203,24 +244,40 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             if (_window.CurrentGraph == null) return;
-            OpenSearchWindow(evt.mousePosition, true);
+
+            // Đưa Create Node lên đầu tiên
+            evt.menu.InsertAction(0, "Create Node", (action) =>
+            {
+                OpenSearchWindow(action.eventInfo.localMousePosition, action.eventInfo.mousePosition, true);
+            });
+
+            evt.menu.AppendSeparator(); // Thêm gạch ngang phân cách
+
+            base.BuildContextualMenu(evt); // Giữ lại các lệnh mặc định phía dưới
         }
 
-        private void OpenSearchWindow(Vector2 mousePosition, bool isLocal)
+        private void OpenSearchWindow(Vector2 localMousePosition, Vector2 panelMousePosition, bool isLocal)
         {
-            Vector2 panelPos = isLocal ? this.LocalToWorld(mousePosition) : mousePosition;
-            _searchWindow.GraphMousePosition = contentViewContainer.WorldToLocal(panelPos);
-            Vector2 screenPos = _window.position.position + panelPos;
-            screenPos.y += 22;
+            Vector2 graphPos = isLocal ? localMousePosition : contentViewContainer.WorldToLocal(localMousePosition);
+            _searchWindow.GraphMousePosition = graphPos;
+
+            // panelMousePosition là toạ độ relative to editor window panel
+            // Cần cộng thêm vị trí của cửa sổ trên màn hình
+            Vector2 screenPos = _window.position.position + panelMousePosition;
+            // Bù trừ một chút cho thanh tiêu đề (title bar) của window
+            screenPos.y += 24;
+
             SearchWindow.Open(new SearchWindowContext(screenPos), _searchWindow);
         }
 
         public void CreateNode(System.Type type, Vector2 position)
         {
+            Undo.RecordObject(_window.CurrentGraph, "Create Node");
             var nodeData = ScriptableObject.CreateInstance(type) as SkillNode;
             nodeData.guid = System.Guid.NewGuid().ToString();
             nodeData.position = position;
-            nodeData.name = type.Name;
+            nodeData.name = type.Name.Replace("Node", ""); // "TrackingNode" -> "Tracking"
+            nodeData.graph = _window.CurrentGraph;
             AssetDatabase.AddObjectToAsset(nodeData, _window.CurrentGraph);
             _window.CurrentGraph.nodes.Add(nodeData);
 

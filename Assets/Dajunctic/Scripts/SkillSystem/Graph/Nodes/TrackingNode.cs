@@ -5,13 +5,14 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class TrackingNode : SkillNode
     {
-        [NodeInput] public List<CombatActor> actorsToTrack;
+        [SerializeField, NodeInput] public IDamageTaker target;
 
         public override void Execute()
         {
-            if (actorsToTrack != null && actorsToTrack.Count > 0)
+            target = GetInputValue<IDamageTaker>(nameof(target));
+            if (target != null)
             {
-                Debug.Log($"[Tracking] Node {guid} is tracking {actorsToTrack.Count} targets.");
+                Debug.Log($"[Tracking] Node {guid} is tracking target.");
                 // Thực hiện logic tracking ở đây...
             }
             else
@@ -25,7 +26,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public override void Reset()
         {
             base.Reset();
-            actorsToTrack = null;
+            target = null;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             // Execution In
             inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "In";
+            inputPort.AddToClassList("execution-port");
             inputContainer.Add(inputPort);
 
             // Data Inputs
@@ -66,6 +67,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             // Execution Out
             outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
             outputPort.portName = "Out";
+            outputPort.AddToClassList("execution-port");
             outputContainer.Add(outputPort);
 
             // Data Outputs

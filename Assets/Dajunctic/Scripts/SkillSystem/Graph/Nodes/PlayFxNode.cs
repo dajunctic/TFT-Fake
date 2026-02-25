@@ -12,7 +12,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             if (vfxPrefab != null)
             {
-                var vfx = Instantiate(vfxPrefab, _context.actor.transform.position, Quaternion.identity);
+                var vfx = Instantiate(vfxPrefab, _context.actor.Position, Quaternion.identity);
 
                 if (Application.isPlaying)
                 {

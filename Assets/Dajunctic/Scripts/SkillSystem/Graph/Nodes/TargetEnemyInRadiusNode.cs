@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
@@ -15,21 +16,24 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public TargetType targetType;
         public float radius = 5f;
 
-        [NodeOutput] public List<CombatActor> targets;
+        [SerializeField, NodeOutput] public List<IDamageTaker> targets;
+        [SerializeField, NodeOutput] public IDamageTaker mainTarget;
 
         public override void Execute()
         {
-            targets = new List<CombatActor>();
+            targets = new List<IDamageTaker>();
 
             // TODO: thực hiện logic tìm enemy trong bán kính
-            // Ví dụ:
-            // var allActors = Object.FindObjectsOfType<CombatActor>();
-            // foreach (var a in allActors)
-            //     if (a != _context.actor && Vector3.Distance(a.transform.position, _context.actor.transform.position) <= radius)
-            //         targets.Add(a);
+            // logic implementation here...
 
-            _context.SetOutput(guid, nameof(targets), targets);
             TriggerComplete();
+        }
+
+        public override object GetValue(string portName)
+        {
+            if (portName == nameof(targets)) return targets;
+            if (portName == nameof(mainTarget)) return mainTarget;
+            return base.GetValue(portName);
         }
 
         public override void Reset()

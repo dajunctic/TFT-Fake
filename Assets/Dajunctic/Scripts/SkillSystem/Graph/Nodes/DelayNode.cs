@@ -11,7 +11,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             if (Application.isPlaying)
             {
-                _context.actor.StartCoroutine(WaitCoroutine());
+                // StartCoroutine(WaitCoroutine());
             }
             else
             {

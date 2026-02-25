@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: EntryNode
   m_EditorClassIdentifier: 
   guid: c335dad6-7f4c-4978-80c8-a955e0d5f42d
-  position: {x: 100, y: 200}
+  position: {x: 96, y: 259}
+  graph: {fileID: 11400000}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28,8 +29,44 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodes:
   - {fileID: -7055845144157177170}
+  - {fileID: 8855621589401288569}
   - {fileID: 4687087265721512467}
-  links: []
+  - {fileID: 2171902664063280343}
+  - {fileID: 5097532923301128113}
+  links:
+  - baseNodeGuid: c335dad6-7f4c-4978-80c8-a955e0d5f42d
+    portName: Out
+    targetNodeGuid: 53ed285c-9236-4d81-9c51-8f4bb0f42f76
+    targetPortName: In
+  - baseNodeGuid: 53ed285c-9236-4d81-9c51-8f4bb0f42f76
+    portName: Out
+    targetNodeGuid: 0fd742be-9f21-4de9-bd5a-a3ca6ce6b829
+    targetPortName: In
+  - baseNodeGuid: 0fd742be-9f21-4de9-bd5a-a3ca6ce6b829
+    portName: Out
+    targetNodeGuid: 10c640c2-cbc1-4760-8ab7-81f67f0d37dc
+    targetPortName: In
+  - baseNodeGuid: d81af62d-3049-4860-866b-74d84ee2c895
+    portName: Targets
+    targetNodeGuid: 53ed285c-9236-4d81-9c51-8f4bb0f42f76
+    targetPortName: Target
+--- !u!114 &2171902664063280343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17775f8176d531446bf564e6a1e1ba7a, type: 3}
+  m_Name: Damage
+  m_EditorClassIdentifier: 
+  guid: 0fd742be-9f21-4de9-bd5a-a3ca6ce6b829
+  position: {x: 397, y: 250}
+  graph: {fileID: 11400000}
+  damage: 1
+  damageType: 1
 --- !u!114 &4687087265721512467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43,4 +80,37 @@ MonoBehaviour:
   m_Name: ExitNode
   m_EditorClassIdentifier: 
   guid: 10c640c2-cbc1-4760-8ab7-81f67f0d37dc
-  position: {x: 500, y: 200}
+  position: {x: 697, y: 274}
+  graph: {fileID: 11400000}
+--- !u!114 &5097532923301128113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66325352259352547901d017a3a30364, type: 3}
+  m_Name: TargetEnemyInRadius
+  m_EditorClassIdentifier: 
+  guid: d81af62d-3049-4860-866b-74d84ee2c895
+  position: {x: -48, y: 395}
+  graph: {fileID: 11400000}
+  targetType: 0
+  radius: 5
+--- !u!114 &8855621589401288569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f6abe313d77304f980b5151a4306a3, type: 3}
+  m_Name: Tracking
+  m_EditorClassIdentifier: 
+  guid: 53ed285c-9236-4d81-9c51-8f4bb0f42f76
+  position: {x: 243, y: 250}
+  graph: {fileID: 11400000}

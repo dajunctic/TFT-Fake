@@ -8,13 +8,11 @@ namespace Dajunctic.SkillSystem.Graph
     {
         [HideInInspector] public string guid;
         [HideInInspector] public Vector2 position;
+        [HideInInspector] public SkillGraph graph;
 
         protected SkillExecutionContext _context;
         private Action _onComplete;
 
-        /// <summary>
-        /// Khởi tạo node với context và callback trước mỗi lần chạy.
-        /// </summary>
         public void Init(SkillExecutionContext context, Action onComplete)
         {
             _context = context;
@@ -22,40 +20,60 @@ namespace Dajunctic.SkillSystem.Graph
             OnInit();
         }
 
-        /// <summary>
-        /// Override để thực hiện logic khởi tạo riêng của từng node.
-        /// </summary>
         protected virtual void OnInit() { }
 
-        /// <summary>
-        /// Thực thi node. Khi xong việc, gọi TriggerComplete().
-        /// </summary>
         public virtual void Execute()
         {
             TriggerComplete();
         }
 
-        /// <summary>
-        /// Gọi khi node hoàn thành, kích hoạt các node tiếp theo trong graph.
-        /// </summary>
         public void TriggerComplete()
         {
             _onComplete?.Invoke();
         }
 
-        /// <summary>
-        /// Đặt lại trạng thái của node (gọi khi graph được reset hoặc chạy lại).
-        /// </summary>
         public virtual void Reset()
         {
             _context = null;
             _onComplete = null;
         }
+
+        /// <summary>
+        /// Returns the value for a specific output port. Override in subclasses.
+        /// </summary>
+        public virtual object GetValue(string portName)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Pulls a value from the node connected to the specified input port.
+        /// </summary>
+        protected T GetInputValue<T>(string portName, T defaultValue = default)
+        {
+            if (graph == null) return defaultValue;
+
+            // Find connection to this port
+            var link = graph.links.Find(l => l.targetNodeGuid == guid && l.targetPortName == portName);
+            if (link == null) return defaultValue;
+
+            // Find source node
+            var sourceNode = graph.nodes.Find(n => n.guid == link.baseNodeGuid);
+            if (sourceNode == null) return defaultValue;
+
+            // Pull value from source
+            object value = sourceNode.GetValue(link.portName);
+            if (value is T tValue) return tValue;
+
+            return defaultValue;
+        }
     }
 
     [AttributeUsage(AttributeTargets.Field)]
+    [HideInInspector]
     public class NodeInputAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Field)]
+    [HideInInspector]
     public class NodeOutputAttribute : Attribute { }
 }

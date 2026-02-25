@@ -19,9 +19,12 @@ namespace Dajunctic.SkillSystem.Graph
         {
             if (graph == null || actor == null) return;
 
-            // Reset tất cả các node trước khi chạy
+            // Reset tất cả các node trước khi chạy và gán reference graph
             foreach (var node in graph.nodes)
+            {
+                node.graph = graph;
                 node.Reset();
+            }
 
             _nodeTriggerCounts.Clear();
             var context = new SkillExecutionContext(actor);
@@ -33,16 +36,10 @@ namespace Dajunctic.SkillSystem.Graph
 
         private void ExecuteNode(SkillNode node, SkillExecutionContext context)
         {
-            // 1. Inject data từ các port input
-            ResolveNodeData(node, context);
-
-            // 2. Init node với context và callback hoàn thành
+            // Init node với context và callback hoàn thành
             node.Init(context, () =>
             {
-                // 3. Capture output sau khi node hoàn thành
-                CaptureNodeOutputs(node, context);
-
-                // 4. Kích hoạt các node tiếp theo qua execution link "Out -> In"
+                // Kích hoạt các node tiếp theo qua execution link "Out -> In"
                 var outgoingLinks = graph.links
                     .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out")
                     .ToList();
@@ -64,39 +61,8 @@ namespace Dajunctic.SkillSystem.Graph
                 }
             });
 
-            // 5. Chạy node
+            // Chạy node
             node.Execute();
-        }
-
-        private void ResolveNodeData(SkillNode node, SkillExecutionContext context)
-        {
-            var incomingDataLinks = graph.links
-                .Where(l => l.targetNodeGuid == node.guid
-                         && !string.IsNullOrEmpty(l.targetPortName)
-                         && l.targetPortName != "In")
-                .ToList();
-
-            foreach (var link in incomingDataLinks)
-            {
-                var value = context.GetOutput<object>(link.baseNodeGuid, link.portName);
-                if (value != null)
-                {
-                    var field = node.GetType().GetField(
-                        link.targetPortName,
-                        BindingFlags.Public | BindingFlags.Instance);
-                    field?.SetValue(node, value);
-                }
-            }
-        }
-
-        private void CaptureNodeOutputs(SkillNode node, SkillExecutionContext context)
-        {
-            var fields = node.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance);
-            foreach (var field in fields)
-            {
-                if (System.Attribute.IsDefined(field, typeof(NodeOutputAttribute)))
-                    context.SetOutput(node.guid, field.Name, field.GetValue(node));
-            }
         }
     }
 }

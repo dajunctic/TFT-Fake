@@ -10,32 +10,26 @@ public class Entity: AssetId, IEntity
 
     public void DoDisable()
     {
-        throw new System.NotImplementedException();
     }
 
     public void DoEnable()
     {
-        throw new System.NotImplementedException();
     }
 
     public void Initialize()
     {
-        throw new System.NotImplementedException();
     }
 
     public void ListenEvents()
     {
-        throw new System.NotImplementedException();
     }
 
     public void StopListenEvents()
     {
-        throw new System.NotImplementedException();
     }
 
     public void Tick()
     {
-        throw new System.NotImplementedException();
     }
 
 #if UNITY_EDITOR

@@ -13,6 +13,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         public override void Execute()
         {
+            targets = GetInputValue<List<CombatActor>>(nameof(targets));
             var actorsToShoot = targets ?? new List<CombatActor>();
             if (actorsToShoot.Count == 0)
             {
@@ -22,14 +23,14 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
             foreach (var target in actorsToShoot)
             {
-                var missileData = new MissileData
-                {
-                    launcher = _context.actor.CachedTransform.TransformPoint(launcherOffset),
-                    targetActor = target,
-                    combatActor = _context.actor,
-                    combineDamage = new CombineDamage(DamageType.PhysicalDamage, _context.actor.GetTotalAtk() * damageMultiplier)
-                };
-                GameManager.Instance.SpawnMissile(missileId, missileData);
+                // var missileData = new MissileData
+                // {
+                //     launcher = _context.actor.CachedTransform.TransformPoint(launcherOffset),
+                //     targetActor = target,
+                //     combatActor = _context.actor,
+                //     combineDamage = new CombineDamage(DamageType.PhysicalDamage, _context.actor.GetTotalAtk() * damageMultiplier)
+                // };
+                // GameManager.Instance.SpawnMissile(missileId, missileData);
             }
 
             TriggerComplete();

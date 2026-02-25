@@ -56,6 +56,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _previewRenderUtility.camera.farClipPlane = 1000;
             _previewRenderUtility.camera.nearClipPlane = 0.1f;
             EditorApplication.update += OnEditorUpdate;
+            Undo.undoRedoPerformed += OnUndoRedoPerformed;
 
             if (_currentGraph != null)
             {
@@ -72,6 +73,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private void OnDisable()
         {
             EditorApplication.update -= OnEditorUpdate;
+            Undo.undoRedoPerformed -= OnUndoRedoPerformed;
             if (_previewRenderUtility != null) _previewRenderUtility.Cleanup();
             if (_previewInstance != null) DestroyImmediate(_previewInstance);
         }
@@ -328,6 +330,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             UpdateTitle();
         }
 
+        private void OnUndoRedoPerformed()
+        {
+            if (_currentGraph != null)
+            {
+                LoadGraph(_currentGraph);
+            }
+        }
+
         private void GenerateToolbar()
         {
             var toolbar = new Toolbar();
@@ -355,7 +365,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             if (_currentGraph == null || _previewInstance == null) return;
             _nodeTriggerCounts.Clear();
 
-            // Clear all node highlights before starting
             ClearAllNodeHighlights();
 
             var actor = _previewInstance.GetComponent<CombatActor>();
@@ -376,20 +385,11 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void ExecuteNode(SkillNode node, SkillExecutionContext context)
         {
-            // Highlight the current executing node
             var nodeView = _graphView?.GetNodeViewByGuid(node.guid);
             nodeView?.SetHighlight();
 
-            // 1. Inject data từ các port input
-            ResolveNodeData(node, context);
-
-            // 2. Init node với context và callback khi hoàn thành
             node.Init(context, () =>
             {
-                // 3. Sau khi node gọi TriggerComplete(), capture output
-                CaptureNodeOutputs(node, context);
-
-                // 4. Kích hoạt các node tiếp theo qua execution link "Out -> In"
                 var outgoingLinks = _currentGraph.links
                     .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out")
                     .ToList();
@@ -411,43 +411,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 }
             });
 
-            // 5. Chạy node
             node.Execute();
-        }
-
-        private void ResolveNodeData(SkillNode node, SkillExecutionContext context)
-        {
-            // Inject giá trị từ các data port input (bỏ qua execution link "In")
-            var incomingDataLinks = _currentGraph.links
-                .Where(l => l.targetNodeGuid == node.guid && l.targetPortName != "In" && !string.IsNullOrEmpty(l.targetPortName))
-                .ToList();
-
-            foreach (var link in incomingDataLinks)
-            {
-                var value = context.GetOutput<object>(link.baseNodeGuid, link.portName);
-                if (value != null)
-                {
-                    var field = node.GetType().GetField(
-                        link.targetPortName,
-                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                    field?.SetValue(node, value);
-                }
-            }
-        }
-
-        private void CaptureNodeOutputs(SkillNode node, SkillExecutionContext context)
-        {
-            // Capture tất cả field có [NodeOutput] vào context
-            var fields = node.GetType().GetFields(
-                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-
-            foreach (var field in fields)
-            {
-                if (System.Attribute.IsDefined(field, typeof(NodeOutputAttribute)))
-                {
-                    context.SetOutput(node.guid, field.Name, field.GetValue(node));
-                }
-            }
         }
     }
 }
