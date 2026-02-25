@@ -30,10 +30,10 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void ApplyNodeStyle()
         {
-            if (nodeData is Nodes.EntryNode) AddToClassList("start-node");
-            else if (nodeData is Nodes.PlayAnimNode) AddToClassList("animation-node");
-            else if (nodeData is Nodes.WaitNode) AddToClassList("wait-node");
-            else if (nodeData is Nodes.VFXNode) AddToClassList("vfx-node");
+            if (nodeData is Nodes.EntryNode) AddToClassList("entry-node");
+            else if (nodeData is Nodes.PlayAnimNode) AddToClassList("playanim-node");
+            else if (nodeData is Nodes.DelayNode) AddToClassList("delay-node");
+            else if (nodeData is Nodes.PlayFxNode) AddToClassList("playfx-node");
             else if (nodeData is Nodes.DamageNode) AddToClassList("damage-node");
             else if (nodeData is Nodes.TargetNode) AddToClassList("target-node");
             else if (nodeData is Nodes.ShootNode) AddToClassList("shoot-node");

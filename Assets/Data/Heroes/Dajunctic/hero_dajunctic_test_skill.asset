@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8065477161942224702
+--- !u!114 &-5932744432794814982
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,13 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc8ee4c41eaa44b45a82618fb54416ad, type: 3}
-  m_Name: WaitNode
+  m_Script: {fileID: 11500000, guid: 17775f8176d531446bf564e6a1e1ba7a, type: 3}
+  m_Name: DamageNode
   m_EditorClassIdentifier: 
-  guid: a38e7b02-a52a-4d26-83df-aa34bcefbf3f
-  position: {x: 522, y: 204}
-  duration: 0
---- !u!114 &-6359482410116455573
+  guid: 0bed9059-3099-4599-ac53-08fe571787b5
+  position: {x: 0, y: 0}
+  damage: 1
+  damageType: 1
+--- !u!114 &-3471675017643032838
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25,10 +26,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c28f214cf5d48540ad070ac90bd5363, type: 3}
-  m_Name: StartNode
+  m_Name: EntryNode
   m_EditorClassIdentifier: 
-  guid: 7a2c664d-925c-465d-9d5e-dae92e200e84
-  position: {x: 153.91255, y: 197.63771}
+  guid: 9416f8f8-ace2-4137-aed0-3010e7608f92
+  position: {x: 219, y: 163}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42,6 +43,53 @@ MonoBehaviour:
   m_Name: hero_dajunctic_test_skill
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -6359482410116455573}
-  - {fileID: -8065477161942224702}
+  - {fileID: -5932744432794814982}
+  - {fileID: -3471675017643032838}
+  - {fileID: 8846584388133468314}
+  - {fileID: 1440605349583737540}
+  - {fileID: 445262904083817206}
   links: []
+--- !u!114 &445262904083817206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8ee4c41eaa44b45a82618fb54416ad, type: 3}
+  m_Name: DelayNode
+  m_EditorClassIdentifier: 
+  guid: 86f1e523-692e-449a-b4c6-9cf54961fd9e
+  position: {x: 454, y: 259}
+  duration: 0
+--- !u!114 &1440605349583737540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f449dfd69fcc5cb4e870484c547340ab, type: 3}
+  m_Name: ExitNode
+  m_EditorClassIdentifier: 
+  guid: d017573f-2434-4c1c-90a9-b4b159bcfdc0
+  position: {x: 263, y: 162}
+--- !u!114 &8846584388133468314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8ee4c41eaa44b45a82618fb54416ad, type: 3}
+  m_Name: DelayNode
+  m_EditorClassIdentifier: 
+  guid: 50ba83b3-7594-44ed-a3ad-3ae3cca66cec
+  position: {x: 78, y: 208}
+  duration: 0

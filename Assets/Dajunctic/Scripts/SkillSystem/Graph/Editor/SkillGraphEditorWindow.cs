@@ -24,7 +24,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private SkillGraph _currentGraph;
         private SkillGraphView _graphView;
-        private VisualElement _previewContainer;
         private CombatActor _previewActor;
         private PreviewRenderUtility _previewRenderUtility;
         private GameObject _previewInstance;
@@ -32,6 +31,13 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private float _previewDistance = 6f;
         private Vector3 _previewPivot = Vector3.up * 0.8f;
         private Dictionary<string, int> _nodeTriggerCounts = new Dictionary<string, int>();
+
+        // Custom Proportional Splitter variables
+        private VisualElement _leftPane;
+        private VisualElement _rightPane;
+        private VisualElement _divider;
+        private bool _isDraggingDivider = false;
+        private float _splitRatio = 0.5f; // Khởi tạo 50/50 để Preview rộng rãi hơn
 
         [MenuItem("Dajunctic/Skill Graph Editor")]
         public static void OpenWindow()
@@ -54,105 +60,143 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private void OnDisable()
         {
             EditorApplication.update -= OnEditorUpdate;
-            rootVisualElement.Remove(_graphView);
-            if (_previewRenderUtility != null)
-            {
-                _previewRenderUtility.Cleanup();
-                _previewRenderUtility = null;
-            }
-            if (_previewInstance != null)
-            {
-                DestroyImmediate(_previewInstance);
-            }
+            if (_previewRenderUtility != null) _previewRenderUtility.Cleanup();
+            if (_previewInstance != null) DestroyImmediate(_previewInstance);
         }
 
         private void OnEditorUpdate()
         {
             if (_previewInstance != null)
             {
-                // Manually update animator in editor
                 var animator = _previewInstance.GetComponentInChildren<Animator>();
-                if (animator != null && !Application.isPlaying)
-                {
-                    animator.Update(Time.deltaTime);
-                }
+                if (animator != null && !Application.isPlaying) animator.Update(Time.deltaTime);
             }
             Repaint();
         }
 
         private void ConstructGraphView()
         {
+            rootVisualElement.style.flexDirection = FlexDirection.Column;
+
+            // Main Content Area
+            var contentArea = new VisualElement();
+            contentArea.style.flexDirection = FlexDirection.Row;
+            contentArea.style.flexGrow = 1;
+            rootVisualElement.Add(contentArea);
+
+            // Left Pane (Graph) - Uses flexGrow based on ratio
+            _leftPane = new VisualElement();
+            _leftPane.style.flexGrow = _splitRatio;
+            _leftPane.style.flexBasis = 0;
+
             _graphView = new SkillGraphView(this)
             {
                 name = "Skill Graph"
             };
             _graphView.StretchToParentSize();
-            rootVisualElement.Add(_graphView);
+            _leftPane.Add(_graphView);
+            contentArea.Add(_leftPane);
 
-            // Split View
-            var splitView = new TwoPaneSplitView(0, 250, TwoPaneSplitViewOrientation.Horizontal);
-            rootVisualElement.Add(splitView);
+            // Custom Draggable Divider
+            _divider = new VisualElement();
+            _divider.style.width = 4;
+            _divider.style.backgroundColor = new Color(0.25f, 0.25f, 0.25f, 1f); // Làm sáng thanh chia một chút để dễ thấy
+            // _divider.style.cursor = ... (Tạm thời bỏ qua để tránh lỗi biên dịch, quan trọng là phần toán học bên dưới đã được sửa)
 
-            var leftPane = new VisualElement();
-            leftPane.Add(_graphView);
-            splitView.Add(leftPane);
 
-            var rightPane = new VisualElement();
-            rightPane.style.paddingLeft = 10;
-            rightPane.style.paddingRight = 10;
-            rightPane.style.paddingTop = 10;
+            // Divider Interactivity
+            _divider.RegisterCallback<MouseDownEvent>(evt => { _isDraggingDivider = true; _divider.CaptureMouse(); evt.StopPropagation(); });
+            _divider.RegisterCallback<MouseUpEvent>(evt => { _isDraggingDivider = false; _divider.ReleaseMouse(); evt.StopPropagation(); });
+            _divider.RegisterCallback<MouseMoveEvent>(OnDividerDrag);
 
-            _previewContainer = new VisualElement();
-            rightPane.Add(new Label("Preview Settings") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 10 } });
-            
+            contentArea.Add(_divider);
+
+            // Right Pane (Settings & Preview) - Uses flexGrow based on remaining ratio
+            _rightPane = new VisualElement();
+            _rightPane.style.flexGrow = 1f - _splitRatio;
+            _rightPane.style.flexBasis = 0;
+            _rightPane.style.backgroundColor = new Color(0.18f, 0.18f, 0.18f, 1f);
+            contentArea.Add(_rightPane);
+
+            var rightScroll = new ScrollView(ScrollViewMode.Vertical);
+            rightScroll.style.flexGrow = 0; // Chỉ chiếm không gian vừa đủ cho settings
+            rightScroll.style.paddingLeft = 10;
+            rightScroll.style.paddingRight = 10;
+            rightScroll.style.paddingTop = 10;
+            _rightPane.Add(rightScroll);
+
+            // Preview Section
+            rightScroll.Add(new Label("Preview Settings") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginBottom = 10 } });
+
             var actorField = new ObjectField("Preview Actor") { objectType = typeof(CombatActor) };
-            actorField.RegisterValueChangedCallback(evt => 
+            actorField.RegisterValueChangedCallback(evt =>
             {
                 _previewActor = evt.newValue as CombatActor;
                 UpdatePreviewInstance();
             });
-            rightPane.Add(actorField);
+            rightScroll.Add(actorField);
 
+            // Preview sẽ nằm ngoài ScrollView để có thể scale theo chiều cao của RightPane
             var previewIMGUI = new IMGUIContainer(OnPreviewGUI);
-            previewIMGUI.style.flexGrow = 1;
-            previewIMGUI.style.minHeight = 200;
-            rightPane.Add(previewIMGUI);
+            previewIMGUI.style.flexGrow = 1; // Tự động giãn nở theo chiều cao còn lại
+            previewIMGUI.style.marginTop = 10;
+            previewIMGUI.style.backgroundColor = new Color(0.12f, 0.12f, 0.12f, 1f);
+            _rightPane.Add(previewIMGUI);
+        }
 
-            rightPane.Add(_previewContainer);
-            splitView.Add(rightPane);
-            
-            _graphView.StretchToParentSize();
+        private void OnDividerDrag(MouseMoveEvent evt)
+        {
+            if (!_isDraggingDivider) return;
+
+            VisualElement parent = _divider.parent;
+            float totalWidth = parent.resolvedStyle.width;
+            if (totalWidth <= 0) return;
+
+            // Vị trí chuột (evt.mousePosition) trong UI Toolkit mặc định là toạ độ của Panel (Window)
+            // Ta chỉ cần trừ đi toạ độ X của parent để có vị trí cục bộ trong vùng chứa
+            float mousePositionX = evt.mousePosition.x - parent.worldBound.x;
+            float newRatio = mousePositionX / totalWidth;
+
+            // Clamp ratio to prevent panes from disappearing
+            _splitRatio = Mathf.Clamp(newRatio, 0.1f, 0.9f);
+
+            // Update UI
+            _leftPane.style.flexGrow = _splitRatio;
+            _rightPane.style.flexGrow = 1f - _splitRatio;
+
+            evt.StopPropagation();
+        }
+
+        public void OnNodeSelectionChanged(SkillNode node)
+        {
+            if (node != null)
+            {
+                Selection.activeObject = node;
+                EditorGUIUtility.PingObject(node);
+            }
         }
 
         private void UpdatePreviewInstance()
         {
-            if (_previewInstance != null)
-            {
-                DestroyImmediate(_previewInstance);
-            }
-
+            if (_previewInstance != null) DestroyImmediate(_previewInstance);
             if (_previewActor != null)
             {
                 _previewInstance = Instantiate(_previewActor.gameObject);
                 _previewInstance.hideFlags = HideFlags.HideAndDontSave;
-                _previewInstance.transform.position = Vector3.zero;
-                _previewInstance.transform.rotation = Quaternion.identity;
-                
-                // Disable scripts that might interfere with preview, but keep Animator and CombatActor
-                var scripts = _previewInstance.GetComponentsInChildren<MonoBehaviour>();
-                foreach (var script in scripts)
+                _previewInstance.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+                var monoScripts = _previewInstance.GetComponentsInChildren<MonoBehaviour>();
+                foreach (var script in monoScripts)
                 {
-                    if (!(script is Animator) && !(script is CombatActor)) script.enabled = false;
+                    if (script is not CombatActor) script.enabled = false;
                 }
 
-                // Ensure animator is in a state where it can play
                 var animator = _previewInstance.GetComponentInChildren<Animator>();
                 if (animator != null)
                 {
                     animator.enabled = true;
                     animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 }
-
                 _previewRenderUtility.AddSingleGO(_previewInstance);
             }
         }
@@ -160,27 +204,21 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private void OnPreviewGUI()
         {
             Rect rect = GUILayoutUtility.GetRect(200, 200, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-
             if (_previewInstance == null)
             {
                 GUI.Label(new Rect(rect.x + 10, rect.y + 10, 200, 20), "No Preview Actor Selected");
             }
 
             HandlePreviewInput(rect);
-
             _previewRenderUtility.BeginPreview(rect, GUIStyle.none);
-
-            _previewRenderUtility.camera.transform.rotation = Quaternion.Euler(-_previewDir.y, -_previewDir.x, 0);
-            _previewRenderUtility.camera.transform.position = _previewPivot + _previewRenderUtility.camera.transform.forward * -_previewDistance;
-
-            _previewRenderUtility.lights[0].intensity = 1.4f;
+            _previewRenderUtility.camera.transform.SetPositionAndRotation(_previewPivot + _previewRenderUtility.camera.transform.forward * -_previewDistance, Quaternion.Euler(-_previewDir.y, -_previewDir.x, 0));
+            _previewRenderUtility.lights[0].intensity = 2.0f;
             _previewRenderUtility.lights[0].transform.rotation = Quaternion.Euler(40f, 40f, 0f);
-            _previewRenderUtility.lights[1].intensity = 1.4f;
+            // _previewRenderUtility.lights[1].intensity = 1.5f;
+            // _previewRenderUtility.lights[1].transform.rotation = Quaternion.Euler(30f, -30f, 0f);
 
             _previewRenderUtility.Render(true);
-
             DrawPreviewGrid();
-
             Texture result = _previewRenderUtility.EndPreview();
             GUI.DrawTexture(rect, result);
         }
@@ -189,7 +227,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         {
             int controlID = GUIUtility.GetControlID("PreviewInput".GetHashCode(), FocusType.Passive);
             Event evt = Event.current;
-
             switch (evt.GetTypeForControl(controlID))
             {
                 case EventType.MouseDown:
@@ -201,21 +238,18 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                     }
                     break;
                 case EventType.MouseUp:
-                    if (GUIUtility.hotControl == controlID)
-                    {
-                        GUIUtility.hotControl = 0;
-                    }
+                    if (GUIUtility.hotControl == controlID) GUIUtility.hotControl = 0;
                     EditorGUIUtility.SetWantsMouseJumping(0);
                     break;
                 case EventType.MouseDrag:
                     if (GUIUtility.hotControl == controlID)
                     {
-                        if (evt.button == 1) // Right click - Rotate
+                        if (evt.button == 1)
                         {
                             _previewDir -= evt.delta * (evt.shift ? 3 : 1) / Mathf.Min(rect.width, rect.height) * 140f;
                             _previewDir.y = Mathf.Clamp(_previewDir.y, -90f, 90f);
                         }
-                        else if (evt.button == 0 || evt.button == 2) // Left click or Middle click - Pan
+                        else if (evt.button == 0 || evt.button == 2)
                         {
                             Vector3 camRight = _previewRenderUtility.camera.transform.right;
                             Vector3 camUp = _previewRenderUtility.camera.transform.up;
@@ -242,13 +276,9 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             GL.PushMatrix();
             GL.LoadProjectionMatrix(_previewRenderUtility.camera.projectionMatrix);
             GL.modelview = _previewRenderUtility.camera.worldToCameraMatrix;
-
             var mat = new Material(Shader.Find("Hidden/Internal-Colored"));
             mat.SetPass(0);
-
             GL.Begin(GL.LINES);
-            
-            // Draw Grid
             GL.Color(new Color(0.7f, 0.7f, 0.7f, 0.5f));
             float gridSize = 10f;
             float step = 1f;
@@ -259,50 +289,32 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 GL.Vertex(new Vector3(-gridSize, 0, i));
                 GL.Vertex(new Vector3(gridSize, 0, i));
             }
-
             GL.End();
             GL.PopMatrix();
         }
 
         public SkillGraph CurrentGraph => _currentGraph;
 
-        public SerializedObject GetSerializedObject()
-        {
-            return new SerializedObject(_currentGraph);
-        }
-
         public void LoadGraph(SkillGraph graph)
         {
             _currentGraph = graph;
-            _graphView.PopulateView(_currentGraph);
+            if (_graphView != null) _graphView.PopulateView(_currentGraph);
         }
 
         private void GenerateToolbar()
         {
             var toolbar = new Toolbar();
-
-            var saveBtn = new Button(() => { SaveData(); }) { text = "Save Graph" };
-            toolbar.Add(saveBtn);
-
-            var loadBtn = new Button(() => { LoadData(); }) { text = "Load Graph" };
-            toolbar.Add(loadBtn);
-
-            var previewBtn = new Button(() => { PreviewSkill(); }) { text = "Preview Skill" };
-            toolbar.Add(previewBtn);
-
-            var resetBtn = new Button(() => { UpdatePreviewInstance(); }) { text = "Reset Preview" };
-            toolbar.Add(resetBtn);
-
-            var clearBtn = new Button(() => { _graphView.ClearGraph(); }) { text = "Clear Graph" };
-            toolbar.Add(clearBtn);
-
-            rootVisualElement.Add(toolbar);
+            toolbar.Add(new Button(() => { SaveData(); }) { text = "Save Graph" });
+            toolbar.Add(new Button(() => { LoadData(); }) { text = "Load Graph" });
+            toolbar.Add(new Button(() => { PreviewSkill(); }) { text = "Preview Skill" });
+            toolbar.Add(new Button(() => { UpdatePreviewInstance(); }) { text = "Reset Preview" });
+            toolbar.Add(new Button(() => { _graphView.ClearGraph(); }) { text = "Clear Graph" });
+            rootVisualElement.Insert(0, toolbar);
         }
 
         private void SaveData()
         {
             if (_currentGraph == null) return;
-            // Implementation for saving graph data back to ScriptableObject
             _graphView.SaveGraph(_currentGraph);
             EditorUtility.SetDirty(_currentGraph);
             AssetDatabase.SaveAssets();
@@ -312,40 +324,20 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         {
             string path = EditorUtility.OpenFilePanel("Load Skill Graph", "Assets", "asset");
             if (string.IsNullOrEmpty(path)) return;
-
             path = FileUtil.GetProjectRelativePath(path);
             var graph = AssetDatabase.LoadAssetAtPath<SkillGraph>(path);
-            if (graph != null)
-            {
-                LoadGraph(graph);
-            }
+            if (graph != null) LoadGraph(graph);
         }
 
         private void PreviewSkill()
         {
-            if (_currentGraph == null || _previewInstance == null)
-            {
-                Debug.LogWarning("Please select a Skill Graph and a Preview Actor.");
-                return;
-            }
-
-            Debug.Log("Previewing Skill...");
+            if (_currentGraph == null || _previewInstance == null) return;
             _nodeTriggerCounts.Clear();
-            
             var actor = _previewInstance.GetComponent<CombatActor>();
             if (actor == null) return;
-
             var context = new SkillExecutionContext(actor);
-            context.onSpawnVFX = (vfx) =>
-            {
-                _previewRenderUtility.AddSingleGO(vfx);
-            };
-
-            var startNode = _currentGraph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
-            if (startNode != null)
-            {
-                ExecuteNode(startNode, context);
-            }
+            var entryNode = _currentGraph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
+            if (entryNode != null) ExecuteNode(entryNode, context);
         }
 
         private void ExecuteNode(SkillNode node, SkillExecutionContext context)
@@ -353,23 +345,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             node.Execute(context, () =>
             {
                 var outgoingLinks = _currentGraph.links.Where(l => l.baseNodeGuid == node.guid).ToList();
-                
                 foreach (var link in outgoingLinks)
                 {
                     var nextNode = _currentGraph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
                     if (nextNode == null) continue;
-
-                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid))
-                        _nodeTriggerCounts[nextNode.guid] = 0;
-                    
+                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid)) _nodeTriggerCounts[nextNode.guid] = 0;
                     _nodeTriggerCounts[nextNode.guid]++;
-
                     int totalIncoming = _currentGraph.links.Count(l => l.targetNodeGuid == nextNode.guid);
-
-                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming)
-                    {
-                        ExecuteNode(nextNode, context);
-                    }
+                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming) ExecuteNode(nextNode, context);
                 }
             });
         }

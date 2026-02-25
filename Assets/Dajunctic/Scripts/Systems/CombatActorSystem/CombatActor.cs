@@ -38,15 +38,12 @@ namespace Dajunctic
         protected Node root = null;
 
         bool _viewLoaded;
-        VFXFollowTarget _vfxFollowInstance;
         
         Dictionary<SkillSlot, RuntimeSkill> _skillBook = new Dictionary<SkillSlot, RuntimeSkill>();
-        private Dictionary<string, Transform> _firePointMap;
         public override void Initialize()
         {
             base.Initialize();
             _viewLoaded = true;
-            InitializedFirePoints();
             
             Position = CachedTransform.position;
             Forward = CachedTransform.forward;
@@ -92,11 +89,6 @@ namespace Dajunctic
         public bool HasValidTarget()
         {
             return CurrentTarget != null && CurrentTarget.gameObject.activeInHierarchy && CurrentTarget.IsTargetable;
-        }
-
-        private void InitializedFirePoints()
-        {
-            _firePointMap = new Dictionary<string, Transform>();
         }
 
         #region Movement
@@ -356,10 +348,7 @@ namespace Dajunctic
             IsAnimFinished = false;
             animator.speed = 1f; 
         }
-        public Transform GetFirePoint(string param)
-        {
-            return _firePointMap.TryGetValue(param, out var tf) ? tf : transform;
-        }
+
         public void SetCasting(bool value, SkillSlot slot)
         {
             IsCasting = value;

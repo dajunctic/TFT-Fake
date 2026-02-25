@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
-    public class WaitNode : SkillNode
+    public class DelayNode : SkillNode
     {
         public float duration;
 

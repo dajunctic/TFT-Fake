@@ -5,23 +5,23 @@ GridBackground {
     --spacing: 15;
 }
 
-.skill-node #title {
+/* .skill-node #title {
     background-color: rgba(0, 128, 255, 0.8);
 }
 
-.start-node #title {
+.delay-node #title {
     background-color: rgba(0, 200, 0, 0.8);
 }
 
-.animation-node #title {
+.playanim-node #title {
     background-color: rgba(200, 0, 200, 0.8);
 }
 
-.wait-node #title {
+.delay-node #title {
     background-color: rgba(200, 200, 0, 0.8);
 }
 
-.vfx-node #title {
+.playfx-node #title {
     background-color: rgba(0, 200, 200, 0.8);
 }
 
@@ -35,7 +35,7 @@ GridBackground {
 
 .shoot-node #title {
     background-color: rgba(255, 128, 0, 0.8);
-}
+} */
 
 .node #extension {
     background-color: #3f3f3f;

@@ -3,7 +3,7 @@ using System;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
-    public class VFXNode : SkillNode
+    public class PlayFxNode : SkillNode
     {
         public GameObject vfxPrefab;
         public string attachPoint;
@@ -12,10 +12,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public override void Execute(SkillExecutionContext context, Action onComplete)
         {
             Transform parent = null;
-            if (!string.IsNullOrEmpty(attachPoint))
-            {
-                parent = context.actor.GetFirePoint(attachPoint);
-            }
 
             if (vfxPrefab != null)
             {

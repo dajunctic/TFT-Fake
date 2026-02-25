@@ -166,17 +166,11 @@ MonoBehaviour:
   ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
   eventDispatcher: {fileID: 11400000, guid: 27cfed565a59a9544b70752c5a21fbd8, type: 2}
   launcherScene:
-    m_AssetGUID: 
+    m_AssetGUID: 22cd61da445add748a31e29126adb7f8
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
-  fadingScene:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

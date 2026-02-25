@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 1181780196}
   - component: {fileID: 1181780197}
   m_Layer: 0
-  m_Name: InitializeLauncher
+  m_Name: Launcher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,23 +160,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1181780195}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73939cc959a37534980cc40cad9b0bba, type: 3}
+  m_Script: {fileID: 11500000, guid: aaf2166347556aa4da2eae31f503f342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
-  eventDispatcher: {fileID: 11400000, guid: 27cfed565a59a9544b70752c5a21fbd8, type: 2}
-  launcherScene:
-    m_AssetGUID: 
+  initialize: 1
+  tick: 2
+  homeScene:
+    m_AssetGUID: 3defb3e439bc406488f099140d908047
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
-  fadingScene:
-    m_AssetGUID: 
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
+    m_EditorAssetChanged: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

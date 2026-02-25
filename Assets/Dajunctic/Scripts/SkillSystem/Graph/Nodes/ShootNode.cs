@@ -5,7 +5,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class ShootNode : SkillNode
     {
-        public string missileId;
+        [SerializeField, GuidReference("missile", typeof(IDummyId))] public string missileId;
         public Vector3 launcherOffset;
         public float damageMultiplier = 1f;
 

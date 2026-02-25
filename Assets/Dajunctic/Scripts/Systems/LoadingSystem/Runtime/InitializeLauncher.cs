@@ -10,7 +10,7 @@ namespace Dajunctic
         [SerializeField] Ticker ticker;
         [SerializeField] EventDispatcher eventDispatcher;
         [SerializeField] AssetReference launcherScene;
-        [SerializeField] AssetReference fadingScene;
+        // [SerializeField] AssetReference fadingScene;
 
         void Awake()
         {
@@ -24,11 +24,11 @@ namespace Dajunctic
 
         async void Start()
         {
-            if (fadingScene != null)
-            {
-                await Addressables.LoadSceneAsync(fadingScene, LoadSceneMode.Single).Task;
-                this.Raise(new ShowFadingUIEvent());
-            }
+            // if (fadingScene != null)
+            // {
+            //     await Addressables.LoadSceneAsync(fadingScene, LoadSceneMode.Single).Task;
+            //     this.Raise(new ShowFadingUIEvent());
+            // }
             
             AddressableUtils.LoadScene(launcherScene);
            

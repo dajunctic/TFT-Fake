@@ -33,7 +33,6 @@ public class ActorAttribute
 [Serializable]
 public struct CombatStat
 {
-    public float radius;
     public float atk;
     public float atkSpd;
     public float atkRange;
