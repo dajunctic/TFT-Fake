@@ -16,5 +16,6 @@ namespace Dajunctic.SkillSystem.Graph
         public string baseNodeGuid;
         public string portName;
         public string targetNodeGuid;
+        public string targetPortName;
     }
 }

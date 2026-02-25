@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
@@ -9,14 +8,15 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public float transitionDuration = 0.1f;
         public bool waitForFinish = true;
 
-        public override void Execute(SkillExecutionContext context, Action onComplete)
+        public override void Execute()
         {
-            context.actor.PlayAnim(animationName, transitionDuration);
+            _context.actor.PlayAnim(animationName, transitionDuration);
+
             if (waitForFinish)
             {
                 if (Application.isPlaying)
                 {
-                    context.actor.StartCoroutine(WaitForAnimation(context.actor, onComplete));
+                    _context.actor.StartCoroutine(WaitForAnimation());
                 }
                 else
                 {
@@ -24,10 +24,10 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     UnityEditor.EditorApplication.CallbackFunction update = null;
                     update = () =>
                     {
-                        if (context.actor == null || context.actor.IsAnimFinished)
+                        if (_context.actor == null || _context.actor.IsAnimFinished)
                         {
                             UnityEditor.EditorApplication.update -= update;
-                            onComplete?.Invoke();
+                            TriggerComplete();
                         }
                     };
                     UnityEditor.EditorApplication.update += update;
@@ -36,17 +36,15 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             }
             else
             {
-                onComplete?.Invoke();
+                TriggerComplete();
             }
         }
 
-        private System.Collections.IEnumerator WaitForAnimation(CombatActor actor, Action onComplete)
+        private System.Collections.IEnumerator WaitForAnimation()
         {
-            while (!actor.IsAnimFinished)
-            {
+            while (!_context.actor.IsAnimFinished)
                 yield return null;
-            }
-            onComplete?.Invoke();
+            TriggerComplete();
         }
     }
 }

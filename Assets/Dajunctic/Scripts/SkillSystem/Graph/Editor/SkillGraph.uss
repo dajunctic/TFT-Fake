@@ -17,6 +17,7 @@ GridBackground {
     --edge-width: 2;
 }
 
+/* 
 .port.input {
     --port-color: #00ff00;
 }
@@ -24,7 +25,7 @@ GridBackground {
 .port.output {
     --port-color: #ff0000;
 }
-
-.port #type {
+*/
+/* .port #type {
     display: none;
-}
+} */

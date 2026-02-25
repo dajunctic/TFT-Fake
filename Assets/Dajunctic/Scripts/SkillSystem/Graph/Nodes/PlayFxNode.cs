@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
@@ -9,14 +8,11 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public string attachPoint;
         public float duration = 2f;
 
-        public override void Execute(SkillExecutionContext context, Action onComplete)
+        public override void Execute()
         {
-            Transform parent = null;
-
             if (vfxPrefab != null)
             {
-                var vfx = Instantiate(vfxPrefab, parent != null ? parent.position : context.actor.transform.position, Quaternion.identity);
-                if (parent != null) vfx.transform.SetParent(parent);
+                var vfx = Instantiate(vfxPrefab, _context.actor.transform.position, Quaternion.identity);
 
                 if (Application.isPlaying)
                 {
@@ -25,21 +21,14 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 else
                 {
 #if UNITY_EDITOR
-                    if (context.onSpawnVFX != null)
-                    {
-                        context.onSpawnVFX(vfx);
-                    }
-                    
+                    if (_context.onSpawnVFX != null)
+                        _context.onSpawnVFX(vfx);
+
                     float startTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
                     UnityEditor.EditorApplication.CallbackFunction update = null;
                     update = () =>
                     {
-                        if (vfx == null)
-                        {
-                            UnityEditor.EditorApplication.update -= update;
-                            return;
-                        }
-
+                        if (vfx == null) { UnityEditor.EditorApplication.update -= update; return; }
                         if ((float)UnityEditor.EditorApplication.timeSinceStartup - startTime >= duration)
                         {
                             UnityEditor.EditorApplication.update -= update;
@@ -51,7 +40,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 }
             }
 
-            onComplete?.Invoke();
+            TriggerComplete();
         }
     }
 }

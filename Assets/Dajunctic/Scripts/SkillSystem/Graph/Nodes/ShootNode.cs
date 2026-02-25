@@ -1,5 +1,5 @@
 using UnityEngine;
-using System;
+using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
@@ -9,28 +9,36 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public Vector3 launcherOffset;
         public float damageMultiplier = 1f;
 
-        public override void Execute(SkillExecutionContext context, Action onComplete)
+        [NodeInput] public List<CombatActor> targets;
+
+        public override void Execute()
         {
-            if (context.targets.Count == 0)
+            var actorsToShoot = targets ?? new List<CombatActor>();
+            if (actorsToShoot.Count == 0)
             {
-                onComplete?.Invoke();
+                TriggerComplete();
                 return;
             }
 
-            foreach (var target in context.targets)
+            foreach (var target in actorsToShoot)
             {
-                var missileData = new MissileData();
-                missileData.launcher = context.actor.CachedTransform.TransformPoint(launcherOffset);
-                missileData.targetActor = target;
-                missileData.combatActor = context.actor;
-                missileData.combineDamage = new CombineDamage(DamageType.PhysicalDamage, context.actor.GetTotalAtk() * damageMultiplier);
-
-                var missile = GameManager.Instance.SpawnMissile(missileId, missileData);
-                // We don't wait for missile hit in this simple implementation, 
-                // but we could add a callback if needed.
+                var missileData = new MissileData
+                {
+                    launcher = _context.actor.CachedTransform.TransformPoint(launcherOffset),
+                    targetActor = target,
+                    combatActor = _context.actor,
+                    combineDamage = new CombineDamage(DamageType.PhysicalDamage, _context.actor.GetTotalAtk() * damageMultiplier)
+                };
+                GameManager.Instance.SpawnMissile(missileId, missileData);
             }
 
-            onComplete?.Invoke();
+            TriggerComplete();
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            targets = null;
         }
     }
 }

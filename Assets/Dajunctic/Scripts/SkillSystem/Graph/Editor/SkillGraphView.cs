@@ -85,7 +85,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 if (baseNodeView != null && targetNodeView != null)
                 {
                     var outputPort = baseNodeView.outputContainer.Query<Port>().ToList().FirstOrDefault(p => p.portName == link.portName);
-                    var inputPort = targetNodeView.inputContainer.Query<Port>().ToList().FirstOrDefault();
+                    var inputPort = targetNodeView.inputContainer.Query<Port>().ToList().FirstOrDefault(p => p.portName == link.targetPortName || (string.IsNullOrEmpty(link.targetPortName) && p.portName == "In"));
 
                     if (outputPort != null && inputPort != null)
                     {
@@ -96,9 +96,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             }
         }
 
-        private new SkillNodeView GetNodeByGuid(string guid)
+        public SkillNodeView GetNodeViewByGuid(string guid)
         {
             return nodes.ToList().OfType<SkillNodeView>().FirstOrDefault(n => n.nodeData.guid == guid);
+        }
+
+        private new SkillNodeView GetNodeByGuid(string guid)
+        {
+            return GetNodeViewByGuid(guid);
         }
 
         private void CreateNodeView(SkillNode nodeData)
@@ -188,7 +193,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                     {
                         baseNodeGuid = baseNodeView.nodeData.guid,
                         portName = edge.output.portName,
-                        targetNodeGuid = targetNodeView.nodeData.guid
+                        targetNodeGuid = targetNodeView.nodeData.guid,
+                        targetPortName = edge.input.portName
                     });
                 }
             }

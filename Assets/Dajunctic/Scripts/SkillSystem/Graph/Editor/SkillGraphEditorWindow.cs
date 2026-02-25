@@ -22,14 +22,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             return false;
         }
 
-        private SkillGraph _currentGraph;
+        [SerializeField] private SkillGraph _currentGraph;
         private SkillGraphView _graphView;
-        private CombatActor _previewActor;
+        [SerializeField] private CombatActor _previewActor;
         private PreviewRenderUtility _previewRenderUtility;
         private GameObject _previewInstance;
-        private Vector2 _previewDir = new Vector2(120, -20);
-        private float _previewDistance = 6f;
-        private Vector3 _previewPivot = Vector3.up * 0.8f;
+        [SerializeField] private Vector2 _previewDir = new Vector2(120, -20);
+        [SerializeField] private float _previewDistance = 6f;
+        [SerializeField] private Vector3 _previewPivot = Vector3.up * 0.8f;
         private Dictionary<string, int> _nodeTriggerCounts = new Dictionary<string, int>();
 
         // Custom Proportional Splitter variables
@@ -37,8 +37,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private VisualElement _rightPane;
         private VisualElement _divider;
         private bool _isDraggingDivider = false;
-        private float _splitRatio = 0.5f; // Khởi tạo 50/50 để Preview rộng rãi hơn
-        private bool _isDirty = false;
+        [SerializeField] private float _splitRatio = 0.5f; // Khởi tạo 50/50 để Preview rộng rãi hơn
+        [SerializeField] private bool _isDirty = false;
 
         public static void OpenWindow()
         {
@@ -48,6 +48,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void OnEnable()
         {
+            rootVisualElement.Clear();
             ConstructGraphView();
             GenerateToolbar();
             _previewRenderUtility = new PreviewRenderUtility();
@@ -55,6 +56,17 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _previewRenderUtility.camera.farClipPlane = 1000;
             _previewRenderUtility.camera.nearClipPlane = 0.1f;
             EditorApplication.update += OnEditorUpdate;
+
+            if (_currentGraph != null)
+            {
+                bool wasDirty = _isDirty;
+                LoadGraph(_currentGraph);
+                if (wasDirty) SetDirty(true);
+            }
+            if (_previewActor != null)
+            {
+                UpdatePreviewInstance();
+            }
         }
 
         private void OnDisable()
@@ -342,6 +354,10 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         {
             if (_currentGraph == null || _previewInstance == null) return;
             _nodeTriggerCounts.Clear();
+
+            // Clear all node highlights before starting
+            ClearAllNodeHighlights();
+
             var actor = _previewInstance.GetComponent<CombatActor>();
             if (actor == null) return;
             var context = new SkillExecutionContext(actor);
@@ -349,21 +365,89 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             if (entryNode != null) ExecuteNode(entryNode, context);
         }
 
+        private void ClearAllNodeHighlights()
+        {
+            if (_graphView == null) return;
+            foreach (var nodeView in _graphView.nodes.ToList().OfType<SkillNodeView>())
+            {
+                nodeView.ClearHighlight();
+            }
+        }
+
         private void ExecuteNode(SkillNode node, SkillExecutionContext context)
         {
-            node.Execute(context, () =>
+            // Highlight the current executing node
+            var nodeView = _graphView?.GetNodeViewByGuid(node.guid);
+            nodeView?.SetHighlight();
+
+            // 1. Inject data từ các port input
+            ResolveNodeData(node, context);
+
+            // 2. Init node với context và callback khi hoàn thành
+            node.Init(context, () =>
             {
-                var outgoingLinks = _currentGraph.links.Where(l => l.baseNodeGuid == node.guid).ToList();
+                // 3. Sau khi node gọi TriggerComplete(), capture output
+                CaptureNodeOutputs(node, context);
+
+                // 4. Kích hoạt các node tiếp theo qua execution link "Out -> In"
+                var outgoingLinks = _currentGraph.links
+                    .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out")
+                    .ToList();
+
                 foreach (var link in outgoingLinks)
                 {
                     var nextNode = _currentGraph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
                     if (nextNode == null) continue;
-                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid)) _nodeTriggerCounts[nextNode.guid] = 0;
+
+                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid))
+                        _nodeTriggerCounts[nextNode.guid] = 0;
                     _nodeTriggerCounts[nextNode.guid]++;
-                    int totalIncoming = _currentGraph.links.Count(l => l.targetNodeGuid == nextNode.guid);
-                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming) ExecuteNode(nextNode, context);
+
+                    int totalIncoming = _currentGraph.links.Count(l =>
+                        l.targetNodeGuid == nextNode.guid && l.targetPortName == "In");
+
+                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming)
+                        ExecuteNode(nextNode, context);
                 }
             });
+
+            // 5. Chạy node
+            node.Execute();
+        }
+
+        private void ResolveNodeData(SkillNode node, SkillExecutionContext context)
+        {
+            // Inject giá trị từ các data port input (bỏ qua execution link "In")
+            var incomingDataLinks = _currentGraph.links
+                .Where(l => l.targetNodeGuid == node.guid && l.targetPortName != "In" && !string.IsNullOrEmpty(l.targetPortName))
+                .ToList();
+
+            foreach (var link in incomingDataLinks)
+            {
+                var value = context.GetOutput<object>(link.baseNodeGuid, link.portName);
+                if (value != null)
+                {
+                    var field = node.GetType().GetField(
+                        link.targetPortName,
+                        System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                    field?.SetValue(node, value);
+                }
+            }
+        }
+
+        private void CaptureNodeOutputs(SkillNode node, SkillExecutionContext context)
+        {
+            // Capture tất cả field có [NodeOutput] vào context
+            var fields = node.GetType().GetFields(
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+
+            foreach (var field in fields)
+            {
+                if (System.Attribute.IsDefined(field, typeof(NodeOutputAttribute)))
+                {
+                    context.SetOutput(node.guid, field.Name, field.GetValue(node));
+                }
+            }
         }
     }
 }

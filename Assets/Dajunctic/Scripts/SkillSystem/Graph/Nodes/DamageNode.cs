@@ -1,28 +1,34 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class DamageNode : SkillNode
     {
-        public float damage = 1f; // multiplier
+        public float damage = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
-        public override void Execute(SkillExecutionContext context, Action onComplete)
-        {
-            foreach (var targetActor in context.targets)
-            {
-                if (targetActor != null)
-                {
-                    float baseDamage = context.actor.GetTotalAtk();
-                    float finalDamage = baseDamage * this.damage;
+        [NodeInput] public List<CombatActor> targets;
 
-                    var damage = new CombineDamage(damageType, finalDamage);
-                    targetActor.TakeDamage(damage);
-                }
+        public override void Execute()
+        {
+            var actorsToHit = targets ?? new List<CombatActor>();
+
+            foreach (var target in actorsToHit)
+            {
+                if (target == null) continue;
+                float baseDamage = _context.actor.GetTotalAtk();
+                float finalDamage = baseDamage * damage;
+                target.TakeDamage(new CombineDamage(damageType, finalDamage));
             }
-            
-            onComplete?.Invoke();
+
+            TriggerComplete();
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            targets = null;
         }
     }
 }

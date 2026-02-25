@@ -1,22 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-5932744432794814982
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17775f8176d531446bf564e6a1e1ba7a, type: 3}
-  m_Name: DamageNode
-  m_EditorClassIdentifier: 
-  guid: 0bed9059-3099-4599-ac53-08fe571787b5
-  position: {x: 258, y: 154}
-  damage: 1
-  damageType: 1
---- !u!114 &-3471675017643032838
+--- !u!114 &-7055845144157177170
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c28f214cf5d48540ad070ac90bd5363, type: 3}
   m_Name: EntryNode
   m_EditorClassIdentifier: 
-  guid: 9416f8f8-ace2-4137-aed0-3010e7608f92
-  position: {x: -113, y: 154}
+  guid: c335dad6-7f4c-4978-80c8-a955e0d5f42d
+  position: {x: 100, y: 200}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43,21 +27,10 @@ MonoBehaviour:
   m_Name: hero_dajunctic_test_skill
   m_EditorClassIdentifier: 
   nodes:
-  - {fileID: -3471675017643032838}
-  - {fileID: 8846584388133468314}
-  - {fileID: 1440605349583737540}
-  - {fileID: -5932744432794814982}
-  links:
-  - baseNodeGuid: 9416f8f8-ace2-4137-aed0-3010e7608f92
-    portName: Out
-    targetNodeGuid: 50ba83b3-7594-44ed-a3ad-3ae3cca66cec
-  - baseNodeGuid: 50ba83b3-7594-44ed-a3ad-3ae3cca66cec
-    portName: Out
-    targetNodeGuid: 0bed9059-3099-4599-ac53-08fe571787b5
-  - baseNodeGuid: 0bed9059-3099-4599-ac53-08fe571787b5
-    portName: Out
-    targetNodeGuid: d017573f-2434-4c1c-90a9-b4b159bcfdc0
---- !u!114 &1440605349583737540
+  - {fileID: -7055845144157177170}
+  - {fileID: 4687087265721512467}
+  links: []
+--- !u!114 &4687087265721512467
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -69,20 +42,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f449dfd69fcc5cb4e870484c547340ab, type: 3}
   m_Name: ExitNode
   m_EditorClassIdentifier: 
-  guid: d017573f-2434-4c1c-90a9-b4b159bcfdc0
-  position: {x: 572, y: 154}
---- !u!114 &8846584388133468314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc8ee4c41eaa44b45a82618fb54416ad, type: 3}
-  m_Name: DelayNode
-  m_EditorClassIdentifier: 
-  guid: 50ba83b3-7594-44ed-a3ad-3ae3cca66cec
-  position: {x: 39, y: 154}
-  duration: 0
+  guid: 10c640c2-cbc1-4760-8ab7-81f67f0d37dc
+  position: {x: 500, y: 200}

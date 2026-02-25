@@ -14,7 +14,6 @@ namespace Dajunctic
         [SerializeField] protected CombatActorData combatActorData;
         public CombatActorData CombatActorData => combatActorData;
         [SerializeField] private Team team;
-        [Header("Vfx")]
         public Team Team => team;
 
         public virtual Vector3 Position {get; private set;}
@@ -286,7 +285,7 @@ namespace Dajunctic
             _physicalArmor = combatActorData.attribute.physicalArmor;
             _magicalArmor = combatActorData.attribute.magicalArmor;
             _maxEnergy = combatActorData.skillAttribute.energy;
-            _energy = 0; // Start with 0 energy by default
+            _energy = 0;
         }
 
         public void TakeDamage(CombineDamage combineDamage)
@@ -365,7 +364,6 @@ namespace Dajunctic
 
         #region Skill
         public SkillSlot CurrentActiveSlot { get; private set; }
-        private float _inputBufferTimer;
         void InitializeSkills()
         {
             _skillBook.Clear();

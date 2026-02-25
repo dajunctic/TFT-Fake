@@ -1,18 +1,17 @@
 using UnityEngine;
-using System;
 using System.Collections;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class DelayNode : SkillNode
     {
-        public float duration;
+        public float duration = 1f;
 
-        public override void Execute(SkillExecutionContext context, Action onComplete)
+        public override void Execute()
         {
             if (Application.isPlaying)
             {
-                context.actor.StartCoroutine(WaitCoroutine(onComplete));
+                _context.actor.StartCoroutine(WaitCoroutine());
             }
             else
             {
@@ -24,7 +23,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     if ((float)UnityEditor.EditorApplication.timeSinceStartup - startTime >= duration)
                     {
                         UnityEditor.EditorApplication.update -= update;
-                        onComplete?.Invoke();
+                        TriggerComplete();
                     }
                 };
                 UnityEditor.EditorApplication.update += update;
@@ -32,10 +31,10 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             }
         }
 
-        private IEnumerator WaitCoroutine(Action onComplete)
+        private IEnumerator WaitCoroutine()
         {
             yield return new WaitForSeconds(duration);
-            onComplete?.Invoke();
+            TriggerComplete();
         }
     }
 }
