@@ -8,14 +8,14 @@ namespace Dajunctic
         [SerializeField, Child] ParticleSystem particle;
         private float _timer = 0;
         private float _maxDuration = -1;
-        private bool _isInitialized = false;
+        private bool _isPlayed = false;
 
         public void Play(SpawnFxEvent data)
         {
             transform.position = data.position;
             _maxDuration = data.duration;
             _timer = 0;
-            _isInitialized = true;
+            _isPlayed = true;
             
             particle.Play();
         }
@@ -24,7 +24,7 @@ namespace Dajunctic
         {
             base.Tick();
 
-            if (!_isInitialized) return;
+            if (!_isPlayed) return;
 
             if (_maxDuration > 0)
             {
@@ -45,7 +45,7 @@ namespace Dajunctic
 
         private void DestroyFx()
         {
-            _isInitialized = false;
+            _isPlayed = false;
             Destroy(gameObject); 
         }
     }

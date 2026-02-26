@@ -39,7 +39,24 @@ namespace Dajunctic
             Type type = typeof(T);
             if (events.TryGetValue(type, out var del))
             {
-                ((Action<T>)del)?.Invoke(evt);
+                if (del == null)
+                {
+                    events.Remove(type);
+                    return;
+                }
+
+                var invocationList = del.GetInvocationList();
+                foreach (var callback in invocationList)
+                {
+                    try
+                    {
+                        ((Action<T>)callback)?.Invoke(evt);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"[EventDispatcher] Error dispatching event {type.Name} to listener {callback.Method.DeclaringType}.{callback.Method.Name}: {e}");
+                    }
+                }
             }
         }
 

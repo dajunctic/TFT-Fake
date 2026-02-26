@@ -9,7 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13486adc36c3cc546bb932c394cc1053, type: 3}
-  m_Name: event_dispatcher
+  m_Script: {fileID: 11500000, guid: 2ff248634955c2d45826d1365da98fdd, type: 3}
+  m_Name: bench_system_data
   m_EditorClassIdentifier: 
-  dispatcherMonoPrefab: {fileID: 924905442865492660, guid: 298bc330a01b09644a55ed065582cfd0, type: 3}

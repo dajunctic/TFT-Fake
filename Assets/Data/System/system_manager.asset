@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00e47764cb5045c4096368ea18b7486e, type: 3}
+  m_Name: system_manager
+  m_EditorClassIdentifier: 
+  settingsData:
+    m_AssetGUID: 86af746cd8439cf408186510180bbcda
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  shopSystemData:
+    m_AssetGUID: 1c49d8ef00192c4419df959770fb7bdb
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  economySystemData:
+    m_AssetGUID: 4d2986a0fec15934ea4a0a82042d53b6
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  itemSystemData:
+    m_AssetGUID: 89d82905d0debe64a87945cc5f12aa23
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  benchSystemData:
+    m_AssetGUID: cc1b99b532b942440879bdbabc303934
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1

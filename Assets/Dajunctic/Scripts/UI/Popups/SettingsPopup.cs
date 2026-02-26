@@ -4,7 +4,7 @@ using TMPro;
 
 namespace Dajunctic
 {
-    public class SettingsPopup : MonoBehaviour
+    public class SettingsPopup : BasePopup
     {
         [Header("Audio Sliders")]
         [SerializeField] private Slider masterVolumeSlider;
@@ -32,19 +32,25 @@ namespace Dajunctic
         private SettingsSystem _settingsSystem;
         private Resolution[] _resolutions;
 
-        private void Start()
+        public override void BeforeShow(object data = null)
         {
+            base.BeforeShow(data);
             _settingsSystem = GameSystemManager.Instance?.Settings;
             
             if (_settingsSystem == null)
             {
-                Debug.LogError("SettingsSystem not found!");
-                return;
+                Debug.LogWarning("SettingsSystem not found! Settings will not be functional.");
             }
 
             InitializeUI();
             LoadCurrentSettings();
             RegisterListeners();
+        }
+
+        public override void BeforeDismiss()
+        {
+            base.BeforeDismiss();
+            UnregisterListeners();
         }
 
         private void InitializeUI()
@@ -254,12 +260,12 @@ namespace Dajunctic
 
         private void OnCloseClicked()
         {
-            gameObject.SetActive(false);
+            Dismiss();
         }
 
         #endregion
 
-        private void OnDestroy()
+        private void UnregisterListeners()
         {
             // Unregister listeners
             if (masterVolumeSlider != null)

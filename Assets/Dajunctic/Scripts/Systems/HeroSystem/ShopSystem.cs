@@ -121,7 +121,7 @@ namespace Dajunctic
             // Check if bench can accept this hero (has space or would trigger upgrade)
             if (!_manager.Bench.CanAcceptHero(hero))
             {
-                Debug.LogWarning("Bench is full and no upgrade possible!");
+                Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Bench is full and no upgrade possible!");
                 return;
             }
 
@@ -130,12 +130,16 @@ namespace Dajunctic
                 // Add hero to bench
                 _manager.Bench.AddHeroToBench(hero);
 
-                Debug.Log($"Bought {hero.displayName}");
+                Debug.Log($"[ShopSystem] Purchased {hero.displayName} for {hero.rarity} gold.");
                 _currentShop[slotIndex] = null;
 
                 this.Raise(new HeroBoughtEvent { Hero = hero });
                 this.Raise(new ShopRefreshedEvent());
                 OnShopRefreshed?.Invoke();
+            }
+            else
+            {
+                Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Not enough gold ({_manager.Economy.Gold}/{hero.rarity})");
             }
         }
     }

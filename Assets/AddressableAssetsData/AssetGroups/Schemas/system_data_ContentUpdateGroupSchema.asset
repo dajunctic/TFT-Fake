@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13486adc36c3cc546bb932c394cc1053, type: 3}
-  m_Name: event_dispatcher
+  m_Script: {fileID: 11500000, guid: 5834b5087d578d24c926ce20cd31e6d6, type: 3}
+  m_Name: system_data_ContentUpdateGroupSchema
   m_EditorClassIdentifier: 
-  dispatcherMonoPrefab: {fileID: 924905442865492660, guid: 298bc330a01b09644a55ed065582cfd0, type: 3}
+  m_Group: {fileID: 11400000, guid: 859b4eb72c87c6549b40f76d5b47299f, type: 2}
+  m_StaticContent: 0

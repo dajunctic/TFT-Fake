@@ -158,9 +158,11 @@ namespace Dajunctic
         /// </summary>
         private List<HeroCombatActor> GetMatchingHeroes(HeroData heroData, int starLevel)
         {
+            if (heroData == null) return new List<HeroCombatActor>();
+
             var heroesOnBench = _heroOnTiles.Values
-                .Where(h => h != null && h.CombatActorData is HeroData data &&
-                            data == heroData &&
+                .Where(h => h != null && h.CombatActorData != null &&
+                            h.CombatActorData.Id == heroData.Id &&
                             h.StarLevel == starLevel)
                 .ToList();
 
@@ -168,8 +170,8 @@ namespace Dajunctic
             if (_manager.Field != null)
             {
                 heroesOnField = _manager.Field.GetAllHeroes()
-                    .Where(h => h != null && h.CombatActorData is HeroData data &&
-                                data == heroData &&
+                    .Where(h => h != null && h.CombatActorData != null &&
+                                h.CombatActorData.Id == heroData.Id &&
                                 h.StarLevel == starLevel)
                     .ToList();
             }

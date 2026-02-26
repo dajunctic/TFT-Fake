@@ -15,3 +15,4 @@ MonoBehaviour:
   id: popup_controller_data
   prefabs:
   - {fileID: 8499347749602387878, guid: f295b20995f5e0548ac09ade28ea3111, type: 3}
+  - {fileID: 8151619719785498391, guid: 1fc15c9762832174d8404232de6593aa, type: 3}

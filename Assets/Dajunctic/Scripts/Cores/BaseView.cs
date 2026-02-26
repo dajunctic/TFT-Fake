@@ -16,31 +16,31 @@ namespace Dajunctic
         [SerializeField] bool initialize;
         [SerializeField] TickType tick;
 
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (ticker != null) return;
-            var guids = AssetDatabase.FindAssets($"t:{nameof(Ticker)}");
-            if (guids == null || guids.Length == 0)
-            {
-                Debug.LogError("Can not find ticker asset in Project!");
-                return;
-            }
+// #if UNITY_EDITOR
+//         void OnValidate()
+//         {
+//             if (ticker != null) return;
+//             var guids = AssetDatabase.FindAssets($"t:{nameof(Ticker)}");
+//             if (guids == null || guids.Length == 0)
+//             {
+//                 Debug.LogError("Can not find ticker asset in Project!");
+//                 return;
+//             }
 
-            string firstGuid = guids.FirstOrDefault();
-            string path = AssetDatabase.GUIDToAssetPath(firstGuid);
-            ticker = AssetDatabase.LoadAssetAtPath<Ticker>(path);
+//             string firstGuid = guids.FirstOrDefault();
+//             string path = AssetDatabase.GUIDToAssetPath(firstGuid);
+//             ticker = AssetDatabase.LoadAssetAtPath<Ticker>(path);
 
-            if (ticker == null)
-            {
-                Debug.LogError($"Found GUID {firstGuid} but failed to load Ticker asset at {path}");
-            }
-        }
+//             if (ticker == null)
+//             {
+//                 Debug.LogError($"Found GUID {firstGuid} but failed to load Ticker asset at {path}");
+//             }
+//         }
 
-#endif
+// #endif
 
-        public bool Initialized => initialize;
-
+        public bool Initialized => _isInitialized;
+        private bool _isInitialized;
 
         Transform mTransform;
         public Transform CachedTransform => gameObject.GetAndCacheComponent(ref mTransform);
@@ -49,7 +49,7 @@ namespace Dajunctic
 
         protected virtual void Awake()
         {
-            OnValidate();
+            ticker = TickerView.Instance.ticker;
             if (initialize) Initialize(); 
         }
 
@@ -73,7 +73,8 @@ namespace Dajunctic
 
         public virtual void Initialize()
         {
-
+            if (_isInitialized) return;
+            _isInitialized = true;
         }
 
         public virtual void DoEnable()

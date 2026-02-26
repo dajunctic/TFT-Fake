@@ -75,7 +75,7 @@ namespace Dajunctic
             if (sellVisual != null)
                 sellVisual.SetActive(false);
             
-            Debug.Log("<color=orange>Mouse left Sell Zone</color>");
+            // Debug.Log("<color=orange>Mouse left Sell Zone</color>");
         }
     }
 }

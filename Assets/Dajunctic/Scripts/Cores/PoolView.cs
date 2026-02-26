@@ -7,10 +7,26 @@ namespace Dajunctic
     {
         [SerializeField] private PoolData poolData;
 
-        void Start()
+        void OnEnable()
         {
-            this.RegisterListener<SpawnFxEvent>((param) => {SpawnFxView(param);});
-            this.RegisterListener<SpawnHpViewEvent>((param) => {SpawnHpView(param);});
+            this.RegisterListener<SpawnFxEvent>(OnSpawnFx);
+            this.RegisterListener<SpawnHpViewEvent>(OnSpawnHpView);
+        }
+
+        void OnDisable()
+        {
+            this.RemoveListener<SpawnFxEvent>(OnSpawnFx);
+            this.RemoveListener<SpawnHpViewEvent>(OnSpawnHpView);
+        }
+
+        private void OnSpawnHpView(SpawnHpViewEvent param)
+        {
+            SpawnHpView(param);
+        }
+
+        private void OnSpawnFx(SpawnFxEvent param)
+        {
+            SpawnFxView(param);
         }
 
         public void SpawnHpView(SpawnHpViewEvent param)

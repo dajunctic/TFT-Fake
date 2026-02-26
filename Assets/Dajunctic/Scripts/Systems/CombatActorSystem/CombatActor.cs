@@ -45,6 +45,7 @@ namespace Dajunctic
         Dictionary<SkillSlot, RuntimeSkill> _skillBook = new Dictionary<SkillSlot, RuntimeSkill>();
         public override void Initialize()
         {
+            if (Initialized) return;
             base.Initialize();
             _viewLoaded = true;
             
@@ -78,6 +79,11 @@ namespace Dajunctic
         public override void Cleanup()
         {
             base.Cleanup();
+        }
+
+        protected virtual void OnDestroy()
+        {
+            this.Raise(new DespawnHpViewEvent { owner = this });
         }
 
         protected virtual void SetupTree()

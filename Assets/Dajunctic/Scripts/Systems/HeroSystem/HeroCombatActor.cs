@@ -280,6 +280,7 @@ namespace Dajunctic
 
         public override void Initialize()
         {
+            if (Initialized) return;
             base.Initialize();
 
             this.Raise(new SpawnHpViewEvent{owner = this, starLevel = StarLevel});
@@ -353,9 +354,9 @@ namespace Dajunctic
             }
         }
 
-        protected virtual void OnDestroy()
+        protected override void OnDestroy()
         {
-            this.Raise(new DespawnHpViewEvent{ owner = this});
+            base.OnDestroy();
         }
     }
     

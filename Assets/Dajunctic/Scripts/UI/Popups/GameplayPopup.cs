@@ -207,5 +207,15 @@ namespace Dajunctic
             this.Raise(new RequestBuyXPEvent());
         }
 
+        public void OnClickOpenSetting()
+        {
+            this.Raise(new ShowPopupEvent
+            {
+                PopupType = typeof(SettingsPopup),
+                ShowMode = PopupShowMode.DoNothing,
+                Data = null
+            });
+        }
+
     }
 }
