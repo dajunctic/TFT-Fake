@@ -10,7 +10,7 @@ namespace Dajunctic
         public bool IsBoss { get; private set; } = false;
 
         public override string DataId => name;
-        public override bool IsTargetable => true;
+        public override bool CanBeTarget => true;
 
         
         private Transform _cameraTransform;

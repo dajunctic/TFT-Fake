@@ -14,7 +14,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             var actor = _context.actor.AsCombatActor();
             if (actor == null)
             {
-                TriggerComplete();
+                Complete();
                 return;
             }
 
@@ -23,7 +23,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
             if (!waitForFinish)
             {
-                TriggerComplete();
+                Complete();
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     runner.StartCoroutine(WaitForAnimation((CombatActor)actor));
                     return;
                 }
-                TriggerComplete();
+                Complete();
             }
 #if UNITY_EDITOR
             else
@@ -48,13 +48,13 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     if (actor == null)
                     {
                         UnityEditor.EditorApplication.update -= update;
-                        TriggerComplete();
+                        Complete();
                         return;
                     }
                     if (actor.IsAnimFinished)
                     {
                         UnityEditor.EditorApplication.update -= update;
-                        TriggerComplete();
+                        Complete();
                     }
                 };
                 UnityEditor.EditorApplication.update += update;
@@ -69,7 +69,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             {
                 yield return null;
             }
-            TriggerComplete();
+            Complete();
         }
     }
 }

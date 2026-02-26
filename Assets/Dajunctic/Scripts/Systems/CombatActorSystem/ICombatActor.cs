@@ -4,18 +4,14 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public interface ICombatActor: IDamageTaker, ISkillOwner, ITransform, IAnimatorPlayer, IDamageOwner, IGameObject, IMovable
+    public interface ICombatActor: IDamageTaker, ISkillOwner, ITransform, IAnimatorPlayer, IDamageDealer, IGameObject, IMovable, ITeamMemeber
     {
         public string DataId {get;}
-        public Team Team{ get; }
-        public bool IsTargetable {get; }
 
-
-        // 
+        public float CombatRadius {get; }
         public float RotateSpeed {get;}
         public float Speed {get;}
 
-        // SkillGraph
         public SkillGraphRunner GetSkillGraphRunner();
 
 

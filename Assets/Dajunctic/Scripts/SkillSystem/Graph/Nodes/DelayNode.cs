@@ -29,7 +29,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 if ((float)UnityEditor.EditorApplication.timeSinceStartup - startTime >= duration)
                 {
                     UnityEditor.EditorApplication.update -= update;
-                    TriggerComplete();
+                    Complete();
                 }
             };
             UnityEditor.EditorApplication.update += update;
@@ -39,7 +39,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         private IEnumerator WaitCoroutine()
         {
             yield return new WaitForSeconds(duration);
-            TriggerComplete();
+            Complete();
         }
     }
 }

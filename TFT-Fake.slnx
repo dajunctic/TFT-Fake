@@ -1,7 +1,7 @@
 ﻿<Solution>
   <Project Path="MCPForUnity.Editor.csproj" />
-  <Project Path="AllIn13DShaderAssemebly.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="AllIn13DShaderAssemebly.Editor.csproj" />
   <Project Path="AllIn13DShaderDemoScriptsAssembly.csproj" />
   <Project Path="KBCore.Refs.csproj" />
   <Project Path="AllIn13DShaderAssemebly.csproj" />

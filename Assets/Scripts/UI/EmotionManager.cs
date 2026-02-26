@@ -62,10 +62,9 @@ namespace Dajunctic
             if (_timer < 0f)
             {
                 var combatActor = FindFirstObjectByType<MythicalAnimalCombatActor>();
-                var headPoint = combatActor?.HeadPoint;
                 var emotionView = Instantiate(emotionViewPrefab, combatActor.CachedTransform);
             
-                emotionView.CachedTransform.position = headPoint.Position + Vector3.up * 0.3f;
+                emotionView.CachedTransform.position = combatActor.HeadPoint + Vector3.up * 0.3f;
                 emotionView.PlayEmotion(spriteLists.GetIndex(emoteIndex));
                 _timer = duration;
             }

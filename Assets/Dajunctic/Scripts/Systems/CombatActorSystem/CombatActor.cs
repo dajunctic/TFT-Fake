@@ -15,22 +15,23 @@ namespace Dajunctic
         [SerializeField] protected CombatActorData combatActorData;
         public CombatActorData CombatActorData => combatActorData;
         [SerializeField] private Team team;
-        public Team Team => team;
+        public Team CombatTeam => team;
 
         public virtual Vector3 Position {get; private set;}
         public virtual Vector3 Forward {get; private set;}
 
         public bool IsViewLoaded => _viewLoaded;
         public virtual string DataId => string.Empty;
-        public virtual bool IsTargetable => true;
+        public virtual bool CanBeTarget => true;
 
         public bool ActiveInHierarchy => gameObject.activeInHierarchy;
         public bool ActiveSelf => gameObject.activeSelf;
 
         void OnValidate() => this.ValidateRefs();
         public CombatActor CurrentTarget { get; private set; }
-        public MidPoint MidPoint => midPoint;
-        public HeadPoint HeadPoint => headPoint;
+        public Vector3 MidPoint => midPoint.Position;
+        public Vector3 HeadPoint => headPoint.Position;
+        public float CombatRadius => combatActorData.movement.radius;
         public float Speed => combatActorData.movement.moveSpeed;
         public float RotateSpeed => combatActorData.movement.rotateSpeed;
         public float AtkSpd => combatActorData.combatStat.atkSpd;
@@ -90,8 +91,21 @@ namespace Dajunctic
 
         public bool HasValidTarget()
         {
-            return CurrentTarget != null && CurrentTarget.gameObject.activeInHierarchy && CurrentTarget.IsTargetable;
+            return CurrentTarget != null && CurrentTarget.gameObject.activeInHierarchy && CurrentTarget.CanBeTarget;
         }
+
+        #region Transform
+        public Vector3 TransformPoint(Vector3 point)
+        {
+            return CachedTransform.TransformPoint(point);
+        }
+
+        public Vector3 TransformDirection(Vector3 direction)
+        {
+            return CachedTransform.TransformDirection(direction);
+        }
+
+        #endregion
 
         #region Movement
         public IMoveAgent MoveAgent;

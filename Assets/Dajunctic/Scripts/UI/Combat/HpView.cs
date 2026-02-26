@@ -10,14 +10,13 @@ namespace Dajunctic
         [SerializeField] private Image bgRenderer;
         [SerializeField] private Image hpProgress;
         [SerializeField] private Image energyProgress;
-        [SerializeField] private Image[] itemIcons; // Array of 3 small icons
+        [SerializeField] private Image[] itemIcons;
 
         [Header("Settings")]
         [SerializeField] private SpriteLists starBgSprites;
         [SerializeField] private Vector3 offset = new Vector3(0, 0.5f, 0);
 
         private CombatActor _owner;
-        private Transform _headPoint;
         private Transform _cachedTransform;
 
         private void Awake()
@@ -31,15 +30,12 @@ namespace Dajunctic
 
         public void Initialize(CombatActor owner, int starLevel)
         {
-            _owner = owner;
-            _headPoint = owner.HeadPoint.transform;
-            
+            _owner = owner;            
             UpdateStarLevel(starLevel);
 
             _owner.OnHpChanged += UpdateHp;
             _owner.OnEnergyChanged += UpdateEnergy;
 
-            // Initial sync
             UpdateHp(_owner.MaxHp > 0 ? _owner.Hp / _owner.MaxHp : 1f);
             UpdateEnergy(_owner.MaxEnergy > 0 ? _owner.Energy / _owner.MaxEnergy : 0f);
 
@@ -66,19 +62,11 @@ namespace Dajunctic
 
         private void LateUpdate()
         {
-            if (_headPoint != null)
+            _cachedTransform.position = _owner.HeadPoint + offset;
+            
+            if (Camera.main != null)
             {
-                _cachedTransform.position = _headPoint.position + offset;
-                
-                if (Camera.main != null)
-                {
-                    _cachedTransform.rotation = Camera.main.transform.rotation;
-                }
-            }
-            else
-            {
-                // If owner is destroyed but this hasn't been yet
-                Destroy(gameObject);
+                _cachedTransform.rotation = Camera.main.transform.rotation;
             }
         }
 
@@ -86,7 +74,6 @@ namespace Dajunctic
         {
             if (hpProgress != null)
             {
-                // Assuming the progress bar is a sprite that scales on X
                 Vector3 scale = hpProgress.transform.localScale;
                 scale.x = ratio;
                 hpProgress.transform.localScale = scale;

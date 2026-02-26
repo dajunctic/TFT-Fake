@@ -16,7 +16,7 @@ namespace Dajunctic
         // ─── ICombatActor overrides ──────────────────────────────────────────
 
         public override string DataId => name;
-        public override bool IsTargetable => alwaysTargetable && gameObject.activeInHierarchy;
+        public override bool CanBeTarget => alwaysTargetable && gameObject.activeInHierarchy;
 
         // Dummy không cần Movement — override để skip NavMesh init
         public override bool CanMove => false;

@@ -22,9 +22,9 @@ namespace Dajunctic
             return entity as ICombatActor;
         }
 
-        public static IDamageOwner AsDamageOwner(this IEntity entity)
+        public static IDamageDealer AsDamageOwner(this IEntity entity)
         {
-            return entity as IDamageOwner;
+            return entity as IDamageDealer;
         }
 
         public static IAnimatorPlayer AsAnimatorPlayer(this IEntity entity)
@@ -35,6 +35,16 @@ namespace Dajunctic
         public static IGameObject AsGameObject(this IEntity entity)
         {
             return entity as IGameObject;
+        }
+
+        public static IMovable AsMovable(this IEntity entity)
+        {
+            return entity as IMovable;
+        }
+
+        public static ITeamMemeber AsTeamMember(this IEntity entity)
+        {
+            return entity as ITeamMemeber;
         }
     }
 }

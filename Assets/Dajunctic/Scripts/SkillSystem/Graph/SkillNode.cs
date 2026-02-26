@@ -11,14 +11,14 @@ namespace Dajunctic.SkillSystem.Graph
         [HideInInspector] public SkillGraph graph;
 
         protected SkillExecutionContext _context;
-        protected ISkillOwner owner;
+        protected ISkillOwner Owner {get; set; }
         private Action _onComplete;
 
         public void Init(SkillExecutionContext context, Action onComplete)
         {
             _context = context;
             _onComplete = onComplete;
-            owner = _context.actor;
+            Owner = _context.actor;
             OnInit();
         }
 
@@ -26,7 +26,7 @@ namespace Dajunctic.SkillSystem.Graph
 
         public virtual void Execute()
         {
-            TriggerComplete();
+            Complete();
         }
 
         protected void StartCoroutine()
@@ -39,7 +39,7 @@ namespace Dajunctic.SkillSystem.Graph
             yield return null;
         }
 
-        public void TriggerComplete()
+        public void Complete()
         {
             _onComplete?.Invoke();
         }

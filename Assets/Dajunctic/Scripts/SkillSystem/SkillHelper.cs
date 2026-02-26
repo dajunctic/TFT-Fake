@@ -19,7 +19,7 @@ namespace Dajunctic
             {
                 var actor = collider.gameObject.GetComponent<CombatActor>();
                 
-                if (actor != null && actor != finder && actor.Team != finder.Team && actor.IsTargetable)
+                if (actor != null && actor != finder && actor.CombatTeam != finder.CombatTeam && actor.CanBeTarget)
                 {
                     foundActors.Add(actor);
                 }

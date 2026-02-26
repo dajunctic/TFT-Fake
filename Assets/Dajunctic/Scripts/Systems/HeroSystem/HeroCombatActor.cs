@@ -22,7 +22,7 @@ namespace Dajunctic
         private bool _isDragging = false;
         public bool IsOnBench => CurrentBenchCoord.x != -1;
         public bool IsOnField => CurrentFieldCoord.x != -1;
-        public override bool IsTargetable => IsOnField;
+        public override bool CanBeTarget => IsOnField;
 
         private Vector2Int _originalBenchCoord;
         private Vector2Int _originalFieldCoord;

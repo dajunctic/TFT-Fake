@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace Dajunctic
 {
@@ -6,6 +7,10 @@ namespace Dajunctic
     {
         public float Hp {get; }
         public float MaxHp {get; }
+        public Vector3 MidPoint {get; }
+        public Vector3 HeadPoint {get;}
+        public bool CanBeTarget {get; }
+
 
         public void InitDamageTaker();
         public void TakeDamage(CombineDamage combineDamage);

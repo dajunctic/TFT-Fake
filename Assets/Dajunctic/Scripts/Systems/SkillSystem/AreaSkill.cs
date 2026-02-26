@@ -67,7 +67,7 @@ namespace Dajunctic
             {
                 if (hit.TryGetComponent<CombatActor>(out var damageable))
                 {
-                    if (damageable != _owner && damageable.Team != _owner.Team)
+                    if (damageable != _owner && damageable.CombatTeam != _owner.CombatTeam)
                     {
                         damageable.TakeDamage(_damageSnapshot);
                     }

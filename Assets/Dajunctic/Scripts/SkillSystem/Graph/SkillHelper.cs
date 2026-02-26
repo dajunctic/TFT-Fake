@@ -19,7 +19,7 @@ namespace Dajunctic.SkillSystem.Graph
             {
                 var actor = collider.gameObject.GetComponent<IDamageTaker>();
                 
-                if (actor != null && actor != finder && actor.AsCombatActor().Team != finder.AsCombatActor().Team && actor.AsCombatActor().IsTargetable)
+                if (actor != null && actor != finder && actor.AsCombatActor().CombatTeam != finder.AsCombatActor().CombatTeam && actor.AsCombatActor().CanBeTarget)
                 {
                     foundActors.Add(actor);
                 }
@@ -45,11 +45,26 @@ namespace Dajunctic.SkillSystem.Graph
             return bestTarget;
         }
 
-        public static bool IsInAttackRange(IDamageTaker attacker, IDamageTaker target, float skillRange)
+        static bool IsInRange(Vector3 position, float finderRadius, Vector3 targetPosition, float targetRadius, float range, float offset)
         {
-            if (target == null) return false;
-            float dist = Vector3.Distance(attacker.AsTransform().Position, target.AsTransform().Position);
-            return dist <= skillRange;
+            range = GetDistance(finderRadius, targetRadius, range, offset);
+            return MathUtils.InRange(position, targetPosition, range);
+        }
+
+        public static float GetDistance(float finderRadius, float targetRadius, float range, float offset)
+        {
+            range += finderRadius + targetRadius + offset;
+            return range;
+        }
+
+        public static bool IsInAbilityTargetingRange(Vector3 finderPosition, float finderRadius, IDamageTaker target, float abilityRange)
+        {
+            if (target == null || !target.CanBeTarget)
+            {
+                return false;
+            }
+
+            return IsInRange(finderPosition, finderRadius, target.AsTransform().Position, target.AsCombatActor().CombatRadius,abilityRange,0);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace Dajunctic
 {
-    public interface IDamageOwner: IEntity
+    public interface IDamageDealer: IEntity
     {
         public float GetTotalAtk();
     }

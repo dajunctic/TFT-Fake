@@ -48,7 +48,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 #endif
             }
 
-            TriggerComplete();
+            Complete();
         }
     }
 }

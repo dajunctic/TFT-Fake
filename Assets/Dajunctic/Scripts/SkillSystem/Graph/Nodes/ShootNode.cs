@@ -19,7 +19,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
             if (actorsToShoot.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
             {
-                TriggerComplete();
+                Complete();
                 return;
             }
 
@@ -45,7 +45,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 _context.Services.SpawnMissile(missileId, missileData);
             }
 
-            TriggerComplete();
+            Complete();
         }
 
         public override void Reset()

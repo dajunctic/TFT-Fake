@@ -23,7 +23,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 target.TakeDamage(new CombineDamage(damageType, finalDamage));
             }
 
-            TriggerComplete();
+            Complete();
         }
 
         public override void Reset()
