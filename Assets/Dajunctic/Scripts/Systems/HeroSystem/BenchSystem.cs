@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
 
@@ -6,15 +7,30 @@ namespace Dajunctic
 {
     public class BenchSystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private SquareAreaView benchArea;
-        [SerializeField, GuidReference("fx", typeof(IDummyId))] private string fxGuid;
+        // Scene refs — bound at runtime by BenchAreaBinder in the gameplay scene
+        private SquareAreaView _benchArea;
+        private string _fxGuid;
         private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
         private GameSystemManager _manager;
+
+        public async Task LoadDataAsync()
+        {
+            // BenchSystem has no Addressable data — scene refs are bound via BenchAreaBinder
+            await Task.CompletedTask;
+            Debug.Log("<color=cyan>BenchSystem data loaded (no-op)</color>");
+        }
 
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
             Debug.Log("<color=cyan>BenchSystem initialized</color>");
+        }
+
+        /// <summary>Called by BenchAreaBinder when the gameplay scene loads.</summary>
+        public void BindArea(SquareAreaView area, string fxGuid)
+        {
+            _benchArea = area;
+            _fxGuid = fxGuid;
         }
 
         public void Shutdown()
@@ -49,9 +65,9 @@ namespace Dajunctic
 
         public Vector2Int GetFirstEmptyTileCoord()
         {
-            if (benchArea == null || benchArea.Data == null) return new Vector2Int(-10, -10);
+            if (_benchArea == null || _benchArea.Data == null) return new Vector2Int(-10, -10);
 
-            var sortedTiles = benchArea.Data.ActiveTiles
+            var sortedTiles = _benchArea.Data.ActiveTiles
                 .OrderBy(t => t.coordinates.x)
                 .ThenBy(t => t.coordinates.y)
                 .ToList();
@@ -59,7 +75,7 @@ namespace Dajunctic
 
 
             // Debug.LogError("<color=green>Checking bench tiles for empty slot.." + $" Total tiles: {sortedTiles.Count}, Occupied: {_heroOnTiles.Count}</color>");
-            
+
             // // Dump all dictionary entries
             // Debug.LogError("<color=magenta>=== DICTIONARY DUMP ===</color>");
             // foreach (var kvp in _heroOnTiles)
@@ -67,11 +83,11 @@ namespace Dajunctic
             //     Debug.LogError($"<color=magenta>Dict Entry: {kvp.Key} -> {(kvp.Value != null ? kvp.Value.name : "NULL")}</color>");
             // }
             // Debug.LogError("<color=magenta>======================</color>");
-        
+
 
             foreach (var tile in sortedTiles)
             {
-                
+
                 if (!_heroOnTiles.TryGetValue(tile.coordinates, out var occupant) || occupant == null)
                 {
                     return tile.coordinates;
@@ -100,19 +116,19 @@ namespace Dajunctic
                 return;
             }
 
-            Vector3 localPos = benchArea.Data.SquareToWorld(Vector3.zero, coord);
-            Vector3 worldPos = benchArea.CachedTransform.TransformPoint(localPos);
+            Vector3 localPos = _benchArea.Data.SquareToWorld(Vector3.zero, coord);
+            Vector3 worldPos = _benchArea.CachedTransform.TransformPoint(localPos);
 
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, benchArea.CachedTransform.rotation);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
             HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
-            
+
             if (actor != null)
             {
                 _heroOnTiles[coord] = actor;
                 actor.CurrentBenchCoord = coord;
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
-                
+
                 CheckForUpgrades(heroData, starLevel);
             }
         }
@@ -143,8 +159,8 @@ namespace Dajunctic
         private List<HeroCombatActor> GetMatchingHeroes(HeroData heroData, int starLevel)
         {
             var heroesOnBench = _heroOnTiles.Values
-                .Where(h => h != null && h.CombatActorData is HeroData data && 
-                            data == heroData && 
+                .Where(h => h != null && h.CombatActorData is HeroData data &&
+                            data == heroData &&
                             h.StarLevel == starLevel)
                 .ToList();
 
@@ -152,8 +168,8 @@ namespace Dajunctic
             if (_manager.Field != null)
             {
                 heroesOnField = _manager.Field.GetAllHeroes()
-                    .Where(h => h != null && h.CombatActorData is HeroData data && 
-                                data == heroData && 
+                    .Where(h => h != null && h.CombatActorData is HeroData data &&
+                                data == heroData &&
                                 h.StarLevel == starLevel)
                     .ToList();
             }
@@ -166,7 +182,7 @@ namespace Dajunctic
             if (starLevel >= 5) return;
 
             var allMatching = GetMatchingHeroes(heroData, starLevel);
-            
+
             if (allMatching.Count >= 3)
             {
                 MergeHeroes(allMatching.Take(3).ToList(), heroData, starLevel + 1);
@@ -180,7 +196,7 @@ namespace Dajunctic
             // 1. Determine placement: field merges stay on field, bench merges use leftmost merged hero position
             HeroCombatActor fieldHero = instances.FirstOrDefault(h => h.IsOnField);
             bool wasOnField = fieldHero != null;
-            
+
             Vector2Int targetCoord;
             if (wasOnField)
             {
@@ -205,29 +221,29 @@ namespace Dajunctic
             {
                 UnregisterHero(hero); // Call local method directly
                 if (_manager.Field != null) _manager.Field.UnregisterHero(hero);
-                
+
                 // Cleanup MoveAgent properly - return to pool if pooled, destroy if not
                 if (hero.MoveAgent != null)
                 {
                     hero.MoveAgent.SetEnable(false);
-                    
+
                     // Call Cleanup if it's a pooled NavMeshMoveAgent to return it to pool
                     if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
                     {
                         navMeshAgent.Cleanup();
                     }
-                    
+
                     hero.MoveAgent = null;
                 }
                 hero.InterruptAction();
                 hero.ForceStop();
-                
+
                 Destroy(hero.gameObject);
             }
-            
+
             // 3. Spawn upgraded unit at the primary location
             Vector3 spawnPos = wasOnField ? _manager.Field.GetWorldPosition(targetCoord) : GetWorldPosition(targetCoord);
-            
+
             if (wasOnField)
             {
                 _manager.Field.AddHeroToField(heroData, targetCoord, newStarLevel);
@@ -236,13 +252,13 @@ namespace Dajunctic
             {
                 AddHeroToBenchAtCoord(heroData, targetCoord, newStarLevel);
             }
-            
+
             // 4. Spawn merge effect FX at the upgraded hero position
-            if (!string.IsNullOrEmpty(fxGuid))
+            if (!string.IsNullOrEmpty(_fxGuid))
             {
                 this.Raise(new SpawnFxEvent
                 {
-                    id = fxGuid,
+                    id = _fxGuid,
                     position = spawnPos,
                     duration = 1f
                 });
@@ -263,12 +279,12 @@ namespace Dajunctic
         public bool TrySnapToBench(Vector3 worldPos, out Vector2Int coord)
         {
             coord = new Vector2Int(-1, -1);
-            if (benchArea == null || benchArea.Data == null) return false;
+            if (_benchArea == null || _benchArea.Data == null) return false;
 
-            Vector3 localPos = benchArea.CachedTransform.InverseTransformPoint(worldPos);
-            Vector2Int squareCoords = benchArea.Data.WorldToSquare(localPos, Vector3.zero);
+            Vector3 localPos = _benchArea.CachedTransform.InverseTransformPoint(worldPos);
+            Vector2Int squareCoords = _benchArea.Data.WorldToSquare(localPos, Vector3.zero);
 
-            if (benchArea.Data.TryGetTile(squareCoords, out _))
+            if (_benchArea.Data.TryGetTile(squareCoords, out _))
             {
                 coord = squareCoords;
                 return true;
@@ -279,9 +295,9 @@ namespace Dajunctic
         public void AddHeroToBenchAtCoord(HeroData heroData, Vector2Int coord, int starLevel)
         {
             Vector3 worldPos = GetWorldPosition(coord);
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, benchArea.CachedTransform.rotation);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
             HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
-            
+
             if (actor != null)
             {
                 actor.SetStarLevel(starLevel);
@@ -295,14 +311,14 @@ namespace Dajunctic
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to bench means leaving field
             if (_manager.Field != null) _manager.Field.UnregisterHero(actor);
-            
+
             // Remove any existing entry at this coord (in case of stale data)
             if (_heroOnTiles.ContainsKey(coord))
             {
                 Debug.LogWarning($"Tile {coord} already has an entry! Removing stale data.");
                 _heroOnTiles.Remove(coord);
             }
-            
+
             _heroOnTiles[coord] = actor;
             actor.CurrentBenchCoord = coord;
             actor.CurrentFieldCoord = new Vector2Int(-1, -1);
@@ -319,7 +335,7 @@ namespace Dajunctic
                     keysToRemove.Add(kvp.Key);
                 }
             }
-            
+
             foreach (var key in keysToRemove)
             {
                 _heroOnTiles.Remove(key);
@@ -343,8 +359,8 @@ namespace Dajunctic
 
         public Vector3 GetWorldPosition(Vector2Int coord)
         {
-            Vector3 localPos = benchArea.Data.SquareToWorld(Vector3.zero, coord);
-            return benchArea.CachedTransform.TransformPoint(localPos);
+            Vector3 localPos = _benchArea.Data.SquareToWorld(Vector3.zero, coord);
+            return _benchArea.CachedTransform.TransformPoint(localPos);
         }
     }
 }

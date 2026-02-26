@@ -1,4 +1,6 @@
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Dajunctic
 {
@@ -12,7 +14,7 @@ namespace Dajunctic
 
     public class SettingsSystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private SettingsData settingsData;
+        private SettingsData _settingsData;
 
         // Current settings values
         private float _masterVolume = 1f;
@@ -39,10 +41,17 @@ namespace Dajunctic
         private const string KEY_CAMERA_SHAKE = "Settings.Gameplay.CameraShake";
         private const string KEY_DAMAGE_NUMBERS = "Settings.Gameplay.DamageNumbers";
 
+        public async Task LoadDataAsync()
+        {
+            var handle = Addressables.LoadAssetAsync<SettingsData>(GameSystemManager.Instance.Config.settingsData);
+            _settingsData = await handle.Task;
+            Debug.Log("<color=cyan>SettingsSystem data loaded</color>");
+        }
+
         public void Initialize(GameSystemManager manager)
         {
             Debug.Log("<color=cyan>SettingsSystem initialized</color>");
-            
+
             LoadSettings();
             ApplyAllSettings();
         }
@@ -63,15 +72,15 @@ namespace Dajunctic
 
         private void ApplyCursor()
         {
-            if (settingsData == null) return;
+            if (_settingsData == null) return;
 
             Texture2D cursorTexture = _currentCursorState switch
             {
-                CursorState.Normal => settingsData.cursorNormal,
-                CursorState.Hover => settingsData.cursorHover,
-                CursorState.Click => settingsData.cursorClick,
+                CursorState.Normal => _settingsData.cursorNormal,
+                CursorState.Hover => _settingsData.cursorHover,
+                CursorState.Click => _settingsData.cursorClick,
                 CursorState.Disabled => null,
-                _ => settingsData.cursorNormal
+                _ => _settingsData.cursorNormal
             };
 
             if (_currentCursorState == CursorState.Disabled)
@@ -83,7 +92,7 @@ namespace Dajunctic
                 Cursor.visible = true;
                 if (cursorTexture != null)
                 {
-                    Cursor.SetCursor(cursorTexture, settingsData.cursorHotspot, CursorMode.Auto);
+                    Cursor.SetCursor(cursorTexture, _settingsData.cursorHotspot, CursorMode.Auto);
                 }
                 else
                 {
@@ -105,7 +114,7 @@ namespace Dajunctic
             _masterVolume = Mathf.Clamp01(volume);
             ApplyMasterVolume();
             SaveSettings();
-            
+
             this.Raise(new SettingsChangedEvent { SettingType = "MasterVolume", Value = _masterVolume });
         }
 
@@ -114,7 +123,7 @@ namespace Dajunctic
             _musicVolume = Mathf.Clamp01(volume);
             ApplyMusicVolume();
             SaveSettings();
-            
+
             this.Raise(new SettingsChangedEvent { SettingType = "MusicVolume", Value = _musicVolume });
         }
 
@@ -123,7 +132,7 @@ namespace Dajunctic
             _sfxVolume = Mathf.Clamp01(volume);
             ApplySFXVolume();
             SaveSettings();
-            
+
             this.Raise(new SettingsChangedEvent { SettingType = "SFXVolume", Value = _sfxVolume });
         }
 
@@ -158,7 +167,7 @@ namespace Dajunctic
             _qualityLevel = Mathf.Clamp(level, 0, QualitySettings.names.Length - 1);
             QualitySettings.SetQualityLevel(_qualityLevel, true);
             SaveSettings();
-            
+
             Debug.Log($"Quality set to: {QualitySettings.names[_qualityLevel]}");
         }
 
@@ -166,7 +175,7 @@ namespace Dajunctic
         {
             Screen.SetResolution(width, height, fullscreen);
             SaveSettings();
-            
+
             Debug.Log($"Resolution set to: {width}x{height} Fullscreen: {fullscreen}");
         }
 
@@ -195,7 +204,7 @@ namespace Dajunctic
         {
             _cameraShake = enabled;
             SaveSettings();
-            
+
             this.Raise(new SettingsChangedEvent { SettingType = "CameraShake", Value = enabled ? 1f : 0f });
         }
 
@@ -203,7 +212,7 @@ namespace Dajunctic
         {
             _showDamageNumbers = enabled;
             SaveSettings();
-            
+
             this.Raise(new SettingsChangedEvent { SettingType = "DamageNumbers", Value = enabled ? 1f : 0f });
         }
 
@@ -235,26 +244,26 @@ namespace Dajunctic
 
         public void LoadSettings()
         {
-            if (settingsData == null)
+            if (_settingsData == null)
             {
                 Debug.LogWarning("SettingsData not assigned! Using hardcoded defaults.");
                 LoadDefaults();
                 return;
             }
 
-            // Audio - use settingsData defaults if not found
-            _masterVolume = PlayerPrefs.GetFloat(KEY_MASTER_VOLUME, settingsData.defaultMasterVolume);
-            _musicVolume = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, settingsData.defaultMusicVolume);
-            _sfxVolume = PlayerPrefs.GetFloat(KEY_SFX_VOLUME, settingsData.defaultSFXVolume);
+            // Audio - use _settingsData defaults if not found
+            _masterVolume = PlayerPrefs.GetFloat(KEY_MASTER_VOLUME, _settingsData.defaultMasterVolume);
+            _musicVolume = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, _settingsData.defaultMusicVolume);
+            _sfxVolume = PlayerPrefs.GetFloat(KEY_SFX_VOLUME, _settingsData.defaultSFXVolume);
 
             // Graphics
-            _qualityLevel = PlayerPrefs.GetInt(KEY_QUALITY, settingsData.defaultQualityLevel);
-            _vSync = PlayerPrefs.GetInt(KEY_VSYNC, settingsData.defaultVSync ? 1 : 0) == 1;
-            _targetFrameRate = PlayerPrefs.GetInt(KEY_TARGET_FPS, settingsData.defaultTargetFrameRate);
+            _qualityLevel = PlayerPrefs.GetInt(KEY_QUALITY, _settingsData.defaultQualityLevel);
+            _vSync = PlayerPrefs.GetInt(KEY_VSYNC, _settingsData.defaultVSync ? 1 : 0) == 1;
+            _targetFrameRate = PlayerPrefs.GetInt(KEY_TARGET_FPS, _settingsData.defaultTargetFrameRate);
 
             // Gameplay
-            _cameraShake = PlayerPrefs.GetInt(KEY_CAMERA_SHAKE, settingsData.defaultCameraShake ? 1 : 0) == 1;
-            _showDamageNumbers = PlayerPrefs.GetInt(KEY_DAMAGE_NUMBERS, settingsData.defaultShowDamageNumbers ? 1 : 0) == 1;
+            _cameraShake = PlayerPrefs.GetInt(KEY_CAMERA_SHAKE, _settingsData.defaultCameraShake ? 1 : 0) == 1;
+            _showDamageNumbers = PlayerPrefs.GetInt(KEY_DAMAGE_NUMBERS, _settingsData.defaultShowDamageNumbers ? 1 : 0) == 1;
         }
 
         private void LoadDefaults()
@@ -287,16 +296,16 @@ namespace Dajunctic
 
         public void ResetToDefaults()
         {
-            if (settingsData != null)
+            if (_settingsData != null)
             {
-                _masterVolume = settingsData.defaultMasterVolume;
-                _musicVolume = settingsData.defaultMusicVolume;
-                _sfxVolume = settingsData.defaultSFXVolume;
-                _qualityLevel = settingsData.defaultQualityLevel;
-                _vSync = settingsData.defaultVSync;
-                _targetFrameRate = settingsData.defaultTargetFrameRate;
-                _cameraShake = settingsData.defaultCameraShake;
-                _showDamageNumbers = settingsData.defaultShowDamageNumbers;
+                _masterVolume = _settingsData.defaultMasterVolume;
+                _musicVolume = _settingsData.defaultMusicVolume;
+                _sfxVolume = _settingsData.defaultSFXVolume;
+                _qualityLevel = _settingsData.defaultQualityLevel;
+                _vSync = _settingsData.defaultVSync;
+                _targetFrameRate = _settingsData.defaultTargetFrameRate;
+                _cameraShake = _settingsData.defaultCameraShake;
+                _showDamageNumbers = _settingsData.defaultShowDamageNumbers;
             }
             else
             {
@@ -305,7 +314,7 @@ namespace Dajunctic
 
             ApplyAllSettings();
             SaveSettings();
-            
+
             Debug.Log("Settings reset to defaults");
         }
 

@@ -1,35 +1,72 @@
 # TFT-Fake
 
-Một game clone Teamfight Tactics (TFT) được xây dựng bằng Unity, với kiến trúc **System-Based** hiện đại, **Event-Driven**, giúp code decoupled và dễ mở rộng.
+Một game clone Teamfight Tactics (TFT) được xây dựng bằng Unity, với kiến trúc **System-Based** hiện đại, **Event-Driven**, hỗ trợ **Async Data Loading** qua Addressables.
 
 ---
 
-## 🏗️ Kiến trúc & Design Pattern (New!)
+## 🏗️ Kiến trúc
 
-Dự án đã được Refactor hoàn toàn từ mô hình **Manager Singleton** cũ sang mô hình **Centralized System Manager** kết hợp **Event-Driven Communication**.
+### Boot Flow
+
+```
+[Boot Scene] InitializeLauncher
+  → Init core services (Ticker, Pool, EventDispatcher)
+  → Load Launcher Scene
+
+[Launcher Scene]
+  BaseApplication  → DontDestroyOnLoad
+  GameSystemManager:
+    1. CreateSystems()      → AddComponent<T>() cho mỗi system (code-based, không kéo thả)
+    2. LoadAllDataAsync()   → Từng system load ScriptableObject data qua Addressables
+    3. InitializeSystems()  → Cross-system wiring (Initialize)
+    4. AllSystemsReady = true
+  Launcher → chờ AllSystemsReady → LoadScene(homeScene)
+
+[Gameplay Scene]
+  BenchAreaBinder → bind scene refs vào BenchSystem
+  FieldAreaBinder → bind scene refs vào FieldSystem
+```
 
 ### 1. **GameSystemManager (The Core Hub)**
-- Thay vì mỗi Manager là một Singleton (`BenchManager.Instance`, `FieldManager.Instance`...), giờ đây chỉ có **duy nhất 1 Singleton**: `GameSystemManager`.
-- `GameSystemManager` quản lý vòng đời (`Initialize`, `Shutdown`) của tất cả các System con.
+- Duy nhất **1 Singleton**: `GameSystemManager` — quản lý toàn bộ vòng đời hệ thống.
+- Systems được **tạo bằng code** trong `CreateSystems()`, không cần kéo thả từng system trên Inspector.
+- Chỉ cần gán **1 ScriptableObject** duy nhất: `GameSystemManagerData` — chứa Addressable references tới mọi data asset.
+- Property `AllSystemsReady` cho phép `Launcher` biết khi nào đã sẵn sàng vào Home Scene.
 
-### 2. **Các System (IGameSystem)**
-Các tính năng cốt lõi được tách thành các System độc lập, implement interface `IGameSystem`:
-- **`BenchSystem`**: Quản lý hàng chờ, logic merge/upgrade (thay thế `BenchManager`).
-- **`FieldSystem`**: Quản lý bàn cờ, giới hạn unit (thay thế `FieldManager`).
-- **`ShopSystem`**: Quản lý Shop, Reroll, xác suất tướng (thay thế `ShopController`).
-- **`EconomySystem`**: Quản lý Vàng, XP, Level (thay thế `EconomyManager`).
+### 2. **IGameSystem — Interface chung**
+```csharp
+public interface IGameSystem
+{
+    Task LoadDataAsync();                    // Load data qua Addressables
+    void Initialize(GameSystemManager mgr); // Cross-system wiring
+    void Shutdown();                         // Cleanup
+}
+```
 
-### 3. **Cơ chế giao tiếp (Decoupling)**
-- **Event-Driven Actions**: UI không gọi hàm trực tiếp của System để thay đổi dữ liệu. Thay vào đó, UI bắn **Request Event**:
+### 3. **Các System**
+
+| System | ScriptableObject Data | Chức năng |
+|---|---|---|
+| `SettingsSystem` | `SettingsData` | Cursor, Audio, Graphics, Gameplay settings |
+| `EconomySystem` | `EconomySystemData` | Gold, XP, Level |
+| `ShopSystem` | `ShopSystemData` | Shop, Reroll, xác suất tướng |
+| `BenchSystem` | `BenchSystemData` + `BenchAreaBinder` (scene) | Hàng chờ, merge/upgrade |
+| `FieldSystem` | *(no-op)* + `FieldAreaBinder` (scene) | Bàn cờ, giới hạn unit |
+| `ItemSystem` | `ItemSystemData` | Item bench, combine recipes |
+
+### 4. **Scene Binders**
+Scene-specific references (SquareAreaView, HexAreaView) không thể nằm trong ScriptableObject. Giải pháp:
+- **`BenchAreaBinder`**: MonoBehaviour trong gameplay scene → gọi `BenchSystem.BindArea(area, fxGuid)` lúc `Awake()`.
+- **`FieldAreaBinder`**: MonoBehaviour trong gameplay scene → gọi `FieldSystem.BindArea(area)` lúc `Awake()`.
+
+### 5. **Cơ chế giao tiếp (Decoupling)**
+- **Event-Driven Actions**: UI bắn Request Event, System lắng nghe và xử lý:
   ```csharp
-  // UI Code
   this.Raise(new RequestBuyHeroEvent { SlotIndex = 0 });
   this.Raise(new RequestRerollEvent());
   ```
-  System lắng nghe và xử lý logic.
-- **Data Access**: Để lấy dữ liệu hiển thị (View), sử dụng Extension Method tiện lợi:
+- **Data Access**: Extension Method tiện lợi:
   ```csharp
-  // Truy cập System bất kỳ đâu
   var shop = this.GetSystem<ShopSystem>();
   var gold = this.GetSystem<EconomySystem>().Gold;
   ```
@@ -46,91 +83,139 @@ Các tính năng cốt lõi được tách thành các System độc lập, impl
 
 ### 2. **Economy System**
 - **Gold**: Tài nguyên chính để mua tướng/XP.
-- **XP & Level**: Mua XP để lên cấp. Cấp độ quyết định số lượng tướng tối đa trên bàn cờ và tỉ lệ ra tướng xịn trong Shop.
+- **XP & Level**: Mua XP để lên cấp. Level quyết định số lượng tướng tối đa và tỉ lệ shop.
 
-### 3. **Combat UI/UX**
+### 3. **Item System**
+- **Item Bench**: Quản lý items trên bench UI.
+- **Combine**: Kéo item vào tướng, tự combine theo recipe database.
+
+### 4. **Combat UI/UX**
 - **Drag & Drop**: Kéo thả mượt mà giữa Bench và Field.
 - **Visuals**: Hiển thị thông tin, màu sắc theo Rarity (Xám, Lá, Dương, Tím, Vàng).
 
 ---
 
-## 📁 Cấu trúc thư mục (Refactored)
+## 📁 Cấu trúc thư mục
 
 ```
 Assets/Dajunctic/Scripts/
+├── Cores/                              # Core utilities
+│   ├── ServiceLocator.cs              # ServiceLocator pattern
+│   ├── IApplication.cs                # Application interface
+│   ├── Singleton.cs, Ticker.cs, Pool.cs, EventDispatcher.cs
+│   └── ...
 ├── Systems/
-│   ├── Core/                        # Lõi hệ thống mới
-│   │   ├── GameSystemManager.cs     # Manager tổng
-│   │   ├── GameSystemExtensions.cs  # Extension this.GetSystem<T>()
-│   │   ├── IGameSystem.cs           # Interface chung
-│   │   └── GameEvents.cs            # Định nghĩa các Request Event
-│   ├── HeroSystem/                  # Logic game cụ thể
-│   │   ├── BenchSystem.cs           # (Renamed from BenchManager)
-│   │   ├── FieldSystem.cs           # (Renamed from FieldManager)
-│   │   ├── ShopSystem.cs            # (Renamed from ShopController)
-│   │   ├── EconomySystem.cs         # (Renamed from EconomyManager)
-│   │   └── HeroCombatActor.cs       # Logic Unit
+│   ├── Core/                           # Lõi hệ thống
+│   │   ├── GameSystemManager.cs       # Manager tổng (code-based binding)
+│   │   ├── GameSystemManagerData.cs   # SO chứa Addressable refs
+│   │   ├── GameSystemExtensions.cs    # Extension this.GetSystem<T>()
+│   │   ├── IGameSystem.cs            # Interface (LoadDataAsync + Init + Shutdown)
+│   │   └── GameEvents.cs             # Request Events
+│   ├── HeroSystem/
+│   │   ├── BenchSystem.cs            # Logic bench + BindArea()
+│   │   ├── BenchSystemData.cs        # SO data
+│   │   ├── BenchAreaBinder.cs        # Scene binder
+│   │   ├── FieldSystem.cs            # Logic field + BindArea()
+│   │   ├── FieldAreaBinder.cs        # Scene binder
+│   │   ├── ShopSystem.cs             # Logic shop
+│   │   ├── ShopSystemData.cs         # SO data (shopData + allHeroes)
+│   │   ├── EconomySystem.cs          # Logic economy
+│   │   ├── EconomySystemData.cs      # SO data (initialGold, initialLevel)
+│   │   └── HeroCombatActor.cs        # Logic Unit
+│   ├── ItemSystem/
+│   │   ├── ItemSystem.cs             # Logic items
+│   │   └── ItemSystemData.cs         # SO data (recipeDB, prefab, slots)
+│   ├── SettingsSystem/
+│   │   ├── SettingsSystem.cs          # Settings (loads SettingsData via Addressables)
+│   │   └── SettingsData.cs            # SO data
+│   ├── LoadingSystem/Runtime/
+│   │   ├── InitializeLauncher.cs      # Boot scene entry point
+│   │   ├── BaseApplication.cs         # DontDestroyOnLoad app
+│   │   └── Launcher.cs               # Chờ AllSystemsReady → load home
+│   └── ...
 ├── UI/
-│   ├── Popups/
-│   │   └── GameplayPopup.cs         # UI chính (đã update dùng Event)
-│   └── Shop/
-│       └── ShopSlotView.cs          # UI Slot Shop
+│   ├── Popups/GameplayPopup.cs
+│   └── Shop/ShopSlotView.cs
+└── ...
 ```
 
 ---
 
-## 🚀 Hướng dẫn Setup Scene (Quan trọng!)
+## 🚀 Hướng dẫn Setup
 
-Do thay đổi kiến trúc, Scene cần được setup lại như sau:
+### Bước 1: Tạo ScriptableObject Assets
+Right-click → Create → Dajunctic/Systems/:
+- `GameSystemManagerData`
+- `ShopSystemData`, `EconomySystemData`, `ItemSystemData`, `BenchSystemData`
 
-1.  **Tạo GameObject**: Đặt tên `GameSystemManager`.
-2.  **Add Component**:
-    - Thêm script `GameSystemManager`.
-    - Thêm script `BenchSystem`.
-    - Thêm script `FieldSystem`.
-    - Thêm script `EconomySystem`.
-    - Thêm script `ShopSystem`.
-3.  **Link References (Inspector)**:
-    - Kéo các System (`Bench`, `Field`...) vào slot tương ứng trong component `GameSystemManager` (hoặc để nó tự tìm `GetComponentInChildren`).
-    - Trong `BenchSystem` / `FieldSystem`: Assign `AreaView` tương ứng.
-    - Trong `ShopSystem`: Assign `ShopData` và list `HeroData`.
+### Bước 2: Cấu hình dữ liệu
+- Kéo data cũ vào SO mới (VD: `shopData` → `ShopSystemData.shopData`, `allHeroes` → `ShopSystemData.allHeroes`)
+- Đánh dấu **Addressable** cho từng SO asset
+
+### Bước 3: Launcher Scene
+- Tạo/giữ GameObject `GameSystemManager` với component `GameSystemManager`
+- Gán duy nhất 1 SO: `GameSystemManagerData` vào field `config`
+  *(Không cần kéo thả từng system nữa — chúng được tạo tự động bằng code)*
+
+### Bước 4: Gameplay Scene
+- Thêm `BenchAreaBinder` lên GameObject có `SquareAreaView` (bench area) — gán `benchArea` + `fxGuid`
+- Thêm `FieldAreaBinder` lên GameObject có `HexAreaView` (field area) — gán `fieldArea`
+
+### Bước 5: Xoá cũ
+- Xoá các System MonoBehaviour components cũ (BenchSystem, FieldSystem...) khỏi scene objects
+- Chúng giờ được `AddComponent` tự động bởi `GameSystemManager`
 
 ---
 
-## 🐛 Các Bug đã fix gần đây
+## 📝 Scripting Guide
 
-1.  **Architecture Refactor**: Loại bỏ Singleton rác, chuyển sang System Manager tập trung.
-2.  **Bench Full Logic Check**: Fix lỗi check tọa độ `x` gây sai logic khi bench full (đã chuyển sang check `y` hoặc valid coord chuẩn).
-3.  **UI Decoupling**: UI không còn phụ thuộc chặt vào logic game, giảm thiểu lỗi null reference khi khởi tạo sai thứ tự.
-4.  **Resource Loading**: Fix lỗi Shop không hiện tướng nếu chưa assign list HeroData (đã thêm fallback `Resources.LoadAll`).
-
----
-
-## 📝 Scripting Guide (Cho Dev)
-
-**1. Muốn gọi một System:**
+**1. Truy cập System:**
 ```csharp
-// Cũ (Don't use): BenchManager.Instance.DoSomething();
-// Mới (Recommended):
 var bench = this.GetSystem<BenchSystem>();
-bench.DoSomething();
+var gold  = this.GetSystem<EconomySystem>().Gold;
+// Hoặc:
+GameSystemManager.Instance.Bench.DoSomething();
 ```
 
-**2. Muốn thực hiện hành động (Mua, Reroll...):**
+**2. Thực hiện hành động:**
 ```csharp
-// Bắn Event Request
-this.Raise(new RequestByHeroEvent { SlotIndex = 0 });
+this.Raise(new RequestBuyHeroEvent { SlotIndex = 0 });
 this.Raise(new RequestRerollEvent());
+this.Raise(new RequestBuyXPEvent());
 ```
 
-**3. Muốn nghe sự kiện từ System:**
+**3. Lắng nghe sự kiện:**
 ```csharp
-// Trong method Initialization/ListenEvents
 this.RegisterListener<GoldChangedEvent>(OnGoldChanged);
 
 private void OnGoldChanged(GoldChangedEvent evt) {
-    // Update UI
+    goldText.text = evt.NewGold.ToString();
 }
+```
+
+**4. Thêm System mới:**
+```csharp
+// 1. Tạo SO data class
+[CreateAssetMenu(menuName = "Dajunctic/Systems/MySystemData")]
+public class MySystemData : ScriptableObject { ... }
+
+// 2. Tạo System class
+public class MySystem : MonoBehaviour, IGameSystem
+{
+    private MySystemData _data;
+
+    public async Task LoadDataAsync()
+    {
+        var handle = Addressables.LoadAssetAsync<MySystemData>(...);
+        _data = await handle.Task;
+    }
+
+    public void Initialize(GameSystemManager manager) { ... }
+    public void Shutdown() { ... }
+}
+
+// 3. Thêm vào GameSystemManager.CreateSystems() và LoadAllDataAsync()
+// 4. Thêm AssetReference vào GameSystemManagerData
 ```
 
 ---

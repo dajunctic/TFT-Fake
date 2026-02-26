@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using System.Linq;
 
@@ -6,15 +7,26 @@ namespace Dajunctic
 {
     public class FieldSystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private HexAreaView fieldArea;
+        // Scene ref — bound at runtime by FieldAreaBinder in the gameplay scene
+        private HexAreaView _fieldArea;
         private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
         private GameSystemManager _manager;
+
+        public async Task LoadDataAsync()
+        {
+            // FieldSystem has no Addressable data — scene ref bound via FieldAreaBinder
+            await Task.CompletedTask;
+            Debug.Log("<color=cyan>FieldSystem data loaded (no-op)</color>");
+        }
 
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
             Debug.Log("<color=cyan>FieldSystem initialized</color>");
         }
+
+        /// <summary>Called by FieldAreaBinder when the gameplay scene loads.</summary>
+        public void BindArea(HexAreaView area) => _fieldArea = area;
 
         public void Shutdown()
         {
@@ -35,12 +47,12 @@ namespace Dajunctic
         public bool TrySnapToField(Vector3 worldPos, out Vector2Int coord)
         {
             coord = new Vector2Int(-1, -1);
-            if (fieldArea == null || fieldArea.Data == null) return false;
+            if (_fieldArea == null || _fieldArea.Data == null) return false;
 
-            Vector3 localPos = fieldArea.CachedTransform.InverseTransformPoint(worldPos);
-            Vector2Int hexCoords = fieldArea.Data.WorldToHex(localPos, Vector3.zero);
+            Vector3 localPos = _fieldArea.CachedTransform.InverseTransformPoint(worldPos);
+            Vector2Int hexCoords = _fieldArea.Data.WorldToHex(localPos, Vector3.zero);
 
-            if (fieldArea.Data.TryGetTile(hexCoords, out _))
+            if (_fieldArea.Data.TryGetTile(hexCoords, out _))
             {
                 coord = hexCoords;
                 return true;
@@ -53,14 +65,14 @@ namespace Dajunctic
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to field means leaving bench
             if (_manager.Bench != null) _manager.Bench.UnregisterHero(actor);
-            
+
             // Remove any existing entry at this coord (in case of stale data)
             if (_heroOnTiles.ContainsKey(coord))
             {
                 Debug.LogWarning($"Field tile {coord} already has an entry! Removing stale data.");
                 _heroOnTiles.Remove(coord);
             }
-            
+
             _heroOnTiles[coord] = actor;
             actor.CurrentFieldCoord = coord;
             actor.CurrentBenchCoord = new Vector2Int(-1, -1);
@@ -85,7 +97,7 @@ namespace Dajunctic
                     keysToRemove.Add(kvp.Key);
                 }
             }
-            
+
             foreach (var key in keysToRemove)
             {
                 _heroOnTiles.Remove(key);
@@ -101,9 +113,9 @@ namespace Dajunctic
         public void AddHeroToField(HeroData heroData, Vector2Int coord, int starLevel)
         {
             Vector3 worldPos = GetWorldPosition(coord);
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, fieldArea.CachedTransform.rotation);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _fieldArea.CachedTransform.rotation);
             HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
-            
+
             if (actor != null)
             {
                 actor.CurrentFieldCoord = coord;
@@ -120,8 +132,8 @@ namespace Dajunctic
 
         public Vector3 GetWorldPosition(Vector2Int coord)
         {
-            Vector3 localPos = fieldArea.Data.HexToWorld(Vector3.zero, coord);
-            return fieldArea.CachedTransform.TransformPoint(localPos);
+            Vector3 localPos = _fieldArea.Data.HexToWorld(Vector3.zero, coord);
+            return _fieldArea.CachedTransform.TransformPoint(localPos);
         }
     }
 }

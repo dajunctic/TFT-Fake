@@ -1,34 +1,37 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using System.Linq;
 
 namespace Dajunctic
 {
     public class ShopSystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private ShopData shopData;
-        [SerializeField] private List<HeroData> allHeroes; // Ideally populated from a database or folder
-        
+        private ShopSystemData _data;
+
         private HeroData[] _currentShop = new HeroData[5];
         public HeroData[] CurrentShop => _currentShop;
-        public ShopData ShopData => shopData;
+        public ShopData ShopData => _data?.shopData;
         private GameSystemManager _manager;
 
         public static event System.Action OnShopRefreshed;
 
+        public async Task LoadDataAsync()
+        {
+            var handle = Addressables.LoadAssetAsync<ShopSystemData>(GameSystemManager.Instance.Config.shopSystemData);
+            _data = await handle.Task;
+            Debug.Log("<color=cyan>ShopSystem data loaded</color>");
+        }
+
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            if (allHeroes == null || allHeroes.Count == 0)
-            {
-                allHeroes = Resources.LoadAll<HeroData>("").ToList(); 
-                // Commented out to prevent slow loading if not needed immediately
-            }
 
             this.RegisterListener<RequestRerollEvent>(OnRequestReroll);
             this.RegisterListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
-            
+
             Debug.Log("<color=cyan>ShopSystem initialized</color>");
         }
 
@@ -65,7 +68,8 @@ namespace Dajunctic
 
         public void Reroll()
         {
-            if (_manager.Economy.SpendGold(shopData.rerollCost))
+            if (_data == null) return;
+            if (_manager.Economy.SpendGold(_data.shopData.rerollCost))
             {
                 RefreshShop();
             }
@@ -73,8 +77,9 @@ namespace Dajunctic
 
         public void RefreshShop()
         {
+            if (_data == null) return;
             int level = _manager.Economy.Level;
-            float[] chances = shopData.GetChancesForLevel(level);
+            float[] chances = _data.shopData.GetChancesForLevel(level);
 
             for (int i = 0; i < 5; i++)
             {
@@ -100,7 +105,8 @@ namespace Dajunctic
 
         private HeroData GetRandomHeroOfRarity(int rarity)
         {
-            var eligible = allHeroes.Where(h => h.rarity == rarity).ToList();
+            if (_data == null || _data.allHeroes == null) return null;
+            var eligible = _data.allHeroes.Where(h => h.rarity == rarity).ToList();
             if (eligible.Count == 0) return null;
             return eligible[Random.Range(0, eligible.Count)];
         }
@@ -108,7 +114,7 @@ namespace Dajunctic
         public void BuyHero(int slotIndex)
         {
             if (slotIndex < 0 || slotIndex >= _currentShop.Length) return;
-            
+
             HeroData hero = _currentShop[slotIndex];
             if (hero == null) return;
 
@@ -123,10 +129,10 @@ namespace Dajunctic
             {
                 // Add hero to bench
                 _manager.Bench.AddHeroToBench(hero);
-                
+
                 Debug.Log($"Bought {hero.displayName}");
                 _currentShop[slotIndex] = null;
-                
+
                 this.Raise(new HeroBoughtEvent { Hero = hero });
                 this.Raise(new ShopRefreshedEvent());
                 OnShopRefreshed?.Invoke();

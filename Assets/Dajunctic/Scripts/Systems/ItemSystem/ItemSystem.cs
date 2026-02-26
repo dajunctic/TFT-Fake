@@ -1,22 +1,29 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace Dajunctic
 {
     public class ItemSystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private ItemRecipeDatabase recipeDatabase;
-        [SerializeField] private DraggableItem draggableItemPrefab;
-        [SerializeField] private int maxBenchSlots = 10;
-        
+        private ItemSystemData _data;
+
         [Header("Debug")]
         [SerializeField] private ItemData[] debugTestItems;
-        
+
         private List<ItemData> _itemBench = new List<ItemData>();
         private List<DraggableItem> _spawnedItems = new List<DraggableItem>();
         public List<ItemData> ItemBench => _itemBench;
 
         private GameSystemManager _manager;
+
+        public async Task LoadDataAsync()
+        {
+            var handle = Addressables.LoadAssetAsync<ItemSystemData>(GameSystemManager.Instance.Config.itemSystemData);
+            _data = await handle.Task;
+            Debug.Log("<color=cyan>ItemSystem data loaded</color>");
+        }
 
         public void Initialize(GameSystemManager manager)
         {
@@ -31,12 +38,12 @@ namespace Dajunctic
 
         public bool AddItemToBench(ItemData item)
         {
-            if (_itemBench.Count >= maxBenchSlots)
+            if (_data != null && _itemBench.Count >= _data.maxBenchSlots)
             {
                 Debug.LogWarning("Item bench is full!");
                 return false;
             }
-            
+
             _itemBench.Add(item);
             SpawnItemOnBench(item, _itemBench.Count - 1);
             this.Raise(new ItemBenchChangedEvent());
@@ -46,11 +53,11 @@ namespace Dajunctic
         private void SpawnItemOnBench(ItemData item, int slotIndex)
         {
             if (GameplayPopup.Instance == null) return; // Don't spawn if UI is closed
-            
+
             var benchPositions = GameplayPopup.Instance.ItemBenchPositions;
-            if (draggableItemPrefab == null)
+            if (_data == null || _data.draggableItemPrefab == null)
             {
-                Debug.LogWarning("DraggableItemPrefab is not assigned in ItemSystem!");
+                Debug.LogWarning("DraggableItemPrefab is not set in ItemSystemData!");
                 return;
             }
             if (benchPositions == null || benchPositions.Length == 0)
@@ -61,10 +68,10 @@ namespace Dajunctic
             if (slotIndex >= benchPositions.Length) return;
 
             Transform parentSlot = benchPositions[slotIndex];
-            
+
             // Instantiate perfectly inside the UI slot
-            DraggableItem instance = Instantiate(draggableItemPrefab, parentSlot);
-            
+            DraggableItem instance = Instantiate(_data.draggableItemPrefab, parentSlot);
+
             // Reset local position and scale for UI elements
             instance.transform.localPosition = Vector3.zero;
             instance.transform.localScale = Vector3.one;
@@ -76,7 +83,7 @@ namespace Dajunctic
         public void RefreshAllVisuals()
         {
             ClearAllVisuals();
-            
+
             for (int i = 0; i < _itemBench.Count; i++)
             {
                 SpawnItemOnBench(_itemBench[i], i);
@@ -101,10 +108,10 @@ namespace Dajunctic
                 _spawnedItems.RemoveAt(index);
 
                 _itemBench.RemoveAt(index);
-                
+
                 // Rearrange remaining items
                 RearrangeBench();
-                
+
                 this.Raise(new ItemBenchChangedEvent());
             }
         }
@@ -142,7 +149,7 @@ namespace Dajunctic
             container.Initialize(hero);
 
             // 2. Try to add or combine
-            if (container.TryAddItem(item, recipeDatabase))
+            if (container.TryAddItem(item, _data != null ? _data.recipeDatabase : null))
             {
                 // Find and remove from bench by instance to handle duplicates correctly
                 int index = _spawnedItems.IndexOf(instance);
@@ -151,12 +158,12 @@ namespace Dajunctic
                     _itemBench.RemoveAt(index);
                     _spawnedItems.RemoveAt(index);
                 }
-                
+
                 // Item successfully consumed
                 Destroy(instance.gameObject);
-                
+
                 RearrangeBench();
-                
+
                 this.Raise(new ItemBenchChangedEvent());
                 Debug.Log($"Gave {item.itemName} to {hero.name}");
                 return true;

@@ -1,22 +1,23 @@
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using System;
 
 namespace Dajunctic
 {
     public class EconomySystem : MonoBehaviour, IGameSystem
     {
-        [SerializeField] private int initialGold = 10;
-        [SerializeField] private int initialLevel = 1;
-        
+        private EconomySystemData _data;
+
         private int _gold;
         private int _level;
         private int _xp;
         private GameSystemManager _manager;
-        
+
         public int Gold => _gold;
         public int Level => _level;
         public int XP => _xp;
-        
+
         public static event Action<int> OnGoldChanged;
         public static event Action<int, int> OnXPChanged; // currentXP, requiredXP
         public static event Action<int> OnLevelChanged;
@@ -24,16 +25,23 @@ namespace Dajunctic
         public const int MAX_LEVEL = 10;
         private readonly int[] _xpRequirements = { 0, 2, 2, 6, 10, 20, 36, 56, 80, 100 }; // Index 1 is level 1 -> 2, etc.
 
+        public async Task LoadDataAsync()
+        {
+            var handle = Addressables.LoadAssetAsync<EconomySystemData>(GameSystemManager.Instance.Config.economySystemData);
+            _data = await handle.Task;
+            Debug.Log("<color=cyan>EconomySystem data loaded</color>");
+        }
+
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            _gold = initialGold;
-            _level = initialLevel;
+            _gold = _data != null ? _data.initialGold : 10;
+            _level = _data != null ? _data.initialLevel : 1;
             _xp = 0;
-            
+
             this.RegisterListener<RequestAddGoldEvent>(OnRequestAddGold);
             this.RegisterListener<RequestBuyXPEvent>(OnRequestBuyXP);
-            
+
             Debug.Log("<color=cyan>EconomySystem initialized</color>");
         }
 
@@ -48,7 +56,7 @@ namespace Dajunctic
 
             // Access ShopData via Manager
             if (_manager.Shop == null) return;
-            
+
             var shopData = _manager.Shop.ShopData;
             if (SpendGold(shopData.buyXpCost))
             {
@@ -90,7 +98,7 @@ namespace Dajunctic
         public void AddXP(int amount)
         {
             if (_level >= MAX_LEVEL) return;
-            
+
             _xp += amount;
             CheckLevelUp();
             OnXPChanged?.Invoke(_xp, GetXPRequired());
@@ -112,7 +120,7 @@ namespace Dajunctic
                 _level++;
                 OnLevelChanged?.Invoke(_level);
                 this.Raise(new LevelChangedEvent { NewLevel = _level });
-                
+
                 if (_level >= MAX_LEVEL)
                 {
                     _xp = 0;
@@ -128,7 +136,7 @@ namespace Dajunctic
             if (_level >= _xpRequirements.Length) return 0;
             return _xpRequirements[_level];
         }
-        
+
         public bool IsMaxLevel => _level >= MAX_LEVEL;
     }
 
