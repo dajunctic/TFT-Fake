@@ -10,22 +10,33 @@ namespace Dajunctic
         void Start()
         {
             this.RegisterListener<SpawnFxEvent>((param) => {SpawnFxView(param);});
+            this.RegisterListener<SpawnHpViewEvent>((param) => {SpawnHpView(param);});
         }
 
-        public FxView SpawnFxView(SpawnFxEvent playFxEvent)
+        public void SpawnHpView(SpawnHpViewEvent param)
         {
-            var position = playFxEvent.position;
-            var fxId = playFxEvent.id;
+            var position = param.owner.HeadPoint;
+            var starLevel = param.starLevel;
+
+            var hpViewPrefab = poolData.hpView;
+            var hpView = PoolableObject.Pool.Spawn(hpViewPrefab, position, Quaternion.identity);
+            hpView.Initialize(param.owner, starLevel);
+        }
+
+        public FxView SpawnFxView(SpawnFxEvent param)
+        {
+            var position = param.position;
+            var fxId = param.id;
             var fxViewPrefab = poolData.fxLists.Find(f => f.Id == fxId).fxViewPrefab;
 
-            var fxView = Instantiate(fxViewPrefab, position, Quaternion.identity);
-            fxView.Play(playFxEvent);
+            var fxView =  PoolableObject.Pool.Spawn(fxViewPrefab, position, Quaternion.identity);
+            fxView.Play(param);
             return fxView;
         }
 
-        public FxView SpawnFx(SpawnFxEvent playFxEvent)
+        public FxView SpawnFx(SpawnFxEvent param)
         {
-            return SpawnFxView(playFxEvent);
+            return SpawnFxView(param);
         }
 
         public MissileView SpawnMissile(string missileId, MissileData missileData)
@@ -38,7 +49,7 @@ namespace Dajunctic
             var entry = poolData.missileLists.Find(m => m.Id == missileId);
             if (entry == null || entry.missilePrefab == null) return null;
 
-            var missileView = Instantiate(entry.missilePrefab, missileData.launcher, Quaternion.identity);
+            var missileView =  PoolableObject.Pool.Spawn(entry.missilePrefab, missileData.launcher, Quaternion.identity);
             missileView.InitData(missileData);
             missileView.StartFly();
             return missileView;

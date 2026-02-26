@@ -90,5 +90,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heroLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   iconImage: {fileID: 425899324493181100}

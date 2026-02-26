@@ -164,6 +164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
+  pool: {fileID: 11400000, guid: 3c85d7c16a42fc347a71b18e39bfea67, type: 2}
   eventDispatcher: {fileID: 11400000, guid: 27cfed565a59a9544b70752c5a21fbd8, type: 2}
   launcherScene:
     m_AssetGUID: 22cd61da445add748a31e29126adb7f8

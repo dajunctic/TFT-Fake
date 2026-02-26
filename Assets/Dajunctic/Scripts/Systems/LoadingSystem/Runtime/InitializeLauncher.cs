@@ -8,6 +8,7 @@ namespace Dajunctic
     public class InitializeLauncher: MonoBehaviour
     {
         [SerializeField] Ticker ticker;
+        [SerializeField] Pool pool;
         [SerializeField] EventDispatcher eventDispatcher;
         [SerializeField] AssetReference launcherScene;
         // [SerializeField] AssetReference fadingScene;
@@ -16,9 +17,12 @@ namespace Dajunctic
         {
             ticker.Initialize();
             eventDispatcher.Initialize();
+            pool.Initialize();
+
 
             ServiceLocator.Register(ticker);
             ServiceLocator.Register(eventDispatcher);
+            ServiceLocator.Register(pool);
             
         }
 

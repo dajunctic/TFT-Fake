@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace Dajunctic
 {
-    public class HpView : MonoBehaviour
+    public class HpView : BaseView
     {
         [Header("Renderers")]
         [SerializeField] private Image bgRenderer;
@@ -19,8 +19,9 @@ namespace Dajunctic
         private CombatActor _owner;
         private Transform _cachedTransform;
 
-        private void Awake()
+        public override void Initialize()
         {
+            base.Initialize();
             _cachedTransform = transform;
             foreach (var icon in itemIcons)
             {
@@ -38,8 +39,27 @@ namespace Dajunctic
 
             UpdateHp(_owner.MaxHp > 0 ? _owner.Hp / _owner.MaxHp : 1f);
             UpdateEnergy(_owner.MaxEnergy > 0 ? _owner.Energy / _owner.MaxEnergy : 0f);
+        }
 
+        public override void ListenEvents()
+        {
             this.RegisterListener<HeroItemsChangedEvent>(OnItemsChanged);
+            this.RegisterListener<DespawnHpViewEvent>(OnDespawn);
+            this.RegisterListener<UpdateStarLevelEvent>(OnUpdateStarLevel);
+        }
+
+        public override void StopListenEvents()
+        {
+            this.RemoveListener<UpdateStarLevelEvent>(OnUpdateStarLevel);
+            this.RemoveListener<HeroItemsChangedEvent>(OnItemsChanged);
+            this.RemoveListener<DespawnHpViewEvent>(OnDespawn);
+        }
+
+        public void OnUpdateStarLevel(UpdateStarLevelEvent param)
+        {
+            if (_owner != param.owner) return;
+
+            UpdateStarLevel(param.starLevel);
         }
 
         public void UpdateStarLevel(int starLevel)
@@ -50,18 +70,21 @@ namespace Dajunctic
             }
         }
 
-        private void OnDestroy()
+        public void OnDespawn(DespawnHpViewEvent param)
         {
+            if (_owner != param.owner) return;
+
             if (_owner != null)
             {
                 _owner.OnHpChanged -= UpdateHp;
                 _owner.OnEnergyChanged -= UpdateEnergy;
             }
-            this.RemoveListener<HeroItemsChangedEvent>(OnItemsChanged);
+            StopListenEvents();
         }
 
-        private void LateUpdate()
+        public override void LateTick()
         {
+            base.LateTick();
             _cachedTransform.position = _owner.HeadPoint + offset;
             
             if (Camera.main != null)
@@ -109,5 +132,22 @@ namespace Dajunctic
                 }
             }
         }
+    }
+
+    public class SpawnHpViewEvent: IEvent
+    {
+        public CombatActor owner;
+        public int starLevel;
+    }
+
+    public class DespawnHpViewEvent: IEvent
+    {
+        public CombatActor owner;
+    }
+
+    public class UpdateStarLevelEvent: IEvent
+    {
+        public CombatActor owner;
+        public int starLevel;
     }
 }

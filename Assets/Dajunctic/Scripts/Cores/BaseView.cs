@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class BaseView : MonoBehaviour, IBaseView, IEntity
+    public class BaseView : PoolableObject, IBaseView, IEntity
     {
         [Header("Base")]
         protected Ticker ticker;
@@ -118,6 +118,21 @@ namespace Dajunctic
         }
 
         public virtual void Tick()
+        {
+            
+        }
+
+        public virtual void EarlyTick()
+        {
+            
+        }
+
+        public virtual void LateTick()
+        {
+            
+        }
+
+        public virtual void FixedTick()
         {
             
         }

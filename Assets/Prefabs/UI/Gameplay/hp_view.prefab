@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 1148180546937744565}
   - component: {fileID: 6893235465245587854}
   m_Layer: 7
-  m_Name: 'HP_bar '
+  m_Name: hp_view
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &4396781083486130241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 55
 --- !u!114 &1148180546937744565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +346,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b9a6fca659529a449e088554075fefe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialize: 1
+  tick: 2
   bgRenderer: {fileID: 5039783486492382203}
   hpProgress: {fileID: 704830235815222827}
   energyProgress: {fileID: 6649779862397314422}

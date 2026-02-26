@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class MissileView : MonoBehaviour
+    public class MissileView : BaseView
     {
         [SerializeField] public MissileType missileType;
         [SerializeField] public float radius = 0.1f;
@@ -147,7 +147,6 @@ namespace Dajunctic
     }
 
     public class MissileData
-
     {
 
         public Vector3 launcher;

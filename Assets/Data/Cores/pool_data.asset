@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd6fbfbcf8594ab40a0957af05816513, type: 3}
   m_Name: pool_data
   m_EditorClassIdentifier: 
-  id: pool_so
+  id: pool_data
+  hpView: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   fxLists:
   - Id: fx_click_marker
     fxViewPrefab: {fileID: 7397906057650735875, guid: 9d342c1fe33ef0645b291df6d679c44b, type: 3}
