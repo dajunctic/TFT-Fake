@@ -240,10 +240,10 @@ namespace Dajunctic
             // 4. Spawn merge effect FX at the upgraded hero position
             if (!string.IsNullOrEmpty(fxGuid))
             {
-                this.Raise(new PlayFxEvent
+                this.Raise(new SpawnFxEvent
                 {
-                    Id = fxGuid,
-                    Position = spawnPos,
+                    id = fxGuid,
+                    position = spawnPos,
                     duration = 1f
                 });
             }

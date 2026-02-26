@@ -47,7 +47,7 @@ namespace Dajunctic
         
         }
 
-        [MenuItem("Panthera/RefreshIds")]
+        [MenuItem("Dajunctic/RefreshIds")]
         public static void Refresh()
         {
             _ids = new Dictionary<Type, List<string>>();
@@ -57,8 +57,6 @@ namespace Dajunctic
             LoadAssetIds();
             LoadDummyIds();
             CheckDuplicateIds();
-
-            // Debug.Log("<color=cyan>[Refresh Ids]</color> <color=green>Done!</color>");
         }
 
         public static void LoadAssetIds()

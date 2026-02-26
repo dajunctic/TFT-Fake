@@ -10,9 +10,9 @@ namespace Dajunctic
         private float _maxDuration = -1;
         private bool _isInitialized = false;
 
-        public void Play(PlayFxEvent data)
+        public void Play(SpawnFxEvent data)
         {
-            transform.position = data.Position;
+            transform.position = data.position;
             _maxDuration = data.duration;
             _timer = 0;
             _isInitialized = true;
@@ -50,10 +50,11 @@ namespace Dajunctic
         }
     }
 
-    public class PlayFxEvent: IEvent
+    public class SpawnFxEvent: IEvent
     {
-        public string Id;
-        public Vector3 Position;
+        public string id;
+        public Vector3 position;
+        public Quaternion rotation;
         public float duration = -1;
     }
 

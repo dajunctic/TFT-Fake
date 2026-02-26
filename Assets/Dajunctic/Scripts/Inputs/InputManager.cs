@@ -94,10 +94,10 @@ public class InputManager: Singleton<InputManager>
             {
                 var targetPosition = hitInfo.point;
 
-                this.Raise(new PlayFxEvent
+                this.Raise(new SpawnFxEvent
                 {
-                    Id = "fx_click_marker",
-                    Position = targetPosition,
+                    id = "fx_click_marker",
+                    position = targetPosition,
                 });
             }
 

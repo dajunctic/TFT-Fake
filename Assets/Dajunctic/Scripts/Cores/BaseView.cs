@@ -11,7 +11,7 @@ namespace Dajunctic
     public class BaseView : MonoBehaviour, IBaseView, IEntity
     {
         [Header("Base")]
-        [SerializeField] protected Ticker ticker;
+        protected Ticker ticker;
 
         [SerializeField] bool initialize;
         [SerializeField] TickType tick;
@@ -49,6 +49,7 @@ namespace Dajunctic
 
         protected virtual void Awake()
         {
+            OnValidate();
             if (initialize) Initialize(); 
         }
 

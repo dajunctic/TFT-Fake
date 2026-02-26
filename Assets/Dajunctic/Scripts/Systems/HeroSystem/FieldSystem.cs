@@ -13,7 +13,6 @@ namespace Dajunctic
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            FindFieldArea();
             Debug.Log("<color=cyan>FieldSystem initialized</color>");
         }
 
@@ -21,20 +20,6 @@ namespace Dajunctic
         {
             _heroOnTiles.Clear();
             Debug.Log("<color=yellow>FieldSystem shutdown</color>");
-        }
-
-        private void FindFieldArea()
-        {
-            if (fieldArea != null) return;
-            
-            // Try to find the player's area. Usually it's the 'bossArea' in this project structure
-            if (GameManager.Instance != null)
-                fieldArea = GameManager.Instance.bossArea;
-            
-            if (fieldArea == null)
-            {
-                Debug.LogError("FieldManager: Could not find Field Area (HexAreaView)!");
-            }
         }
 
         public int UnitCount => _heroOnTiles.Count;

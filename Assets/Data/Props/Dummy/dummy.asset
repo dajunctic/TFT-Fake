@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae2412630b46b074fba28c5d7fa5007b, type: 3}
+  m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
   m_Name: dummy
   m_EditorClassIdentifier: 
-  id: 
+  id: dummy
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -27,10 +27,14 @@ MonoBehaviour:
   skillAttribute:
     energy: 0
   combatStat:
-    radius: 0
     atk: 0
     atkSpd: 0
     atkRange: 0
     criticalChance: 0
     criticalDmg: 0
   skills: []
+  displayName: Dummy
+  rarity: 1
+  shopIcon: {fileID: 0}
+  traits: []
+  prefab: {fileID: 0}

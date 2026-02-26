@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Dajunctic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Dajunctic

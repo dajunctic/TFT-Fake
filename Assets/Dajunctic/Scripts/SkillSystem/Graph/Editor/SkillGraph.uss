@@ -21,7 +21,3 @@ GridBackground {
 .port.execution-port {
     --port-color: #03d9f5;
 }
-
-/* .port #type {
-    display: none;
-} */

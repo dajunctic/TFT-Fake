@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    [CreateAssetMenu(fileName = "PoolSO", menuName = "Dajunctic/PoolSO")]
-    public class PoolSO: BaseSO
+    [CreateAssetMenu(fileName = "PoolData", menuName = "Dajunctic/Core/PoolData")]
+    public class PoolData: BaseSO
     {
         [SerializeField] public List<FxEntity> fxLists;
         [SerializeField] public List<MissileEntity> missileLists;
