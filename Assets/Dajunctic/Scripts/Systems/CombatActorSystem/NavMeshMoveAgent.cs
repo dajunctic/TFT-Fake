@@ -7,8 +7,8 @@ namespace Dajunctic
     public class NavMeshMoveAgent : MonoBehaviour, IMoveAgent, IObjectPoolItem<string>
     {
         bool _initialized;
-        public bool IsInitialized => _initialized && gameObject;
-        public bool IsEnabled => IsInitialized && _navMeshAgent.enabled;
+        public bool Initialized => _initialized && gameObject;
+        public bool IsEnabled => Initialized && _navMeshAgent.enabled;
         public bool CanMove => true;
         public bool IsMoving => _navMeshAgent.velocity != Vector3.zero;
         public Vector3 Position => transform.position;

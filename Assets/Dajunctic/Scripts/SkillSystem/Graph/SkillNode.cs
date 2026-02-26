@@ -29,6 +29,11 @@ namespace Dajunctic.SkillSystem.Graph
             TriggerComplete();
         }
 
+        protected void StartCoroutine()
+        {
+            this.StartGlobalCoroutine(IECoroutine());
+        }
+
         public virtual IEnumerator IECoroutine()
         {
             yield return null;

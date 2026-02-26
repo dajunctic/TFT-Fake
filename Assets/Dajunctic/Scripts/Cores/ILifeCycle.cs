@@ -2,7 +2,7 @@ namespace Dajunctic
 {
     public interface ILifeCycle
     {
-        bool IsInitialized {get; }
+        bool Initialized {get; }
         void Initialize();
         void Cleanup();
     }

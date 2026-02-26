@@ -6,8 +6,8 @@ namespace Dajunctic
     public class TransformMoveAgent : IMoveAgent
     {
         bool _isInitialized;
-        public bool IsInitialized => _isInitialized;
-        public bool IsEnabled => IsInitialized && _enable;
+        public bool Initialized => _isInitialized;
+        public bool IsEnabled => Initialized && _enable;
         public bool CanMove => true;
         public bool IsMoving { get; private set; }
         public Vector3 Position { get; private set; }

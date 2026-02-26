@@ -39,7 +39,7 @@ namespace Dajunctic
 
 #endif
 
-        public bool IsInitialized => initialize;
+        public bool Initialized => initialize;
 
 
         Transform mTransform;

@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbaa5d3be2fb1da46a089f129da665da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  settingsSystem: {fileID: 0}
+  settingsSystem: {fileID: 341098085}
   benchSystem: {fileID: 1960126259}
   fieldSystem: {fileID: 1966869745}
   economySystem: {fileID: 1972310694}

@@ -238,7 +238,7 @@ namespace Dajunctic
 
         void SyncTransform()
         {
-            if (MoveAgent != null && MoveAgent.IsInitialized && MoveAgent.IsEnabled)
+            if (MoveAgent != null && MoveAgent.Initialized && MoveAgent.IsEnabled)
             {
                 Position = MoveAgent.Position;
                 Forward = MoveAgent.Forward;

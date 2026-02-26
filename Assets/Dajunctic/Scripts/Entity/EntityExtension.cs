@@ -27,9 +27,9 @@ namespace Dajunctic
             return entity as IDamageOwner;
         }
 
-        public static IAnimator AsAnimator(this IEntity entity)
+        public static IAnimatorPlayer AsAnimatorPlayer(this IEntity entity)
         {
-            return entity as IAnimator;
+            return entity as IAnimatorPlayer;
         }
 
         public static IGameObject AsGameObject(this IEntity entity)
