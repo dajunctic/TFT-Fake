@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 216759851}
   - component: {fileID: 216759852}
   m_Layer: 0
-  m_Name: EmotionManager
+  m_Name: EmotionSystemView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -310,15 +310,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 216759850}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57cddc0e4c3999b4c8a0eae2b1c3e465, type: 3}
+  m_Script: {fileID: 11500000, guid: 5e9406c8df248a640bdd4c8fef62f1c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   initialize: 1
   tick: 2
-  duration: 2
   piUIManager: {fileID: 114494581081311467}
-  emotionViewPrefab: {fileID: 8379174434645732961, guid: c01e9023b123659448cab326f60c2757, type: 3}
-  spriteLists: {fileID: 11400000, guid: 593b605d0fe1da845884aa04c93c7f9d, type: 2}
 --- !u!1 &280221487
 GameObject:
   m_ObjectHideFlags: 0
@@ -2222,7 +2219,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3
@@ -2256,7 +2253,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3
@@ -2290,7 +2287,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3
@@ -2324,7 +2321,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3
@@ -2358,7 +2355,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3
@@ -2392,7 +2389,7 @@ MonoBehaviour:
     onSliceReleased:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 216759852}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Dajunctic.EmotionManager, Assembly-CSharp
           m_MethodName: ShowEmotionView
           m_Mode: 3

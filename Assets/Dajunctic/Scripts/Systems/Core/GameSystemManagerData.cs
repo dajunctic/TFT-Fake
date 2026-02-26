@@ -16,5 +16,6 @@ namespace Dajunctic
         public AssetReferenceT<EconomySystemData> economySystemData;
         public AssetReferenceT<ItemSystemData> itemSystemData;
         public AssetReferenceT<BenchSystemData> benchSystemData;
+        public AssetReferenceT<EmotionSystemData> emotionSystemData;
     }
 }

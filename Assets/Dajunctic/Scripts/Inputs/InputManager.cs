@@ -64,25 +64,19 @@ public class InputManager: Singleton<InputManager>
     {
         var mousePosition = pointAction.action.ReadValue<Vector2>();
 
-        var data = new ShowEmotionUIEvent
+        this.Raise(new ShowEmotionUIEvent
         {
             Enable = true,
             Position = mousePosition
-        };
-        // this.Raise(data);
-
-        FindFirstObjectByType<EmotionManager>()?.ToggleEmotionUI(data);  
+        });
     }
 
     private void OnEmotionCanceled(InputAction.CallbackContext context)
     {
-        var data = new ShowEmotionUIEvent
+        this.Raise(new ShowEmotionUIEvent
         {
             Enable = false
-        };
-        // this.Raise(data);
-        FindFirstObjectByType<EmotionManager>()?.ToggleEmotionUI(data);
-
+        });
     }
 
     private void OnRightClick(InputAction.CallbackContext context)
