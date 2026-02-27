@@ -17,7 +17,7 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            var config = _manager.Config;
+            var config = GameSystemManager.Instance.Config;
             if (config.traitSystemData != null)
             {
                 var handle = Addressables.LoadAssetAsync<TraitSystemData>(config.traitSystemData);
@@ -37,9 +37,6 @@ namespace Dajunctic
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-
-            // Listen for unit movement on/off field to refresh traits
-            // This would normally be hooked into events from FieldSystem
             Debug.Log("<color=cyan>TraitSystem initialized</color>");
         }
 
@@ -79,16 +76,13 @@ namespace Dajunctic
 
             _activeTraitCounts = traitCounts;
 
-            // Apply/Remove traits from all heroes on field
             foreach (var hero in allHeroes)
             {
-                // Clear previous trait modifiers
                 foreach (var trait in _traitDatabase.Values)
                 {
                     hero.Stats.RemoveAllModifiersFromSource(trait);
                 }
 
-                // Apply active ones
                 foreach (var kvp in traitCounts)
                 {
                     var trait = kvp.Key;
@@ -101,7 +95,6 @@ namespace Dajunctic
 
                     if (activeTier != null)
                     {
-                        // Check if this specific unit should get the bonus (usually all on field get it if they have the trait)
                         if (trait.IsUnitEligible(hero, allHeroes.Cast<IChampionUnit>().ToList()))
                         {
                             ApplyModifiersToHero(hero, activeTier, trait);
@@ -115,10 +108,6 @@ namespace Dajunctic
 
         private void ApplyModifiersToHero(ChampionActor hero, ITraitTier tier, ITrait source)
         {
-            // The tier.StatModifiers in TraitData implementation (TraitTierData) returns a list of modifiers.
-            // But we need to know WHICH stat to apply them to.
-            // My refactored TraitData uses StatModifierConfig which has a StatType.
-
             if (tier is TraitTierData tierData)
             {
                 foreach (var config in tierData.statModifiers)

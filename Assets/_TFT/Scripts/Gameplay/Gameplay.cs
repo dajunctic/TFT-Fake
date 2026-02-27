@@ -6,7 +6,7 @@ namespace Dajunctic
 {
     public class Gameplay : BaseView
     {
-        public static string HeroLayerName = "Hero";
+        public static string HeroLayerName = "CombatActor";
         public static Gameplay Instance { get; private set; }
 
         [Header("Phase Settings")]
