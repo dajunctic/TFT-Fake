@@ -4,18 +4,18 @@ namespace Dajunctic
 {
     public interface IChampionUnit
     {
-        string UnitId {get; }
-        string ChampionId {get; }
-        int StarLevel {get; }
+        string UnitId { get; }
+        string ChampionId { get; }
+        int StarLevel { get; }
 
-        ChampionStats Stats{ get; }
-        List<ITrait> Traits {get; }
-        List<IItem> Inventory {get;}
+        ChampionStats Stats { get; }
+        List<ITrait> Traits { get; }
 
-        IHexPosition CurrentPosition {get; set;}
-        // UnitStatus Status {get; }
+        // Removed things that aren't fully settled yet or making them simpler
+        // List<IItem> Inventory { get; }
+        // IHexPosition CurrentPosition { get; set; }
 
-        void ApplyEffect(IStatusEffect effect);
-        void RemoveEffect(IStatusEffect effect);
+        // void ApplyEffect(IStatusEffect effect);
+        // void RemoveEffect(IStatusEffect effect);
     }
 }

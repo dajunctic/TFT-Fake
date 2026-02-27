@@ -25,6 +25,7 @@ namespace Dajunctic
         public ShopSystem Shop { get; private set; }
         public ItemSystem Items { get; private set; }
         public EmotionSystem Emotion { get; private set; }
+        public TraitSystem Traits { get; private set; }
 
         /// <summary>True once all system data has been loaded and systems are initialized.</summary>
         public bool AllSystemsReady { get; private set; }
@@ -66,6 +67,7 @@ namespace Dajunctic
             Shop = CreateSystem<ShopSystem>();
             Items = CreateSystem<ItemSystem>();
             Emotion = CreateSystem<EmotionSystem>();
+            Traits = CreateSystem<TraitSystem>();
 
             Debug.Log("<color=cyan>GameSystemManager: Systems created.</color>");
         }
@@ -93,6 +95,7 @@ namespace Dajunctic
             await Shop.LoadDataAsync();
             await Items.LoadDataAsync();
             await Emotion.LoadDataAsync();
+            await Traits.LoadDataAsync();
 
             Debug.Log("<color=cyan>GameSystemManager: All data loaded.</color>");
         }

@@ -76,6 +76,8 @@ namespace Dajunctic
             _heroOnTiles[coord] = actor;
             actor.CurrentFieldCoord = coord;
             actor.CurrentBenchCoord = new Vector2Int(-1, -1);
+
+            _manager.Traits?.RefreshTraits();
         }
 
         public void RemoveHeroFromTile(Vector2Int coord)
@@ -102,6 +104,9 @@ namespace Dajunctic
             {
                 _heroOnTiles.Remove(key);
             }
+
+            if (keysToRemove.Count > 0)
+                _manager.Traits?.RefreshTraits();
         }
 
         public ChampionActor GetHeroAtTile(Vector2Int coord)

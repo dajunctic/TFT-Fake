@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dajunctic
 {
     [RequireComponent(typeof(CapsuleCollider))]
-    public class ChampionActor : CombatActor, IDraggable, IStatSource
+    public class ChampionActor : CombatActor, IDraggable, IStatSource, IChampionUnit
     {
         [Header("Champion")]
         public Vector2Int CurrentBenchCoord { get; set; } = new Vector2Int(-1, -1);
@@ -22,6 +22,22 @@ namespace Dajunctic
         private Vector2Int _originalBenchCoord;
         private Vector2Int _originalFieldCoord;
         private CapsuleCollider _capsuleCollider;
+
+        #region IChampionUnit
+        public string UnitId => gameObject.name;
+        public string ChampionId => combatActorData.Id;
+        public List<ITrait> Traits
+        {
+            get
+            {
+                if (GameSystemManager.Instance.Traits == null) return new List<ITrait>();
+                var data = CombatActorData as ChampionData;
+                if (data == null) return new List<ITrait>();
+                return GameSystemManager.Instance.Traits.GetTraitsByIDs(data.traits);
+            }
+        }
+
+        #endregion
 
         public void SetStarLevel(int level)
         {
