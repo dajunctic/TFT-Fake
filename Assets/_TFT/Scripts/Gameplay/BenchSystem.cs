@@ -10,7 +10,7 @@ namespace Dajunctic
         // Scene refs — bound at runtime by BenchAreaBinder in the gameplay scene
         private SquareAreaView _benchArea;
         private string _fxGuid;
-        private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
+        private Dictionary<Vector2Int, ChampionActor> _heroOnTiles = new Dictionary<Vector2Int, ChampionActor>();
         private GameSystemManager _manager;
 
         public async Task LoadDataAsync()
@@ -120,7 +120,7 @@ namespace Dajunctic
             Vector3 worldPos = _benchArea.CachedTransform.TransformPoint(localPos);
 
             GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
-            HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
+            ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
             {
@@ -156,9 +156,9 @@ namespace Dajunctic
         /// <summary>
         /// Find all heroes matching the given HeroData and star level across bench and field.
         /// </summary>
-        private List<HeroCombatActor> GetMatchingHeroes(HeroData heroData, int starLevel)
+        private List<ChampionActor> GetMatchingHeroes(HeroData heroData, int starLevel)
         {
-            if (heroData == null) return new List<HeroCombatActor>();
+            if (heroData == null) return new List<ChampionActor>();
 
             var heroesOnBench = _heroOnTiles.Values
                 .Where(h => h != null && h.CombatActorData != null &&
@@ -166,7 +166,7 @@ namespace Dajunctic
                             h.StarLevel == starLevel)
                 .ToList();
 
-            var heroesOnField = new List<HeroCombatActor>();
+            var heroesOnField = new List<ChampionActor>();
             if (_manager.Field != null)
             {
                 heroesOnField = _manager.Field.GetAllHeroes()
@@ -191,12 +191,12 @@ namespace Dajunctic
             }
         }
 
-        private void MergeHeroes(List<HeroCombatActor> instances, HeroData heroData, int newStarLevel)
+        private void MergeHeroes(List<ChampionActor> instances, HeroData heroData, int newStarLevel)
         {
             Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars!");
 
             // 1. Determine placement: field merges stay on field, bench merges use leftmost merged hero position
-            HeroCombatActor fieldHero = instances.FirstOrDefault(h => h.IsOnField);
+            ChampionActor fieldHero = instances.FirstOrDefault(h => h.IsOnField);
             bool wasOnField = fieldHero != null;
 
             Vector2Int targetCoord;
@@ -298,7 +298,7 @@ namespace Dajunctic
         {
             Vector3 worldPos = GetWorldPosition(coord);
             GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
-            HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
+            ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
             {
@@ -308,7 +308,7 @@ namespace Dajunctic
             }
         }
 
-        public void RegisterHeroToTile(HeroCombatActor actor, Vector2Int coord)
+        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord)
         {
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to bench means leaving field
@@ -326,7 +326,7 @@ namespace Dajunctic
             actor.CurrentFieldCoord = new Vector2Int(-1, -1);
         }
 
-        public void UnregisterHero(HeroCombatActor actor)
+        public void UnregisterHero(ChampionActor actor)
         {
             // Remove ALL entries for this actor (not just first one)
             var keysToRemove = new List<Vector2Int>();
@@ -344,7 +344,7 @@ namespace Dajunctic
             }
         }
 
-        public Vector2Int GetCoordOfActor(HeroCombatActor actor)
+        public Vector2Int GetCoordOfActor(ChampionActor actor)
         {
             foreach (var kvp in _heroOnTiles)
             {
@@ -353,7 +353,7 @@ namespace Dajunctic
             return new Vector2Int(-1, -1);
         }
 
-        public HeroCombatActor GetHeroAtTile(Vector2Int coord)
+        public ChampionActor GetHeroAtTile(Vector2Int coord)
         {
             _heroOnTiles.TryGetValue(coord, out var actor);
             return actor;

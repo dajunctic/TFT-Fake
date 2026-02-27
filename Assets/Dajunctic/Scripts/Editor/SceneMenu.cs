@@ -14,7 +14,6 @@ namespace Dajunctic
         const string LauncherScene = "LauncherScene";
         const string DummyScene = "Dummy";
         const string HomeScene = "HomeScene";
-        const string GameScene = "GameScene";
         const string FadingScene = "FadingScene";
 
 
@@ -105,19 +104,6 @@ namespace Dajunctic
         // {
         //     return CanChangeScene(FadingScene);
         // }
-
-
-        [MenuItem("Scenes/Game Scene", false, 22)]
-        static void OpenGameScene()
-        {
-            ChangeScene(GameScene);
-        }
-
-        [MenuItem("Scenes/Game Scene", true, 22)]
-        static bool CanOpenGameScene()
-        {
-            return CanChangeScene(GameScene);
-        }
 
         [MenuItem("Scenes/Play", false, 44)]
         public static void Play()

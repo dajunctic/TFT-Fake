@@ -9,7 +9,7 @@ namespace Dajunctic
     {
         // Scene ref — bound at runtime by FieldAreaBinder in the gameplay scene
         private HexAreaView _fieldArea;
-        private Dictionary<Vector2Int, HeroCombatActor> _heroOnTiles = new Dictionary<Vector2Int, HeroCombatActor>();
+        private Dictionary<Vector2Int, ChampionActor> _heroOnTiles = new Dictionary<Vector2Int, ChampionActor>();
         private GameSystemManager _manager;
 
         public async Task LoadDataAsync()
@@ -60,7 +60,7 @@ namespace Dajunctic
             return false;
         }
 
-        public void RegisterHeroToTile(HeroCombatActor actor, Vector2Int coord)
+        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord)
         {
             UnregisterHero(actor);
             // Cross-zone cleanup: moving to field means leaving bench
@@ -86,7 +86,7 @@ namespace Dajunctic
             }
         }
 
-        public void UnregisterHero(HeroCombatActor actor)
+        public void UnregisterHero(ChampionActor actor)
         {
             // Remove ALL entries for this actor (not just first one)
             var keysToRemove = new List<Vector2Int>();
@@ -104,7 +104,7 @@ namespace Dajunctic
             }
         }
 
-        public HeroCombatActor GetHeroAtTile(Vector2Int coord)
+        public ChampionActor GetHeroAtTile(Vector2Int coord)
         {
             _heroOnTiles.TryGetValue(coord, out var actor);
             return actor;
@@ -114,7 +114,7 @@ namespace Dajunctic
         {
             Vector3 worldPos = GetWorldPosition(coord);
             GameObject heroObj = Instantiate(heroData.prefab, worldPos, _fieldArea.CachedTransform.rotation);
-            HeroCombatActor actor = heroObj.GetComponent<HeroCombatActor>();
+            ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
             {
@@ -125,7 +125,7 @@ namespace Dajunctic
             }
         }
 
-        public List<HeroCombatActor> GetAllHeroes()
+        public List<ChampionActor> GetAllHeroes()
         {
             return _heroOnTiles.Values.ToList();
         }
