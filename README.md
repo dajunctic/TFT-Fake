@@ -26,6 +26,7 @@ A Teamfight Tactics (TFT) clone built with Unity, featuring a modern **System-Ba
 | `FieldSystem` | *(no-op)* | Board unit counts and placement |
 | `ItemSystem` | `ItemSystemData` | Item bench and combination recipes |
 | `EmotionSystem` | `EmotionSystemData` | Manages player emotes (Pi-Menu) |
+| `TraitSystem` | `TraitSystemData` | Calculates active traits and applies stat bonuses |
 
 #### Communication
 - **Event-Driven**: Systems listen for `IEvent` (e.g., `RequestBuyHeroEvent`).
@@ -38,6 +39,7 @@ A Teamfight Tactics (TFT) clone built with Unity, featuring a modern **System-Ba
 - **Economy**: Gold management and XP-based leveling system.
 - **Item System**: Drag-and-drop item combination with recipe database.
 - **Emotion System**: Radial menu (Pi-Menu) to trigger emotes on your character.
+- **Trait System**: Dynamic trait calculation, tier-based bonuses (Bronze/Silver/Gold/Chromatic), and UI integration.
 - **Combat Actor**: Custom AI state machine (Dummy vs Heroes).
 
 ---
@@ -72,6 +74,7 @@ Bản clone Teamfight Tactics (TFT) được phát triển bằng Unity với ki
 | `FieldSystem` | *(no-op)* | Quản lý bàn cờ và số lượng quân |
 | `ItemSystem` | `ItemSystemData` | Kho đồ và công thức ghép trang bị |
 | `EmotionSystem` | `EmotionSystemData` | Hệ thống cảm xúc/emote (Radial Menu) |
+| `TraitSystem` | `TraitSystemData` | Tính toán kích hoạt Tộc/Hệ và cộng chỉ số |
 
 #### Giao tiếp (Decoupling)
 - **Event-Driven**: Sử dụng các sự kiện yêu cầu như `this.Raise(new RequestBuyHeroEvent { ... })`.
@@ -84,6 +87,7 @@ Bản clone Teamfight Tactics (TFT) được phát triển bằng Unity với ki
 - **Kinh tế**: Quản lý vàng và cơ chế mua kinh nghiệm lên cấp.
 - **Trang bị**: Kéo thả trang bị vào tướng, tự động ghép theo bảng công thức.
 - **Cảm xúc (Emotions)**: Menu xoay (Pi-Menu) để thể hiện cảm xúc trên nhân vật chính.
+- **Hệ thống Tộc/Hệ (Traits)**: Tự động tính toán mốc kích hoạt, cộng chỉ số (Stat Modifiers) và hiển thị UI chuẩn TFT.
 - **Combat Actor**: Hệ thống AI tinh gọn (Dummy vs Heroes).
 
 ---
