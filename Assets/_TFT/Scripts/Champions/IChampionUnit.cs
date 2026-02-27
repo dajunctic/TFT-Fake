@@ -10,12 +10,5 @@ namespace Dajunctic
 
         ChampionStats Stats { get; }
         List<ITrait> Traits { get; }
-
-        // Removed things that aren't fully settled yet or making them simpler
-        // List<IItem> Inventory { get; }
-        // IHexPosition CurrentPosition { get; set; }
-
-        // void ApplyEffect(IStatusEffect effect);
-        // void RemoveEffect(IStatusEffect effect);
     }
 }

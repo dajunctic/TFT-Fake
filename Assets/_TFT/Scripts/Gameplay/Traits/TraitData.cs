@@ -30,10 +30,12 @@ namespace Dajunctic
         public int requiredCount;
         public List<StatModifierConfig> statModifiers = new List<StatModifierConfig>();
         public string specialEffectDescription;
+        public TraitTierType visualTier;
 
         public int RequiredCount => requiredCount;
         public List<IStatModifier> StatModifiers => statModifiers.Select(m => m.ToModifier(null)).ToList(); // Source will be set by system
         public string SpecialEffectDescription => specialEffectDescription;
+        public TraitTierType VisualTier => visualTier;
     }
 
     [Serializable]
@@ -62,5 +64,14 @@ namespace Dajunctic
         CriticalStrikeDamage,
         StartingMana,
         MaxMana
+    }
+
+    public enum TraitTierType
+    {
+        None,
+        Bronze,
+        Silver,
+        Gold,
+        Chromatic
     }
 }

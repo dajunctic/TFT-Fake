@@ -7,6 +7,8 @@ namespace Dajunctic
         int RequiredCount {get; }
         List<IStatModifier> StatModifiers {get; }
         string SpecialEffectDescription {get; }
+        public TraitTierType VisualTier {get;}
+
     
     }
 }

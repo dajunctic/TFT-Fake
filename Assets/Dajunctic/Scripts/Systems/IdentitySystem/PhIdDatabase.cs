@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    [CreateAssetMenu(fileName = "PhIdDatabase", menuName = "Identiy System/PhIdDatabase")]
+    [CreateAssetMenu(fileName = "PhIdDatabase", menuName = "Dajunctic/PhIdDatabase")]
     public class PhIdDatabase: IdDatabase
     {
         [FoldoutGroup("Fx Ids")]

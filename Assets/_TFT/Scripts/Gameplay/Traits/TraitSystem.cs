@@ -11,6 +11,9 @@ namespace Dajunctic
         private GameSystemManager _manager;
         private TraitSystemData _data;
         private Dictionary<string, TraitData> _traitDatabase = new Dictionary<string, TraitData>();
+        private Dictionary<ITrait, int> _activeTraitCounts = new Dictionary<ITrait, int>();
+
+        public Dictionary<ITrait, int> ActiveTraitCounts => _activeTraitCounts;
 
         public async Task LoadDataAsync()
         {
@@ -34,7 +37,7 @@ namespace Dajunctic
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            
+
             // Listen for unit movement on/off field to refresh traits
             // This would normally be hooked into events from FieldSystem
             Debug.Log("<color=cyan>TraitSystem initialized</color>");
@@ -74,6 +77,8 @@ namespace Dajunctic
                 }
             }
 
+            _activeTraitCounts = traitCounts;
+
             // Apply/Remove traits from all heroes on field
             foreach (var hero in allHeroes)
             {
@@ -104,6 +109,8 @@ namespace Dajunctic
                     }
                 }
             }
+
+            this.Raise(new TraitCountsChangedEvent { ActiveTraitCounts = _activeTraitCounts });
         }
 
         private void ApplyModifiersToHero(ChampionActor hero, ITraitTier tier, ITrait source)
@@ -111,7 +118,7 @@ namespace Dajunctic
             // The tier.StatModifiers in TraitData implementation (TraitTierData) returns a list of modifiers.
             // But we need to know WHICH stat to apply them to.
             // My refactored TraitData uses StatModifierConfig which has a StatType.
-            
+
             if (tier is TraitTierData tierData)
             {
                 foreach (var config in tierData.statModifiers)
@@ -143,5 +150,10 @@ namespace Dajunctic
                 default: return null;
             }
         }
+    }
+
+    public struct TraitCountsChangedEvent : IEvent
+    {
+        public Dictionary<ITrait, int> ActiveTraitCounts;
     }
 }

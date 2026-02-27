@@ -25,10 +25,13 @@ namespace Dajunctic
         [SerializeField] private Image xpProgress;
         [SerializeField] private GameObject buyXPButton;
         [SerializeField] private GameObject buyXPDisabledButton;
-        
+
         [Header("Item Bench")]
         [SerializeField] private Transform[] itemBenchPositions;
         public Transform[] ItemBenchPositions => itemBenchPositions;
+
+        [Header("Trait List")]
+        [SerializeField] private TraitListUI traitListUI;
 
         public static GameplayPopup Instance { get; private set; }
 
@@ -53,7 +56,7 @@ namespace Dajunctic
         public override void AfterShow()
         {
             base.AfterShow();
-            
+
             var itemSystem = this.GetSystem<ItemSystem>();
             if (itemSystem != null) itemSystem.RefreshAllVisuals();
         }
@@ -61,10 +64,10 @@ namespace Dajunctic
         public override void BeforeDismiss()
         {
             base.BeforeDismiss();
-            
+
             var itemSystem = this.GetSystem<ItemSystem>();
             if (itemSystem != null) itemSystem.ClearAllVisuals();
-            
+
             if (Instance == this) Instance = null;
         }
 
@@ -99,17 +102,17 @@ namespace Dajunctic
         {
             var gameplay = Gameplay.Instance;
             float timer = Mathf.Max(0, gameplay.Timer);
-            
+
             // Format time
             timerText.text = Mathf.CeilToInt(timer).ToString();
-            
+
             // Fill amount
             float fill = timer / gameplay.PhaseDuration;
             progressImage.fillAmount = fill;
 
             // Phase name Vietnamese
             phaseText.text = gameplay.CurrentPhase == GameplayPhase.Planning ? "CHUẨN BỊ" : "CHIẾN ĐẤU";
-            
+
             // Color change for combat phase
             phaseText.color = gameplay.CurrentPhase == GameplayPhase.Planning ? Color.white : Color.red;
             progressImage.color = gameplay.CurrentPhase == GameplayPhase.Planning ? Color.cyan : Color.red;
@@ -159,12 +162,12 @@ namespace Dajunctic
             var eco = EconomySystem;
             goldText.text = eco.Gold.ToString();
             levelText.text = "Lvl. " + eco.Level;
-            
+
             if (eco.IsMaxLevel)
             {
                 xpText.text = "MAX";
                 if (xpProgress != null) xpProgress.fillAmount = 1;
-                
+
                 if (buyXPButton != null) buyXPButton.SetActive(false);
                 if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(true);
             }
@@ -186,7 +189,7 @@ namespace Dajunctic
                 UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
 
         }
-        
+
         private void OnHeroDragStarted(HeroDragStartedEvent evt)
         {
             if (cardListContent != null) cardListContent.SetActive(false);
