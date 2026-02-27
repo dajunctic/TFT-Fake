@@ -6,14 +6,13 @@ using UnityEngine;
 namespace Dajunctic
 {
     [CreateAssetMenu(fileName = "TraitData", menuName = "Dajunctic/Traits/TraitData")]
-    public class TraitData : ScriptableObject, ITrait
+    public class TraitData : BaseSO, ITrait
     {
-        [SerializeField] private string traitID;
         [SerializeField] private string displayName;
         [SerializeField] private Sprite icon;
         [SerializeField] private List<TraitTierData> tiers = new List<TraitTierData>();
 
-        public string TraidID => traitID;
+        public string TraidID => Id;
         public string DisplayName => displayName;
         public Sprite Icon => icon;
         public List<ITraitTier> Tiers => tiers.Cast<ITraitTier>().ToList();

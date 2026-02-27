@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f197eb39f085a546974c9cf284ee8d6, type: 3}
   m_Name: ph_id_database
   m_EditorClassIdentifier: 
+  traitIds:
+  - trait_north_korea
   fxIds:
   - fx_click_marker
   - fx_master_yi_atk_1_hit

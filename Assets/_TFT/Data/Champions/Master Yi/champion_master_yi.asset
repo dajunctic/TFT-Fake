@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
   m_Name: champion_master_yi
   m_EditorClassIdentifier: 
-  id: hero_master_yi
+  id: champion_master_yi
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -20,23 +20,22 @@ MonoBehaviour:
     radius: 0.25
     acceleration: 16
     movementType: 0
-  attribute:
-    maxHp: 0
-    physicalArmor: 0
-    magicalArmor: 0
-  skillAttribute:
-    energy: 0
-  combatStat:
-    radius: 1
-    atk: 1
-    atkSpd: 1
-    atkRange: 6
-    criticalChance: 1
-    criticalDmg: 10
+  stats:
+    maxHp: 500
+    armor: 20
+    magicResist: 20
+    attackDamage: 50
+    abilityPower: 100
+    attackSpeed: 0.65
+    attackRange: 1
+    critChance: 0.25
+    critDamage: 1.4
+    maxMana: 100
+    startingMana: 0
   skills:
   - {fileID: 11400000, guid: f0c3b2949c7c2eb42a7106e72f8b8b89, type: 2}
   displayName: Master Yi
-  rarity: 1
   shopIcon: {fileID: 21300000, guid: 4c78455ec3d4a624abfac3c0a53ef722, type: 3}
-  traits: []
+  rarity: 1
   prefab: {fileID: 5056634818722811979, guid: c32f2aaa61a9bf24f868af3d937d9d6e, type: 3}
+  traits: []
