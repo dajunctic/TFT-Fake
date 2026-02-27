@@ -14,9 +14,9 @@ namespace Dajunctic
         [SerializeField] private Image rarityBackground;
 
         private int _slotIndex;
-        private HeroData _heroData;
+        private ChampionData _heroData;
 
-        public void Setup(int index, HeroData data, Sprite bgSprite = null)
+        public void Setup(int index, ChampionData data, Sprite bgSprite = null)
         {
             _slotIndex = index;
             _heroData = data;

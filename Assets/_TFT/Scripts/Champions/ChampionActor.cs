@@ -182,7 +182,7 @@ namespace Dajunctic
 
         private void SellSelf()
         {
-            if (CombatActorData is HeroData heroData)
+            if (CombatActorData is ChampionData heroData)
             {
                 int refundGold = GetSellValue(heroData);
 
@@ -228,7 +228,7 @@ namespace Dajunctic
         /// </summary>
         public int GetSellValue()
         {
-            if (CombatActorData is HeroData heroData)
+            if (CombatActorData is ChampionData heroData)
             {
                 return GetSellValue(heroData);
             }
@@ -238,7 +238,7 @@ namespace Dajunctic
         /// <summary>
         /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9
         /// </summary>
-        public int GetSellValue(HeroData heroData)
+        public int GetSellValue(ChampionData heroData)
         {
             if (StarLevel == 1) return heroData.rarity;
 

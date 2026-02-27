@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class TacticiansActor : CombatActor
+    public class TacticianActor : CombatActor
     {
         [Header("Tacticians")]
         public int Tier { get; private set; } = 1;
@@ -19,10 +19,10 @@ namespace Dajunctic
         {
             base.Initialize();
 
-            if (CombatActorData is MythicalAnimalActorData mythicalData)
+            if (CombatActorData is TacticianData tacticianData)
             {
-                Tier = mythicalData.tier;
-                IsBoss = mythicalData.isBoss;
+                Tier = tacticianData.tier;
+                IsBoss = tacticianData.isBoss;
             }
 
             if (MoveAgent != null)

@@ -10,8 +10,8 @@ namespace Dajunctic
     {
         private ShopSystemData _data;
 
-        private HeroData[] _currentShop = new HeroData[5];
-        public HeroData[] CurrentShop => _currentShop;
+        private ChampionData[] _currentShop = new ChampionData[5];
+        public ChampionData[] CurrentShop => _currentShop;
         public ShopData ShopData => _data?.shopData;
         private GameSystemManager _manager;
 
@@ -103,7 +103,7 @@ namespace Dajunctic
             return 1;
         }
 
-        private HeroData GetRandomHeroOfRarity(int rarity)
+        private ChampionData GetRandomHeroOfRarity(int rarity)
         {
             if (_data == null || _data.allHeroes == null) return null;
             var eligible = _data.allHeroes.Where(h => h.rarity == rarity).ToList();
@@ -115,7 +115,7 @@ namespace Dajunctic
         {
             if (slotIndex < 0 || slotIndex >= _currentShop.Length) return;
 
-            HeroData hero = _currentShop[slotIndex];
+            ChampionData hero = _currentShop[slotIndex];
             if (hero == null) return;
 
             // Check if bench can accept this hero (has space or would trigger upgrade)
@@ -145,8 +145,8 @@ namespace Dajunctic
     }
 
     public struct ShopRefreshedEvent : IEvent { }
-    public struct HeroBoughtEvent : IEvent { public HeroData Hero; }
-    public struct HeroSoldEvent : IEvent { public HeroData Hero; public int GoldRefunded; }
+    public struct HeroBoughtEvent : IEvent { public ChampionData Hero; }
+    public struct HeroSoldEvent : IEvent { public ChampionData Hero; public int GoldRefunded; }
 
     public struct HeroDragStartedEvent : IEvent { public ChampionActor Hero; }
     public struct HeroDragEndedEvent : IEvent { public ChampionActor Hero; }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ChampionData", menuName = "Dajunctic/ChampionData")]
-public class HeroData : CombatActorData
+public class ChampionData : CombatActorData
 {
     public string displayName;
     public int rarity = 1; // 1 to 5 cost

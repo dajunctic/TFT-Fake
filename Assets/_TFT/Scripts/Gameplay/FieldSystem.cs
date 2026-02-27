@@ -110,7 +110,7 @@ namespace Dajunctic
             return actor;
         }
 
-        public void AddHeroToField(HeroData heroData, Vector2Int coord, int starLevel)
+        public void AddHeroToField(ChampionData heroData, Vector2Int coord, int starLevel)
         {
             Vector3 worldPos = GetWorldPosition(coord);
             GameObject heroObj = Instantiate(heroData.prefab, worldPos, _fieldArea.CachedTransform.rotation);

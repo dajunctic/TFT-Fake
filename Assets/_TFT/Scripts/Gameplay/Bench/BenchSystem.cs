@@ -47,7 +47,7 @@ namespace Dajunctic
         /// <summary>
         /// Check if we can accept a hero: either bench has space, or buying would trigger an upgrade.
         /// </summary>
-        public bool CanAcceptHero(HeroData heroData, int starLevel = 1)
+        public bool CanAcceptHero(ChampionData heroData, int starLevel = 1)
         {
             if (HasEmptySlot()) return true;
             return WouldTriggerUpgrade(heroData, starLevel);
@@ -56,7 +56,7 @@ namespace Dajunctic
         /// <summary>
         /// Check if adding one more hero of this type/star would trigger a 3-to-1 merge.
         /// </summary>
-        private bool WouldTriggerUpgrade(HeroData heroData, int starLevel)
+        private bool WouldTriggerUpgrade(ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return false;
             // Need 2 existing + 1 new (purchased) = 3 total
@@ -96,7 +96,7 @@ namespace Dajunctic
             return new Vector2Int(-1, -1);
         }
 
-        public void AddHeroToBench(HeroData heroData, int starLevel = 1)
+        public void AddHeroToBench(ChampionData heroData, int starLevel = 1)
         {
             Vector2Int coord = GetFirstEmptyTileCoord();
 
@@ -137,7 +137,7 @@ namespace Dajunctic
         /// Perform an upgrade when bench is full. The purchased hero is consumed
         /// without being placed — we only need 2 existing copies on board.
         /// </summary>
-        private bool TryDirectUpgrade(HeroData heroData, int starLevel)
+        private bool TryDirectUpgrade(ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return false;
 
@@ -156,7 +156,7 @@ namespace Dajunctic
         /// <summary>
         /// Find all heroes matching the given HeroData and star level across bench and field.
         /// </summary>
-        private List<ChampionActor> GetMatchingHeroes(HeroData heroData, int starLevel)
+        private List<ChampionActor> GetMatchingHeroes(ChampionData heroData, int starLevel)
         {
             if (heroData == null) return new List<ChampionActor>();
 
@@ -179,7 +179,7 @@ namespace Dajunctic
             return heroesOnBench.Concat(heroesOnField).ToList();
         }
 
-        private void CheckForUpgrades(HeroData heroData, int starLevel)
+        private void CheckForUpgrades(ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return;
 
@@ -191,7 +191,7 @@ namespace Dajunctic
             }
         }
 
-        private void MergeHeroes(List<ChampionActor> instances, HeroData heroData, int newStarLevel)
+        private void MergeHeroes(List<ChampionActor> instances, ChampionData heroData, int newStarLevel)
         {
             Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars!");
 
@@ -294,7 +294,7 @@ namespace Dajunctic
             return false;
         }
 
-        public void AddHeroToBenchAtCoord(HeroData heroData, Vector2Int coord, int starLevel)
+        public void AddHeroToBenchAtCoord(ChampionData heroData, Vector2Int coord, int starLevel)
         {
             Vector3 worldPos = GetWorldPosition(coord);
             GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);

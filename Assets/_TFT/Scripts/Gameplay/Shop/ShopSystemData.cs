@@ -7,6 +7,6 @@ namespace Dajunctic
     public class ShopSystemData : ScriptableObject
     {
         public ShopData shopData;
-        public List<HeroData> allHeroes = new List<HeroData>();
+        public List<ChampionData> allHeroes = new List<ChampionData>();
     }
 }
