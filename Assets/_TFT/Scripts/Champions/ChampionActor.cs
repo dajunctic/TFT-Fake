@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Dajunctic
 {
     [RequireComponent(typeof(CapsuleCollider))]
-    public class ChampionActor: CombatActor, IDraggable
+    public class ChampionActor : CombatActor, IDraggable, IStatSource
     {
-        [Header("Hero")]
+        [Header("Champion")]
         public Vector2Int CurrentBenchCoord { get; set; } = new Vector2Int(-1, -1);
         public Vector2Int CurrentFieldCoord { get; set; } = new Vector2Int(-1, -1);
         [field: SerializeField] public int StarLevel { get; private set; } = 1;
@@ -29,9 +29,17 @@ namespace Dajunctic
             float scale = 1f + (level - 1) * 0.2f;
             CachedTransform.localScale = Vector3.one * scale;
 
+            Stats.Health.RemoveAllModifiersFromSource(this);
+            Stats.AttackDamage.RemoveAllModifiersFromSource(this);
+
+            if (level > 1)
+            {
+                float multiplier = Mathf.Pow(1.8f, level - 1) - 1f;
+                Stats.Health.AddModifier(new StatModifier(multiplier, StatModType.PercentMult, this, null));
+                Stats.AttackDamage.AddModifier(new StatModifier(multiplier, StatModType.PercentMult, this, null));
+            }
+
             this.Raise(new UpdateStarLevelEvent { owner = this, starLevel = level });
-            
-            // combatActorData.combatStat.hp *= 1.8f; etc.
         }
 
         public void OnDragStart()
@@ -87,7 +95,7 @@ namespace Dajunctic
             }
 
             var occupant = GameSystemManager.Instance.Bench.GetHeroAtTile(newBenchCoord);
-            
+
             if (occupant != null && occupant != this)
             {
                 SwapOccupant(occupant);
@@ -171,7 +179,7 @@ namespace Dajunctic
             // Restore original IDs
             CurrentBenchCoord = _originalBenchCoord;
             CurrentFieldCoord = _originalFieldCoord;
-            
+
             Teleport(originalPosition, false);
             if (MoveAgent != null)
             {
@@ -251,7 +259,7 @@ namespace Dajunctic
             else if (StarLevel >= 3)
             {
                 if (heroData.rarity == 1) return 5;
-                return totalCost - (heroData.rarity * 2); 
+                return totalCost - (heroData.rarity * 2);
             }
 
             return totalCost;
@@ -283,7 +291,7 @@ namespace Dajunctic
             if (Initialized) return;
             base.Initialize();
 
-            this.Raise(new SpawnHpViewEvent{owner = this, starLevel = StarLevel});
+            this.Raise(new SpawnHpViewEvent { owner = this, starLevel = StarLevel });
 
             _capsuleCollider = GetComponent<CapsuleCollider>();
 
@@ -299,7 +307,7 @@ namespace Dajunctic
                 return MovementPriority.Controlled;
             }
         }
-        
+
         protected override void SetupTree()
         {
             List<Node> rootNodes = new List<Node>
@@ -320,12 +328,12 @@ namespace Dajunctic
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.Ultimate);
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.Skill);
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.BasicAttack);
-        
+
             List<Node> targetingNodes = new List<Node>
             {
-                new FindTargetNode(this, combatActorData.combatStat.atkRange)
+                new FindTargetNode(this, Stats.AttackRange.Value)
             };
-        
+
             return new Sequence(new List<Node>()
             {
                 new Selector(targetingNodes),
@@ -359,6 +367,6 @@ namespace Dajunctic
             base.OnDestroy();
         }
     }
-    
-    
+
+
 }

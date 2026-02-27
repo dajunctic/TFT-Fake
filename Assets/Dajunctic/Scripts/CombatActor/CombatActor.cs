@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 namespace Dajunctic
 {
-    public class CombatActor: BaseView, ICombatActor
+    public class CombatActor : BaseView, ICombatActor
     {
         [SerializeField, Child] protected Animator animator;
         [SerializeField, Child] protected MidPoint midPoint;
@@ -17,8 +17,8 @@ namespace Dajunctic
         [SerializeField] private Team team;
         public Team CombatTeam => team;
 
-        public virtual Vector3 Position {get; private set;}
-        public virtual Vector3 Forward {get; private set;}
+        public virtual Vector3 Position { get; private set; }
+        public virtual Vector3 Forward { get; private set; }
 
         public bool IsViewLoaded => _viewLoaded;
         public virtual string DataId => string.Empty;
@@ -34,28 +34,30 @@ namespace Dajunctic
         public float CombatRadius => combatActorData.movement.radius;
         public float Speed => combatActorData.movement.moveSpeed;
         public float RotateSpeed => combatActorData.movement.rotateSpeed;
-        public float AtkSpd => combatActorData.combatStat.atkSpd;
+        public float AtkSpd => Stats.AttackSpeed.Value;
+        public ChampionStats Stats { get; private set; }
         public event Action<float> OnHpChanged;
         public event Action<float> OnEnergyChanged;
-        
+
         protected Node root = null;
 
         bool _viewLoaded;
-        
+
         Dictionary<SkillSlot, RuntimeSkill> _skillBook = new Dictionary<SkillSlot, RuntimeSkill>();
         public override void Initialize()
         {
             if (Initialized) return;
             base.Initialize();
             _viewLoaded = true;
-            
+
             Position = CachedTransform.position;
             Forward = CachedTransform.forward;
 
             InitializeMoveAgent();
+            Stats = new ChampionStats(combatActorData);
             InitializeSkills();
             InitDamageTaker();
-            
+
             SetupTree();
         }
 
@@ -65,7 +67,7 @@ namespace Dajunctic
             if (root != null)
             {
                 root.Evaluate();
-            }        
+            }
 
             float realSpeed = MoveAgent != null ? MoveAgent.Velocity.magnitude : 0f;
             float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
@@ -89,7 +91,7 @@ namespace Dajunctic
         protected virtual void SetupTree()
         {
         }
-        
+
         public void SetTarget(CombatActor target)
         {
             CurrentTarget = target;
@@ -121,7 +123,7 @@ namespace Dajunctic
         protected virtual ActorMovementType ActorMovementType => combatActorData.movement.movementType;
         public virtual MovementPriority AvoidancePriority
         {
-            get 
+            get
             {
                 switch (ActorMovementType)
                 {
@@ -131,7 +133,7 @@ namespace Dajunctic
                         return MovementPriority.Obstacle;
                     case ActorMovementType.Transform:
                         return GetDynamicAvoidancePriority();
-                } 
+                }
                 return GetDynamicAvoidancePriority();
             }
         }
@@ -168,7 +170,7 @@ namespace Dajunctic
             MoveAgent.SetOffset(0);
             MoveAgent.SetAcceleration(combatActorData.movement.acceleration);
             MoveAgent.ToggleMoveCollision(true);
-            
+
             InitMoveAgent();
 
         }
@@ -202,7 +204,7 @@ namespace Dajunctic
             RotateDirection(position - Position, rotateSpeed, deltaTime, immediately);
         }
 
-        public void Teleport(Vector3 position, bool checkNavMesh, bool fx=false)
+        public void Teleport(Vector3 position, bool checkNavMesh, bool fx = false)
         {
             if (MoveAgent != null)
             {
@@ -211,21 +213,21 @@ namespace Dajunctic
                 {
                     position = hit.position;
                 }
-               
+
                 MoveAgent.Warp(position);
             }
 
             if (fx)
             {
-                
+
             }
         }
-            
+
         public void RotateDirection(Vector3 direction, float rotateSpeed, float deltaTime, bool immediately)
         {
             direction.y = 0;
             direction.Normalize();
-            
+
             if (direction != Vector3.zero)
             {
                 if (MoveAgent != null)
@@ -277,38 +279,22 @@ namespace Dajunctic
         #endregion
 
         #region DamageTaker
-        
+
         private float _hp;
-        private float _physicalArmor;
-        private float _magicalArmor;
-        private float _maxHp;
         private float _energy;
-        private float _maxEnergy;
-        
+
         public float Hp => _hp;
-        public virtual float MaxHp => _maxHp + BonusMaxHp;
+        public virtual float MaxHp => Stats.Health.Value;
         public float Energy => _energy;
-        public float MaxEnergy => _maxEnergy;
+        public float MaxEnergy => Stats.MaxMana.Value;
 
-        public float BonusMaxHp { get; set; }
-        public float BonusPhysicalArmor { get; set; }
-        public float BonusMagicalArmor { get; set; }
-        public float BonusAtk { get; set; }
-        public float BonusAtkSpd { get; set; }
-
-        public float GetTotalPhysicalArmor() => _physicalArmor + BonusPhysicalArmor;
-        public float GetTotalMagicalArmor() => _magicalArmor + BonusMagicalArmor;
-        public float GetTotalAtk() => combatActorData.combatStat.atk + BonusAtk;
-        public float GetTotalAtkSpd() => combatActorData.combatStat.atkSpd + BonusAtkSpd;
+        public float GetTotalAtk() => Stats.AttackDamage.Value;
+        public float GetTotalAtkSpd() => Stats.AttackSpeed.Value;
 
         public void InitDamageTaker()
         {
-            _maxHp = combatActorData.attribute.maxHp;
-            _hp = _maxHp;
-            _physicalArmor = combatActorData.attribute.physicalArmor;
-            _magicalArmor = combatActorData.attribute.magicalArmor;
-            _maxEnergy = combatActorData.skillAttribute.energy;
-            _energy = 0;
+            _hp = MaxHp;
+            _energy = Stats.StartingMana.Value;
         }
 
         public void TakeDamage(CombineDamage combineDamage)
@@ -318,11 +304,11 @@ namespace Dajunctic
             switch (combineDamage.damageType)
             {
                 case DamageType.PhysicalDamage:
-                    finalDamage = combineDamage.damage * (100f / (100f + GetTotalPhysicalArmor()));
+                    finalDamage = combineDamage.damage * (100f / (100f + Stats.Armor.Value));
                     break;
 
                 case DamageType.MagicalDamage:
-                    finalDamage = combineDamage.damage * (100f / (100f + GetTotalMagicalArmor()));
+                    finalDamage = combineDamage.damage * (100f / (100f + Stats.MagicResist.Value));
                     break;
 
                 case DamageType.TrueDamage:
@@ -378,12 +364,12 @@ namespace Dajunctic
             animator.speed = multiplier;
         }
         public bool IsAnimFinished { get; private set; }
-        public bool IsCasting { get; private set; } 
+        public bool IsCasting { get; private set; }
         public int ActionSessionId { get; private set; }
         public void ResetAnim()
         {
             IsAnimFinished = false;
-            animator.speed = 1f; 
+            animator.speed = 1f;
         }
 
         public void SetCasting(bool value, SkillSlot slot)
@@ -420,7 +406,7 @@ namespace Dajunctic
         {
             return _skillBook.GetValueOrDefault(slot);
         }
-        
+
         protected virtual Node CreateCombatBranch()
         {
             List<Node> skillNodes = new List<Node>();
@@ -428,7 +414,7 @@ namespace Dajunctic
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.Skill);
             AddSkillNodeIfAvailable(skillNodes, SkillSlot.BasicAttack);
 
-            var attackRange = Mathf.Max(combatActorData.combatStat.atkRange, GetSkill(SkillSlot.BasicAttack)?.Data.castRange ?? 0);
+            var attackRange = Mathf.Max(Stats.AttackRange.Value, GetSkill(SkillSlot.BasicAttack)?.Data.castRange ?? 0);
             skillNodes.Add(new ChaseTargetNode(this, attackRange));
 
             return new Sequence(new List<Node>()
@@ -468,7 +454,7 @@ namespace Dajunctic
                 default:
                     return CachedTransform.position;
             }
-                    
+
         }
         public void InterruptAction()
         {
@@ -481,10 +467,10 @@ namespace Dajunctic
             PlayAnim("Locomotion");
         }
         #endregion
-        
+
     }
 
-    
+
     [Serializable]
     public enum ActorMovementType
     {

@@ -3,17 +3,17 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class ItemContainer : MonoBehaviour
+    public class ItemContainer : MonoBehaviour, IStatSource
     {
         private List<ItemData> _items = new List<ItemData>();
         public List<ItemData> Items => _items;
-        
-        private const int MAX_ITEMS = 3;
-        private ChampionActor _hero;
 
-        public void Initialize(ChampionActor hero)
+        private const int MAX_ITEMS = 3;
+        private ChampionActor _champion;
+
+        public void Initialize(ChampionActor champion)
         {
-            _hero = hero;
+            _champion = champion;
         }
 
         public bool TryAddItem(ItemData newItem, ItemRecipeDatabase recipes)
@@ -52,19 +52,31 @@ namespace Dajunctic
         {
             // Apply stats to hero
             ApplyItemStats();
-            
+
             // Raise event for UI update on the hero
-            if (_hero != null)
+            if (_champion != null)
             {
-                _hero.Raise(new ChampionItemsChangedEvent { Hero = _hero, Items = _items });
+                _champion.Raise(new ChampionItemsChangedEvent { Hero = _champion, Items = _items });
             }
         }
 
         private void ApplyItemStats()
         {
-            if (_hero == null) return;
+            if (_champion == null || _champion.Stats == null) return;
 
-            float hp = 0, atk = 0, aspd = 0, armor = 0, mr = 0;
+            // 1. Clear existing item modifiers from this source
+            _champion.Stats.Health.RemoveAllModifiersFromSource(this);
+            _champion.Stats.AttackDamage.RemoveAllModifiersFromSource(this);
+            _champion.Stats.AttackSpeed.RemoveAllModifiersFromSource(this);
+            _champion.Stats.Armor.RemoveAllModifiersFromSource(this);
+            _champion.Stats.MagicResist.RemoveAllModifiersFromSource(this);
+            _champion.Stats.AbilityPower.RemoveAllModifiersFromSource(this);
+            _champion.Stats.MaxMana.RemoveAllModifiersFromSource(this);
+            _champion.Stats.CriticalStrikeChance.RemoveAllModifiersFromSource(this);
+            _champion.Stats.CriticalStrikeDamage.RemoveAllModifiersFromSource(this);
+
+            // 2. Sum up totals
+            float hp = 0, atk = 0, aspd = 0, armor = 0, mr = 0, ap = 0, mana = 0, critC = 0, critD = 0;
 
             foreach (var item in _items)
             {
@@ -73,15 +85,33 @@ namespace Dajunctic
                 aspd += item.bonusAtkSpd;
                 armor += item.bonusArmor;
                 mr += item.bonusMagicResist;
+                ap += item.bonusAbilityPower;
+                mana += item.bonusMana;
+                critC += item.bonusCritChance;
+                critD += item.bonusCritDamage;
             }
 
-            _hero.BonusMaxHp = hp;
-            _hero.BonusAtk = atk;
-            _hero.BonusAtkSpd = aspd;
-            _hero.BonusPhysicalArmor = armor;
-            _hero.BonusMagicalArmor = mr;
+            // 3. Apply new modifiers
+            AddModIfNonZero(_champion.Stats.Health, hp, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.AttackDamage, atk, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.AttackSpeed, aspd, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.Armor, armor, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.MagicResist, mr, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.AbilityPower, ap, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.MaxMana, mana, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.CriticalStrikeChance, critC, StatModType.Flat);
+            AddModIfNonZero(_champion.Stats.CriticalStrikeDamage, critD, StatModType.Flat);
 
-            Debug.Log($"Stats updated for {_hero.name}: HP+{hp}, ATK+{atk}");
+            Debug.Log($"Stats updated for {_champion.name} from Items");
+        }
+
+        private void AddModIfNonZero(IStat stat, float value, StatModType type)
+        {
+            if (Mathf.Approximately(value, 0)) return;
+            if (stat is BaseStat baseStat)
+            {
+                baseStat.AddModifier(new StatModifier(value, type, this, null));
+            }
         }
 
         public List<ItemData> RemoveAllItems()
@@ -93,9 +123,9 @@ namespace Dajunctic
         }
     }
 
-    public struct ChampionItemsChangedEvent : IEvent 
-    { 
-        public ChampionActor Hero; 
-        public List<ItemData> Items; 
+    public struct ChampionItemsChangedEvent : IEvent
+    {
+        public ChampionActor Hero;
+        public List<ItemData> Items;
     }
 }

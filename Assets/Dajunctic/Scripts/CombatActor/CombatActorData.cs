@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Dajunctic;
+using UnityEngine;
 
-public class CombatActorData: BaseSO
+public class CombatActorData : BaseSO
 {
     public ActorMovement movement;
-    public ActorAttribute attribute;
-    public ActorSkillAttribute skillAttribute;
-    public CombatStat combatStat;
-    public List<SkillData> skills = new List<SkillData>();
+    public ActorBaseStats stats;
+    public List<SkillData> skills = new();
 }
 
 [Serializable]
@@ -23,25 +22,22 @@ public class ActorMovement
 }
 
 [Serializable]
-public class ActorAttribute
+public class ActorBaseStats
 {
-    public float maxHp = 0f;
-    public float physicalArmor;
-    public float magicalArmor;
-}
+    [Header("Life & Defense")]
+    public float maxHp = 500f;
+    public float armor = 20f;
+    public float magicResist = 20f;
 
-[Serializable]
-public struct CombatStat
-{
-    public float atk;
-    public float atkSpd;
-    public float atkRange;
-    public float criticalChance;
-    public float criticalDmg;
-}
+    [Header("Offense")]
+    public float attackDamage = 50f;
+    public float abilityPower = 100f;
+    public float attackSpeed = 0.65f;
+    public float attackRange = 1f;
+    public float critChance = 0.25f;
+    public float critDamage = 1.4f;
 
-[Serializable]
-public class ActorSkillAttribute
-{
-    public int energy;
+    [Header("Mana")]
+    public float maxMana = 100f;
+    public float startingMana = 0f;
 }
