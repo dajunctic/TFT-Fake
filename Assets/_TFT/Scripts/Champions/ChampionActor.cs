@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Dajunctic
@@ -30,10 +31,9 @@ namespace Dajunctic
         {
             get
             {
-                if (GameSystemManager.Instance.Traits == null) return new List<ITrait>();
                 var data = CombatActorData as ChampionData;
                 if (data == null) return new List<ITrait>();
-                return GameSystemManager.Instance.Traits.GetTraitsByIDs(data.traits);
+                return data.traits.Cast<ITrait>().ToList();
             }
         }
 

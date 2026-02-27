@@ -1,12 +1,29 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ChampionData", menuName = "Dajunctic/ChampionData")]
-public class ChampionData : CombatActorData
+namespace Dajunctic
 {
-    public string displayName;
-    public int rarity = 1; // 1 to 5 cost
-    public Sprite shopIcon;
-    public List<string> traits = new List<string>();
-    public GameObject prefab;
+    [CreateAssetMenu(fileName = "ChampionData", menuName = "Dajunctic/Champions/ChampionData")]
+    public class ChampionData : CombatActorData
+    {
+        [Header("Display Info")]
+        public string displayName;
+        public Sprite shopIcon;
+
+        [Header("Meta Data")]
+        public int rarity = 1; // 1 to 5 cost
+        public GameObject prefab;
+
+        [Header("Traits")]
+        public List<TraitData> traits = new();
+
+        /// <summary>
+        /// Gets the list of traits as ITrait for system usage.
+        /// </summary>
+        public List<ITrait> GetTraits()
+        {
+            return traits.Cast<ITrait>().ToList();
+        }
+    }
 }
