@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class MythicalAnimalCombatActor : CombatActor
+    public class TacticiansActor : CombatActor
     {
-        [Header("Mythical Animal")]
+        [Header("Tacticians")]
         public int Tier { get; private set; } = 1;
         public bool IsBoss { get; private set; } = false;
 

@@ -41,7 +41,7 @@ namespace Dajunctic
             if (_data == null) return;
             if (_cooldownTimer > 0f) return;
 
-            var combatActor = FindFirstObjectByType<MythicalAnimalCombatActor>();
+            var combatActor = FindFirstObjectByType<TacticiansActor>();
             if (combatActor == null) return;
 
             var emotionView = Instantiate(_data.emotionViewPrefab, combatActor.CachedTransform);

@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    [CreateAssetMenu(fileName = "MythicalAnimalData", menuName = "Dajunctic/MythicalAnimalData")]
+    [CreateAssetMenu(fileName = "TacticiansData", menuName = "Dajunctic/TacticiansData")]
     public class MythicalAnimalActorData : CombatActorData
     {
-        [Header("Mythical Animal Info")]
+        [Header("Tacticians Info")]
         public string displayName;
         public string animalType; // e.g., "Dragon", "Phoenix", "Unicorn"
         public Sprite icon;

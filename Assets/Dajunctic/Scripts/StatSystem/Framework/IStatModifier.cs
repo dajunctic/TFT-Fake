@@ -1,10 +1,10 @@
 namespace Dajunctic
 {
-    public class IStatModifier
+    public interface IStatModifier
     {
-        public float Value {get; }
-        public StatModType Type {get; }
-        public int Order {get; }
-        public IStatSource Source {get; }
+        float Value {get; }
+        StatModType Type {get; }
+        int Order {get; }
+        IStatSource Source {get; }
     }
 }

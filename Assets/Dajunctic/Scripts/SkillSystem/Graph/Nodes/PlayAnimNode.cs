@@ -19,7 +19,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             }
 
             actor.PlayAnim(animationName, transitionDuration);
-            actor.ResetAnim(); // kích hoạt lại IsAnimFinished = false
+            actor.ResetAnim(); 
 
             if (!waitForFinish)
             {
@@ -29,7 +29,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
             if (Application.isPlaying)
             {
-                // Runtime: chạy qua SkillGraphRunner coroutine
                 var runner = actor.GetSkillGraphRunner();
                 if (runner != null)
                 {
@@ -41,7 +40,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 #if UNITY_EDITOR
             else
             {
-                // Editor Preview: poll qua EditorApplication.update
                 UnityEditor.EditorApplication.CallbackFunction update = null;
                 update = () =>
                 {
@@ -64,7 +62,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         private IEnumerator WaitForAnimation(CombatActor actor)
         {
-            yield return null; // Đợi 1 frame để animation bắt đầu
+            yield return null;
             while (!actor.IsAnimFinished)
             {
                 yield return null;

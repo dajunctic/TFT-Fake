@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    [CreateAssetMenu(fileName = "ShopData", menuName = "Panthera/ShopData")]
+    [CreateAssetMenu(fileName = "ShopData", menuName = "Dajunctic/ShopData")]
     public class ShopData : ScriptableObject
     {
         [Header("Costs")]

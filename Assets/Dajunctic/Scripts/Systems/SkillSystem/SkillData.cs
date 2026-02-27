@@ -12,7 +12,7 @@ public enum SkillSlot
 }
 
 
-[CreateAssetMenu(fileName = "NewSkill", menuName = "Panthera/Skill Data")]
+[CreateAssetMenu(fileName = "NewSkill", menuName = "Dajunctic/Skill Data")]
 public class SkillData : BaseSO
 {
     public SkillSlot slot;
