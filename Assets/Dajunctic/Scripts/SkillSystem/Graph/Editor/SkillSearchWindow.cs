@@ -43,35 +43,55 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             // Grouping logic
             HashSet<string> groups = new HashSet<string>();
+            string nodesNs = "Dajunctic.SkillSystem.Graph.Nodes";
+            string actionNs = "Dajunctic.SkillSystem.Graph.ActionNodes";
+
             foreach (var type in nodeTypes)
             {
                 string ns = type.Namespace;
-                if (!string.IsNullOrEmpty(ns) && ns.StartsWith("Dajunctic.SkillSystem.Graph.Nodes"))
+                if (string.IsNullOrEmpty(ns))
                 {
-                    string subNs = ns.Replace("Dajunctic.SkillSystem.Graph.Nodes", "").Trim('.');
-                    if (!string.IsNullOrEmpty(subNs))
-                    {
-                        if (groups.Add(subNs))
-                        {
-                            tree.Add(new SearchTreeGroupEntry(new GUIContent(subNs), 1));
-                        }
-                        tree.Add(new SearchTreeEntry(new GUIContent(type.Name, _indentationIcon))
-                        {
-                            level = 2,
-                            userData = type
-                        });
-                        continue;
-                    }
+                    AddEntry(tree, type, 1);
+                    continue;
                 }
 
-                tree.Add(new SearchTreeEntry(new GUIContent(type.Name, _indentationIcon))
+                string groupPath = null;
+                if (ns.StartsWith(nodesNs))
                 {
-                    level = 1,
-                    userData = type
-                });
+                    groupPath = ns.Replace(nodesNs, "").Trim('.');
+                }
+                else if (ns.StartsWith(actionNs))
+                {
+                    groupPath = "Actions";
+                    string sub = ns.Replace(actionNs, "").Trim('.');
+                    if (!string.IsNullOrEmpty(sub)) groupPath += "/" + sub;
+                }
+
+                if (!string.IsNullOrEmpty(groupPath))
+                {
+                    // Split path for potential nested groups (though currently handled as single string)
+                    if (groups.Add(groupPath))
+                    {
+                        tree.Add(new SearchTreeGroupEntry(new GUIContent(groupPath), 1));
+                    }
+                    AddEntry(tree, type, 2);
+                }
+                else
+                {
+                    AddEntry(tree, type, 1);
+                }
             }
 
             return tree;
+        }
+
+        private void AddEntry(List<SearchTreeEntry> tree, Type type, int level)
+        {
+            tree.Add(new SearchTreeEntry(new GUIContent(type.Name, _indentationIcon))
+            {
+                level = level,
+                userData = type
+            });
         }
 
         public bool OnSelectEntry(SearchTreeEntry searchTreeEntry, SearchWindowContext context)

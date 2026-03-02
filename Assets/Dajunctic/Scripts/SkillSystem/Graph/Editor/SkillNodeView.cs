@@ -38,7 +38,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateInputPorts()
         {
-            if (nodeData is Nodes.EntryNode) return;
+            if (nodeData is Nodes.EntryNode || nodeData is ActionNode) return;
 
             // Execution In
             inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
@@ -54,9 +54,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             foreach (var field in fields)
             {
-                if (System.Attribute.IsDefined(field, typeof(Dajunctic.SkillSystem.Graph.NodeInputAttribute)))
+                if (System.Attribute.IsDefined(field, typeof(NodeInputAttribute))) //||
+                    // System.Attribute.IsDefined(field, typeof(UnityEngine.SerializeReferenceAttribute)))
                 {
-                    var port = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, field.FieldType);
+                    var capacity = field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>)
+                        ? Port.Capacity.Multi
+                        : Port.Capacity.Single;
+
+                    var port = InstantiatePort(Orientation.Horizontal, Direction.Input, capacity, field.FieldType);
                     port.portName = field.Name;
                     SetPortLabel(port, FormatPortName(field.Name));
                     inputContainer.Add(port);
@@ -66,7 +71,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateOutputPorts()
         {
-            if (nodeData is Nodes.ExitNode) return;
+            if (nodeData is Nodes.ExitNode || nodeData is ActionNode) return;
 
             // Execution Out
             outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));

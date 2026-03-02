@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8066119252799218792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c28f214cf5d48540ad070ac90bd5363, type: 3}
+  m_Name: Entry
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.Nodes.EntryNode
+  guid: c320d1dc-6d8d-4546-a4b4-7468c29bdeb9
+  gridPosition: {x: 100, y: 200}
+  graph: {fileID: 11400000}
+--- !u!114 &-5688582255329730170
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66325352259352547901d017a3a30364, type: 3}
+  m_Name: TargetInRadius
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.Nodes.TargetInRadiusNode
+  guid: 765a8928-c05b-4353-b88e-8d740308c0d2
+  gridPosition: {x: -25, y: -55}
+  graph: {fileID: 11400000}
+  radius: 5
+  offset: {x: 0, y: 0, z: 0}
+  targetType: 0
+  targetAll: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac80f92f93e70a941b25853192ef8646, type: 3}
+  m_Name: champion_kim_jong_un_atk_1_graph
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.SkillGraph
+  nodes:
+  - {fileID: -8066119252799218792}
+  - {fileID: -5688582255329730170}
+  - {fileID: 4189450171198083585}
+  - {fileID: 4154907880675435527}
+  - {fileID: 6598005642691697510}
+  links:
+  - baseNodeGuid: c320d1dc-6d8d-4546-a4b4-7468c29bdeb9
+    portName: Out
+    targetNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
+    targetPortName: In
+  - baseNodeGuid: 765a8928-c05b-4353-b88e-8d740308c0d2
+    portName: All Targets
+    targetNodeGuid: 174f101d-fb27-449e-9578-52ee28cb5b1f
+    targetPortName: Targets
+  - baseNodeGuid: 765a8928-c05b-4353-b88e-8d740308c0d2
+    portName: Main Target
+    targetNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
+    targetPortName: Target
+  - baseNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
+    portName: Out
+    targetNodeGuid: 174f101d-fb27-449e-9578-52ee28cb5b1f
+    targetPortName: In
+  - baseNodeGuid: 174f101d-fb27-449e-9578-52ee28cb5b1f
+    portName: Out
+    targetNodeGuid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
+    targetPortName: In
+--- !u!114 &4154907880675435527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17775f8176d531446bf564e6a1e1ba7a, type: 3}
+  m_Name: Damage
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.Nodes.DamageNode
+  guid: 174f101d-fb27-449e-9578-52ee28cb5b1f
+  gridPosition: {x: 340, y: -55}
+  graph: {fileID: 11400000}
+  damage: 1
+  damageType: 1
+  hitActions: []
+--- !u!114 &4189450171198083585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f6abe313d77304f980b5151a4306a3, type: 3}
+  m_Name: Tracking
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.Nodes.TrackingNode
+  guid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
+  gridPosition: {x: 245, y: 171}
+  graph: {fileID: 11400000}
+  duration: 0.3
+  immediately: 0
+  isManual: 0
+--- !u!114 &6598005642691697510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f449dfd69fcc5cb4e870484c547340ab, type: 3}
+  m_Name: Exit
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.Nodes.ExitNode
+  guid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
+  gridPosition: {x: 500, y: 200}
+  graph: {fileID: 11400000}
