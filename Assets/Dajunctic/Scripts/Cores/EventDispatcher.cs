@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Dajunctic
 {
     [CreateAssetMenu(menuName = "Dajunctic/Core/EventDispatcher", fileName = "EventDispatcher")]
-    public class EventDispatcher: ScriptableObject
+    public class EventDispatcher : ScriptableObject
     {
         [SerializeField] private EventDispatcherView dispatcherMonoPrefab;
 
