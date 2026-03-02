@@ -25,7 +25,7 @@ namespace Dajunctic
                 await Addressables.UnloadSceneAsync(currentSceneHandle).Task;
             }
 
-            currentSceneHandle = Addressables.LoadSceneAsync(sceneRef, LoadSceneMode.Additive);
+            currentSceneHandle = Addressables.LoadSceneAsync(sceneRef, LoadSceneMode.Single);
 
             while (!currentSceneHandle.IsDone)
             {

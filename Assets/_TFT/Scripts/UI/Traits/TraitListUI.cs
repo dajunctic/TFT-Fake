@@ -11,6 +11,18 @@ namespace Dajunctic
 
         private List<TraitItemUI> _pool = new List<TraitItemUI>();
 
+        public override void Initialize()
+        {
+            base.Initialize();
+            for (var i = 0; i < container.childCount; i++)
+            {
+                var child = container.GetChild(i);
+
+                Destroy(child.gameObject);
+            }
+
+        }
+
         public override void DoEnable()
         {
             base.DoEnable();
@@ -40,6 +52,7 @@ namespace Dajunctic
 
         private void UpdateTraits(Dictionary<ITrait, int> traitCounts)
         {
+
             var sortedTraits = traitCounts
                 .Select(kvp => new { Trait = kvp.Key as TraitData, Count = kvp.Value })
                 .Where(x => x.Trait != null)

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Dajunctic
 {
-    public class TraitItemUI : MonoBehaviour
+    public class TraitItemUI : BaseView
     {
         [Header("UI References")]
         [SerializeField] private Image icon;

@@ -1672,7 +1672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   draggableLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   groundLayer:
     serializedVersion: 2
     m_Bits: 256

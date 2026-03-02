@@ -36,6 +36,7 @@ namespace Dajunctic
 
             var hpViewPrefab = poolData.hpView;
             var hpView = PoolableObject.Pool.Spawn(hpViewPrefab, position, Quaternion.identity);
+            hpView.CachedTransform.parent = param.owner.CachedTransform;
             hpView.Initialize(param.owner, starLevel);
         }
 
