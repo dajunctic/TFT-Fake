@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45674d83aa474771be365ad913d0cb7e, type: 3}
   m_Name: champion_trump_atk_1
   m_EditorClassIdentifier: 
-  id: hero_kayn_atk_1
+  id: champion_trump_atk_1
   slot: 0
   castRange: 2
-  duration: 4
   cooldown: 2
-  timelineId: tl_kayn_atk_1
+  skillGraph: {fileID: 11400000, guid: 40f2307290acd2c4680dd38396d99a19, type: 2}

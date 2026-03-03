@@ -56,14 +56,14 @@ namespace Dajunctic
             return SpawnFxView(param);
         }
 
-        public MissileView SpawnMissile(string missileId, MissileData missileData)
+        public MissileView SpawnMissile(MissileData missileData)
         {
-            return SpawnMissileView(missileId, missileData);
+            return SpawnMissileView(missileData);
         }
 
-        public MissileView SpawnMissileView(string missileId, MissileData missileData)
+        public MissileView SpawnMissileView(MissileData missileData)
         {
-            var entry = poolData.missileLists.Find(m => m.Id == missileId);
+            var entry = poolData.missileLists.Find(m => m.Id == missileData.id);
             if (entry == null || entry.missilePrefab == null) return null;
 
             var missileView =  PoolableObject.Pool.Spawn(entry.missilePrefab, missileData.launcher, Quaternion.identity);

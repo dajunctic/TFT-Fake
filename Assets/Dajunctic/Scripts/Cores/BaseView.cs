@@ -13,31 +13,25 @@ namespace Dajunctic
         [Header("Base")]
         protected Ticker ticker;
 
+        private float _lastEditorTime;
+        protected float DeltaTime
+        {
+            get
+            {
+                if (Application.isPlaying) return Time.deltaTime;
+#if UNITY_EDITOR
+                if (_lastEditorTime == 0) _lastEditorTime = (float)EditorApplication.timeSinceStartup;
+                float dt = (float)EditorApplication.timeSinceStartup - _lastEditorTime;
+                _lastEditorTime = (float)EditorApplication.timeSinceStartup;
+                return dt;
+#else
+                return 0.02f;
+#endif
+            }
+        }
+
         [SerializeField] bool initialize;
         [SerializeField] TickType tick;
-
-// #if UNITY_EDITOR
-//         void OnValidate()
-//         {
-//             if (ticker != null) return;
-//             var guids = AssetDatabase.FindAssets($"t:{nameof(Ticker)}");
-//             if (guids == null || guids.Length == 0)
-//             {
-//                 Debug.LogError("Can not find ticker asset in Project!");
-//                 return;
-//             }
-
-//             string firstGuid = guids.FirstOrDefault();
-//             string path = AssetDatabase.GUIDToAssetPath(firstGuid);
-//             ticker = AssetDatabase.LoadAssetAtPath<Ticker>(path);
-
-//             if (ticker == null)
-//             {
-//                 Debug.LogError($"Found GUID {firstGuid} but failed to load Ticker asset at {path}");
-//             }
-//         }
-
-// #endif
 
         public bool Initialized => _isInitialized;
         private bool _isInitialized;
@@ -49,8 +43,11 @@ namespace Dajunctic
 
         protected virtual void Awake()
         {
-            ticker = TickerView.Instance.ticker;
-            if (initialize) Initialize(); 
+            if (Application.isPlaying && TickerView.Instance != null)
+            {
+                ticker = TickerView.Instance.ticker;
+            }
+            if (initialize) Initialize();
         }
 
         void Start()
@@ -120,27 +117,27 @@ namespace Dajunctic
 
         public virtual void Tick()
         {
-            
+
         }
 
         public virtual void EarlyTick()
         {
-            
+
         }
 
         public virtual void LateTick()
         {
-            
+
         }
 
         public virtual void FixedTick()
         {
-            
+
         }
 
         public virtual void Cleanup()
         {
-            
+
         }
     }
 }

@@ -17,21 +17,21 @@ namespace Dajunctic
 
         private Vector3 launcher;
         private Vector3 destination;
-        private CombatActor targetActor;
-        private CombatActor combatActor;
+        private IDamageTaker damageTaker;
+        private IDamageDealer damageDealer;
         private CombineDamage combineDamage;
 
         private Vector3 targetPos;
-        public event Action<CombatActor> OnHitTargetEvent;
+        public event Action<IDamageTaker> OnHitEvent;
 
 
         public void InitData(MissileData missileData)
         {
             launcher = missileData.launcher;
             destination = missileData.destination;
-            targetActor = missileData.targetActor;
+            damageTaker = missileData.damageTaker;
             transform.position = launcher;
-            combatActor = missileData.combatActor;
+            damageDealer = missileData.damageDealer;
             combineDamage = missileData.combineDamage;
         }
 
@@ -39,25 +39,45 @@ namespace Dajunctic
         {
             StopAllCoroutines();
 
+            IEnumerator coroutine = null;
             switch (missileType)
             {
                 case MissileType.Follow:
-                    StartCoroutine(IEFlyFollow());
+                    coroutine = IEFlyFollow();
                     break;
                 case MissileType.Straight:
-                    StartCoroutine(IEFlyStraight());
+                    coroutine = IEFlyStraight();
                     break;
                 case MissileType.FixedTime:
-                    StartCoroutine(IEFlyFixedTime());
+                    coroutine = IEFlyFixedTime();
                     break;
+            }
+
+            if (coroutine == null) return;
+
+            if (Application.isPlaying)
+            {
+                StartCoroutine(coroutine);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                // We'll hook this in PreviewSkillServiceProvider
+                _editorCoroutine = coroutine;
+#endif
             }
         }
 
+#if UNITY_EDITOR
+        private IEnumerator _editorCoroutine;
+        public IEnumerator GetEditorCoroutine() => _editorCoroutine;
+#endif
+
         public void UpdateTargetPos()
         {
-            if (targetActor != null)
+            if (damageTaker != null)
             {
-                targetPos = targetActor.GetAnchorPosition(anchorType);
+                targetPos = damageTaker.AsCombatActor().GetAnchorPosition(anchorType);
             }
             else
             {
@@ -67,12 +87,12 @@ namespace Dajunctic
 
         public IEnumerator IEFlyFollow()
         {
-            if (combatActor == null) yield break;
-            while (targetActor != null && targetActor.CachedTransform != null)
+            if (damageDealer == null) yield break;
+            while (damageTaker != null && damageTaker.AsTransform().CachedTransform != null)
             {
                 UpdateTargetPos();
-                transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-                
+                transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * DeltaTime);
+
                 transform.LookAt(targetPos);
 
                 if (Vector3.Distance(transform.position, targetPos) < stoppingDistance)
@@ -82,19 +102,20 @@ namespace Dajunctic
                 }
                 yield return null;
             }
-            OnHitTarget(); 
+            OnHitTarget();
         }
 
         public IEnumerator IEFlyStraight()
         {
-            if (combatActor != null) {
+            if (damageDealer != null)
+            {
                 UpdateTargetPos();
-                targetPos = transform.position + combatActor.Forward;
+                targetPos = transform.position + damageDealer.AsTransform().Forward;
                 Vector3 direction = (targetPos - launcher).normalized;
                 while (Vector3.Distance(transform.position, targetPos) > stoppingDistance)
                 {
-                    transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-                    
+                    transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * DeltaTime);
+
                     if (direction != Vector3.zero)
                         transform.rotation = Quaternion.LookRotation(direction);
 
@@ -107,7 +128,7 @@ namespace Dajunctic
 
         public IEnumerator IEFlyFixedTime()
         {
-            if (combatActor != null)
+            if (damageDealer != null)
             {
                 float time = 0;
                 Vector3 startPos = transform.position;
@@ -115,20 +136,21 @@ namespace Dajunctic
 
                 while (time < duration)
                 {
-                    time += Time.deltaTime;
-                    float pct = time / duration; 
+                    time += DeltaTime;
+                    float pct = time / duration;
 
                     Vector3 currentLinearPos = Vector3.Lerp(startPos, targetPos, pct);
 
                     float hOffset = horizontal.length > 0 ? horizontal.Evaluate(pct) : 0;
                     float vOffset = vertical.length > 0 ? vertical.Evaluate(pct) : 0;
-                    
+
                     Vector3 offset = transform.up * vOffset + transform.right * hOffset;
-                    
+
                     transform.position = currentLinearPos + offset;
-                    
-                    if (pct < 1.0f) {
-                        transform.LookAt(currentLinearPos + offset); 
+
+                    if (pct < 1.0f)
+                    {
+                        transform.LookAt(currentLinearPos + offset);
                     }
 
                     yield return null;
@@ -139,8 +161,8 @@ namespace Dajunctic
 
         private void OnHitTarget()
         {
-            targetActor.TakeDamage(combineDamage);
-            OnHitTargetEvent?.Invoke(targetActor);
+            damageTaker.TakeDamage(combineDamage);
+            OnHitEvent?.Invoke(damageTaker);
 
             Destroy(gameObject);
         }
@@ -148,15 +170,14 @@ namespace Dajunctic
 
     public class MissileData
     {
-
+        public string id;
         public Vector3 launcher;
 
-        public Vector3 destination;  
+        public Vector3 destination;
 
-        public CombatActor targetActor;
-        public CombatActor combatActor;
+        public IDamageTaker damageTaker;
+        public IDamageDealer damageDealer;
         public CombineDamage combineDamage;
-
     }
 
     public enum MissileType

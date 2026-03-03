@@ -16,7 +16,7 @@ namespace Dajunctic
             _maxDuration = data.duration;
             _timer = 0;
             _isPlayed = true;
-            
+
             particle.Play();
         }
 
@@ -28,7 +28,7 @@ namespace Dajunctic
 
             if (_maxDuration > 0)
             {
-                _timer += Time.deltaTime;
+                _timer += DeltaTime;
                 if (_timer >= _maxDuration)
                 {
                     DestroyFx();
@@ -46,11 +46,11 @@ namespace Dajunctic
         private void DestroyFx()
         {
             _isPlayed = false;
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
-    public class SpawnFxEvent: IEvent
+    public class SpawnFxEvent : IEvent
     {
         public string id;
         public Vector3 position;

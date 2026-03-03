@@ -104,6 +104,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 var anim = dummy.GetComponentInChildren<Animator>();
                 if (anim != null && !Application.isPlaying) anim.Update(Time.deltaTime);
             }
+
+            if (!Application.isPlaying)
+            {
+                _previewServices?.Update();
+            }
+
             Repaint();
         }
 

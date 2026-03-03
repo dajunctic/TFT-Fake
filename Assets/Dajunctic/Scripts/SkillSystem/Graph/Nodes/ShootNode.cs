@@ -3,55 +3,89 @@ using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
-    public class ShootNode : SkillNode
+    public class ShootNode : SkillNode, IFxDataProvider
     {
         [SerializeField, GuidReference("missile", typeof(IDummyId))] public string missileId;
         public Vector3 launcherOffset;
         public float damageMultiplier = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
+        [ActionInput] public List<ActionNode> hitActions;
+        [ActionInput] public List<ActionNode> despawnActions;
+
         [NodeInput] public List<IDamageTaker> targets;
+
+        private IDamageTaker currentTarget;
 
         public override void Execute()
         {
             targets = GetInputValue<List<IDamageTaker>>(nameof(targets));
-            var actorsToShoot = targets ?? new List<IDamageTaker>();
+            var inTargets = targets ?? new List<IDamageTaker>();
 
-            if (actorsToShoot.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
+            if (inTargets.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
             {
                 Complete();
                 return;
             }
 
-            var casterCA = _context.actor.AsCombatActor();
-            Vector3 launchPos = casterCA != null
-                ? casterCA.CachedTransform.TransformPoint(launcherOffset)
+            var damageDealer = _context.actor.AsCombatActor();
+            Vector3 launchPos = damageDealer != null
+                ? damageDealer.CachedTransform.TransformPoint(launcherOffset)
                 : _context.actor.AsTransform().Position;
 
-            foreach (var target in actorsToShoot)
+            foreach (var target in inTargets)
             {
                 if (target == null) continue;
 
                 float totalAtk = _context.actor.GetTotalAtk();
                 var missileData = new MissileData
                 {
+                    id = missileId,
                     launcher = launchPos,
                     destination = target.AsTransform().Position,
-                    targetActor = target.AsCombatActor() as CombatActor,
-                    combatActor = casterCA as CombatActor,
+                    damageTaker = target,
+                    damageDealer = damageDealer,
                     combineDamage = new CombineDamage(damageType, totalAtk * damageMultiplier)
                 };
 
-                _context.Services.SpawnMissile(missileId, missileData);
+                var missile = _context.Services.SpawnMissile(missileData);
+                missile.OnHitEvent += OnHitEvent;
+
             }
 
             Complete();
+        }
+
+        void OnHitEvent(IDamageTaker target)
+        {
+
+            currentTarget = target;
+
+            if (hitActions != null)
+            {
+                foreach (var action in hitActions)
+                {
+                    if (action != null)
+                    {
+                        action.Init(_context, null);
+                        action.Execute(this);
+                    }
+                }
+            }
         }
 
         public override void Reset()
         {
             base.Reset();
             targets = null;
+        }
+
+        public FxData GetFxData()
+        {
+            return new FxData
+            {
+                targets = new List<IDamageTaker> { currentTarget }
+            };
         }
     }
 }

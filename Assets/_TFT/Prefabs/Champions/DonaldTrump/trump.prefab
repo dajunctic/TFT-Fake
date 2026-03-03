@@ -141,7 +141,6 @@ MonoBehaviour:
   combatActorData: {fileID: 11400000, guid: 85817080e67f31041b7f3f3437e064a0, type: 2}
   team: 0
   <StarLevel>k__BackingField: 1
-  hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
 --- !u!1001 &4668489738009636991
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -474,7 +473,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: b76ef9fae1c01ad4f8a3fe452c381312, type: 2}
     - target: {fileID: 5866666021909216657, guid: 5c05384eefec7bf4ea90eae30d74d12c, type: 3}
       propertyPath: m_ApplyRootMotion
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8817898888258712963, guid: 5c05384eefec7bf4ea90eae30d74d12c, type: 3}
       propertyPath: m_Layer
