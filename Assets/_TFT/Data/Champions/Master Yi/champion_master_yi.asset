@@ -40,3 +40,9 @@ MonoBehaviour:
   prefab: {fileID: 5056634818722811979, guid: c32f2aaa61a9bf24f868af3d937d9d6e, type: 3}
   traits:
   - {fileID: 11400000, guid: d8981683762691a48a8a16c75c1df629, type: 2}
+  - {fileID: 11400000, guid: 97d58ec8a5b4e2c489ea1ecb8d0bdee5, type: 2}
+  - {fileID: 11400000, guid: 74a7c910668f8a94ab447cdb93db7c30, type: 2}
+  - {fileID: 11400000, guid: 5ec4717f608c7b345882a99cf1a7d9b3, type: 2}
+  - {fileID: 11400000, guid: ac44f11cfd51fd1469006d9c1586992f, type: 2}
+  - {fileID: 11400000, guid: 885f782b018d9674ea93dc29489fab4c, type: 2}
+  - {fileID: 11400000, guid: 9b33dd32fad15214d9d76b75215b3156, type: 2}

@@ -73,8 +73,6 @@ namespace Dajunctic
             int i = 0;
             foreach (var item in sortedTraits)
             {
-                if (item.ActiveTier == null) continue;
-
                 var ui = GetOrCreateItem(i++);
                 ui.gameObject.SetActive(true);
                 ui.Setup(item.Trait, item.Count);
