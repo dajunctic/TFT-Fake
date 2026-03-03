@@ -10,8 +10,8 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public float damageMultiplier = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
-        [ActionInput] public List<ActionNode> hitActions;
-        [ActionInput] public List<ActionNode> despawnActions;
+        [ActionInput] private List<ActionNode> hitActions;
+        [ActionInput] private List<ActionNode> despawnActions;
 
         [NodeInput] public List<IDamageTaker> targets;
 

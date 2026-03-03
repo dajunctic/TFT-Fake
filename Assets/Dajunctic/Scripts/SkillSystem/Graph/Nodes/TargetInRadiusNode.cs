@@ -14,7 +14,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
     public class TargetInRadiusNode : TargetNode
     {
-        protected override void FindAllTargets(IDamageTaker currentMainTarget, List<IDamageTaker> allTargets, float range)
+        protected override void FindAllTargets(ref IDamageTaker currentMainTarget, List<IDamageTaker> currentAllTargets, float range)
         {
             Debug.Log($"[TargetInRadiusNode] FindAllTargets called on node '{name}'");
             List<IDamageTaker> foundActors = null;
@@ -29,7 +29,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     .Where(d =>
                     {
                         var dCA = d.AsCombatActor();
-                        return dCA == null || ownerCA == null || dCA.CombatTeam != ownerCA.CombatTeam;
+                        return dCA == null || ownerCA == null || (dCA.CombatTeam != ownerCA.CombatTeam && MathUtils.InRange(ownerCA.Position, dCA.Position, range));
                     })
                     .ToList();
             }
@@ -39,7 +39,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 SkillHelper.ScanTargetInRadius(Owner.AsDamageTaker(), range, out foundActors);
             }
 
-            allTargets.Clear();
+            currentAllTargets.Clear();
             if (foundActors != null && foundActors.Count > 0)
             {
                 switch (targetType)
@@ -58,19 +58,19 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 if (!targetAll)
                     foundActors = foundActors.Take(count).ToList();
 
-                allTargets.AddRange(foundActors);
+                currentAllTargets.AddRange(foundActors);
             }
 
-            if (allTargets.Count > 0)
+            if (currentAllTargets.Count > 0)
             {
-                BindTarget(allTargets[0]);
+                currentMainTarget = currentAllTargets[0];
             }
             else
             {
-                BindTarget(null);
+                currentMainTarget = null;
             }
 
-            Debug.Log($"<color=green>[TargetInRadiusNode <color=red><{Owner.AsCombatActor()?.DataId}></color>]</color> Found: {allTargets.Count} targets.");
+            Debug.Log($"<color=green>[TargetInRadiusNode <color=red><{Owner.AsCombatActor()?.DataId}></color>]</color> Found: {currentAllTargets.Count} targets.");
         }
 
         protected override IDamageTaker GetOtherMainTarget(List<IDamageTaker> allTargets)

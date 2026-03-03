@@ -55,6 +55,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   targetType: 0
   targetAll: 0
+  count: 1
 --- !u!114 &-2673107805178859236
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72,6 +73,7 @@ MonoBehaviour:
   graph: {fileID: 11400000}
   animationName: atk_1
   transitionDuration: 0.1
+  duration: 0
   waitForFinish: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -90,10 +92,10 @@ MonoBehaviour:
   - {fileID: 4189450171198083585}
   - {fileID: -2673107805178859236}
   - {fileID: 7244376526115231882}
-  - {fileID: -5688582255329730170}
   - {fileID: 6598005642691697510}
   - {fileID: 8623586713851232229}
   - {fileID: -9172899940808046999}
+  - {fileID: -5688582255329730170}
   links:
   - baseNodeGuid: c320d1dc-6d8d-4546-a4b4-7468c29bdeb9
     portName: Out

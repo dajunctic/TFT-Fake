@@ -287,7 +287,7 @@ namespace Dajunctic
         public float Energy => _energy;
         public float MaxEnergy => Stats.MaxMana.Value;
 
-        public float GetTotalAtk() => Stats.AttackDamage.Value;
+        public float GetTotalAtk() => Stats?.AttackDamage.Value ?? 0;
         public float GetTotalAtkSpd() => Stats.AttackSpeed.Value;
 
         public void InitDamageTaker()

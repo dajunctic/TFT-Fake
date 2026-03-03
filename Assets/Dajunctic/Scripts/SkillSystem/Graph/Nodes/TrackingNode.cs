@@ -32,7 +32,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             {
                 Rotate();
                 Complete();
-
             }
 
             else
@@ -53,7 +52,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 _inTarget = GetInputValue<IDamageTaker>(nameof(target));
                 if (_inTarget == null || !_inTarget.CanBeTarget)
                 {
-
+                    Debug.LogError("Can not found Target");
                 }
 
                 if (_inTarget != null && _inTarget.CanBeTarget && _inTarget != Owner)

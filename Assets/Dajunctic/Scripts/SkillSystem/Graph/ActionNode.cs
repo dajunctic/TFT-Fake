@@ -14,7 +14,7 @@ namespace Dajunctic.SkillSystem.Graph
 
         public override object GetValue(string portName)
         {
-            if (portName == nameof(self)) return this;
+            if (IsPortNameMatch(portName, nameof(self))) return this;
             return base.GetValue(portName);
         }
 

@@ -15,7 +15,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         [SerializeField] protected Vector3 offset;
         [SerializeField] protected TargetType targetType;
         [SerializeField] protected bool targetAll = true;
-        [ShowIf("@targetAll==false")] protected int count = 1;
+        [SerializeField] protected int count = 1;
 
         private IDamageTaker _mainTarget;
         private List<IDamageTaker> _allTargets;
@@ -28,7 +28,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             if (_allTargets == null) _allTargets = new List<IDamageTaker>();
             _allTargets.Clear();
-            FindAllTargets(_mainTarget, _allTargets, radius);
+            FindAllTargets(ref _mainTarget, _allTargets, radius);
             if (_mainTarget == null || !_allTargets.Contains(_mainTarget))
             {
                 _mainTarget = GetOtherMainTarget(_allTargets);
@@ -66,22 +66,27 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         public override object GetValue(string portName)
         {
             if (_allTargets == null) _allTargets = new List<IDamageTaker>();
-            FindAllTargets(_mainTarget, _allTargets, Range);
+
+            // Re-calculate targets to ensure data is fresh
+            FindAllTargets(ref _mainTarget, _allTargets, Range);
+
+            // If current main target is lost or invalid, pick a new one
+            if (_mainTarget == null || !_allTargets.Contains(_mainTarget))
+            {
+                _mainTarget = GetOtherMainTarget(_allTargets);
+            }
+
             allTargets = _allTargets;
             mainTarget = _mainTarget;
 
-            if (string.Equals(portName, nameof(allTargets), StringComparison.OrdinalIgnoreCase)) return allTargets;
-            if (string.Equals(portName, nameof(mainTarget), StringComparison.OrdinalIgnoreCase)) return mainTarget;
+            if (IsPortNameMatch(portName, nameof(allTargets))) return allTargets;
+            if (IsPortNameMatch(portName, nameof(mainTarget))) return mainTarget;
             return base.GetValue(portName);
         }
 
         protected abstract bool IsCurrentMainTargetIsValid(IDamageTaker currentMainTarget, float range);
-        protected abstract void FindAllTargets(IDamageTaker currentMainTarget, List<IDamageTaker> allTargets, float range);
+        protected abstract void FindAllTargets(ref IDamageTaker currentMainTarget, List<IDamageTaker> allTargets, float range);
         protected abstract IDamageTaker GetOtherMainTarget(List<IDamageTaker> allTargets);
 
-        public void BindTarget(IDamageTaker target)
-        {
-            _mainTarget = target;
-        }
     }
 }

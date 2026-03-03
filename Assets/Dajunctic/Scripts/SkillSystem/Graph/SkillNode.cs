@@ -143,7 +143,43 @@ namespace Dajunctic.SkillSystem.Graph
         /// </summary>
         public virtual object GetValue(string portName)
         {
+            if (string.IsNullOrEmpty(portName)) return null;
+
+            // By default, try to find a field with a matching name (case-insensitive, normalized)
+            var field = GetType().GetField(portName.Replace(" ", ""),
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.IgnoreCase);
+
+            if (field != null) return field.GetValue(this);
+
+            // Fallback: iterate through all fields using the helper
+            var allFields = GetType().GetFields(
+                System.Reflection.BindingFlags.Public |
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance);
+
+            foreach (var f in allFields)
+            {
+                if (IsPortNameMatch(portName, f.Name))
+                {
+                    return f.GetValue(this);
+                }
+            }
+
+            Debug.LogWarning($"[SkillNode] GetValue('{portName}') failed for node '{name}': No matching field found.");
             return null;
+        }
+
+        /// <summary>
+        /// Helper to compare port names by ignoring spaces and case.
+        /// Useful for subclasses overriding GetValue.
+        /// </summary>
+        protected bool IsPortNameMatch(string inputPortName, string targetFieldName)
+        {
+            if (string.IsNullOrEmpty(inputPortName) || string.IsNullOrEmpty(targetFieldName)) return false;
+            return string.Equals(inputPortName.Replace(" ", ""), targetFieldName.Replace(" ", ""), StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -171,6 +207,7 @@ namespace Dajunctic.SkillSystem.Graph
             }
 
             Debug.Log($"[SkillNode] GetInputValue('{portName}') found {links.Count} links for node '{name}'");
+            Debug.Log($"[SkillNode] Link: " + string.Join(", ", links.Select(l => $"'{l.targetPortName}' from {l.portName}")));
 
             // Handle List types by aggregating all connected values
             if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(List<>))

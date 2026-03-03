@@ -161,10 +161,19 @@ namespace Dajunctic
 
         private void OnHitTarget()
         {
-            damageTaker.TakeDamage(combineDamage);
+            if (Application.isPlaying) damageTaker.TakeDamage(combineDamage);
+            
             OnHitEvent?.Invoke(damageTaker);
 
-            Destroy(gameObject);
+            if (Application.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                DestroyImmediate(gameObject);
+            }
+           
         }
     }
 
