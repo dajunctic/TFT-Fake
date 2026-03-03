@@ -14,6 +14,8 @@ namespace Dajunctic.SkillSystem.Graph.ActionNodes
         {
             if (_context?.Services == null || string.IsNullOrEmpty(fxId)) return;
 
+            Debug.LogError("Ahihi");
+
             var data = GetFxData(source);
             if (data != null && data.targets != null)
             {

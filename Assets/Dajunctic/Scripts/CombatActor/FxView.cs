@@ -46,7 +46,15 @@ namespace Dajunctic
         private void DestroyFx()
         {
             _isPlayed = false;
-            Destroy(gameObject);
+
+            if (Application.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                DestroyImmediate(gameObject);
+            }
         }
     }
 
