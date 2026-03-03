@@ -12,7 +12,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         [UnityEditor.Callbacks.OnOpenAsset(1)]
         public static bool OnOpenAsset(int instanceID, int line)
         {
-            if (EditorUtility.InstanceIDToObject(instanceID) is SkillGraph graph)
+            if (EditorUtility.EntityIdToObject(instanceID) is SkillGraph graph)
             {
                 OpenWindow();
                 var window = GetWindow<SkillGraphEditorWindow>();
@@ -30,6 +30,11 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         [SerializeField] private Vector2 _previewDir = new Vector2(120, -20);
         [SerializeField] private float _previewDistance = 6f;
         [SerializeField] private Vector3 _previewPivot = Vector3.up * 0.8f;
+        private bool _showDebugLog = true;
+        private static readonly string LogPrefix = "<color=#4dabf7>[PreviewSkill]</color>";
+        private static readonly string NodeColor = "#ffd43b";
+        private static readonly string SuccessColor = "#69db7c";
+        private static readonly string WarningColor = "#ff922b";
         private Dictionary<string, int> _nodeTriggerCounts = new();
 
         // Dummy state
@@ -66,7 +71,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _previewRenderUtility.camera.farClipPlane = 1000;
             _previewRenderUtility.camera.nearClipPlane = 0.1f;
 
-            _previewServices = new PreviewSkillServiceProvider(_previewRenderUtility);
+            _previewServices = new PreviewSkillServiceProvider(_previewRenderUtility, _showDebugLog);
 
             EditorApplication.update += OnEditorUpdate;
             Undo.undoRedoPerformed += OnUndoRedoPerformed;
@@ -644,6 +649,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             })
             { text = "Reset Preview" });
             toolbar.Add(new Button(() => _graphView.ClearGraph()) { text = "Clear Graph" });
+
+            toolbar.Add(new ToolbarSpacer());
+            var debugToggle = new ToolbarToggle { label = "Show Debug", value = _showDebugLog };
+            debugToggle.RegisterValueChangedCallback(evt => _showDebugLog = evt.newValue);
+            toolbar.Add(debugToggle);
+
             rootVisualElement.Insert(0, toolbar);
         }
 
@@ -670,8 +681,25 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             var context = new SkillExecutionContext(actor, _previewServices);
             InjectPreviewDummies(context);
 
+            if (_showDebugLog) Debug.Log($"{LogPrefix} Starting preview for graph: <color={NodeColor}>{_currentGraph.name}</color>. Nodes: {_currentGraph.nodes.Count}");
+
+            // Ensure graph reference and initialize ALL nodes
+            foreach (var n in _currentGraph.nodes)
+            {
+                n.graph = _currentGraph;
+                n.Init(context, null);
+            }
+
             var entryNode = _currentGraph.nodes.OfType<Nodes.EntryNode>().FirstOrDefault();
-            if (entryNode != null) ExecuteNodePreview(entryNode, context);
+            if (entryNode != null)
+            {
+                if (_showDebugLog) Debug.Log($"{LogPrefix} Found EntryNode, executing...");
+                ExecuteNodePreview(entryNode, context);
+            }
+            else
+            {
+                Debug.LogWarning("[PreviewSkill] No EntryNode found in graph!");
+            }
         }
 
         private void InjectPreviewDummies(SkillExecutionContext context)
@@ -695,6 +723,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void ExecuteNodePreview(SkillNode node, SkillExecutionContext context)
         {
+            if (node == null) return;
+            if (_showDebugLog) Debug.Log($"{LogPrefix} Executing node: <color={NodeColor}>{node.name}</color> (<color=#ced4da>{node.GetType().Name}</color>)");
             _graphView?.GetNodeViewByGuid(node.guid)?.SetHighlight();
 
             node.Init(context, () =>
@@ -702,10 +732,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 var outgoing = _currentGraph.links
                     .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out").ToList();
 
+                if (_showDebugLog) Debug.Log($"{LogPrefix} Node <color={NodeColor}>{node.name}</color> <color={SuccessColor}>completed</color>. Found {outgoing.Count} outgoing links.");
+
                 // Slow down the preview flow so highlights are visible
                 UnityEditor.EditorApplication.CallbackFunction nextCall = null;
                 float waitStart = (float)UnityEditor.EditorApplication.timeSinceStartup;
-                float stepDelay = 0f;
+                float stepDelay = 0.15f;
 
                 nextCall = () =>
                 {
@@ -773,6 +805,6 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public Team team = Team.Opponent;
         public Vector3 spawnPosition = new Vector3(3f, 0f, 0f);
         [Range(0f, 360f)]
-        public float yRotation = 180f; // mặc định quay mặt về phía caster
+        public float yRotation = 180f;
     }
 }

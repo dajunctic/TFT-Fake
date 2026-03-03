@@ -16,10 +16,11 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
     {
         protected override void FindAllTargets(IDamageTaker currentMainTarget, List<IDamageTaker> allTargets, float range)
         {
-            List<IDamageTaker> foundActors;
+            Debug.Log($"[TargetInRadiusNode] FindAllTargets called on node '{name}'");
+            List<IDamageTaker> foundActors = null;
 
-            // ── Editor Preview: dummies injected vào context ─────────────────
-            if (!Application.isPlaying &&
+            // ── Editor Preview ─────────────────
+            if (!Application.isPlaying && _context != null &&
                 _context.nodeOutputs.TryGetValue("__preview_dummies__", out var raw) &&
                 raw is List<IDamageTaker> previewDummies)
             {
@@ -32,12 +33,13 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                     })
                     .ToList();
             }
-            else
+            else if (Application.isPlaying)
             {
-                // ── Runtime: scan bằng Physics ────────────────────────────────
+                // ── Runtime ────────────────────────────────
                 SkillHelper.ScanTargetInRadius(Owner.AsDamageTaker(), range, out foundActors);
             }
 
+            allTargets.Clear();
             if (foundActors != null && foundActors.Count > 0)
             {
                 switch (targetType)
@@ -56,23 +58,31 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
                 if (!targetAll)
                     foundActors = foundActors.Take(count).ToList();
 
-                allTargets = new List<IDamageTaker>(foundActors);
-                mainTarget = allTargets.Count > 0 ? allTargets[0] : null;
+                allTargets.AddRange(foundActors);
             }
 
-            Debug.Log($"<color=green>[Target<color=red><{Owner.AsCombatActor()?.DataId}></color>]</color> Found: {allTargets?.Count ?? 0} targets.");
+            if (allTargets.Count > 0)
+            {
+                BindTarget(allTargets[0]);
+            }
+            else
+            {
+                BindTarget(null);
+            }
+
+            Debug.Log($"<color=green>[TargetInRadiusNode <color=red><{Owner.AsCombatActor()?.DataId}></color>]</color> Found: {allTargets.Count} targets.");
         }
 
         protected override IDamageTaker GetOtherMainTarget(List<IDamageTaker> allTargets)
         {
-            throw new System.NotImplementedException();
+            return allTargets != null && allTargets.Count > 0 ? allTargets[0] : null;
         }
 
         protected override bool IsCurrentMainTargetIsValid(IDamageTaker currentMainTarget, float range)
         {
-              return currentMainTarget != null
-                   && currentMainTarget.AsTeamMember().CombatTeam != Owner.AsTeamMember().CombatTeam
-                   && SkillHelper.IsInAbilityTargetingRange(OwnerOffset, OwnerRadius, currentMainTarget, range);
+            return currentMainTarget != null
+                 && currentMainTarget.AsTeamMember().CombatTeam != Owner.AsTeamMember().CombatTeam
+                 && SkillHelper.IsInAbilityTargetingRange(OwnerOffset, OwnerRadius, currentMainTarget, range);
         }
     }
 }

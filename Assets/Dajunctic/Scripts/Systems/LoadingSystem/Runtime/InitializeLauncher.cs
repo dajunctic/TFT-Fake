@@ -26,7 +26,7 @@ namespace Dajunctic
             
         }
 
-        async void Start()
+        void Start()
         {
             // if (fadingScene != null)
             // {

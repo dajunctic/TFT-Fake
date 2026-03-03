@@ -73,7 +73,7 @@ namespace Dajunctic
                 
                 for (int i = 0; i < _resolutions.Length; i++)
                 {
-                    string option = $"{_resolutions[i].width} x {_resolutions[i].height} @ {_resolutions[i].refreshRate}Hz";
+                    string option = $"{_resolutions[i].width} x {_resolutions[i].height} @ {_resolutions[i].refreshRateRatio}Hz";
                     options.Add(option);
                     
                     if (_resolutions[i].width == Screen.width && _resolutions[i].height == Screen.height)

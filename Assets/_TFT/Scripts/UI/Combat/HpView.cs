@@ -45,7 +45,6 @@ namespace Dajunctic
             if (_owner != null)
             {
                 _owner.OnHpChanged += UpdateHp;
-                _owner.OnEnergyChanged += UpdateEnergy;
 
                 UpdateHp(_owner.MaxHp > 0 ? _owner.Hp / _owner.MaxHp : 1f);
                 UpdateEnergy(_owner.MaxEnergy > 0 ? _owner.Energy / _owner.MaxEnergy : 0f);
@@ -74,7 +73,6 @@ namespace Dajunctic
             if (_owner != null)
             {
                 _owner.OnHpChanged -= UpdateHp;
-                _owner.OnEnergyChanged -= UpdateEnergy;
             }
         }
 

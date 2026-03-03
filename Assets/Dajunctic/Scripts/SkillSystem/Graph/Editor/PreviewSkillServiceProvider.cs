@@ -13,10 +13,17 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         private readonly List<System.Collections.IEnumerator> _activeCoroutines = new();
         private readonly PoolData poolSO;
         private float _lastUpdateTime;
+        private bool _showDebug;
+        public bool IsDebug => _showDebug;
 
-        public PreviewSkillServiceProvider(PreviewRenderUtility preview)
+        private static readonly string LogPrefix = "<color=#4dabf7>[PreviewServices]</color>";
+        private static readonly string SuccessColor = "#69db7c";
+        private static readonly string WarningColor = "#ff922b";
+
+        public PreviewSkillServiceProvider(PreviewRenderUtility preview, bool showDebug = true)
         {
             _preview = preview;
+            _showDebug = showDebug;
             var guids = AssetDatabase.FindAssets("t:PoolData");
             if (guids.Length > 0)
             {
@@ -34,6 +41,9 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         public void Cleanup()
         {
+            if (_showDebug && (_spawnedObjects.Count > 0 || _activeCoroutines.Count > 0))
+                Debug.Log($"{LogPrefix} Cleanup: Destroying {_spawnedObjects.Count} objects and stopping {_activeCoroutines.Count} coroutines.");
+
             foreach (var go in _spawnedObjects)
             {
                 if (go != null) Object.DestroyImmediate(go);
@@ -74,15 +84,24 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         public void StartManualCoroutine(System.Collections.IEnumerator coroutine)
         {
-            _activeCoroutines.Add(coroutine);
+            if (coroutine != null)
+            {
+                if (_showDebug) Debug.Log($"{LogPrefix} Starting Manual Coroutine: <color=#ced4da>{coroutine.GetType().Name}</color>");
+                _activeCoroutines.Add(coroutine);
+            }
         }
 
         public FxView SpawnFx(SpawnFxEvent playFxEvent)
         {
             if (poolSO == null || string.IsNullOrEmpty(playFxEvent.id)) return null;
             var entity = poolSO.fxLists.Find(f => f.Id == playFxEvent.id);
-            if (entity == null || entity.fxViewPrefab == null) return null;
+            if (entity == null || entity.fxViewPrefab == null)
+            {
+                if (_showDebug) Debug.LogWarning($"{LogPrefix} SpawnFx: Prefab NOT FOUND for ID: <color={WarningColor}>{playFxEvent.id}</color>");
+                return null;
+            }
 
+            if (_showDebug) Debug.Log($"{LogPrefix} Spawning FX: <color={SuccessColor}>{playFxEvent.id}</color> at {playFxEvent.position}");
             var go = Object.Instantiate(entity.fxViewPrefab.gameObject);
             go.hideFlags = HideFlags.HideAndDontSave;
             TrackSpawnedObject(go);
@@ -94,10 +113,24 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         public MissileView SpawnMissile(MissileData missileData)
         {
-            if (poolSO == null || string.IsNullOrEmpty(missileData.id)) return null;
+            if (poolSO == null)
+            {
+                if (_showDebug) Debug.LogWarning($"{LogPrefix} SpawnMissile: <color={WarningColor}>PoolData (poolSO) is NULL!</color>");
+                return null;
+            }
+            if (string.IsNullOrEmpty(missileData.id))
+            {
+                if (_showDebug) Debug.LogWarning($"{LogPrefix} SpawnMissile: <color={WarningColor}>missileData.id is EMPTY!</color>");
+                return null;
+            }
             var entity = poolSO.missileLists.Find(m => m.Id == missileData.id);
-            if (entity == null || entity.missilePrefab == null) return null;
+            if (entity == null || entity.missilePrefab == null)
+            {
+                if (_showDebug) Debug.LogWarning($"{LogPrefix} SpawnMissile: Prefab NOT FOUND for ID: <color={WarningColor}>{missileData.id}</color>");
+                return null;
+            }
 
+            if (_showDebug) Debug.Log($"{LogPrefix} Spawning Missile: <color={SuccessColor}>{missileData.id}</color> targeting {missileData.destination}");
             var go = Object.Instantiate(entity.missilePrefab.gameObject);
             go.hideFlags = HideFlags.HideAndDontSave;
             TrackSpawnedObject(go);

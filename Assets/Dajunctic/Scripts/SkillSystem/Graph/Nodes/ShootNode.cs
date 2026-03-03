@@ -22,8 +22,18 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             targets = GetInputValue<List<IDamageTaker>>(nameof(targets));
             var inTargets = targets ?? new List<IDamageTaker>();
 
+            if (_context.Services != null && _context.Services.IsDebug)
+            {
+                Debug.Log($"<color=#4dabf7>[ShootNode]</color> Execute: targets={inTargets.Count}, missileId='{missileId}'");
+            }
+
             if (inTargets.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
             {
+                if (_context.Services != null && _context.Services.IsDebug)
+                {
+                    if (inTargets.Count == 0) Debug.LogWarning("<color=#4dabf7>[ShootNode]</color> No targets found!");
+                    if (string.IsNullOrEmpty(missileId)) Debug.LogWarning("<color=#4dabf7>[ShootNode]</color> missileId is EMPTY!");
+                }
                 Complete();
                 return;
             }

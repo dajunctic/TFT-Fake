@@ -72,7 +72,7 @@ MonoBehaviour:
   graph: {fileID: 11400000}
   animationName: atk_1
   transitionDuration: 0.1
-  waitForFinish: 1
+  waitForFinish: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

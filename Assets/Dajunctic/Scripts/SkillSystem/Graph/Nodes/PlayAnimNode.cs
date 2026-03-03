@@ -7,6 +7,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
     {
         public string animationName;
         public float transitionDuration = 0.1f;
+        public float duration;
         public bool waitForFinish = true;
 
         public override void Execute()
@@ -33,12 +34,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         public override IEnumerator IECoroutine()
         {
-            var actor = _context.actor.AsCombatActor();
-            yield return null;
-            while (actor != null && !actor.IsAnimFinished)
-            {
-                yield return null;
-            }
+            yield return new WaitForSeconds(duration);
             Complete();
         }
     }

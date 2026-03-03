@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Dajunctic.SkillSystem.Graph
 {
@@ -150,11 +151,26 @@ namespace Dajunctic.SkillSystem.Graph
         /// </summary>
         protected T GetInputValue<T>(string portName, T defaultValue = default)
         {
-            if (graph == null) return defaultValue;
+            if (graph == null)
+            {
+                Debug.LogWarning($"[SkillNode] GetInputValue('{portName}') failed: graph is null on node '{name}' ({guid})");
+                return defaultValue;
+            }
 
             // Find all connections to this port
-            var links = graph.links.FindAll(l => l.targetNodeGuid == guid && l.targetPortName == portName);
-            if (links == null || links.Count == 0) return defaultValue;
+            var links = graph.links.FindAll(l =>
+                l.targetNodeGuid == guid &&
+                string.Equals(l.targetPortName, portName, StringComparison.OrdinalIgnoreCase));
+
+            if (links == null || links.Count == 0)
+            {
+                var allIncoming = graph.links.FindAll(l => l.targetNodeGuid == guid);
+                string linksInfo = string.Join(", ", allIncoming.Select(l => $"'{l.targetPortName}' from {l.portName}"));
+                Debug.Log($"[SkillNode] GetInputValue('{portName}') found 0 links for node '{name}'. Incoming links available: [{linksInfo}]");
+                return defaultValue;
+            }
+
+            Debug.Log($"[SkillNode] GetInputValue('{portName}') found {links.Count} links for node '{name}'");
 
             // Handle List types by aggregating all connected values
             if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(List<>))

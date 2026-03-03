@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public class PoolView: Singleton<PoolView>, ISkillServiceProvider
+    public class PoolView : Singleton<PoolView>, ISkillServiceProvider
     {
         [SerializeField] private PoolData poolData;
+        public bool IsDebug => false;
 
         void OnEnable()
         {
@@ -46,7 +47,7 @@ namespace Dajunctic
             var fxId = param.id;
             var fxViewPrefab = poolData.fxLists.Find(f => f.Id == fxId).fxViewPrefab;
 
-            var fxView =  PoolableObject.Pool.Spawn(fxViewPrefab, position, Quaternion.identity);
+            var fxView = PoolableObject.Pool.Spawn(fxViewPrefab, position, Quaternion.identity);
             fxView.Play(param);
             return fxView;
         }
@@ -66,7 +67,7 @@ namespace Dajunctic
             var entry = poolData.missileLists.Find(m => m.Id == missileData.id);
             if (entry == null || entry.missilePrefab == null) return null;
 
-            var missileView =  PoolableObject.Pool.Spawn(entry.missilePrefab, missileData.launcher, Quaternion.identity);
+            var missileView = PoolableObject.Pool.Spawn(entry.missilePrefab, missileData.launcher, Quaternion.identity);
             missileView.InitData(missileData);
             missileView.StartFly();
             return missileView;

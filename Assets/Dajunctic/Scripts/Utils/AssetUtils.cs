@@ -10,7 +10,7 @@ namespace Dajunctic
 
         public static void ChangeAssetName(Object asset, string name)
         {
-            var assetPath = AssetDatabase.GetAssetPath(asset.GetInstanceID());
+            var assetPath = AssetDatabase.GetAssetPath(asset.GetEntityId());
             asset.name = name;
             AssetDatabase.RenameAsset(assetPath, name);
             AssetDatabase.SaveAssets();

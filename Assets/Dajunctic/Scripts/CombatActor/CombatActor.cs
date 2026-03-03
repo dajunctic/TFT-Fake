@@ -37,7 +37,6 @@ namespace Dajunctic
         public float AtkSpd => Stats.AttackSpeed.Value;
         public ChampionStats Stats { get; private set; }
         public event Action<float> OnHpChanged;
-        public event Action<float> OnEnergyChanged;
 
         protected Node root = null;
 
