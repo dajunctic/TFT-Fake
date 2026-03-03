@@ -160,24 +160,38 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             rightScroll.style.paddingTop = rightScroll.style.paddingBottom = 10;
             _rightPane.Add(rightScroll);
 
-            AddSectionLabel(rightScroll, "▶ Preview Settings");
+            // ─── Preview Settings ─────────────────────────────────────────────
+            var settingsContainer = new VisualElement();
+            var settingsLabel = AddSectionLabel(rightScroll, "▼ Preview Settings");
+            settingsLabel.RegisterCallback<MouseDownEvent>(_ => ToggleSection(settingsContainer, settingsLabel, "Preview Settings"));
+            rightScroll.Add(settingsContainer);
 
             var actorField = new ObjectField("Caster Actor (Prefab)") { objectType = typeof(CombatActor) };
             actorField.value = _previewActor;
             actorField.RegisterValueChangedCallback(evt => { _previewActor = evt.newValue as CombatActor; UpdatePreviewInstance(); });
-            rightScroll.Add(actorField);
+            settingsContainer.Add(actorField);
 
             // ─── Dummy Targets ─────────────────────────────────────────────
-            AddSectionLabel(rightScroll, "▶ Dummy Targets");
+            var dummiesContainer = new VisualElement();
+            var dummiesLabel = AddSectionLabel(rightScroll, "▼ Dummy Targets");
+            dummiesLabel.RegisterCallback<MouseDownEvent>(_ => ToggleSection(dummiesContainer, dummiesLabel, "Dummy Targets"));
+            rightScroll.Add(dummiesContainer);
 
             var rotateHint = new Label("Tip: Click dummy marker in preview → drag left/right to rotate");
             rotateHint.style.fontSize = 9;
             rotateHint.style.color = new Color(0.5f, 0.8f, 0.5f, 1f);
             rotateHint.style.marginBottom = 4;
-            rightScroll.Add(rotateHint);
+            dummiesContainer.Add(rotateHint);
+
+            var dummyScroll = new ScrollView(ScrollViewMode.Vertical);
+            dummyScroll.style.maxHeight = 185; // Approximately the height of one dummy card
+            dummyScroll.style.marginBottom = 5;
+            dummyScroll.style.borderBottomWidth = 1;
+            dummyScroll.style.borderBottomColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
+            dummiesContainer.Add(dummyScroll);
 
             _dummyListContainer = new VisualElement();
-            rightScroll.Add(_dummyListContainer);
+            dummyScroll.Add(_dummyListContainer);
             RebuildDummyUI();
 
             var addBtn = new Button(() =>
@@ -188,7 +202,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             })
             { text = "+ Add Dummy Target" };
             addBtn.style.marginTop = 5;
-            rightScroll.Add(addBtn);
+            dummiesContainer.Add(addBtn);
 
             // Preview IMGUI
             var previewIMGUI = new IMGUIContainer(OnPreviewGUI);
@@ -198,7 +212,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             _rightPane.Add(previewIMGUI);
         }
 
-        private void AddSectionLabel(VisualElement parent, string text)
+        private void ToggleSection(VisualElement container, Label label, string title)
+        {
+            bool isHidden = container.style.display == DisplayStyle.None;
+            container.style.display = isHidden ? DisplayStyle.Flex : DisplayStyle.None;
+            label.text = (isHidden ? "▼ " : "▶ ") + title;
+        }
+
+        private Label AddSectionLabel(VisualElement parent, string text)
         {
             var lbl = new Label(text);
             lbl.style.unityFontStyleAndWeight = FontStyle.Bold;
@@ -206,6 +227,7 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             lbl.style.marginBottom = 4;
             lbl.style.color = new Color(0.8f, 0.8f, 0.8f, 1f);
             parent.Add(lbl);
+            return lbl;
         }
 
         // ─── DUMMY UI ────────────────────────────────────────────────────────
