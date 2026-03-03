@@ -11,17 +11,15 @@ namespace Dajunctic.SkillSystem.Graph.ActionNodes
 
         public override void Execute(object source)
         {
-            if (_context?.actor == null || source == null) return;
+            if (_context?.actor == null) return;
 
-            if (source is ISubActionSource actionSource)
+            var data = GetHitData(source);
+            if (data != null && data.targets != null)
             {
-                var data = actionSource.GetData();
-                if (data == null || data.damageTakers == null) return;
-
                 float baseDamage = _context.actor.GetTotalAtk();
                 float finalDamage = baseDamage * damageMultiplier;
 
-                foreach (var target in data.damageTakers)
+                foreach (var target in data.targets)
                 {
                     if (target == null) continue;
                     target.TakeDamage(new CombineDamage(damageType, finalDamage));

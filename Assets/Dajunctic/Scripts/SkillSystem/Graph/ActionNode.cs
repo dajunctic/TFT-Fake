@@ -5,7 +5,7 @@ namespace Dajunctic.SkillSystem.Graph
 {
     public abstract class ActionNode : SkillNode
     {
-        [NodeOutput] public SkillNode self;
+        [NodeOutput] public ActionNode self;
 
         public virtual void Execute(object source)
         {
@@ -22,6 +22,18 @@ namespace Dajunctic.SkillSystem.Graph
         {
             base.Reset();
             // Action nodes don't have per-execution data input for now (resolved from source)
+        }
+
+        protected HitData GetHitData(object source)
+        {
+            if (source is IHitDataProvider hitProvider) return hitProvider.GetHitData();
+            return null;
+        }
+
+        protected FxData GetFxData(object source)
+        {
+            if (source is IFxDataProvider fxProvider) return fxProvider.GetFxData();
+            return null;
         }
     }
 }

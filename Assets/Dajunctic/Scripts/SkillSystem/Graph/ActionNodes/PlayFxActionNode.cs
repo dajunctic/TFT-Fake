@@ -6,20 +6,18 @@ namespace Dajunctic.SkillSystem.Graph.ActionNodes
 {
     public class PlayFxActionNode : ActionNode
     {
-        public string fxId;
+        [SerializeField, GuidReference("fx", typeof(IDummyId))] private string fxId;
         public AnchorType spawnAnchor = AnchorType.MidPoint;
         public float duration = 2f;
 
         public override void Execute(object source)
         {
-            if (_context?.Services == null || string.IsNullOrEmpty(fxId) || source == null) return;
+            if (_context?.Services == null || string.IsNullOrEmpty(fxId)) return;
 
-            if (source is ISubActionSource actionSource)
+            var data = GetFxData(source);
+            if (data != null && data.targets != null)
             {
-                var data = actionSource.GetData();
-                if (data == null || data.damageTakers == null) return;
-
-                foreach (var target in data.damageTakers)
+                foreach (var target in data.targets)
                 {
                     if (target == null) continue;
 

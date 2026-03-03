@@ -4,6 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using Dajunctic.SkillSystem.Graph;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph.Editor
 {
@@ -12,6 +13,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
         public SkillNode nodeData;
         public Port inputPort;
         public Port outputPort;
+
+        private static readonly Color ActionPortColor = new Color(1.0f, 0.3f, 0.6f); // Magenta/Pink for Action Flow
 
         public SkillNodeView(SkillNode nodeData)
         {
@@ -38,13 +41,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateInputPorts()
         {
-            if (nodeData is Nodes.EntryNode || nodeData is ActionNode) return;
-
             // Execution In
-            inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
-            inputPort.portName = "In";
-            inputPort.AddToClassList("execution-port");
-            inputContainer.Add(inputPort);
+            if (!(nodeData is Nodes.EntryNode || nodeData is ActionNode))
+            {
+                inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
+                inputPort.portName = "In";
+                inputPort.AddToClassList("execution-port");
+                inputContainer.Add(inputPort);
+            }
 
             // Data Inputs
             var fields = nodeData.GetType().GetFields(
@@ -54,8 +58,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             foreach (var field in fields)
             {
-                if (System.Attribute.IsDefined(field, typeof(NodeInputAttribute))) //||
-                    // System.Attribute.IsDefined(field, typeof(UnityEngine.SerializeReferenceAttribute)))
+                if (System.Attribute.IsDefined(field, typeof(NodeInputAttribute)) ||
+                    System.Attribute.IsDefined(field, typeof(ActionInput)))
                 {
                     var capacity = field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(List<>)
                         ? Port.Capacity.Multi
@@ -63,6 +67,12 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
                     var port = InstantiatePort(Orientation.Horizontal, Direction.Input, capacity, field.FieldType);
                     port.portName = field.Name;
+
+                    if (System.Attribute.IsDefined(field, typeof(ActionInput)))
+                    {
+                        port.portColor = ActionPortColor;
+                    }
+
                     SetPortLabel(port, FormatPortName(field.Name));
                     inputContainer.Add(port);
                 }
@@ -71,13 +81,14 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
         private void CreateOutputPorts()
         {
-            if (nodeData is Nodes.ExitNode || nodeData is ActionNode) return;
-
             // Execution Out
-            outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
-            outputPort.portName = "Out";
-            outputPort.AddToClassList("execution-port");
-            outputContainer.Add(outputPort);
+            if (!(nodeData is Nodes.ExitNode || nodeData is ActionNode))
+            {
+                outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
+                outputPort.portName = "Out";
+                outputPort.AddToClassList("execution-port");
+                outputContainer.Add(outputPort);
+            }
 
             // Data Outputs
             var fields = nodeData.GetType().GetFields(
@@ -87,10 +98,16 @@ namespace Dajunctic.SkillSystem.Graph.Editor
 
             foreach (var field in fields)
             {
-                if (System.Attribute.IsDefined(field, typeof(Dajunctic.SkillSystem.Graph.NodeOutputAttribute)))
+                if (System.Attribute.IsDefined(field, typeof(NodeOutputAttribute)))
                 {
                     var port = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, field.FieldType);
                     port.portName = field.Name;
+
+                    if (field.FieldType == typeof(ActionNode) || field.Name == "self")
+                    {
+                        port.portColor = ActionPortColor;
+                    }
+
                     SetPortLabel(port, FormatPortName(field.Name));
                     outputContainer.Add(port);
                 }
@@ -115,8 +132,15 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             while (iterator.NextVisible(false))
             {
                 // Tránh hiển thị các field đã được dùng làm Port
-                var fieldInfo = nodeData.GetType().GetField(iterator.name, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                if (fieldInfo != null && (System.Attribute.IsDefined(fieldInfo, typeof(Dajunctic.SkillSystem.Graph.NodeInputAttribute)) || System.Attribute.IsDefined(fieldInfo, typeof(Dajunctic.SkillSystem.Graph.NodeOutputAttribute))))
+                var fieldInfo = nodeData.GetType().GetField(iterator.name,
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic |
+                    System.Reflection.BindingFlags.Instance);
+
+                if (fieldInfo != null && (
+                    System.Attribute.IsDefined(fieldInfo, typeof(NodeInputAttribute)) ||
+                    System.Attribute.IsDefined(fieldInfo, typeof(NodeOutputAttribute)) ||
+                    System.Attribute.IsDefined(fieldInfo, typeof(ActionInput))))
                     continue;
 
                 var field = new PropertyField(iterator);

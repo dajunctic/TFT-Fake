@@ -11,14 +11,12 @@ namespace Dajunctic.SkillSystem.Graph.ActionNodes
 
         public override void Execute(object source)
         {
-            if (source == null || string.IsNullOrEmpty(animationName)) return;
+            if (string.IsNullOrEmpty(animationName)) return;
 
-            if (source is ISubActionSource actionSource)
+            var data = GetFxData(source);
+            if (data != null && data.targets != null)
             {
-                var data = actionSource.GetData();
-                if (data == null || data.damageTakers == null) return;
-
-                foreach (var target in data.damageTakers)
+                foreach (var target in data.targets)
                 {
                     if (target == null) continue;
 

@@ -19,51 +19,23 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             }
 
             actor.PlayAnim(animationName, transitionDuration);
-            actor.ResetAnim(); 
+            actor.ResetAnim();
 
-            if (!waitForFinish)
+            if (waitForFinish)
             {
-                Complete();
-                return;
+                StartCoroutine();
             }
-
-            if (Application.isPlaying)
-            {
-                var runner = actor.GetSkillGraphRunner();
-                if (runner != null)
-                {
-                    runner.StartCoroutine(WaitForAnimation((CombatActor)actor));
-                    return;
-                }
-                Complete();
-            }
-#if UNITY_EDITOR
             else
             {
-                UnityEditor.EditorApplication.CallbackFunction update = null;
-                update = () =>
-                {
-                    if (actor == null)
-                    {
-                        UnityEditor.EditorApplication.update -= update;
-                        Complete();
-                        return;
-                    }
-                    if (actor.IsAnimFinished)
-                    {
-                        UnityEditor.EditorApplication.update -= update;
-                        Complete();
-                    }
-                };
-                UnityEditor.EditorApplication.update += update;
+                Complete();
             }
-#endif
         }
 
-        private IEnumerator WaitForAnimation(CombatActor actor)
+        public override IEnumerator IECoroutine()
         {
+            var actor = _context.actor.AsCombatActor();
             yield return null;
-            while (!actor.IsAnimFinished)
+            while (actor != null && !actor.IsAnimFinished)
             {
                 yield return null;
             }

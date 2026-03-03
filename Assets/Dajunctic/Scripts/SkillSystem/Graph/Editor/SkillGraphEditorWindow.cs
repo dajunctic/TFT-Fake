@@ -174,7 +174,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 _dummyEntries.Add(new DummySpawnEntry());
                 RebuildDummyUI();
                 RebuildDummyInstances();
-            }) { text = "+ Add Dummy Target" };
+            })
+            { text = "+ Add Dummy Target" };
             addBtn.style.marginTop = 5;
             rightScroll.Add(addBtn);
 
@@ -231,7 +232,8 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                     if (_selectedDummyIndex >= _dummyEntries.Count) _selectedDummyIndex = -1;
                     RebuildDummyUI();
                     RebuildDummyInstances();
-                }) { text = "✕" };
+                })
+                { text = "✕" };
                 removeBtn.style.color = new Color(1f, 0.4f, 0.4f, 1f);
                 removeBtn.style.width = 22; removeBtn.style.height = 22;
 
@@ -632,7 +634,9 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 _previewServices?.Cleanup();
                 UpdatePreviewInstance();
                 RebuildDummyInstances();
-            }) { text = "Reset Preview" });
+                ClearAllNodeHighlights();
+            })
+            { text = "Reset Preview" });
             toolbar.Add(new Button(() => _graphView.ClearGraph()) { text = "Clear Graph" });
             rootVisualElement.Insert(0, toolbar);
         }
@@ -692,19 +696,31 @@ namespace Dajunctic.SkillSystem.Graph.Editor
                 var outgoing = _currentGraph.links
                     .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out").ToList();
 
-                foreach (var link in outgoing)
+                // Slow down the preview flow so highlights are visible
+                UnityEditor.EditorApplication.CallbackFunction nextCall = null;
+                float waitStart = (float)UnityEditor.EditorApplication.timeSinceStartup;
+                float stepDelay = 0f;
+
+                nextCall = () =>
                 {
-                    var next = _currentGraph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
-                    if (next == null) continue;
+                    if ((float)UnityEditor.EditorApplication.timeSinceStartup - waitStart < stepDelay) return;
+                    UnityEditor.EditorApplication.update -= nextCall;
 
-                    if (!_nodeTriggerCounts.ContainsKey(next.guid)) _nodeTriggerCounts[next.guid] = 0;
-                    _nodeTriggerCounts[next.guid]++;
+                    foreach (var link in outgoing)
+                    {
+                        var next = _currentGraph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
+                        if (next == null) continue;
 
-                    int totalIn = _currentGraph.links.Count(l =>
-                        l.targetNodeGuid == next.guid && l.targetPortName == "In");
-                    if (_nodeTriggerCounts[next.guid] >= totalIn)
-                        ExecuteNodePreview(next, context);
-                }
+                        if (!_nodeTriggerCounts.ContainsKey(next.guid)) _nodeTriggerCounts[next.guid] = 0;
+                        _nodeTriggerCounts[next.guid]++;
+
+                        int totalIn = _currentGraph.links.Count(l =>
+                            l.targetNodeGuid == next.guid && l.targetPortName == "In");
+                        if (_nodeTriggerCounts[next.guid] >= totalIn)
+                            ExecuteNodePreview(next, context);
+                    }
+                };
+                UnityEditor.EditorApplication.update += nextCall;
             });
 
             node.Execute();

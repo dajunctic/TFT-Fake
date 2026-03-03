@@ -3,17 +3,27 @@ using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Graph
 {
-    public interface ISubActionSource
+    public interface IActionSource { }
+
+    public class HitData
     {
-        SubActionData GetData();
+        public List<IDamageTaker> targets;
+        public List<Vector3> hitPoints;
     }
 
-    public class SubActionData
+    public interface IHitDataProvider : IActionSource
     {
-        public List<IDamageTaker> damageTakers = new List<IDamageTaker>();
-        public List<Vector3> positions = new List<Vector3>();
-        public List<Transform> transforms = new List<Transform>();
-        
-        // Add more common data fields as needed
+        HitData GetHitData();
+    }
+
+    public class FxData
+    {
+        public List<IDamageTaker> targets;
+        public List<Vector3> spawnPositions;
+    }
+
+    public interface IFxDataProvider : IActionSource
+    {
+        FxData GetFxData();
     }
 }

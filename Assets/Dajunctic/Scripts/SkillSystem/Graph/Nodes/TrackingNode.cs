@@ -7,7 +7,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
     public class TrackingNode : SkillNode
     {
         [NodeInput] public IDamageTaker target;
-        
+
         [SerializeField] private float duration;
         [SerializeField] private bool immediately;
 
@@ -30,46 +30,51 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
             if (immediately)
             {
-                
+                Rotate();
+                Complete();
+
             }
 
-            StartCoroutine();
+            else
+            {
+                StartCoroutine();
+            }
 
-            Complete();
         }
 
         private void Rotate()
         {
             if (isManual)
             {
-                Owner.AsMovable().RotateDirection(_inManualDirection, Owner.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
+                Owner.AsMovable().RotateDirection(_inManualDirection, Owner.AsCombatActor().RotateSpeed, DeltaTime, immediately);
             }
             else
             {
                 _inTarget = GetInputValue<IDamageTaker>(nameof(target));
                 if (_inTarget == null || !_inTarget.CanBeTarget)
                 {
-                    
+
                 }
 
                 if (_inTarget != null && _inTarget.CanBeTarget && _inTarget != Owner)
                 {
-                    Owner.AsMovable().RotatePosition(_inTarget.MidPoint, Owner.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
-                }   
+                    Owner.AsMovable().RotatePosition(_inTarget.MidPoint, Owner.AsCombatActor().RotateSpeed, DeltaTime, immediately);
+                }
 
             }
         }
 
         public override IEnumerator IECoroutine()
         {
-            var actor = Owner.AsCombatActor();
-            while (true)
+            var timeElapsed = 0f;
+            while (timeElapsed < duration)
             {
-                
-
-                actor.RotatePosition(_inTarget.AsTransform().Position, actor.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
+                Rotate();
                 yield return null;
+                timeElapsed += DeltaTime;
             }
+
+            Complete();
         }
 
 

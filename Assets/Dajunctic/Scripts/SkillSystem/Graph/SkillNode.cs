@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem.Graph
 {
@@ -11,8 +12,25 @@ namespace Dajunctic.SkillSystem.Graph
         [HideInInspector] public SkillGraph graph;
 
         protected SkillExecutionContext _context;
-        protected ISkillOwner Owner {get; set; }
+        protected ISkillOwner Owner { get; set; }
         private Action _onComplete;
+
+        private float _lastEditorTime;
+        protected float DeltaTime
+        {
+            get
+            {
+                if (Application.isPlaying) return Time.deltaTime;
+#if UNITY_EDITOR
+                if (_lastEditorTime == 0) _lastEditorTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
+                float dt = (float)UnityEditor.EditorApplication.timeSinceStartup - _lastEditorTime;
+                _lastEditorTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
+                return dt;
+#else
+                return 0.02f;
+#endif
+            }
+        }
 
         public void Init(SkillExecutionContext context, Action onComplete)
         {
@@ -31,17 +49,86 @@ namespace Dajunctic.SkillSystem.Graph
 
         protected void StartCoroutine()
         {
-            this.StartGlobalCoroutine(IECoroutine());
+            var coroutine = IECoroutine();
+            if (coroutine == null) return;
+
+            if (Application.isPlaying)
+            {
+                this.StartGlobalCoroutine(coroutine);
+            }
+            else
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.CallbackFunction update = null;
+                update = () =>
+                {
+                    // Pump the coroutine
+                    if (!coroutine.MoveNext())
+                    {
+                        UnityEditor.EditorApplication.update -= update;
+                    }
+                };
+                UnityEditor.EditorApplication.update += update;
+#endif
+            }
         }
 
         public virtual IEnumerator IECoroutine()
         {
-            yield return null;
+            yield break;
         }
 
         public void Complete()
         {
             _onComplete?.Invoke();
+        }
+
+        protected void Delay(float duration, Action onComplete = null)
+        {
+            if (duration <= 0)
+            {
+                onComplete?.Invoke();
+                Complete();
+                return;
+            }
+
+            if (Application.isPlaying)
+            {
+                var runner = _context.actor.AsCombatActor()?.GetSkillGraphRunner();
+                if (runner != null)
+                {
+                    runner.StartCoroutine(DelayCoroutine(duration, onComplete));
+                }
+                else
+                {
+                    onComplete?.Invoke();
+                    Complete();
+                }
+            }
+            else
+            {
+#if UNITY_EDITOR
+                float startTime = (float)UnityEditor.EditorApplication.timeSinceStartup;
+                UnityEditor.EditorApplication.CallbackFunction update = null;
+                update = () =>
+                {
+                    if ((float)UnityEditor.EditorApplication.timeSinceStartup - startTime >= duration)
+                    {
+                        UnityEditor.EditorApplication.update -= update;
+                        onComplete?.Invoke();
+                        Complete();
+                    }
+                };
+                UnityEditor.EditorApplication.update += update;
+#endif
+            }
+        }
+
+        private IEnumerator DelayCoroutine(float duration, Action onComplete)
+        {
+            yield return new WaitForSeconds(duration);
+            onComplete?.Invoke();
+            Complete();
         }
 
         public virtual void Reset()
@@ -65,16 +152,48 @@ namespace Dajunctic.SkillSystem.Graph
         {
             if (graph == null) return defaultValue;
 
-            // Find connection to this port
-            var link = graph.links.Find(l => l.targetNodeGuid == guid && l.targetPortName == portName);
-            if (link == null) return defaultValue;
+            // Find all connections to this port
+            var links = graph.links.FindAll(l => l.targetNodeGuid == guid && l.targetPortName == portName);
+            if (links == null || links.Count == 0) return defaultValue;
 
-            // Find source node
-            var sourceNode = graph.nodes.Find(n => n.guid == link.baseNodeGuid);
-            if (sourceNode == null) return defaultValue;
+            // Handle List types by aggregating all connected values
+            if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var elementType = typeof(T).GetGenericArguments()[0];
+                var list = (IList)Activator.CreateInstance(typeof(T));
 
-            // Pull value from source
-            object value = sourceNode.GetValue(link.portName);
+                foreach (var link in links)
+                {
+                    var sourceNode = graph.nodes.Find(n => n.guid == link.baseNodeGuid);
+                    if (sourceNode == null) continue;
+
+                    object sourceValue = sourceNode.GetValue(link.portName);
+                    if (sourceValue == null) continue;
+
+                    if (elementType.IsInstanceOfType(sourceValue))
+                    {
+                        list.Add(sourceValue);
+                    }
+                    else if (sourceValue is IList sourceList)
+                    {
+                        foreach (var item in sourceList)
+                        {
+                            if (elementType.IsInstanceOfType(item))
+                            {
+                                list.Add(item);
+                            }
+                        }
+                    }
+                }
+                return (T)list;
+            }
+
+            // Single value handling
+            var firstLink = links[0];
+            var firstSourceNode = graph.nodes.Find(n => n.guid == firstLink.baseNodeGuid);
+            if (firstSourceNode == null) return defaultValue;
+
+            object value = firstSourceNode.GetValue(firstLink.portName);
             if (value is T tValue) return tValue;
 
             return defaultValue;
@@ -86,4 +205,7 @@ namespace Dajunctic.SkillSystem.Graph
 
     [AttributeUsage(AttributeTargets.Field)]
     public class NodeOutputAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ActionInput : Attribute { }
 }

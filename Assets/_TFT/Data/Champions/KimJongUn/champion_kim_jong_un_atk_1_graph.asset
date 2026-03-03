@@ -52,6 +52,7 @@ MonoBehaviour:
   - {fileID: 4189450171198083585}
   - {fileID: 4154907880675435527}
   - {fileID: 6598005642691697510}
+  - {fileID: 8623586713851232229}
   links:
   - baseNodeGuid: c320d1dc-6d8d-4546-a4b4-7468c29bdeb9
     portName: Out
@@ -73,6 +74,10 @@ MonoBehaviour:
     portName: Out
     targetNodeGuid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
     targetPortName: In
+  - baseNodeGuid: db68e453-364f-45eb-b9e0-408bca5e9708
+    portName: Self
+    targetNodeGuid: 174f101d-fb27-449e-9578-52ee28cb5b1f
+    targetPortName: Hit Actions
 --- !u!114 &4154907880675435527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,9 +93,8 @@ MonoBehaviour:
   guid: 174f101d-fb27-449e-9578-52ee28cb5b1f
   gridPosition: {x: 340, y: -55}
   graph: {fileID: 11400000}
-  damage: 1
+  damageMultiplier: 1
   damageType: 1
-  hitActions: []
 --- !u!114 &4189450171198083585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,3 +128,22 @@ MonoBehaviour:
   guid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
   gridPosition: {x: 500, y: 200}
   graph: {fileID: 11400000}
+--- !u!114 &8623586713851232229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a29edddc7510e74e9f0cde44f337aaa, type: 3}
+  m_Name: PlayFxAction
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Graph.ActionNodes.PlayFxActionNode
+  guid: db68e453-364f-45eb-b9e0-408bca5e9708
+  gridPosition: {x: 10, y: -224}
+  graph: {fileID: 11400000}
+  self: {fileID: 0}
+  fxId: fx_kayn_atk_1_hit
+  spawnAnchor: 1
+  duration: 2
