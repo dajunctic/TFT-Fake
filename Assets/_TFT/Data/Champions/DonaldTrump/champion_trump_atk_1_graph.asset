@@ -16,11 +16,9 @@ MonoBehaviour:
   gridPosition: {x: 733, y: -32}
   graph: {fileID: 11400000}
   missileId: missile_trump_atk_1
-  launcherOffset: {x: 0, y: 1, z: 2}
+  launcherOffset: {x: 0, y: 1, z: 0.5}
   damageMultiplier: 1
   damageType: 1
-  hitActions: []
-  despawnActions: []
 --- !u!114 &-8066119252799218792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,14 +103,6 @@ MonoBehaviour:
     portName: Main Target
     targetNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
     targetPortName: Target
-  - baseNodeGuid: c320d1dc-6d8d-4546-a4b4-7468c29bdeb9
-    portName: Out
-    targetNodeGuid: 99d969ed-55bb-4dad-ae62-369dd619b7ba
-    targetPortName: In
-  - baseNodeGuid: 99d969ed-55bb-4dad-ae62-369dd619b7ba
-    portName: Out
-    targetNodeGuid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
-    targetPortName: In
   - baseNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
     portName: Out
     targetNodeGuid: 2a06d44d-5676-46f0-8b7b-05a5d16dc943
@@ -133,6 +123,14 @@ MonoBehaviour:
     portName: Self
     targetNodeGuid: 18a5a336-0039-4e37-8655-3b63e004a100
     targetPortName: Hit Actions
+  - baseNodeGuid: 99d969ed-55bb-4dad-ae62-369dd619b7ba
+    portName: Out
+    targetNodeGuid: 07992e2e-ab75-4bf8-82f9-ca12ef96d3f8
+    targetPortName: In
+  - baseNodeGuid: 70fd2fbd-bf2b-44a1-885b-31acfcb95c2a
+    portName: Out
+    targetNodeGuid: 99d969ed-55bb-4dad-ae62-369dd619b7ba
+    targetPortName: In
 --- !u!114 &4189450171198083585
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,7 +179,7 @@ MonoBehaviour:
   guid: 2a06d44d-5676-46f0-8b7b-05a5d16dc943
   gridPosition: {x: 538, y: 171}
   graph: {fileID: 11400000}
-  duration: 1
+  duration: 0.5
 --- !u!114 &8623586713851232229
 MonoBehaviour:
   m_ObjectHideFlags: 0

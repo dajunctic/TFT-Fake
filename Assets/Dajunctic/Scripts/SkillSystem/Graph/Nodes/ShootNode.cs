@@ -68,12 +68,23 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         void OnHitEvent(IDamageTaker target)
         {
-
             currentTarget = target;
 
             if (hitActions != null)
             {
-                foreach (var action in hitActions)
+                var inActions = GetInputValue<List<ActionNode>>(nameof(hitActions));
+
+                if (_context?.Services != null && _context.Services.IsDebug)
+                {
+                    Debug.Log($"<color=#4dabf7>[ShootNode]</color> OnHitEvent: target={(target == null ? "<null>" : target.GetType().Name)}, resolvedHitActions={(inActions == null ? "<null>" : inActions.Count.ToString())}");
+                }
+
+                if (inActions == null || inActions.Count == 0)
+                {
+                    return;
+                }
+
+                foreach (var action in inActions)
                 {
                     if (action != null)
                     {

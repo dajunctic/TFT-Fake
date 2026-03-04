@@ -53,6 +53,8 @@ namespace Dajunctic
                     break;
             }
 
+            Debug.LogError("âsdasdasd");
+
             if (coroutine == null) return;
 
             if (Application.isPlaying)
@@ -88,6 +90,8 @@ namespace Dajunctic
         public IEnumerator IEFlyFollow()
         {
             if (damageDealer == null) yield break;
+
+            Debug.LogError("Có chạy ở đây");
             while (damageTaker != null && damageTaker.AsTransform().CachedTransform != null)
             {
                 UpdateTargetPos();
@@ -161,6 +165,8 @@ namespace Dajunctic
 
         private void OnHitTarget()
         {
+
+            Debug.LogError("May co van de gi khong");
             if (Application.isPlaying) damageTaker.TakeDamage(combineDamage);
             
             OnHitEvent?.Invoke(damageTaker);

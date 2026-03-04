@@ -13,11 +13,20 @@ namespace Dajunctic
         public void Play(SpawnFxEvent data)
         {
             transform.position = data.position;
+            transform.rotation = data.rotation;
             _maxDuration = data.duration;
             _timer = 0;
             _isPlayed = true;
 
-            particle.Play();
+            if (particle != null)
+            {
+                particle.Play();
+                Debug.LogError("Fx Ahihih");
+            }
+            else
+            {
+                Debug.LogWarning($"[FxView] ParticleSystem is NULL on '{name}' (fxId='{data.id}')");
+            }
         }
 
         public override void Tick()

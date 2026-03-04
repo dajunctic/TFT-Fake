@@ -196,7 +196,10 @@ namespace Dajunctic.SkillSystem.Graph
             // Find all connections to this port
             var links = graph.links.FindAll(l =>
                 l.targetNodeGuid == guid &&
-                string.Equals(l.targetPortName, portName, StringComparison.OrdinalIgnoreCase));
+                (
+                    IsPortNameMatch(l.targetPortName, portName) ||
+                    IsPortNameMatch(l.portName, portName)
+                ));
 
             if (links == null || links.Count == 0)
             {

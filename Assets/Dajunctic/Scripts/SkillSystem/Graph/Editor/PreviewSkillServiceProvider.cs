@@ -106,8 +106,28 @@ namespace Dajunctic.SkillSystem.Graph.Editor
             go.hideFlags = HideFlags.HideAndDontSave;
             TrackSpawnedObject(go);
 
+            if (_showDebug)
+            {
+                var psCount = go.GetComponentsInChildren<ParticleSystem>(true)?.Length ?? 0;
+                Debug.Log($"{LogPrefix} FX instantiated: name='{go.name}', active={go.activeSelf}, layer={go.layer}, particleSystems={psCount}");
+            }
+
             var fxView = go.GetComponent<FxView>();
             fxView.Play(playFxEvent);
+
+            // In PreviewRenderUtility, ParticleSystem time may not advance as expected.
+            // Force a small simulation step so users can immediately see the effect.
+            var particleSystems = go.GetComponentsInChildren<ParticleSystem>(true);
+            if (particleSystems != null && particleSystems.Length > 0)
+            {
+                foreach (var ps in particleSystems)
+                {
+                    if (ps == null) continue;
+                    ps.Simulate(0.02f, true, false, true);
+                    ps.Play(true);
+                }
+            }
+
             return fxView;
         }
 
