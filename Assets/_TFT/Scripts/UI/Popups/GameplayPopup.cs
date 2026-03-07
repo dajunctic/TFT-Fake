@@ -25,6 +25,8 @@ namespace Dajunctic
         [SerializeField] private Image xpProgress;
         [SerializeField] private GameObject buyXPButton;
         [SerializeField] private GameObject buyXPDisabledButton;
+        [SerializeField] private GameObject unlockShop;
+        [SerializeField] private GameObject lockShop;
 
         [Header("Item Bench")]
         [SerializeField] private Transform[] itemBenchPositions;
@@ -32,6 +34,13 @@ namespace Dajunctic
 
         [Header("Trait List")]
         [SerializeField] private TraitListUI traitListUI;
+
+        [Header("FPS & Ping")]
+        [SerializeField] private TMP_Text fpsTxt;
+        [SerializeField] private TMP_Text pingTxt;
+
+        [Header("Player Lists")]
+        [SerializeField] private List<PlayerUI> playerUIs;
 
         public static GameplayPopup Instance { get; private set; }
 
@@ -51,6 +60,7 @@ namespace Dajunctic
             this.RegisterListener<XPChangedEvent>(OnXPChanged);
             this.RegisterListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
+            this.RegisterListener<ShopLockChangedEvent>(OnShopLockChanged);
         }
 
         public override void AfterShow()
@@ -80,6 +90,7 @@ namespace Dajunctic
             this.RemoveListener<XPChangedEvent>(OnXPChanged);
             this.RemoveListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RemoveListener<HeroDragEndedEvent>(OnHeroDragEnded);
+            this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
         }
 
         public override void BeforeShow(object data = null)
@@ -89,6 +100,8 @@ namespace Dajunctic
             UpdateUI();
             UpdateShop();
             UpdateEconomy();
+            UpdatePlayerList();
+            UpdateShopLockUI(ShopSystem != null && ShopSystem.IsShopLocked);
         }
 
         private void Update()
@@ -220,5 +233,69 @@ namespace Dajunctic
             });
         }
 
+        /// <summary>Drag this to the LockShop button's OnClick in Inspector.</summary>
+        public void OnClickLockShop()
+        {
+            this.Raise(new RequestToggleShopLockEvent());
+        }
+
+        /// <summary>Drag this to the UnlockShop button's OnClick in Inspector.</summary>
+        public void OnClickUnlockShop()
+        {
+            this.Raise(new RequestToggleShopLockEvent());
+        }
+
+        private void OnShopLockChanged(ShopLockChangedEvent evt)
+        {
+            UpdateShopLockUI(evt.IsLocked);
+        }
+
+        private void UpdateShopLockUI(bool isLocked)
+        {
+            // Locked: show unlock button, hide lock button
+            // Unlocked: show lock button, hide unlock button
+            if (lockShop != null) lockShop.SetActive(!isLocked);
+            if (unlockShop != null) unlockShop.SetActive(isLocked);
+        }
+
+
+        public override void Tick()
+        {
+            base.Tick();
+
+            fpsTxt.text = $"FPS: {Mathf.RoundToInt(1f / Time.unscaledDeltaTime)}";
+        }
+
+        public void UpdatePing(float ping)
+        {
+            pingTxt.text = $"Ping: {Mathf.RoundToInt(ping)} ms";
+        }
+
+        #region Player List
+        private void UpdatePlayerList()
+        {
+            foreach (var ui in playerUIs)
+            {
+                ui.TogglePlayer(false);
+            }
+            playerUIs[0].TogglePlayer(true);
+        }
+
+
+        public void OnclickPlayer(int index)
+        {
+            if (index < 0 || index >= playerUIs.Count) return;
+
+            var playerUI = playerUIs[index];
+
+            foreach (var ui in playerUIs)
+            {
+                ui.TogglePlayer(false);
+            }
+            
+            playerUI.TogglePlayer(true);
+        }
+
+        #endregion
     }
 }

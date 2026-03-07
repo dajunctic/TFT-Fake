@@ -12,6 +12,9 @@ namespace Dajunctic
 
         private ChampionData[] _currentShop = new ChampionData[5];
         public ChampionData[] CurrentShop => _currentShop;
+
+        private bool _isShopLocked;
+        public bool IsShopLocked => _isShopLocked;
         public ShopData ShopData => _data?.shopData;
         private GameSystemManager _manager;
 
@@ -31,6 +34,7 @@ namespace Dajunctic
             this.RegisterListener<RequestRerollEvent>(OnRequestReroll);
             this.RegisterListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            this.RegisterListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
 
             Debug.Log("<color=cyan>ShopSystem initialized</color>");
         }
@@ -50,6 +54,7 @@ namespace Dajunctic
             this.RemoveListener<RequestRerollEvent>(OnRequestReroll);
             this.RemoveListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            this.RemoveListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
             Debug.Log("<color=yellow>ShopSystem shutdown</color>");
         }
 
@@ -62,7 +67,15 @@ namespace Dajunctic
         {
             if (evt.Phase == GameplayPhase.Planning)
             {
-                RefreshShop();
+                if (_isShopLocked)
+                {
+                    // Shop locked: keep current shop, auto-unlock (TFT behavior: lock lasts 1 round)
+                    SetShopLock(false);
+                }
+                else
+                {
+                    RefreshShop();
+                }
             }
         }
 
@@ -72,7 +85,22 @@ namespace Dajunctic
             if (_manager.Economy.SpendGold(_data.shopData.rerollCost))
             {
                 RefreshShop();
+                // Auto-unlock on manual reroll (TFT behavior)
+                if (_isShopLocked) SetShopLock(false);
             }
+        }
+
+        private void OnRequestToggleShopLock(RequestToggleShopLockEvent evt)
+        {
+            SetShopLock(!_isShopLocked);
+        }
+
+        public void SetShopLock(bool locked)
+        {
+            if (_isShopLocked == locked) return;
+            _isShopLocked = locked;
+            this.Raise(new ShopLockChangedEvent { IsLocked = _isShopLocked });
+            Debug.Log($"<color=cyan>ShopSystem: Shop {(_isShopLocked ? "LOCKED" : "UNLOCKED")}</color>");
         }
 
         public void RefreshShop()
@@ -145,6 +173,7 @@ namespace Dajunctic
     }
 
     public struct ShopRefreshedEvent : IEvent { }
+    public struct ShopLockChangedEvent : IEvent { public bool IsLocked; }
     public struct HeroBoughtEvent : IEvent { public ChampionData Hero; }
     public struct HeroSoldEvent : IEvent { public ChampionData Hero; public int GoldRefunded; }
 

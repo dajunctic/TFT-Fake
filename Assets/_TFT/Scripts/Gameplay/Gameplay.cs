@@ -38,6 +38,11 @@ namespace Dajunctic
         void Start()
         {
             StartPhase(GameplayPhase.Planning);
+            var economySystem = this.GetSystem<EconomySystem>();
+            if (economySystem != null)
+            {
+                economySystem.AddGold(1000); // Initial gold for testing
+            }
         }
 
         public override void Tick()
