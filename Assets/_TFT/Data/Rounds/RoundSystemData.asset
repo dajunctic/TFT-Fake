@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92681dc7bd9cf744daf209c162775f40, type: 3}
+  m_Name: RoundSystemData
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundSystemData
+  stages:
+  - {fileID: 11400000, guid: 904870b5237159546b1b878fe29d3e31, type: 2}
+  - {fileID: 11400000, guid: 68c8138fa6136f44aa42c050956cfaa8, type: 2}
+  - {fileID: 11400000, guid: 9ec07cdd278a15147a1814a14f70dbbc, type: 2}
+  - {fileID: 11400000, guid: 90359bf869c3a1945a1a7ea886427d20, type: 2}
+  - {fileID: 11400000, guid: 6f8bdfffce1b99f49a78d68676426a8b, type: 2}
+  - {fileID: 11400000, guid: e152703172ce9ad41ab1085816ed383c, type: 2}
+  - {fileID: 11400000, guid: 3de89be1c89909046ae12e0e283cb8ad, type: 2}
+  - {fileID: 11400000, guid: dfd85afa22a4b674d97f45fe4fbd9db0, type: 2}
+  - {fileID: 11400000, guid: 3676e3daf77db4d4c86adf71471dcd4b, type: 2}
+  - {fileID: 11400000, guid: 1fbea9a5672abc545865ad37ba358d51, type: 2}
+  loopLastStage: 1
+  defaultPlanningTime: 30
+  defaultCombatTime: 30

@@ -26,6 +26,7 @@ namespace Dajunctic
         public ItemSystem Items { get; private set; }
         public EmotionSystem Emotion { get; private set; }
         public TraitSystem Traits { get; private set; }
+        public RoundSystem Round { get; private set; }
 
         /// <summary>True once all system data has been loaded and systems are initialized.</summary>
         public bool AllSystemsReady { get; private set; }
@@ -68,7 +69,8 @@ namespace Dajunctic
             Items = CreateSystem<ItemSystem>();
             Emotion = CreateSystem<EmotionSystem>();
             Traits = CreateSystem<TraitSystem>();
-
+            Round = CreateSystem<RoundSystem>();
+            
             Debug.Log("<color=cyan>GameSystemManager: Systems created.</color>");
         }
 
@@ -96,6 +98,7 @@ namespace Dajunctic
             await Items.LoadDataAsync();
             await Emotion.LoadDataAsync();
             await Traits.LoadDataAsync();
+            await Round.LoadDataAsync();
 
             Debug.Log("<color=cyan>GameSystemManager: All data loaded.</color>");
         }

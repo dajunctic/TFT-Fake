@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Dajunctic
 {
@@ -9,6 +10,7 @@ namespace Dajunctic
         [SerializeField] private GameObject nameBg;
         [SerializeField] private GameObject playerCircleBgSmall;
         [SerializeField] private GameObject playerCircleBgBig;
+        [SerializeField] private Image hpBarFill;
 
         public void TogglePlayer(bool active)
         {
@@ -17,6 +19,14 @@ namespace Dajunctic
 
             scaleTransform.localScale = active ? Vector3.one * 1.3f : Vector3.one;
             nameBg.SetActive(!active);
+        }
+
+        public void SetHp(float hpPercent)
+        {
+            if (hpBarFill != null)
+            {
+                hpBarFill.fillAmount = hpPercent;
+            }
         }
     }
 }

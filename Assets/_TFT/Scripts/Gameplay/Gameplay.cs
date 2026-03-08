@@ -13,6 +13,9 @@ namespace Dajunctic
         [SerializeField] private float planningDuration = 10f;
         [SerializeField] private float combatDuration = 30f;
 
+        private RoundSystem _roundSystem;
+        private RoundSystem RoundSystem => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
+        
         private GameplayPhase _currentPhase;
         private float _timer;
         private float _phaseDuration;
@@ -62,10 +65,20 @@ namespace Dajunctic
         private void StartPhase(GameplayPhase phase)
         {
             _currentPhase = phase;
-            _phaseDuration = (phase == GameplayPhase.Planning) ? planningDuration : combatDuration;
+            
+            float duration = (phase == GameplayPhase.Planning) ? planningDuration : combatDuration;
+            
+            if (RoundSystem != null && RoundSystem.CurrentRoundData != null)
+            {
+                duration = (phase == GameplayPhase.Planning) 
+                    ? RoundSystem.CurrentRoundData.planningDuration 
+                    : RoundSystem.CurrentRoundData.combatDuration;
+            }
+
+            _phaseDuration = duration;
             _timer = _phaseDuration;
 
-            Debug.Log($"[Gameplay] Starting Phase: {phase} for {_phaseDuration}s");
+            Debug.Log($"[Gameplay] Starting Phase: {phase} for {_phaseDuration}s in round {(RoundSystem != null ? RoundSystem.GetRoundDisplayString() : "N/A")}");
             
             if (phase == GameplayPhase.Planning)
             {
@@ -84,7 +97,12 @@ namespace Dajunctic
             }
             else
             {
-                // Logic for after combat (e.g. back to planning)
+                // Logic for after combat: Advance Round then back to planning
+                if (RoundSystem != null)
+                {
+                    RoundSystem.AdvanceRound();
+                }
+                
                 StartPhase(GameplayPhase.Planning);
             }
         }

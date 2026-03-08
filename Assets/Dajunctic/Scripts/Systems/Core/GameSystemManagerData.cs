@@ -18,5 +18,6 @@ namespace Dajunctic
         public AssetReferenceT<BenchSystemData> benchSystemData;
         public AssetReferenceT<EmotionSystemData> emotionSystemData;
         public AssetReferenceT<TraitSystemData> traitSystemData;
+        public AssetReferenceT<RoundSystemData> roundSystemData;
     }
 }

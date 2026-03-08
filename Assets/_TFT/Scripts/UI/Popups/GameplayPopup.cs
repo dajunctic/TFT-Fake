@@ -252,10 +252,10 @@ namespace Dajunctic
 
         private void UpdateShopLockUI(bool isLocked)
         {
-            // Locked: show unlock button, hide lock button
-            // Unlocked: show lock button, hide unlock button
-            if (lockShop != null) lockShop.SetActive(!isLocked);
-            if (unlockShop != null) unlockShop.SetActive(isLocked);
+            // lockShop = icon khóa đóng (shop đang locked) → hiện khi locked
+            // unlockShop = icon khóa mở (shop đang unlocked) → hiện khi unlocked (mặc định)
+            if (lockShop != null) lockShop.SetActive(isLocked);
+            if (unlockShop != null) unlockShop.SetActive(!isLocked);
         }
 
 

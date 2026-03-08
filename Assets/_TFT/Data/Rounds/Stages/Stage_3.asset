@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2886ae57595e6a4409d01d7291021e43, type: 3}
+  m_Name: Stage_3
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.StageData
+  stageNumber: 3
+  rounds:
+  - {fileID: 11400000, guid: 5a80b8aa863687241b358f3f394da8f2, type: 2}
+  - {fileID: 11400000, guid: 212e603024e6f864285206381e1e31d0, type: 2}
+  - {fileID: 11400000, guid: 0bc757f69bf82684981c22044a963497, type: 2}
+  - {fileID: 11400000, guid: e1ccf2346c049a14eb90d737c0e57af3, type: 2}
+  - {fileID: 11400000, guid: fdb6b401153167a46aa2e5b8a5ad0cbe, type: 2}
+  - {fileID: 11400000, guid: 4c5af4b8c6024c148866ca1193433491, type: 2}
+  - {fileID: 11400000, guid: ecd3e47e63c3d7c459044f61262d9700, type: 2}
