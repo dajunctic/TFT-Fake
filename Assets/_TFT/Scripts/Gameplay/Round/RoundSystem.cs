@@ -23,8 +23,8 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            var handle = Addressables.LoadAssetAsync<RoundSystemData>(_manager.Config.roundSystemData);
-            _data = await handle.Task;
+            // var handle = Addressables.LoadAssetAsync<RoundSystemData>(_manager.Config.roundSystemData);
+            // _data = await handle.Task;
             Debug.Log("<color=cyan>RoundSystem data loaded</color>");
         }
 

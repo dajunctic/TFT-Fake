@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92681dc7bd9cf744daf209c162775f40, type: 3}
-  m_Name: RoundSystemData
+  m_Name: round_system_data
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundSystemData
   stages:
   - {fileID: 11400000, guid: 904870b5237159546b1b878fe29d3e31, type: 2}

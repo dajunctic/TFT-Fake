@@ -41,6 +41,10 @@ namespace Dajunctic
 
         [Header("Player Lists")]
         [SerializeField] private List<PlayerUI> playerUIs;
+        [SerializeField] private GameObject fightInfoBtn;
+        [SerializeField] private GameObject playerInfoBtn;
+        [SerializeField] private GameObject playerInfoDisabledBtn;
+        [SerializeField] private GameObject fightInfoDisabledBtn;
 
         public static GameplayPopup Instance { get; private set; }
 
@@ -272,6 +276,26 @@ namespace Dajunctic
         }
 
         #region Player List
+
+        public void ToggleFightInfo(bool show)
+        {
+            if (fightInfoBtn != null) fightInfoBtn.SetActive(show);
+            if (fightInfoDisabledBtn != null) fightInfoDisabledBtn.SetActive(!show);
+
+            if (playerInfoBtn != null) playerInfoBtn.SetActive(!show);
+            if (playerInfoDisabledBtn != null) playerInfoDisabledBtn.SetActive(show);
+        }
+
+        public void TogglePlayerInfo(bool show)
+        {
+            if (playerInfoBtn != null) playerInfoBtn.SetActive(show);
+            if (playerInfoDisabledBtn != null) playerInfoDisabledBtn.SetActive(!show);
+
+            if (fightInfoBtn != null) fightInfoBtn.SetActive(!show);
+            if (fightInfoDisabledBtn != null) fightInfoDisabledBtn.SetActive(show);
+        }
+
+
         private void UpdatePlayerList()
         {
             foreach (var ui in playerUIs)
@@ -279,6 +303,8 @@ namespace Dajunctic
                 ui.TogglePlayer(false);
             }
             playerUIs[0].TogglePlayer(true);
+
+            TogglePlayerInfo(true);
         }
 
 
