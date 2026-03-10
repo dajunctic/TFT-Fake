@@ -12,6 +12,8 @@ namespace Dajunctic
         private int _gold;
         private int _level;
         private int _xp;
+        private int _winStreak;
+        private int _lossStreak;
         private GameSystemManager _manager;
 
         public int Gold => _gold;
@@ -41,6 +43,7 @@ namespace Dajunctic
 
             this.RegisterListener<RequestAddGoldEvent>(OnRequestAddGold);
             this.RegisterListener<RequestBuyXPEvent>(OnRequestBuyXP);
+            this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
 
             Debug.Log("<color=cyan>EconomySystem initialized</color>");
         }
@@ -103,6 +106,61 @@ namespace Dajunctic
             CheckLevelUp();
             OnXPChanged?.Invoke(_xp, GetXPRequired());
             this.Raise(new XPChangedEvent { NewXP = _xp, RequiredXP = GetXPRequired() });
+        }
+
+        private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
+        {
+            if (evt.Phase == GameplayPhase.Planning)
+            {
+                ApplyEndRoundIncome();
+            }
+        }
+
+        private void ApplyEndRoundIncome()
+        {
+            // Passive Income
+            int passiveIncome = 5;
+
+            // Interest (capped at 5 gold for 50+ gold)
+            int interest = Mathf.Min(_gold / 10, 5);
+
+            // Streak Bonus
+            int streakBonus = CalculateStreakBonus();
+
+            // Winning round bonus (usually 1 gold if you won previous round)
+            int winningBonus = (_winStreak > 0) ? 1 : 0;
+
+            AddGold(passiveIncome + interest + streakBonus + winningBonus);
+
+            Debug.Log($"[Economy] End Round Income: Passive {passiveIncome}, Interest {interest}, Streak {streakBonus}, Win {winningBonus}");
+        }
+
+        private int CalculateStreakBonus()
+        {
+            int currentStreak = Mathf.Max(_winStreak, _lossStreak);
+            if (currentStreak >= 5) return 3;
+            if (currentStreak >= 4) return 2;
+            if (currentStreak >= 2) return 1;
+            return 0;
+        }
+
+        public void RegisterResult(bool win)
+        {
+            if (win)
+            {
+                _winStreak++;
+                _lossStreak = 0;
+            }
+            else
+            {
+                _lossStreak++;
+                _winStreak = 0;
+            }
+
+            if (_manager.Player != null)
+            {
+                _manager.Player.SetStreak(Team.Player, _winStreak, _lossStreak);
+            }
         }
 
         private void CheckLevelUp()
