@@ -35,7 +35,8 @@ namespace Dajunctic
                 _cameraTransform = Camera.main.transform;
                 _camera = Camera.main;
             }
-        
+
+            this.Raise(new SpawnHpViewEvent { owner = this, starLevel = Tier });
         }
 
         public override void ListenEvents()

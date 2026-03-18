@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.EventSystems;
 
 namespace Dajunctic
 {
@@ -187,6 +188,16 @@ namespace Dajunctic
 
         private void Update()
         {
+            // Kiểm tra xem có đang focus vào UI Input không
+            if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+            {
+                var input = EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>();
+                if (input != null && input.isFocused) return;
+                
+                var inputLegacy = EventSystem.current.currentSelectedGameObject.GetComponent<UnityEngine.UI.InputField>();
+                if (inputLegacy != null && inputLegacy.isFocused) return;
+            }
+
             // Press 'I' to spawn a random item for testing
             if (Input.GetKeyDown(KeyCode.I))
             {

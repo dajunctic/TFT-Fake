@@ -21,7 +21,6 @@ namespace Dajunctic
             if (particle != null)
             {
                 particle.Play();
-                Debug.LogError("Fx Ahihih");
             }
             else
             {

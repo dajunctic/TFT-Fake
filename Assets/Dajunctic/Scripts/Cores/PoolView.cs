@@ -35,10 +35,20 @@ namespace Dajunctic
             var position = param.owner.HeadPoint;
             var starLevel = param.starLevel;
 
-            var hpViewPrefab = poolData.hpView;
-            var hpView = PoolableObject.Pool.Spawn(hpViewPrefab, position, Quaternion.identity);
-            hpView.CachedTransform.parent = param.owner.CachedTransform;
-            hpView.Initialize(param.owner, starLevel);
+            if (param.owner is TacticianActor)
+            {
+                if (poolData.playerHpView == null) return;
+                var instance = PoolableObject.Pool.Spawn(poolData.playerHpView, position, Quaternion.identity);
+                instance.CachedTransform.parent = param.owner.CachedTransform;
+                instance.Initialize(param.owner, starLevel);
+            }
+            else
+            {
+                if (poolData.hpView == null) return;
+                var instance = PoolableObject.Pool.Spawn(poolData.hpView, position, Quaternion.identity);
+                instance.CachedTransform.parent = param.owner.CachedTransform;
+                instance.Initialize(param.owner, starLevel);
+            }
         }
 
         public FxView SpawnFxView(SpawnFxEvent param)

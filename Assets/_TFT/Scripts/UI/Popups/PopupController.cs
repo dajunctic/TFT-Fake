@@ -87,6 +87,18 @@ namespace Dajunctic
 
         public BasePopup ShowPopup(Type type, PopupShowMode showMode = PopupShowMode.DoNothing, object data = null)
         {
+            // Kiểm tra xem popup loại này đã đang hiển thị chưa
+            foreach (var active in activePopups)
+            {
+                if (active != null && active.GetType() == type)
+                {
+                    // Nếu đã có rồi, có thể cập nhật data hoặc chỉ đơn giản là trả về
+                    active.BeforeShow(data);
+                    active.AfterShow();
+                    return active;
+                }
+            }
+
             if (!popupDictionary.TryGetValue(type, out var prefab))
             {
                 Debug.LogError($"Popup of type {type.Name} not found in PopupControllerData!");

@@ -14,9 +14,9 @@ namespace Dajunctic
 
         [Header("Settings")]
         [SerializeField] private SpriteLists starBgSprites;
-        [SerializeField] private Vector3 offset = new Vector3(0, 0.5f, 0);
+        [SerializeField] protected Vector3 offset = new Vector3(0, 0.5f, 0);
 
-        private CombatActor _owner;
+        protected CombatActor _owner;
         private Transform _cachedTransform;
         private Camera _mainCamera;
 
@@ -31,7 +31,7 @@ namespace Dajunctic
             }
         }
 
-        public void Initialize(CombatActor owner, int starLevel)
+        public virtual void Initialize(CombatActor owner, int starLevel)
         {
             // Unsubscribe from previous owner if exists
             if (_owner != null && _owner != owner)
@@ -125,7 +125,7 @@ namespace Dajunctic
             }
         }
 
-        private void UpdateHp(float ratio)
+        protected virtual void UpdateHp(float ratio)
         {
             if (float.IsNaN(ratio)) ratio = 0;
             if (hpProgress != null)

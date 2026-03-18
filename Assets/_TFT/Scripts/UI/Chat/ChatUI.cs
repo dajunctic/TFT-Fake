@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Dajunctic
 {
@@ -19,8 +20,8 @@ namespace Dajunctic
         [SerializeField] private float fadeOutTime = 5f;
 
         private List<ChatMessageUI> _activeMessages = new List<ChatMessageUI>();
-        private float _lastMessageTime;
         private bool _isFocused;
+        private bool _isOpen; // Trạng thái đóng/mở tuyệt đối của Chat
 
         public override void Initialize()
         {
@@ -30,8 +31,9 @@ namespace Dajunctic
             inputField.onDeselect.AddListener(_ => OnInputFocus(false));
             inputField.onSubmit.AddListener(OnSubmit);
 
-            // Initially hide or fade
-            UpdateVisibility();
+            // Khởi tạo ở trạng thái đóng
+            _isOpen = false;
+            UpdateLayout();
         }
 
         public override void ListenEvents()
@@ -48,27 +50,33 @@ namespace Dajunctic
 
         private void Update()
         {
-            // Enter key to focus chat
-            if (Input.GetKeyDown(KeyCode.Return) && !_isFocused)
+            // Chỉ xử lý phím Enter trong Update khi Chat đang ĐÓNG hoặc mất FOCUS
+            if (Input.GetKeyDown(KeyCode.Return))
             {
-                inputField.ActivateInputField();
+                if (!_isOpen)
+                {
+                    // Đang đóng hoàn toàn -> Mở ra
+                    _isOpen = true;
+                    UpdateLayout();
+                    FocusChat();
+                }
+                else if (!_isFocused)
+                {
+                    // Đang mở nhưng click ra ngoài -> Focus lại để gõ tiếp
+                    FocusChat();
+                }
             }
+        }
 
-            // Auto fade out if not focused and no recent activity
-            if (!_isFocused && Time.time - _lastMessageTime > fadeOutTime)
-            {
-                chatGroup.alpha = Mathf.Lerp(chatGroup.alpha, 0.2f, Time.deltaTime);
-            }
-            else
-            {
-                chatGroup.alpha = Mathf.Lerp(chatGroup.alpha, 1.0f, Time.deltaTime * 5f);
-            }
+        private void FocusChat()
+        {
+            inputField.ActivateInputField();
+            inputField.Select();
         }
 
         private void OnMessageReceived(ChatMessageEvent evt)
         {
             AddMessage(evt.Message);
-            _lastMessageTime = Time.time;
         }
 
         private void AddMessage(ChatMessage message)
@@ -85,37 +93,62 @@ namespace Dajunctic
                 _activeMessages.RemoveAt(0);
             }
 
-            // Scroll to bottom
-            Canvas.ForceUpdateCanvases();
-            scrollRect.verticalNormalizedPosition = 0f;
+            // Đợi đến cuối frame để Layout Groups cập nhật kích thước rồi mới cuộn
+            StartCoroutine(ScrollToBottomCoroutine());
+        }
+
+        private IEnumerator ScrollToBottomCoroutine()
+        {
+            yield return new WaitForEndOfFrame();
+            
+            if (scrollRect != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                scrollRect.verticalNormalizedPosition = 0f;
+            }
         }
 
         private void OnSubmit(string text)
         {
-            if (!string.IsNullOrWhiteSpace(text))
+            // OnSubmit được gọi khi phím Enter được nhấn trong lúc đang focus
+            if (string.IsNullOrWhiteSpace(text))
             {
-                this.Raise(new RequestSendMessageEvent { Content = text });
+                // Nếu ô text trống và nhấn Enter -> ĐÓNG CHAT
+                _isOpen = false;
+                inputField.text = "";
+                inputField.DeactivateInputField();
+                UpdateLayout();
             }
-
-            inputField.text = "";
-            
-            // Re-focus unless escape was pressed (handled by Unity's InputField usually)
-            if (Input.GetKey(KeyCode.Return))
+            else
             {
-                inputField.ActivateInputField();
+                // Nếu có text -> Gửi tin nhắn
+                this.Raise(new RequestSendMessageEvent { Content = text });
+                
+                // Xóa text và giữ nguyên trạng thái mở, focus lại để gõ tiếp
+                inputField.text = "";
+                FocusChat();
             }
         }
 
         private void OnInputFocus(bool focused)
         {
             _isFocused = focused;
-            UpdateVisibility();
         }
 
-        private void UpdateVisibility()
+        private void UpdateLayout()
         {
-            // When focused, background should be more visible
-            // Implement background alpha change here if desired
+            if (_isOpen)
+            {
+                chatGroup.alpha = 1f;
+                chatGroup.interactable = true;
+                chatGroup.blocksRaycasts = true;
+            }
+            else
+            {
+                chatGroup.alpha = 0f;
+                chatGroup.interactable = false;
+                chatGroup.blocksRaycasts = false;
+            }
         }
     }
 }

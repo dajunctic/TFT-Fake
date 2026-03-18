@@ -8,8 +8,8 @@ namespace Dajunctic
     [CreateAssetMenu(fileName = "PoolData", menuName = "Dajunctic/Core/PoolData")]
     public class PoolData: BaseSO
     {   
-        [FoldoutGroup("Dummy UI")]
-        [SerializeField] public HpView hpView;
+        [FoldoutGroup("Dummy UI")][SerializeField] public HpView hpView;
+        [FoldoutGroup("Dummy UI")] [SerializeField] public PlayerHpView playerHpView;
         
 
         [SerializeField] public List<FxEntity> fxLists;
