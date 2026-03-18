@@ -10,7 +10,6 @@ namespace Dajunctic
         [Header("UI References")]
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private Image progressImage;
-        [SerializeField] private TMP_Text phaseText;
 
         [Header("Shop References")]
         [SerializeField] private SpriteLists cardRarities;
@@ -128,10 +127,6 @@ namespace Dajunctic
             progressImage.fillAmount = fill;
 
             // Phase name Vietnamese
-            phaseText.text = gameplay.CurrentPhase == GameplayPhase.Planning ? "CHUẨN BỊ" : "CHIẾN ĐẤU";
-
-            // Color change for combat phase
-            phaseText.color = gameplay.CurrentPhase == GameplayPhase.Planning ? Color.white : Color.red;
             progressImage.color = gameplay.CurrentPhase == GameplayPhase.Planning ? Color.cyan : Color.red;
         }
 

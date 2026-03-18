@@ -2,12 +2,13 @@ using System.Linq;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Dajunctic
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public class TraitDescriptionUI : BaseView
+    public class TraitDescriptionUI : BaseView, IPointerExitHandler
     {
         [Header("UI References")]
         [SerializeField] private Image traitIcon;
@@ -25,6 +26,7 @@ namespace Dajunctic
         private Canvas _parentCanvas;
         private RectTransform _canvasRectTransform;
         private bool _isShowing;
+        private RectTransform _currentTriggerRect;
 
         public override void Initialize()
         {
@@ -54,14 +56,26 @@ namespace Dajunctic
             this.RemoveListener<TraitHoverExitEvent>(OnTraitHoverExit);
         }
 
-        private void LateUpdate()
+        private void Update()
         {
             if (!_isShowing) return;
-            UpdatePosition(Input.mousePosition);
+
+            // Check if mouse is over the tooltip OR the triggering icon
+            bool overTooltip = RectTransformUtility.RectangleContainsScreenPoint(_rectTransform, Input.mousePosition, 
+                _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _parentCanvas.worldCamera);
+            
+            bool overTrigger = _currentTriggerRect != null && RectTransformUtility.RectangleContainsScreenPoint(_currentTriggerRect, Input.mousePosition, 
+                _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _parentCanvas.worldCamera);
+
+            if (!overTooltip && !overTrigger)
+            {
+                Hide();
+            }
         }
 
         private void OnTraitHover(TraitHoverEvent evt)
         {
+            _currentTriggerRect = evt.Trigger;
             Show(evt.Trait, evt.Count);
         }
 
@@ -70,11 +84,15 @@ namespace Dajunctic
             Hide();
         }
 
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            Hide();
+        }
+
         private void UpdatePosition(Vector2 screenPos)
         {
             if (_parentCanvas == null || _rectTransform == null || _rectTransform.parent == null) return;
 
-            // Convert screen position to canvas local position relative to our parent
             RectTransform parentRect = _rectTransform.parent as RectTransform;
             if (parentRect == null) return;
 
@@ -82,22 +100,60 @@ namespace Dajunctic
                 parentRect,
                 screenPos,
                 _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _parentCanvas.worldCamera,
-                out var localPoint
+                out var cursorLocalPoint
             );
 
             Vector2 panelSize = _rectTransform.rect.size;
             Vector2 canvasSize = _canvasRectTransform.rect.size;
+            Vector2 pivot = _rectTransform.pivot;
             
-            // Place to the right of cursor by default
-            Vector2 targetPos = localPoint + offset;
+            // Goal: Place the RIGHT edge of the tooltip to the LEFT of the cursor
+            // targetPos is the anchoredPosition (the pivot point)
+            // pivot.x = 0 means targetPos is the left edge
+            // pivot.x = 1 means targetPos is the right edge
+            // pivot.x = 0.5 means targetPos is the center
+            
+            // To put the right edge at (cursor.x - offset.x):
+            // RightEdge = targetPos.x + (1 - pivot.x) * panelSize.x
+            // targetPos.x = (cursor.x - offset.x) - (1 - pivot.x) * panelSize.x
+            
+            float targetX = (cursorLocalPoint.x - offset.x) - (1 - pivot.x) * panelSize.x;
+            
+            // Center the tooltip vertically relative to cursor, accounting for pivot
+            // CenterY = targetPos.y + (0.5 - pivot.y) * panelSize.y
+            // targetPos.y = cursor.y - (0.5 - pivot.y) * panelSize.y
+            float targetY = cursorLocalPoint.y - (0.5f - pivot.y) * panelSize.y;
 
-            // Check boundaries relative to parent/canvas
-            // Simplified clamping: just make sure it stays on screen
-            float halfW = panelSize.x;
+            Vector2 targetPos = new Vector2(targetX, targetY);
+
+            // Check boundaries (clamping)
+            float leftEdge = targetPos.x - pivot.x * panelSize.x;
+            float canvasLeft = -canvasSize.x * 0.5f;
             
-            if (targetPos.x + halfW > canvasSize.x * 0.5f) // Rough check against canvas edge
+            // If it goes off the left edge, flip to the right side
+            if (leftEdge < canvasLeft) 
             {
-                targetPos.x = localPoint.x - offset.x - panelSize.x;
+                // LeftEdge of tooltip = cursor.x + offset.x
+                // targetPos.x - pivot.x * panelSize.x = cursor.x + offset.x
+                targetPos.x = cursorLocalPoint.x + offset.x + pivot.x * panelSize.x;
+            }
+
+            // Vertical clamping
+            float halfCanvasHeight = canvasSize.y * 0.5f;
+            float topEdge = targetPos.y + (1 - pivot.y) * panelSize.y;
+            float bottomEdge = targetPos.y - pivot.y * panelSize.y;
+
+            if (topEdge > halfCanvasHeight)
+                targetPos.y -= (topEdge - halfCanvasHeight + 10f);
+            if (bottomEdge < -halfCanvasHeight)
+                targetPos.y += (-halfCanvasHeight - bottomEdge + 10f);
+            
+            // Re-check left/right flip with more margin to avoid overlap
+            float currentLeftEdge = targetPos.x - pivot.x * panelSize.x;
+            if (currentLeftEdge < -canvasSize.x * 0.5f)
+            {
+                // Move it sufficiently to the right of the trigger icon
+                targetPos.x = cursorLocalPoint.x + offset.x + 40f + pivot.x * panelSize.x;
             }
 
             _rectTransform.anchoredPosition = targetPos;
@@ -153,8 +209,8 @@ namespace Dajunctic
         {
             if (_canvasGroup == null) return;
             _canvasGroup.alpha = visible ? 1f : 0f;
-            _canvasGroup.interactable = false; // Tooltips shouldn't be interactable
-            _canvasGroup.blocksRaycasts = false; // IMPORTANT: prevent tooltip from blocking the mouse for the trait icons
+            _canvasGroup.interactable = visible; 
+            _canvasGroup.blocksRaycasts = visible; // Enable raycasts when visible to detect mouse exit
         }
 
         private string BuildTierText(TraitData trait, int currentCount)
@@ -256,6 +312,7 @@ namespace Dajunctic
     {
         public TraitData Trait;
         public int Count;
+        public RectTransform Trigger;
     }
 
     public struct TraitHoverExitEvent : IEvent { }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Dajunctic
 {
-    public class TraitItemUI : BaseView, IPointerEnterHandler, IPointerExitHandler
+    public class TraitItemUI : BaseView, IPointerEnterHandler, IPointerClickHandler
     {
         [Header("UI References")]
         [SerializeField] private Image icon;
@@ -46,18 +46,19 @@ namespace Dajunctic
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            // Do nothing on hover as per request "khi mình bấm vào thì mới hiện"
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
             if (_traitData == null) return;
 
             this.Raise(new TraitHoverEvent
             {
                 Trait = _traitData,
-                Count = _count
+                Count = _count,
+                Trigger = GetComponent<RectTransform>()
             });
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            this.Raise(new TraitHoverExitEvent());
         }
 
         private void UpdateVisualTier(TraitTierType type)

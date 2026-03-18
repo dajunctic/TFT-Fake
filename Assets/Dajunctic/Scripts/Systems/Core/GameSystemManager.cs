@@ -32,6 +32,7 @@ namespace Dajunctic
         public AugmentSystem Augment { get; private set; }
         public CarouselSystem Carousel { get; private set; }
         public AISystem AI { get; private set; }
+        public ChatSystem Chat { get; private set; }
 
         /// <summary>True once all system data has been loaded and systems are initialized.</summary>
         public bool AllSystemsReady { get; private set; }
@@ -79,6 +80,7 @@ namespace Dajunctic
             Augment = CreateSystem<AugmentSystem>();
             Carousel = CreateSystem<CarouselSystem>();
             AI = CreateSystem<AISystem>();
+            Chat = CreateSystem<ChatSystem>();
 
             Debug.Log("<color=cyan>GameSystemManager: Systems created.</color>");
         }
@@ -112,6 +114,7 @@ namespace Dajunctic
             await Augment.LoadDataAsync();
             await Carousel.LoadDataAsync();
             await AI.LoadDataAsync();
+            await Chat.LoadDataAsync();
 
             Debug.Log("<color=cyan>GameSystemManager: All data loaded.</color>");
         }
