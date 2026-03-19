@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Dajunctic
 {
@@ -9,6 +10,8 @@ namespace Dajunctic
     {
         private GameSystemManager _manager;
         private List<PlayerData> _players = new List<PlayerData>();
+        private PlayerSystemData _data;
+        private TacticianData DefaultTacticianData => _data != null ? _data.defaultTacticianData : null;
         
         public IReadOnlyList<PlayerData> Players => _players;
         public PlayerData LocalPlayer => _players.Find(p => p.Team == Team.Player);
@@ -17,8 +20,12 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            // Initial data could be loaded from Addressables if needed
-            await Task.CompletedTask;
+            if (GameSystemManager.Instance.Config != null && GameSystemManager.Instance.Config.playerSystemData != null)
+            {
+                var handle = GameSystemManager.Instance.Config.playerSystemData.LoadAssetAsync<PlayerSystemData>();
+                _data = await handle.Task;
+                Debug.Log("<color=cyan>PlayerSystem data loaded via Addressables</color>");
+            }
         }
 
         public void Initialize(GameSystemManager manager)
@@ -26,15 +33,55 @@ namespace Dajunctic
             _manager = manager;
             
             // Create Local Player
-            _players.Add(new PlayerData("You", Team.Player, 100));
+            var localPlayer = new PlayerData(0, "You", Team.Player, 100);
+            _players.Add(localPlayer);
             
             // Create AI Opponents
             for (int i = 1; i <= 7; i++)
             {
-                _players.Add(new PlayerData($"Bot {i}", Team.Opponent, 100));
+                _players.Add(new PlayerData(i, $"Bot {i}", Team.Opponent, 100));
             }
 
+            SpawnTacticians();
+
             Debug.Log("<color=cyan>PlayerSystem initialized with 8 players.</color>");
+        }
+
+        private void SpawnTacticians()
+        {
+            if (DefaultTacticianData == null)
+            {
+                Debug.LogWarning("PlayerSystem: No defaultTacticianData assigned in GameSystemManagerData!");
+                return;
+            }
+
+            foreach (var player in _players)
+            {
+                if (player.Tactician != null) continue;
+
+                Arena arena = _manager.Field.GetArena(player.Id);
+                if (arena == null) continue;
+
+                Vector3 spawnPos = arena.TacticianSpawnPoint != null ? arena.TacticianSpawnPoint.position : arena.transform.position;
+                GameObject tacticianObj = Instantiate(DefaultTacticianData.prefab, spawnPos, arena.transform.rotation);
+                TacticianActor actor = tacticianObj.GetComponent<TacticianActor>();
+                
+                if (actor != null)
+                {
+                    actor.OwnerID = player.Id;
+                    actor.Initialize();
+                    player.Tactician = actor;
+                }
+            }
+        }
+
+        private void Update()
+        {
+            // Optional: Keep trying to spawn if any are missing (e.g. late registration)
+            if (_players.Any(p => p.Tactician == null))
+            {
+                SpawnTacticians();
+            }
         }
 
         public void ApplyDamage(Team team, int damage)
@@ -68,15 +115,18 @@ namespace Dajunctic
     [Serializable]
     public class PlayerData
     {
+        public int Id;
         public string Name;
         public Team Team;
         public int HP;
         public int MaxHP;
         public int WinStreak;
         public int LossStreak;
+        public TacticianActor Tactician;
 
-        public PlayerData(string name, Team team, int hp)
+        public PlayerData(int id, string name, Team team, int hp)
         {
+            Id = id;
             Name = name;
             Team = team;
             HP = hp;

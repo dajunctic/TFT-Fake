@@ -14,6 +14,10 @@ namespace Dajunctic
         [SerializeField] private float planningDuration = 10f;
         [SerializeField] private float combatDuration = 30f;
 
+        [Header("Debug")]
+        [SerializeField] private bool debugFastMode = false;
+        [SerializeField] private float fastModeDuration = 5f;
+
         private RoundSystem _roundSystem;
         private RoundSystem RoundSys => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
 
@@ -76,6 +80,11 @@ namespace Dajunctic
                     : RoundSys.CurrentRoundData.combatDuration;
             }
 
+            if (debugFastMode)
+            {
+                duration = fastModeDuration;
+            }
+
             _phaseDuration = duration;
             _timer = _phaseDuration;
 
@@ -84,6 +93,22 @@ namespace Dajunctic
             if (phase == GameplayPhase.Planning)
             {
                 this.Raise(new ShowPopupEvent { PopupType = typeof(GameplayPopup), ShowMode = PopupShowMode.DoNothing });
+                
+                // Return everyone home when planning starts
+                if (GameSystemManager.Instance.Travel != null)
+                {
+                    GameSystemManager.Instance.Travel.ReturnAllUnits();
+                }
+            }
+
+            if (phase == GameplayPhase.Combat)
+            {
+                // Start matchmaking and travel when combat starts
+                if (GameSystemManager.Instance.Travel != null)
+                {
+                    GameSystemManager.Instance.Travel.GenerateMatchmaking();
+                    GameSystemManager.Instance.Travel.ExecuteTravelCards();
+                }
             }
 
             OnPhaseChanged?.Invoke(phase);
@@ -112,36 +137,38 @@ namespace Dajunctic
         private void HandleCombatResult()
         {
             var playerSystem = GameSystemManager.Instance.Player;
-            if (playerSystem == null) return;
-
-            // Simplified combat result: for now, assume player always loses if we want to test damage, 
-            // or count surviving units if we have a way to identify teams.
-            // In a real game, you'd check which team has units left on the FieldSystem.
-
+            var travelSystem = GameSystemManager.Instance.Travel;
             var fieldSystem = GameSystemManager.Instance.Field;
-            if (fieldSystem == null) return;
+            if (playerSystem == null || travelSystem == null || fieldSystem == null) return;
 
-            var allUnits = fieldSystem.GetAllHeroes();
-            int playerUnits = allUnits.Count(u => u.CombatTeam == Team.Player);
-            int opponentUnits = allUnits.Count(u => u.CombatTeam == Team.Opponent);
-
+            var combatPairs = travelSystem.GetCombatPairs();
             int stageDamage = (RoundSys != null) ? RoundSys.StageNumber + 1 : 2;
 
-            if (playerUnits == 0 && opponentUnits > 0)
+            foreach (var pair in combatPairs)
             {
-                // Player lost
-                int damage = stageDamage + opponentUnits;
-                playerSystem.ApplyDamage(Team.Player, damage);
-                GameSystemManager.Instance.Economy?.RegisterResult(false);
-                Debug.Log($"[Gameplay] Player lost combat. Taking {damage} damage.");
-            }
-            else if (opponentUnits == 0 && playerUnits > 0)
-            {
-                // Opponent lost
-                int damage = stageDamage + playerUnits;
-                playerSystem.ApplyDamage(Team.Opponent, damage);
-                GameSystemManager.Instance.Economy?.RegisterResult(true);
-                Debug.Log($"[Gameplay] Opponent lost combat. Taking {damage} damage.");
+                // Each pair represents a combat on pair.HomeId arena
+                var allUnitsOnArena = fieldSystem.GetAllHeroes().Where(u => 
+                    fieldSystem.GetHeroAtTile(pair.HomeId, u.CurrentFieldCoord) == u).ToList();
+
+                var homeUnits = allUnitsOnArena.Where(u => u.OwnerID == pair.HomeId).ToList();
+                var guestUnits = allUnitsOnArena.Where(u => u.OwnerID == pair.GuestId).ToList();
+
+                if (homeUnits.Count == 0 && guestUnits.Count > 0)
+                {
+                    // Home lost
+                    int damage = stageDamage + guestUnits.Count;
+                    playerSystem.ApplyDamage(pair.HomeId == 0 ? Team.Player : Team.Opponent, damage); // Assuming Team enum is simple
+                    if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(false);
+                    Debug.Log($"[Gameplay] Player {pair.HomeId} lost combat on home arena. Taking {damage} damage.");
+                }
+                else if (guestUnits.Count == 0 && homeUnits.Count > 0)
+                {
+                    // Guest lost (Home won)
+                    int damage = stageDamage + homeUnits.Count;
+                    playerSystem.ApplyDamage(pair.GuestId == 0 ? Team.Player : Team.Opponent, damage);
+                    if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(true);
+                    Debug.Log($"[Gameplay] Player {pair.GuestId} lost combat as guest. Taking {damage} damage.");
+                }
             }
         }
     }

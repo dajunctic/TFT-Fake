@@ -18,8 +18,16 @@ namespace Dajunctic
                 return;
             }
 
-            GameSystemManager.Instance.Field.BindArea(fieldArea);
-            Debug.Log("<color=cyan>FieldAreaBinder: Bound field area to FieldSystem</color>");
+            Arena arena = GetComponentInParent<Arena>();
+            if (arena != null)
+            {
+                GameSystemManager.Instance.Field.RegisterArena(arena);
+                Debug.Log("<color=cyan>FieldAreaBinder: Bound field area to FieldSystem via Arena</color>");
+            }
+            else
+            {
+                Debug.LogError("FieldAreaBinder: Arena component not found in parent hierarchy!");
+            }
         }
     }
 }

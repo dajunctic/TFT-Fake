@@ -82,13 +82,20 @@ namespace Dajunctic
         {
             _isDragging = false;
 
-            if (GameSystemManager.Instance.Bench.TrySnapToBench(finalPos, out Vector2Int newBenchCoord))
+            if (GameSystemManager.Instance.Bench.TrySnapToBench(finalPos, out Vector2Int newBenchCoord, out int benchArenaId))
             {
-                HandleBenchDrop(newBenchCoord);
+                // For now, only allow dropping on own bench if it's our unit
+                if (benchArenaId == OwnerID)
+                    HandleBenchDrop(newBenchCoord, benchArenaId);
+                else
+                    ResetPosition();
             }
-            else if (GameSystemManager.Instance.Field != null && GameSystemManager.Instance.Field.TrySnapToField(finalPos, out Vector2Int newFieldCoord))
+            else if (GameSystemManager.Instance.Field != null && GameSystemManager.Instance.Field.TrySnapToField(finalPos, out Vector2Int newFieldCoord, out int fieldArenaId))
             {
-                HandleFieldDrop(newFieldCoord);
+                if (fieldArenaId == OwnerID)
+                    HandleFieldDrop(newFieldCoord, fieldArenaId);
+                else
+                    ResetPosition();
             }
             else if (SellZoneUI.IsPointerOverSellZone)
             {
@@ -102,40 +109,40 @@ namespace Dajunctic
             this.Raise(new HeroDragEndedEvent { Hero = this });
         }
 
-        private void HandleBenchDrop(Vector2Int newBenchCoord)
+        private void HandleBenchDrop(Vector2Int newBenchCoord, int arenaId)
         {
             if (IsOnBench && CurrentBenchCoord == newBenchCoord)
             {
-                FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(newBenchCoord));
+                FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(arenaId, newBenchCoord), arenaId);
                 return;
             }
 
-            var occupant = GameSystemManager.Instance.Bench.GetHeroAtTile(newBenchCoord);
+            var occupant = GameSystemManager.Instance.Bench.GetHeroAtTile(arenaId, newBenchCoord);
 
             if (occupant != null && occupant != this)
             {
-                SwapOccupant(occupant);
+                SwapOccupant(occupant, arenaId);
             }
             else
             {
                 ClearPreviousPlacement();
             }
 
-            GameSystemManager.Instance.Bench.RegisterHeroToTile(this, newBenchCoord);
-            FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(newBenchCoord));
+            GameSystemManager.Instance.Bench.RegisterHeroToTile(this, newBenchCoord, arenaId);
+            FinalizePlacement(GameSystemManager.Instance.Bench.GetWorldPosition(arenaId, newBenchCoord), arenaId);
         }
 
-        private void HandleFieldDrop(Vector2Int newFieldCoord)
+        private void HandleFieldDrop(Vector2Int newFieldCoord, int arenaId)
         {
             if (IsOnField && CurrentFieldCoord == newFieldCoord)
             {
-                FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(newFieldCoord));
+                FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, newFieldCoord), arenaId);
                 return;
             }
 
-            var occupant = GameSystemManager.Instance.Field.GetHeroAtTile(newFieldCoord);
+            var occupant = GameSystemManager.Instance.Field.GetHeroAtTile(arenaId, newFieldCoord);
 
-            if (IsOnBench && !GameSystemManager.Instance.Field.CanAddUnit() && occupant == null)
+            if (IsOnBench && !GameSystemManager.Instance.Field.CanAddUnit(OwnerID) && occupant == null)
             {
                 Debug.LogWarning("Unit limit reached! Swap with an existing unit or pull one back.");
                 ResetPosition();
@@ -144,15 +151,15 @@ namespace Dajunctic
 
             if (occupant != null && occupant != this)
             {
-                SwapOccupant(occupant);
+                SwapOccupant(occupant, arenaId);
             }
             else
             {
                 ClearPreviousPlacement();
             }
 
-            GameSystemManager.Instance.Field.RegisterHeroToTile(this, newFieldCoord);
-            FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(newFieldCoord));
+            GameSystemManager.Instance.Field.RegisterHeroToTile(this, newFieldCoord, arenaId);
+            FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, newFieldCoord), arenaId);
         }
 
         private void ClearPreviousPlacement()
@@ -165,21 +172,21 @@ namespace Dajunctic
         /// Move the occupant to where THIS unit was before dragging.
         /// RegisterHeroToTile handles cross-zone coord cleanup automatically.
         /// </summary>
-        private void SwapOccupant(ChampionActor occupant)
+        private void SwapOccupant(ChampionActor occupant, int arenaId)
         {
             if (IsOnBench)
             {
-                GameSystemManager.Instance.Bench.RegisterHeroToTile(occupant, CurrentBenchCoord);
-                occupant.Teleport(GameSystemManager.Instance.Bench.GetWorldPosition(CurrentBenchCoord), true);
+                GameSystemManager.Instance.Bench.RegisterHeroToTile(occupant, CurrentBenchCoord, arenaId);
+                occupant.Teleport(GameSystemManager.Instance.Bench.GetWorldPosition(arenaId, CurrentBenchCoord), true);
             }
             else if (IsOnField)
             {
-                GameSystemManager.Instance.Field.RegisterHeroToTile(occupant, CurrentFieldCoord);
-                occupant.Teleport(GameSystemManager.Instance.Field.GetWorldPosition(CurrentFieldCoord), true);
+                GameSystemManager.Instance.Field.RegisterHeroToTile(occupant, CurrentFieldCoord, arenaId);
+                occupant.Teleport(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, CurrentFieldCoord), true);
             }
         }
 
-        private void FinalizePlacement(Vector3 pos)
+        private void FinalizePlacement(Vector3 pos, int arenaId)
         {
             Teleport(pos, false);
             if (MoveAgent != null)

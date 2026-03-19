@@ -85,6 +85,25 @@ namespace Dajunctic
             return new Vector2Int(rq, rr);
         }
 
+        public List<Vector2Int> GetNeighbors(Vector2Int hex)
+        {
+            List<Vector2Int> neighbors = new List<Vector2Int>();
+            foreach (var dir in HexDirections)
+            {
+                Vector2Int neighbor = hex + dir;
+                if (TryGetTile(neighbor, out _))
+                {
+                    neighbors.Add(neighbor);
+                }
+            }
+            return neighbors;
+        }
+
+        private static readonly Vector2Int[] HexDirections = new Vector2Int[]
+        {
+            new Vector2Int(1, 0), new Vector2Int(1, -1), new Vector2Int(0, -1),
+            new Vector2Int(-1, 0), new Vector2Int(-1, 1), new Vector2Int(0, 1)
+        };
     }
 
     [Serializable]

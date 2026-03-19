@@ -60,3 +60,15 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 1
+  playerSystemData:
+    m_AssetGUID: 5ddafa738c010464b898f41ad9bba65e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  travelSystemData:
+    m_AssetGUID: 62f2f5289e150a843847b056d0e52e55
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1

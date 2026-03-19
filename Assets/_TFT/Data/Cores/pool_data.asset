@@ -26,6 +26,8 @@ MonoBehaviour:
     fxViewPrefab: {fileID: 8815093249552624532, guid: 4970bf4e32ebf8a43ad27c0b0fec08bd, type: 3}
   - Id: fx_upgrade_hero
     fxViewPrefab: {fileID: 3370591234364511026, guid: 705189e6d0fe8eb48b781ff642309127, type: 3}
+  - Id: fx_arena_portal_default
+    fxViewPrefab: {fileID: 4149501266391005753, guid: a9bd5dcb51a40014982b0d38f69389a8, type: 3}
   missileLists:
   - Id: missile_trump_atk_1
     missilePrefab: {fileID: 7856822411453443140, guid: ae611380fccf2304ab93d83d3901fa4e, type: 3}

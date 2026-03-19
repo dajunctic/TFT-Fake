@@ -20,6 +20,7 @@ MonoBehaviour:
   - fx_yasuo_atk_1_hit
   - fx_briar_atk_1_hit
   - fx_upgrade_hero
+  - fx_arena_portal_default
   missileIds:
   - missile_trump_atk_1
   timelineIds:

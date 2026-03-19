@@ -147,7 +147,8 @@ namespace Dajunctic
             if (hero == null) return;
 
             // Check if bench can accept this hero (has space or would trigger upgrade)
-            if (!_manager.Bench.CanAcceptHero(hero))
+            int localPlayerId = 0; // Local player defaults to 0
+            if (!_manager.Bench.CanAcceptHero(localPlayerId, hero))
             {
                 Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Bench is full and no upgrade possible!");
                 return;
@@ -156,7 +157,7 @@ namespace Dajunctic
             if (_manager.Economy.SpendGold(hero.rarity))
             {
                 // Add hero to bench
-                _manager.Bench.AddHeroToBench(hero);
+                _manager.Bench.AddHeroToBench(localPlayerId, hero);
 
                 Debug.Log($"[ShopSystem] Purchased {hero.displayName} for {hero.rarity} gold.");
                 _currentShop[slotIndex] = null;

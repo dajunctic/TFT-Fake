@@ -16,6 +16,7 @@ namespace Dajunctic
         public CombatActorData CombatActorData => combatActorData;
         [SerializeField] private Team team;
         public Team CombatTeam => team;
+        public int OwnerID { get; set; } = 0;
 
         public virtual Vector3 Position { get; private set; }
         public virtual Vector3 Forward { get; private set; }
@@ -156,6 +157,9 @@ namespace Dajunctic
                     break;
                 case ActorMovementType.Transform:
                     MoveAgent = new TransformMoveAgent();
+                    break;
+                case ActorMovementType.HexGrid:
+                    MoveAgent = gameObject.AddComponent<HexGridMoveAgent>();
                     break;
                 default:
                     MoveAgent = new TransformMoveAgent();
@@ -476,6 +480,7 @@ namespace Dajunctic
         Navmesh,
         Obstacle,
         Transform,
+        HexGrid,
     }
 
     public enum MovementPriority

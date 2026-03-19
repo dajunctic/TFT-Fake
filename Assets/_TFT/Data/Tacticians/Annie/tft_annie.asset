@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d692be86667b974aa2e970509836d5a, type: 3}
   m_Name: tft_annie
   m_EditorClassIdentifier: 
-  id: ma_annie
+  id: tft_annie
   movement:
     moveSpeed: 2.5
     rotateSpeed: 4
@@ -20,23 +20,22 @@ MonoBehaviour:
     radius: 0.25
     acceleration: 48
     movementType: 0
-  attribute:
-    maxHp: 100
-    physicalArmor: 0
-    magicalArmor: 0
-  skillAttribute:
-    energy: 0
-  combatStat:
-    radius: 4
-    atk: 0
-    atkSpd: 0
-    atkRange: 0
-    criticalChance: 0
-    criticalDmg: 0
+  stats:
+    maxHp: 500
+    armor: 20
+    magicResist: 20
+    attackDamage: 50
+    abilityPower: 100
+    attackSpeed: 0.65
+    attackRange: 1
+    critChance: 0.25
+    critDamage: 1.4
+    maxMana: 100
+    startingMana: 0
   skills: []
   displayName: Annie
   animalType: 
   icon: {fileID: 0}
-  prefab: {fileID: 0}
+  prefab: {fileID: 4723916307773563682, guid: 36b6f219aad91fd44a04bb1a0575a930, type: 3}
   tier: 1
   isBoss: 0

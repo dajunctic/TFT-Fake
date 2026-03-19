@@ -19,8 +19,16 @@ namespace Dajunctic
                 return;
             }
 
-            GameSystemManager.Instance.Bench.BindArea(benchArea, fxGuid);
-            Debug.Log("<color=cyan>BenchAreaBinder: Bound bench area to BenchSystem</color>");
+            Arena arena = GetComponentInParent<Arena>();
+            if (arena != null)
+            {
+                GameSystemManager.Instance.Bench.RegisterArena(arena, fxGuid);
+                Debug.Log("<color=cyan>BenchAreaBinder: Bound bench area to BenchSystem via Arena</color>");
+            }
+            else
+            {
+                Debug.LogError("BenchAreaBinder: Arena component not found in parent hierarchy!");
+            }
         }
     }
 }

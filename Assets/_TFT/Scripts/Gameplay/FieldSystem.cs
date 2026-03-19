@@ -8,8 +8,8 @@ namespace Dajunctic
     public class FieldSystem : MonoBehaviour, IGameSystem
     {
         // Scene ref — bound at runtime by FieldAreaBinder in the gameplay scene
-        private HexAreaView _fieldArea;
-        private Dictionary<Vector2Int, ChampionActor> _heroOnTiles = new Dictionary<Vector2Int, ChampionActor>();
+        private List<Arena> _arenas = new List<Arena>();
+        private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _heroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
         private GameSystemManager _manager;
 
         public async Task LoadDataAsync()
@@ -25,100 +25,115 @@ namespace Dajunctic
             Debug.Log("<color=cyan>FieldSystem initialized</color>");
         }
 
-        /// <summary>Called by FieldAreaBinder when the gameplay scene loads.</summary>
-        public void BindArea(HexAreaView area) => _fieldArea = area;
+        /// <summary>Called by Arena when it's initialized or by a binder.</summary>
+        public void RegisterArena(Arena arena)
+        {
+            if (!_arenas.Contains(arena)) _arenas.Add(arena);
+            if (!_heroesOnArenas.ContainsKey(arena.OwnerID))
+                _heroesOnArenas[arena.OwnerID] = new Dictionary<Vector2Int, ChampionActor>();
+        }
+
+        public Arena GetArena(int ownerId) => _arenas.Find(a => a.OwnerID == ownerId);
 
         public void Shutdown()
         {
-            _heroOnTiles.Clear();
+            foreach (var dict in _heroesOnArenas.Values) dict.Clear();
+            _heroesOnArenas.Clear();
+            _arenas.Clear();
             Debug.Log("<color=yellow>FieldSystem shutdown</color>");
         }
 
-        public int UnitCount => _heroOnTiles.Count;
+        public int GetUnitCount(int ownerId) 
+        {
+            if (_heroesOnArenas.TryGetValue(ownerId, out var heroes)) return heroes.Count;
+            return 0;
+        }
 
-        public bool CanAddUnit()
+        public bool CanAddUnit(int ownerId)
         {
             if (_manager.Economy == null) return true;
-            bool canAdd = UnitCount < _manager.Economy.Level;
-            if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached. Units: {UnitCount}, Level: {_manager.Economy.Level}");
+            int count = GetUnitCount(ownerId);
+            bool canAdd = count < _manager.Economy.Level;
+            if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached for player {ownerId}. Units: {count}, Level: {_manager.Economy.Level}");
             return canAdd;
         }
 
-        public bool TrySnapToField(Vector3 worldPos, out Vector2Int coord)
+        public bool TrySnapToField(Vector3 worldPos, out Vector2Int coord, out int arenaId)
         {
             coord = new Vector2Int(-1, -1);
-            if (_fieldArea == null || _fieldArea.Data == null) return false;
+            arenaId = -1;
 
-            Vector3 localPos = _fieldArea.CachedTransform.InverseTransformPoint(worldPos);
-            Vector2Int hexCoords = _fieldArea.Data.WorldToHex(localPos, Vector3.zero);
-
-            if (_fieldArea.Data.TryGetTile(hexCoords, out _))
+            foreach (var arena in _arenas)
             {
-                coord = hexCoords;
-                return true;
+                if (arena.TrySnapToField(worldPos, out coord))
+                {
+                    arenaId = arena.OwnerID;
+                    return true;
+                }
             }
             return false;
         }
 
-        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord)
+        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord, int arenaId)
         {
             UnregisterHero(actor);
-            // Cross-zone cleanup: moving to field means leaving bench
             if (_manager.Bench != null) _manager.Bench.UnregisterHero(actor);
 
-            // Remove any existing entry at this coord (in case of stale data)
-            if (_heroOnTiles.ContainsKey(coord))
+            if (!_heroesOnArenas.ContainsKey(arenaId))
+                _heroesOnArenas[arenaId] = new Dictionary<Vector2Int, ChampionActor>();
+
+            var heroes = _heroesOnArenas[arenaId];
+            if (heroes.ContainsKey(coord))
             {
-                Debug.LogWarning($"Field tile {coord} already has an entry! Removing stale data.");
-                _heroOnTiles.Remove(coord);
+                Debug.LogWarning($"Field tile {coord} on Arena {arenaId} already occupied! Removing stale data.");
+                heroes.Remove(coord);
             }
 
-            _heroOnTiles[coord] = actor;
+            heroes[coord] = actor;
             actor.CurrentFieldCoord = coord;
             actor.CurrentBenchCoord = new Vector2Int(-1, -1);
+            // actor.OwnerID = arenaId; // In case we need to track owner on actor
 
             _manager.Traits?.RefreshTraits();
         }
 
-        public void RemoveHeroFromTile(Vector2Int coord)
+        public void RemoveHeroFromTile(int arenaId, Vector2Int coord)
         {
-            if (_heroOnTiles.ContainsKey(coord))
+            if (_heroesOnArenas.TryGetValue(arenaId, out var heroes))
             {
-                _heroOnTiles.Remove(coord);
+                heroes.Remove(coord);
             }
         }
 
         public void UnregisterHero(ChampionActor actor)
         {
-            // Remove ALL entries for this actor (not just first one)
-            var keysToRemove = new List<Vector2Int>();
-            foreach (var kvp in _heroOnTiles)
+            foreach (var arenaId in _heroesOnArenas.Keys.ToList())
             {
-                if (kvp.Value == actor || kvp.Value == null)
-                {
-                    keysToRemove.Add(kvp.Key);
-                }
+                var heroes = _heroesOnArenas[arenaId];
+                var keysToRemove = heroes.Where(kvp => kvp.Value == actor || kvp.Value == null).Select(kvp => kvp.Key).ToList();
+                foreach (var key in keysToRemove) heroes.Remove(key);
             }
 
-            foreach (var key in keysToRemove)
+            _manager.Traits?.RefreshTraits();
+        }
+
+        public ChampionActor GetHeroAtTile(int arenaId, Vector2Int coord)
+        {
+            if (_heroesOnArenas.TryGetValue(arenaId, out var heroes))
             {
-                _heroOnTiles.Remove(key);
+                heroes.TryGetValue(coord, out var actor);
+                return actor;
             }
-
-            if (keysToRemove.Count > 0)
-                _manager.Traits?.RefreshTraits();
+            return null;
         }
 
-        public ChampionActor GetHeroAtTile(Vector2Int coord)
+        public void AddHeroToField(ChampionData heroData, Vector2Int coord, int starLevel, int arenaId)
         {
-            _heroOnTiles.TryGetValue(coord, out var actor);
-            return actor;
-        }
+            Arena arena = GetArena(arenaId);
+            if (arena == null) return;
 
-        public void AddHeroToField(ChampionData heroData, Vector2Int coord, int starLevel)
-        {
-            Vector3 worldPos = GetWorldPosition(coord);
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _fieldArea.CachedTransform.rotation);
+            Vector3 worldPos = arena.GetFieldWorldPosition(coord);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, arena.FieldArea.CachedTransform.rotation);
             ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
@@ -126,19 +141,19 @@ namespace Dajunctic
                 actor.CurrentFieldCoord = coord;
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
-                RegisterHeroToTile(actor, coord);
+                RegisterHeroToTile(actor, coord, arenaId);
             }
         }
 
         public List<ChampionActor> GetAllHeroes()
         {
-            return _heroOnTiles.Values.ToList();
+            return _heroesOnArenas.Values.SelectMany(d => d.Values).ToList();
         }
 
-        public Vector3 GetWorldPosition(Vector2Int coord)
+        public Vector3 GetWorldPosition(int arenaId, Vector2Int coord)
         {
-            Vector3 localPos = _fieldArea.Data.HexToWorld(Vector3.zero, coord);
-            return _fieldArea.CachedTransform.TransformPoint(localPos);
+            Arena arena = GetArena(arenaId);
+            return arena != null ? arena.GetFieldWorldPosition(coord) : Vector3.zero;
         }
     }
 }

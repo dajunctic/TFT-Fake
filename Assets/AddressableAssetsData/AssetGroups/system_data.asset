@@ -35,6 +35,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ddafa738c010464b898f41ad9bba65e
+    m_Address: player_system_data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62f2f5289e150a843847b056d0e52e55
+    m_Address: travel_system_data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 86af746cd8439cf408186510180bbcda
     m_Address: settings_data
     m_ReadOnly: 0

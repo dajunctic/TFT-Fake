@@ -8,10 +8,10 @@ namespace Dajunctic
     public class BenchSystem : MonoBehaviour, IGameSystem
     {
         // Scene refs — bound at runtime by BenchAreaBinder in the gameplay scene
-        private SquareAreaView _benchArea;
-        private string _fxGuid;
-        private Dictionary<Vector2Int, ChampionActor> _heroOnTiles = new Dictionary<Vector2Int, ChampionActor>();
+        private List<Arena> _arenas = new List<Arena>();
+        private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _heroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
         private GameSystemManager _manager;
+        private string _fxGuid;
 
         public async Task LoadDataAsync()
         {
@@ -26,69 +26,62 @@ namespace Dajunctic
             Debug.Log("<color=cyan>BenchSystem initialized</color>");
         }
 
-        /// <summary>Called by BenchAreaBinder when the gameplay scene loads.</summary>
-        public void BindArea(SquareAreaView area, string fxGuid)
+        /// <summary>Called by Arena when it's initialized or by a binder.</summary>
+        public void RegisterArena(Arena arena, string fxGuid)
         {
-            _benchArea = area;
+            if (!_arenas.Contains(arena)) _arenas.Add(arena);
             _fxGuid = fxGuid;
+            if (!_heroesOnArenas.ContainsKey(arena.OwnerID))
+                _heroesOnArenas[arena.OwnerID] = new Dictionary<Vector2Int, ChampionActor>();
         }
+
+        public Arena GetArena(int ownerId) => _arenas.Find(a => a.OwnerID == ownerId);
 
         public void Shutdown()
         {
-            _heroOnTiles.Clear();
+            foreach (var dict in _heroesOnArenas.Values) dict.Clear();
+            _heroesOnArenas.Clear();
+            _arenas.Clear();
             Debug.Log("<color=yellow>BenchSystem shutdown</color>");
         }
 
-        public bool HasEmptySlot()
+        public bool HasEmptySlot(int ownerId)
         {
-            return GetFirstEmptyTileCoord().y >= 0;
+            return GetFirstEmptyTileCoord(ownerId).y >= 0;
         }
 
         /// <summary>
         /// Check if we can accept a hero: either bench has space, or buying would trigger an upgrade.
         /// </summary>
-        public bool CanAcceptHero(ChampionData heroData, int starLevel = 1)
+        public bool CanAcceptHero(int ownerId, ChampionData heroData, int starLevel = 1)
         {
-            if (HasEmptySlot()) return true;
-            return WouldTriggerUpgrade(heroData, starLevel);
+            if (HasEmptySlot(ownerId)) return true;
+            return WouldTriggerUpgrade(ownerId, heroData, starLevel);
         }
 
         /// <summary>
         /// Check if adding one more hero of this type/star would trigger a 3-to-1 merge.
         /// </summary>
-        private bool WouldTriggerUpgrade(ChampionData heroData, int starLevel)
+        private bool WouldTriggerUpgrade(int ownerId, ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return false;
-            // Need 2 existing + 1 new (purchased) = 3 total
-            return GetMatchingHeroes(heroData, starLevel).Count >= 2;
+            return GetMatchingHeroes(ownerId, heroData, starLevel).Count >= 2;
         }
 
-        public Vector2Int GetFirstEmptyTileCoord()
+        public Vector2Int GetFirstEmptyTileCoord(int ownerId)
         {
-            if (_benchArea == null || _benchArea.Data == null) return new Vector2Int(-10, -10);
+            Arena arena = GetArena(ownerId);
+            if (arena == null || arena.BenchArea == null || arena.BenchArea.Data == null) return new Vector2Int(-1, -1);
 
-            var sortedTiles = _benchArea.Data.ActiveTiles
+            var sortedTiles = arena.BenchArea.Data.ActiveTiles
                 .OrderBy(t => t.coordinates.x)
                 .ThenBy(t => t.coordinates.y)
                 .ToList();
 
-
-
-            // Debug.LogError("<color=green>Checking bench tiles for empty slot.." + $" Total tiles: {sortedTiles.Count}, Occupied: {_heroOnTiles.Count}</color>");
-
-            // // Dump all dictionary entries
-            // Debug.LogError("<color=magenta>=== DICTIONARY DUMP ===</color>");
-            // foreach (var kvp in _heroOnTiles)
-            // {
-            //     Debug.LogError($"<color=magenta>Dict Entry: {kvp.Key} -> {(kvp.Value != null ? kvp.Value.name : "NULL")}</color>");
-            // }
-            // Debug.LogError("<color=magenta>======================</color>");
-
-
+            var heroes = _heroesOnArenas[ownerId];
             foreach (var tile in sortedTiles)
             {
-
-                if (!_heroOnTiles.TryGetValue(tile.coordinates, out var occupant) || occupant == null)
+                if (!heroes.TryGetValue(tile.coordinates, out var occupant) || occupant == null)
                 {
                     return tile.coordinates;
                 }
@@ -96,40 +89,34 @@ namespace Dajunctic
             return new Vector2Int(-1, -1);
         }
 
-        public void AddHeroToBench(ChampionData heroData, int starLevel = 1)
+        public void AddHeroToBench(int ownerId, ChampionData heroData, int starLevel = 1)
         {
-            Vector2Int coord = GetFirstEmptyTileCoord();
+            Vector2Int coord = GetFirstEmptyTileCoord(ownerId);
 
             if (coord.y < 0)
             {
-                // Bench is full — try direct upgrade without placing the hero
-                if (TryDirectUpgrade(heroData, starLevel))
+                if (TryDirectUpgrade(ownerId, heroData, starLevel))
                     return;
 
                 Debug.LogWarning("Bench is full!");
                 return;
             }
 
-            if (heroData.prefab == null)
-            {
-                Debug.LogError($"Hero {heroData.displayName} has no prefab assigned!");
-                return;
-            }
+            Arena arena = GetArena(ownerId);
+            if (arena == null) return;
 
-            Vector3 localPos = _benchArea.Data.SquareToWorld(Vector3.zero, coord);
-            Vector3 worldPos = _benchArea.CachedTransform.TransformPoint(localPos);
-
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
+            Vector3 worldPos = arena.GetBenchWorldPosition(coord);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, arena.BenchArea.CachedTransform.rotation);
             ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
             {
-                _heroOnTiles[coord] = actor;
+                _heroesOnArenas[ownerId][coord] = actor;
                 actor.CurrentBenchCoord = coord;
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
 
-                CheckForUpgrades(heroData, starLevel);
+                CheckForUpgrades(ownerId, heroData, starLevel);
             }
         }
 
@@ -137,16 +124,15 @@ namespace Dajunctic
         /// Perform an upgrade when bench is full. The purchased hero is consumed
         /// without being placed — we only need 2 existing copies on board.
         /// </summary>
-        private bool TryDirectUpgrade(ChampionData heroData, int starLevel)
+        private bool TryDirectUpgrade(int ownerId, ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return false;
 
-            var allMatching = GetMatchingHeroes(heroData, starLevel);
+            var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
 
             if (allMatching.Count >= 2)
             {
-                // Take 2 existing — the purchased hero is the virtual 3rd
-                MergeHeroes(allMatching.Take(2).ToList(), heroData, starLevel + 1);
+                MergeHeroes(ownerId, allMatching.Take(2).ToList(), heroData, starLevel + 1);
                 return true;
             }
 
@@ -156,11 +142,11 @@ namespace Dajunctic
         /// <summary>
         /// Find all heroes matching the given HeroData and star level across bench and field.
         /// </summary>
-        private List<ChampionActor> GetMatchingHeroes(ChampionData heroData, int starLevel)
+        private List<ChampionActor> GetMatchingHeroes(int ownerId, ChampionData heroData, int starLevel)
         {
             if (heroData == null) return new List<ChampionActor>();
 
-            var heroesOnBench = _heroOnTiles.Values
+            var heroesOnBench = _heroesOnArenas[ownerId].Values
                 .Where(h => h != null && h.CombatActorData != null &&
                             h.CombatActorData.Id == heroData.Id &&
                             h.StarLevel == starLevel)
@@ -173,42 +159,38 @@ namespace Dajunctic
                     .Where(h => h != null && h.CombatActorData != null &&
                                 h.CombatActorData.Id == heroData.Id &&
                                 h.StarLevel == starLevel)
-                    .ToList();
+                    .ToList(); // Note: This gets ALL heroes from ALL fields, might need to filter by owner
             }
 
             return heroesOnBench.Concat(heroesOnField).ToList();
         }
 
-        private void CheckForUpgrades(ChampionData heroData, int starLevel)
+        private void CheckForUpgrades(int ownerId, ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return;
 
-            var allMatching = GetMatchingHeroes(heroData, starLevel);
+            var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
 
             if (allMatching.Count >= 3)
             {
-                MergeHeroes(allMatching.Take(3).ToList(), heroData, starLevel + 1);
+                MergeHeroes(ownerId, allMatching.Take(3).ToList(), heroData, starLevel + 1);
             }
         }
 
-        private void MergeHeroes(List<ChampionActor> instances, ChampionData heroData, int newStarLevel)
+        private void MergeHeroes(int ownerId, List<ChampionActor> instances, ChampionData heroData, int newStarLevel)
         {
-            Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars!");
+            Debug.Log($"Upgrading {heroData.displayName} to {newStarLevel} stars for player {ownerId}!");
 
-            // 1. Determine placement: field merges stay on field, bench merges use leftmost merged hero position
             ChampionActor fieldHero = instances.FirstOrDefault(h => h.IsOnField);
             bool wasOnField = fieldHero != null;
 
             Vector2Int targetCoord;
             if (wasOnField)
             {
-                // Keep on field at the position of the field hero
                 targetCoord = fieldHero.CurrentFieldCoord;
             }
             else
             {
-                // All on bench - find the leftmost position among merged heroes
-                // This ensures merging heroes at 1,2,3 results in merged hero at position 1
                 targetCoord = instances
                     .Select(h => h.CurrentBenchCoord)
                     .OrderBy(coord => coord.x)
@@ -216,25 +198,18 @@ namespace Dajunctic
                     .First();
             }
 
-
-            // 2. Remove all instances from managers and destroy
-
             foreach (var hero in instances)
             {
-                UnregisterHero(hero); // Call local method directly
+                UnregisterHero(hero);
                 if (_manager.Field != null) _manager.Field.UnregisterHero(hero);
 
-                // Cleanup MoveAgent properly - return to pool if pooled, destroy if not
                 if (hero.MoveAgent != null)
                 {
                     hero.MoveAgent.SetEnable(false);
-
-                    // Call Cleanup if it's a pooled NavMeshMoveAgent to return it to pool
                     if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
                     {
                         navMeshAgent.Cleanup();
                     }
-
                     hero.MoveAgent = null;
                 }
                 hero.InterruptAction();
@@ -243,126 +218,107 @@ namespace Dajunctic
                 Destroy(hero.gameObject);
             }
 
-            // 3. Spawn upgraded unit at the primary location
-            Vector3 spawnPos = wasOnField ? _manager.Field.GetWorldPosition(targetCoord) : GetWorldPosition(targetCoord);
+            Vector3 spawnPos = wasOnField ? _manager.Field.GetWorldPosition(ownerId, targetCoord) : GetWorldPosition(ownerId, targetCoord);
 
             if (wasOnField)
             {
-                _manager.Field.AddHeroToField(heroData, targetCoord, newStarLevel);
+                _manager.Field.AddHeroToField(heroData, targetCoord, newStarLevel, ownerId);
             }
             else
             {
-                AddHeroToBenchAtCoord(heroData, targetCoord, newStarLevel);
+                AddHeroToBenchAtCoord(ownerId, heroData, targetCoord, newStarLevel);
             }
 
-            // 4. Spawn merge effect FX at the upgraded hero position
             if (!string.IsNullOrEmpty(_fxGuid))
             {
-                this.Raise(new SpawnFxEvent
-                {
-                    id = _fxGuid,
-                    position = spawnPos,
-                    duration = 1f
-                });
+                this.Raise(new SpawnFxEvent { id = _fxGuid, position = spawnPos, duration = 1f });
             }
 
-            // 4. Chain upgrade check (e.g., three 2★ → one 3★)
-            CheckForUpgrades(heroData, newStarLevel);
+            CheckForUpgrades(ownerId, heroData, newStarLevel);
         }
 
-        public void RemoveHeroFromTile(Vector2Int coord)
+        public void RemoveHeroFromTile(int arenaId, Vector2Int coord)
         {
-            if (_heroOnTiles.ContainsKey(coord))
+            if (_heroesOnArenas.TryGetValue(arenaId, out var heroes))
             {
-                _heroOnTiles.Remove(coord);
+                heroes.Remove(coord);
             }
         }
 
-        public bool TrySnapToBench(Vector3 worldPos, out Vector2Int coord)
+        public bool TrySnapToBench(Vector3 worldPos, out Vector2Int coord, out int arenaId)
         {
             coord = new Vector2Int(-1, -1);
-            if (_benchArea == null || _benchArea.Data == null) return false;
+            arenaId = -1;
 
-            Vector3 localPos = _benchArea.CachedTransform.InverseTransformPoint(worldPos);
-            Vector2Int squareCoords = _benchArea.Data.WorldToSquare(localPos, Vector3.zero);
-
-            if (_benchArea.Data.TryGetTile(squareCoords, out _))
+            foreach (var arena in _arenas)
             {
-                coord = squareCoords;
-                return true;
+                if (arena.TrySnapToBench(worldPos, out coord))
+                {
+                    arenaId = arena.OwnerID;
+                    return true;
+                }
             }
             return false;
         }
 
-        public void AddHeroToBenchAtCoord(ChampionData heroData, Vector2Int coord, int starLevel)
+        public void AddHeroToBenchAtCoord(int ownerId, ChampionData heroData, Vector2Int coord, int starLevel)
         {
-            Vector3 worldPos = GetWorldPosition(coord);
-            GameObject heroObj = Instantiate(heroData.prefab, worldPos, _benchArea.CachedTransform.rotation);
+            Vector3 worldPos = GetWorldPosition(ownerId, coord);
+            GameObject heroObj = Instantiate(heroData.prefab, worldPos, transform.rotation);
             ChampionActor actor = heroObj.GetComponent<ChampionActor>();
 
             if (actor != null)
             {
                 actor.SetStarLevel(starLevel);
                 actor.Initialize();
-                RegisterHeroToTile(actor, coord);
+                RegisterHeroToTile(actor, coord, ownerId);
             }
         }
 
-        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord)
+        public void RegisterHeroToTile(ChampionActor actor, Vector2Int coord, int ownerId)
         {
             UnregisterHero(actor);
-            // Cross-zone cleanup: moving to bench means leaving field
             if (_manager.Field != null) _manager.Field.UnregisterHero(actor);
 
-            // Remove any existing entry at this coord (in case of stale data)
-            if (_heroOnTiles.ContainsKey(coord))
+            if (!_heroesOnArenas.ContainsKey(ownerId))
+                _heroesOnArenas[ownerId] = new Dictionary<Vector2Int, ChampionActor>();
+
+            var heroes = _heroesOnArenas[ownerId];
+            if (heroes.ContainsKey(coord))
             {
-                Debug.LogWarning($"Tile {coord} already has an entry! Removing stale data.");
-                _heroOnTiles.Remove(coord);
+                Debug.LogWarning($"Tile {coord} on Arena {ownerId} already occupied! Removing stale data.");
+                heroes.Remove(coord);
             }
 
-            _heroOnTiles[coord] = actor;
+            heroes[coord] = actor;
             actor.CurrentBenchCoord = coord;
             actor.CurrentFieldCoord = new Vector2Int(-1, -1);
         }
 
         public void UnregisterHero(ChampionActor actor)
         {
-            // Remove ALL entries for this actor (not just first one)
-            var keysToRemove = new List<Vector2Int>();
-            foreach (var kvp in _heroOnTiles)
+            foreach (var ownerId in _heroesOnArenas.Keys.ToList())
             {
-                if (kvp.Value == actor || kvp.Value == null)
-                {
-                    keysToRemove.Add(kvp.Key);
-                }
-            }
-
-            foreach (var key in keysToRemove)
-            {
-                _heroOnTiles.Remove(key);
+                var heroes = _heroesOnArenas[ownerId];
+                var keysToRemove = heroes.Where(kvp => kvp.Value == actor || kvp.Value == null).Select(kvp => kvp.Key).ToList();
+                foreach (var key in keysToRemove) heroes.Remove(key);
             }
         }
 
-        public Vector2Int GetCoordOfActor(ChampionActor actor)
+        public ChampionActor GetHeroAtTile(int ownerId, Vector2Int coord)
         {
-            foreach (var kvp in _heroOnTiles)
+            if (_heroesOnArenas.TryGetValue(ownerId, out var heroes))
             {
-                if (kvp.Value == actor) return kvp.Key;
+                heroes.TryGetValue(coord, out var actor);
+                return actor;
             }
-            return new Vector2Int(-1, -1);
+            return null;
         }
 
-        public ChampionActor GetHeroAtTile(Vector2Int coord)
+        public Vector3 GetWorldPosition(int ownerId, Vector2Int coord)
         {
-            _heroOnTiles.TryGetValue(coord, out var actor);
-            return actor;
-        }
-
-        public Vector3 GetWorldPosition(Vector2Int coord)
-        {
-            Vector3 localPos = _benchArea.Data.SquareToWorld(Vector3.zero, coord);
-            return _benchArea.CachedTransform.TransformPoint(localPos);
+            Arena arena = GetArena(ownerId);
+            return arena != null ? arena.GetBenchWorldPosition(coord) : Vector3.zero;
         }
     }
 }
