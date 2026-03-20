@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace Dajunctic
 {
@@ -10,7 +11,19 @@ namespace Dajunctic
         [SerializeField] private GameObject nameBg;
         [SerializeField] private GameObject playerCircleBgSmall;
         [SerializeField] private GameObject playerCircleBgBig;
+        [SerializeField] private TMP_Text nameText;
         [SerializeField] private Image hpBarFill;
+        [SerializeField] private Button clickButton;
+
+        public Button ClickButton => clickButton;
+        public PlayerData Data { get; private set; }
+
+        public void Initialize(PlayerData data)
+        {
+            Data = data;
+            if (nameText != null) nameText.text = data.Name;
+            SetHp((float)data.HP / data.MaxHP);
+        }
 
         public void TogglePlayer(bool active)
         {
@@ -25,7 +38,8 @@ namespace Dajunctic
         {
             if (hpBarFill != null)
             {
-                hpBarFill.fillAmount = hpPercent;
+                hpBarFill.DOKill();
+                hpBarFill.DOFillAmount(hpPercent, 0.5f).SetEase(Ease.OutQuad);
             }
         }
     }

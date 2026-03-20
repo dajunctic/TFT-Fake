@@ -157,7 +157,7 @@ namespace Dajunctic
                 {
                     // Home lost
                     int damage = stageDamage + guestUnits.Count;
-                    playerSystem.ApplyDamage(pair.HomeId == 0 ? Team.Player : Team.Opponent, damage); // Assuming Team enum is simple
+                    playerSystem.ApplyDamage(pair.HomeId, damage); 
                     if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(false);
                     Debug.Log($"[Gameplay] Player {pair.HomeId} lost combat on home arena. Taking {damage} damage.");
                 }
@@ -165,7 +165,7 @@ namespace Dajunctic
                 {
                     // Guest lost (Home won)
                     int damage = stageDamage + homeUnits.Count;
-                    playerSystem.ApplyDamage(pair.GuestId == 0 ? Team.Player : Team.Opponent, damage);
+                    playerSystem.ApplyDamage(pair.GuestId, damage);
                     if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(true);
                     Debug.Log($"[Gameplay] Player {pair.GuestId} lost combat as guest. Taking {damage} damage.");
                 }

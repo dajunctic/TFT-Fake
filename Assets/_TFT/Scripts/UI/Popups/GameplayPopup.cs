@@ -2,6 +2,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
 
 namespace Dajunctic
 {
@@ -39,7 +41,8 @@ namespace Dajunctic
         [SerializeField] private TMP_Text pingTxt;
 
         [Header("Player Lists")]
-        [SerializeField] private List<PlayerUI> playerUIs;
+        [SerializeField] private PlayerListUI playerListUI;
+
         [SerializeField] private GameObject fightInfoBtn;
         [SerializeField] private GameObject playerInfoBtn;
         [SerializeField] private GameObject playerInfoDisabledBtn;
@@ -64,7 +67,13 @@ namespace Dajunctic
             this.RegisterListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RegisterListener<ShopLockChangedEvent>(OnShopLockChanged);
+            this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            if (playerListUI != null) playerListUI.OnPlayerClicked += OnPlayerClicked;
         }
+
+
+
+
 
         public override void AfterShow()
         {
@@ -94,7 +103,12 @@ namespace Dajunctic
             this.RemoveListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RemoveListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
+            this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            if (playerListUI != null) playerListUI.OnPlayerClicked -= OnPlayerClicked;
         }
+
+
+
 
         public override void BeforeShow(object data = null)
         {
@@ -134,6 +148,17 @@ namespace Dajunctic
         private void OnGoldChanged(GoldChangedEvent evt) => UpdateEconomy();
         private void OnLevelChanged(LevelChangedEvent evt) => UpdateEconomy();
         private void OnXPChanged(XPChangedEvent evt) => UpdateEconomy();
+        private void OnShopLockChanged(ShopLockChangedEvent evt) => UpdateShopLockUI(evt.IsLocked);
+
+        private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
+        {
+            if (evt.Phase == GameplayPhase.Planning)
+            {
+                if (playerListUI != null) playerListUI.SortAndAnimate();
+            }
+        }
+
+
 
         private void UpdateShop()
         {
@@ -244,11 +269,6 @@ namespace Dajunctic
             this.Raise(new RequestToggleShopLockEvent());
         }
 
-        private void OnShopLockChanged(ShopLockChangedEvent evt)
-        {
-            UpdateShopLockUI(evt.IsLocked);
-        }
-
         private void UpdateShopLockUI(bool isLocked)
         {
             // lockShop = icon khóa đóng (shop đang locked) → hiện khi locked
@@ -256,6 +276,7 @@ namespace Dajunctic
             if (lockShop != null) lockShop.SetActive(isLocked);
             if (unlockShop != null) unlockShop.SetActive(!isLocked);
         }
+
 
 
         public override void Tick()
@@ -290,33 +311,23 @@ namespace Dajunctic
             if (fightInfoDisabledBtn != null) fightInfoDisabledBtn.SetActive(show);
         }
 
-
         private void UpdatePlayerList()
         {
-            foreach (var ui in playerUIs)
-            {
-                ui.TogglePlayer(false);
-            }
-            playerUIs[0].TogglePlayer(true);
+            var playerSystem = this.GetSystem<PlayerSystem>();
+            if (playerSystem == null || playerListUI == null) return;
 
-            TogglePlayerInfo(true);
+            playerListUI.Initialize(playerSystem.Players);
         }
 
-
-        public void OnclickPlayer(int index)
+        private void OnPlayerClicked(PlayerData data)
         {
-            if (index < 0 || index >= playerUIs.Count) return;
-
-            var playerUI = playerUIs[index];
-
-            foreach (var ui in playerUIs)
+            var cam = Camera.main.GetComponent<FollowCamera>();
+            if (cam != null && data.Tactician != null)
             {
-                ui.TogglePlayer(false);
+                cam.target = data.Tactician.transform;
+                cam.SnapToTarget();
             }
-            
-            playerUI.TogglePlayer(true);
         }
-
         #endregion
     }
 }

@@ -78,7 +78,13 @@ namespace Dajunctic
             foreach (var pair in _combatPairs)
             {
                 Arena homeArena = _manager.Field.GetArena(pair.HomeId);
+                Arena guestArena = _manager.Field.GetArena(pair.GuestId);
                 if (homeArena == null) continue;
+
+                // Spawn portals once per pair travel
+                if (guestArena != null) SpawnPortal(guestArena.transform.position);
+                Vector3 guestSpawnPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
+                SpawnPortal(guestSpawnPos);
 
                 // Units belonging to Guest travel to Home Arena
                 var guestUnits = _manager.Field.GetAllHeroes().Where(u => u.OwnerID == pair.GuestId).ToList();
@@ -88,12 +94,7 @@ namespace Dajunctic
                     // Save original state
                     _travelingUnits[unit] = (pair.GuestId, unit.CachedTransform.position, unit.CurrentFieldCoord, true);
                     
-                    // Teleport to Home Arena's guest spawn point
-                    Vector3 targetPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
-                    
-                    SpawnPortal(unit.CachedTransform.position);
-                    unit.Teleport(targetPos, false);
-                    SpawnPortal(targetPos);
+                    unit.Teleport(guestSpawnPos, false);
 
                     // Re-register to Home Arena for combat detection
                     _manager.Field.RegisterHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
@@ -106,11 +107,7 @@ namespace Dajunctic
                     var tactician = guestData.Tactician;
                     _travelingUnits[tactician] = (pair.GuestId, tactician.CachedTransform.position, Vector2Int.zero, false);
                     
-                    Vector3 guestSpawnPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
-                    
-                    SpawnPortal(tactician.CachedTransform.position);
                     tactician.Teleport(guestSpawnPos, false);
-                    SpawnPortal(guestSpawnPos);
                 }
             }
         }

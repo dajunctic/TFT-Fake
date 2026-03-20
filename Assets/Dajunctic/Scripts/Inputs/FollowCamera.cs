@@ -27,5 +27,12 @@ namespace Dajunctic
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
             //transform.LookAt(target);
         }
+
+        public void SnapToTarget()
+        {
+            if (target == null) return;
+            transform.position = target.position + offset;
+            velocity = Vector3.zero;
+        }
     }
 }

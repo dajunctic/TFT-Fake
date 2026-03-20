@@ -11,6 +11,8 @@ namespace Dajunctic
 
         public override string DataId => name;
         public override bool CanBeTarget => true;
+        public bool IsLocalPlayer => OwnerID == 0;
+
 
         
         private Transform _cameraTransform;
@@ -42,8 +44,12 @@ namespace Dajunctic
         public override void ListenEvents()
         {
             base.ListenEvents();
-            InputManager.OnRightClickEvent += OnRightClick;
+            if (IsLocalPlayer)
+            {
+                InputManager.OnRightClickEvent += OnRightClick;
+            }
         }
+
 
         private void OnRightClick(Vector2 mousePosition)
         {
@@ -59,7 +65,10 @@ namespace Dajunctic
         {
             base.Tick();
 
+            if (!IsLocalPlayer) return;
+
             var inputDirection = Vector3.zero;
+
 
             if (FloatingJoystick.Instance != null)
             {

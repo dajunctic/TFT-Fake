@@ -5096,6 +5096,7 @@ GameObject:
   - component: {fileID: 8233468205978149641}
   - component: {fileID: 1481942391867817558}
   - component: {fileID: 8350247995293560542}
+  - component: {fileID: 7342777865550274532}
   m_Layer: 0
   m_Name: player_list
   m_TagString: Untagged
@@ -5170,6 +5171,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 0
+--- !u!114 &7342777865550274532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5275794525898670445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2844ef5e62a625c459c9ec7396dfac6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.PlayerListUI
+  playerUIs:
+  - {fileID: 8962728872251424905}
+  - {fileID: 4070698371119467429}
+  - {fileID: 1493049142615130114}
+  - {fileID: 1545839510303901458}
+  - {fileID: 4653692483517626225}
+  - {fileID: 2872154037701026772}
+  - {fileID: 6302011739483580496}
+  - {fileID: 1096480569879253880}
 --- !u!1 &5384837118914433240
 GameObject:
   m_ObjectHideFlags: 0
@@ -5853,15 +5875,7 @@ MonoBehaviour:
   traitListUI: {fileID: 7036981770785055709}
   fpsTxt: {fileID: 576507009013157745}
   pingTxt: {fileID: 5045712296612343697}
-  playerUIs:
-  - {fileID: 8962728872251424905}
-  - {fileID: 4070698371119467429}
-  - {fileID: 1493049142615130114}
-  - {fileID: 1545839510303901458}
-  - {fileID: 4653692483517626225}
-  - {fileID: 2872154037701026772}
-  - {fileID: 6302011739483580496}
-  - {fileID: 1096480569879253880}
+  playerListUI: {fileID: 7342777865550274532}
   fightInfoBtn: {fileID: 1886707024548374218}
   playerInfoBtn: {fileID: 6450499722275909577}
   playerInfoDisabledBtn: {fileID: 2337551745652850552}

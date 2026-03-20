@@ -84,16 +84,30 @@ namespace Dajunctic
             }
         }
 
-        public void ApplyDamage(Team team, int damage)
+        public void ApplyDamage(int playerId, int damage)
         {
-            var target = _players.Find(p => p.Team == team);
+            var target = _players.Find(p => p.Id == playerId);
             if (target != null)
             {
                 target.HP = Mathf.Max(0, target.HP - damage);
                 OnPlayerInfoChanged?.Invoke(target);
-                Debug.Log($"<color=red>PlayerSystem: {target.Name} took {damage} damage. HP: {target.HP}</color>");
+                Debug.Log($"<color=red>[PlayerSystem] {target.Name} (ID:{playerId}) took {damage} damage. HP: {target.HP}</color>");
             }
         }
+
+        // Backward compatibility for Team based damage (if still used)
+        public void ApplyDamage(Team team, int damage)
+        {
+            var targets = _players.Where(p => p.Team == team).ToList();
+            foreach (var target in targets)
+            {
+                // In actual TFT, only the specific loser is damaged, but if we pass Team, 
+                // we'll just damage the first one for now or all (this method is flawed for multi-opponent teams)
+                ApplyDamage(target.Id, damage);
+                break; 
+            }
+        }
+
 
         public void SetStreak(Team team, int winStreak, int lossStreak)
         {
