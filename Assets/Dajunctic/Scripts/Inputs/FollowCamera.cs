@@ -7,31 +7,116 @@ namespace Dajunctic
     public class FollowCamera : MonoBehaviour
     {
         [Header("Target")]
+        [Tooltip("If null, will auto-find GameSystemManager's LocalPlayer Tactician")]
         public Transform target;
 
         [Header("Settings")]
-        public Vector3 offset = new Vector3(0, 15, -10);
-
+        public Vector3 offset = new Vector3(0f, 9.5f, -6f);
+        public Vector3 scoutOffset = new Vector3(0f, 9.5f, 6f);
         public float smoothTime = 0.3f;
+        public float rotSmoothTime = 0.15f;
+
+        [Header("Camera Lock")]
+        [Tooltip("If true, the camera locks strictly to the center of the active Arena instead of following the target tactician.")]
+        public bool lockToArenaCenter = true;
 
         private Vector3 velocity = Vector3.zero;
+        private Quaternion _originalRot;
+        private bool _rotInitialized = false;
+
+        private Vector3 GetArenaCenter()
+        {
+            if (target != null && GameSystemManager.Instance != null && GameSystemManager.Instance.Field != null)
+            {
+                var arenas = GameSystemManager.Instance.Field.GetAllArenas();
+                if (arenas != null && arenas.Count > 0)
+                {
+                    Arena closest = arenas[0];
+                    float minDist = Vector3.Distance(target.position, closest.transform.position);
+                    for (int i = 1; i < arenas.Count; i++)
+                    {
+                        float d = Vector3.Distance(target.position, arenas[i].transform.position);
+                        if (d < minDist)
+                        {
+                            minDist = d;
+                            closest = arenas[i];
+                        }
+                    }
+                    return closest.transform.position;
+                }
+            }
+            return target != null ? target.position : Vector3.zero;
+        }
+
+        private bool IsFlipped()
+        {
+            if (target != null)
+            {
+                var tactician = target.GetComponent<TacticianActor>();
+                if (tactician != null && tactician.OwnerID != 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         void LateUpdate()
         {
+            if (!_rotInitialized)
+            {
+                _originalRot = transform.rotation;
+                _rotInitialized = true;
+            }
+
             if (target == null)
             {
+                FindLocalTactician();
                 return;
             }
 
-            Vector3 desiredPosition = target.position + offset;
+            bool flipped = IsFlipped();
+            Vector3 focusPoint = lockToArenaCenter ? GetArenaCenter() : target.position;
+            
+            Vector3 desiredPosition = focusPoint + (flipped ? scoutOffset : offset);
+
             transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
-            //transform.LookAt(target);
+            
+            Quaternion targetRot = flipped ? Quaternion.Euler(_originalRot.eulerAngles.x, _originalRot.eulerAngles.y + 180f, _originalRot.eulerAngles.z) : _originalRot;
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime / Mathf.Max(0.01f, rotSmoothTime));
+        }
+
+        private void FindLocalTactician()
+        {
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Player == null)
+                return;
+
+            var localPlayer = GameSystemManager.Instance.Player.LocalPlayer;
+            if (localPlayer != null && localPlayer.Tactician != null)
+            {
+                target = localPlayer.Tactician.transform;
+                SnapToTarget();
+            }
         }
 
         public void SnapToTarget()
         {
             if (target == null) return;
-            transform.position = target.position + offset;
+            
+            if (!_rotInitialized)
+            {
+                _originalRot = transform.rotation;
+                _rotInitialized = true;
+            }
+
+            bool flipped = IsFlipped();
+            Vector3 focusPoint = lockToArenaCenter ? GetArenaCenter() : target.position;
+            
+            Vector3 desiredPosition = focusPoint + (flipped ? scoutOffset : offset);
+            
+            transform.position = desiredPosition;
+            Quaternion targetRot = flipped ? Quaternion.Euler(_originalRot.eulerAngles.x, _originalRot.eulerAngles.y + 180f, _originalRot.eulerAngles.z) : _originalRot;
+            transform.rotation = targetRot;
             velocity = Vector3.zero;
         }
     }

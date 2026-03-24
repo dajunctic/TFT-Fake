@@ -296,7 +296,7 @@ MonoBehaviour:
   tick: 2
   planningDuration: 10
   combatDuration: 30
-  debugFastMode: 1
+  debugFastMode: 0
   fastModeDuration: 5
 --- !u!1 &330585543
 GameObject:
@@ -449,8 +449,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
-  offset: {x: 0, y: 15, z: -10}
+  offset: {x: 0, y: 6.37, z: -7.84}
+  scoutOffset: {x: 0, y: 7.24, z: 6.92}
   smoothTime: 0.3
+  rotSmoothTime: 0.15
+  lockToArenaCenter: 1
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

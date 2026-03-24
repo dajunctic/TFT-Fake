@@ -105,7 +105,10 @@ public class InputManager: Singleton<InputManager>
         if (IsInputBlocked()) return;
         Vector2 mousePosition = pointAction.action.ReadValue<Vector2>();
 
-        var ray = _camera.ScreenPointToRay(mousePosition);
+        if (_camera == null) _camera = Camera.main;
+        if (_camera != null)
+        {
+            var ray = _camera.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hitInfo))
             {
                 var targetPosition = hitInfo.point;
@@ -116,7 +119,7 @@ public class InputManager: Singleton<InputManager>
                     position = targetPosition,
                 });
             }
-
+        }
        
         OnRightClickEvent?.Invoke(mousePosition);
     }

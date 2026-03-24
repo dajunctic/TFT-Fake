@@ -70,6 +70,8 @@ namespace Dajunctic
                 {
                     actor.OwnerID = player.Id;
                     actor.Initialize();
+                    actor.StopListenEvents();
+                    actor.ListenEvents();
                     player.Tactician = actor;
                 }
             }

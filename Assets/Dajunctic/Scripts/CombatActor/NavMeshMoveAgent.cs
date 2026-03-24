@@ -133,7 +133,14 @@ namespace Dajunctic
 
         public void Warp(Vector3 position)
         {
-            _navMeshAgent.transform.position = position;
+            if (_navMeshAgent.isActiveAndEnabled && _navMeshAgent.isOnNavMesh)
+            {
+                _navMeshAgent.Warp(position);
+            }
+            else
+            {
+                _navMeshAgent.transform.position = position;
+            }
         }
     
 

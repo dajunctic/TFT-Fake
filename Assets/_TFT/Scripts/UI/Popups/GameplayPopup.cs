@@ -326,6 +326,29 @@ namespace Dajunctic
             {
                 cam.target = data.Tactician.transform;
                 cam.SnapToTarget();
+
+                var playerSystem = this.GetSystem<PlayerSystem>();
+                if (playerSystem != null && playerSystem.LocalPlayer != null)
+                {
+                    var localTactician = playerSystem.LocalPlayer.Tactician;
+                    if (localTactician != null)
+                    {
+                        var fieldSystem = this.GetSystem<FieldSystem>();
+                        if (fieldSystem != null)
+                        {
+                            var targetArena = fieldSystem.GetArena(data.Id);
+                            if (targetArena != null)
+                            {
+                                Transform spawnTransform = (data.Id == playerSystem.LocalPlayer.Id) 
+                                    ? targetArena.TacticianSpawnPoint 
+                                    : targetArena.GuestSpawnPoint;
+
+                                Vector3 spawnPos = spawnTransform != null ? spawnTransform.position : targetArena.transform.position;
+                                localTactician.Teleport(spawnPos, true, true);
+                            }
+                        }
+                    }
+                }
             }
         }
         #endregion

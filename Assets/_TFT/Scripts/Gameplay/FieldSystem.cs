@@ -35,6 +35,8 @@ namespace Dajunctic
 
         public Arena GetArena(int ownerId) => _arenas.Find(a => a.OwnerID == ownerId);
 
+        public IReadOnlyList<Arena> GetAllArenas() => _arenas;
+
         public void Shutdown()
         {
             foreach (var dict in _heroesOnArenas.Values) dict.Clear();

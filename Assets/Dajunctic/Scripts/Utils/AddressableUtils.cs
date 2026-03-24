@@ -10,6 +10,8 @@ namespace Dajunctic
 {
     public static class AddressableUtils
     {
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)] private static void SelfInit() { currentSceneHandle=new (); }
+
         static AsyncOperationHandle<SceneInstance> currentSceneHandle;
 
         public static void LoadScene(AssetReference sceneRef, Action onCompleted=null, Action<float> onProgress=null, Action onFailed=null)
