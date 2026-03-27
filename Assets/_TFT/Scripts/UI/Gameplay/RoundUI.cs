@@ -10,6 +10,9 @@ namespace Dajunctic
         [Header("References")]
         [SerializeField] private TMP_Text roundText;
         [SerializeField] private RoundStageBarUI stageBar;
+        [SerializeField] private RoundStageBarUI roundList;
+        [SerializeField] private RectTransform stageBg;
+        [SerializeField] private float offset;
 
         private RoundSystem _roundSystem;
         private RoundSystem RoundSystem => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
@@ -56,6 +59,8 @@ namespace Dajunctic
             {
                 stageBar.UpdateStage(RoundSystem.CurrentStageData, RoundSystem.RoundNumber);
             }
+
+            stageBg.sizeDelta = new Vector2(offset + roundList.RectTransform.sizeDelta.x, stageBg.sizeDelta.y);
         }
     }
 }

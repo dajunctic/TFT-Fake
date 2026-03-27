@@ -16,6 +16,6 @@ MonoBehaviour:
   planningDuration: 30
   combatDuration: 30
   displayName: 3-6
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 3a1bd38f3d48bfd4ea2a58768c6f2bc5, type: 3}
   bonusGold: 0
   hasAugment: 0

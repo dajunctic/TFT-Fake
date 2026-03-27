@@ -8,12 +8,20 @@ namespace Dajunctic
         [Header("References")]
         [SerializeField] private RoundStageIconUI iconPrefab;
         [SerializeField] private Transform container;
+        [SerializeField] private RectTransform rectTransform;
+
+        public RectTransform RectTransform => rectTransform;
 
         private List<RoundStageIconUI> _icons = new List<RoundStageIconUI>();
 
         public void UpdateStage(StageData stageData, int currentRoundNumber)
         {
             if (stageData == null) return;
+
+            for(var i = 0; i < container.childCount; i++)
+            {
+                Destroy(container.GetChild(i).gameObject);
+            }
 
             // Adjust icon count
             while (_icons.Count < stageData.rounds.Count)

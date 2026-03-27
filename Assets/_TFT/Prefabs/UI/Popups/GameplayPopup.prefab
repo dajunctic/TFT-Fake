@@ -1321,6 +1321,9 @@ MonoBehaviour:
   tick: 2
   roundText: {fileID: 4582187831719687055}
   stageBar: {fileID: 8622184798757305378}
+  roundList: {fileID: 8622184798757305378}
+  stageBg: {fileID: 8807113309121265011}
+  offset: 284
 --- !u!1 &1380387948781183531
 GameObject:
   m_ObjectHideFlags: 0
@@ -1969,6 +1972,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundStageBarUI
   iconPrefab: {fileID: 402224929668581893, guid: 303a6f67dd7b159438d66da9db3886ac, type: 3}
   container: {fileID: 8702478673072362056}
+  rectTransform: {fileID: 8702478673072362056}
 --- !u!1 &1832570565350283017
 GameObject:
   m_ObjectHideFlags: 0
@@ -10657,10 +10661,6 @@ PrefabInstance:
     - target: {fileID: 4625601066029393379, guid: 303a6f67dd7b159438d66da9db3886ac, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5012068836153721946, guid: 303a6f67dd7b159438d66da9db3886ac, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5705895598932249908, guid: 303a6f67dd7b159438d66da9db3886ac, type: 3}
       propertyPath: m_Name

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: eca955085f002ad4ca101580c575ef7a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 226186
+  packageName: Mobile Force Field
+  packageVersion: 1.0.6
+  assetPath: Assets/Isle of Assets/Mobile Force Field/Scenes/SampleScene/OcclusionCullingData.asset
+  uploadId: 621325

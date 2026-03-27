@@ -16,6 +16,7 @@ namespace Dajunctic
         private bool _isShopLocked;
         public bool IsShopLocked => _isShopLocked;
         public ShopData ShopData => _data?.shopData;
+        public List<ChampionData> AllHeroes => _data?.allHeroes;
         private GameSystemManager _manager;
 
         public static event System.Action OnShopRefreshed;

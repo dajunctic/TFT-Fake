@@ -12,6 +12,7 @@ namespace Dajunctic
 
         [Header("Debug")]
         [SerializeField] private ItemData[] debugTestItems;
+        public ItemData[] DebugTestItems => debugTestItems;
 
         private List<ItemData> _itemBench = new List<ItemData>();
         private List<DraggableItem> _spawnedItems = new List<DraggableItem>();

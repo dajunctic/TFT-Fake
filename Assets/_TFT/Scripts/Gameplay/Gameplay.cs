@@ -101,6 +101,14 @@ namespace Dajunctic
                 }
             }
 
+            if (phase == GameplayPhase.Carousel)
+            {
+                if (GameSystemManager.Instance.Carousel != null)
+                {
+                    GameSystemManager.Instance.Carousel.StartCarousel();
+                }
+            }
+
             if (phase == GameplayPhase.Combat)
             {
                 // Start matchmaking and travel when combat starts
@@ -117,19 +125,41 @@ namespace Dajunctic
 
         private void OnTimerComplete()
         {
+            if (_currentPhase == GameplayPhase.Carousel)
+            {
+                // Carousel ends, go to Planning or next round
+                AdvanceToNextRound();
+                return;
+            }
+
             if (_currentPhase == GameplayPhase.Planning)
             {
                 StartPhase(GameplayPhase.Combat);
             }
             else
             {
-                // Logic for after combat: Advance Round then back to planning
-                if (RoundSys != null)
-                {
-                    HandleCombatResult();
-                    RoundSys.AdvanceRound();
-                }
+                HandleCombatResult();
+                AdvanceToNextRound();
+            }
+        }
 
+        private void AdvanceToNextRound()
+        {
+            if (RoundSys != null)
+            {
+                RoundSys.AdvanceRound();
+                
+                if (RoundSys.CurrentRoundData != null && RoundSys.CurrentRoundData.roundType == RoundType.Carousel)
+                {
+                    StartPhase(GameplayPhase.Carousel);
+                }
+                else
+                {
+                    StartPhase(GameplayPhase.Planning);
+                }
+            }
+            else
+            {
                 StartPhase(GameplayPhase.Planning);
             }
         }
@@ -176,7 +206,8 @@ namespace Dajunctic
     public enum GameplayPhase
     {
         Planning,
-        Combat
+        Combat,
+        Carousel
     }
 
     public struct GameplayPhaseChangedEvent : IEvent
