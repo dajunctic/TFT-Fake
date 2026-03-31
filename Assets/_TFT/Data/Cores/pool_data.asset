@@ -15,6 +15,7 @@ MonoBehaviour:
   id: pool_data
   hpView: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
   playerHpView: {fileID: 1393772639863854433, guid: d06fb7efd4e6af94db339a1dbcceb693, type: 3}
+  arenaChampionCountUI: {fileID: 723896644390739730, guid: 5daa8f8c9be70f144a11cc784fb30251, type: 3}
   fxLists:
   - Id: fx_click_marker
     fxViewPrefab: {fileID: 7397906057650735875, guid: 9d342c1fe33ef0645b291df6d679c44b, type: 3}

@@ -10,7 +10,7 @@ namespace Dajunctic
     {   
         [FoldoutGroup("Dummy UI")][SerializeField] public HpView hpView;
         [FoldoutGroup("Dummy UI")] [SerializeField] public PlayerHpView playerHpView;
-        
+        [FoldoutGroup("Dummy UI")] [SerializeField] public ArenaChampionCountUI arenaChampionCountUI;
 
         [SerializeField] public List<FxEntity> fxLists;
         [SerializeField] public List<MissileEntity> missileLists;

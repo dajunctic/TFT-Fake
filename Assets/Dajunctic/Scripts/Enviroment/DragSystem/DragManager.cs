@@ -14,6 +14,9 @@ namespace Dajunctic
         private List<IDragTarget> allTargets = new List<IDragTarget>();
         private Vector3 _dragOffset; // To fix the perspective issue you mentioned
 
+        public static event System.Action<IDraggable> OnGlobalDragStart;
+        public static event System.Action<IDraggable> OnGlobalDragEnd;
+
         private void Awake()
         {
             mainCamera = Camera.main;
@@ -72,6 +75,7 @@ namespace Dajunctic
                     currentDragged.OnDragStart();
                     
                     foreach (var target in allTargets) target.OnDragStart();
+                    OnGlobalDragStart?.Invoke(currentDragged);
                     
                     Debug.Log($"Started dragging: {hit.collider.name}");
                 }
@@ -115,6 +119,7 @@ namespace Dajunctic
             
             currentDragged.OnDrop(finalPos);
             foreach (var target in allTargets) target.OnDragEnd();
+            OnGlobalDragEnd?.Invoke(currentDragged);
             currentDragged = null;
         }
     }

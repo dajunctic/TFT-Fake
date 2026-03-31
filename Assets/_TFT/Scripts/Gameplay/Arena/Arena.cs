@@ -22,8 +22,29 @@ namespace Dajunctic
 
             if (FieldArea != null) FieldArea.Initialize();
             if (BenchArea != null) BenchArea.Initialize();
+            SpawnChampionCountUI();
 
             RegisterToSystems();
+        }
+
+        private void Start()
+        {
+            SpawnChampionCountUI();
+        }
+
+        private void SpawnChampionCountUI()
+        {
+            if (PoolView.Instance != null && GetComponentInChildren<ArenaChampionCountUI>() == null)
+            {
+                var countUI = PoolView.Instance.SpawnArenaChampionCountUI(transform.position);
+                if (countUI != null)
+                {
+                    countUI.transform.SetParent(transform);
+                    countUI.transform.localPosition = new Vector3(0, 0.173f, 0);
+                    countUI.transform.localRotation = Quaternion.Euler(90f, 0, 0);
+                    countUI.Initialize(this);
+                }
+            }
         }
 
         private void Awake()

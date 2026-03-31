@@ -25,6 +25,12 @@ namespace Dajunctic
             SpawnHpView(param);
         }
 
+        public ArenaChampionCountUI SpawnArenaChampionCountUI(Vector3 position)
+        {
+            if (poolData.arenaChampionCountUI == null) return null;
+            return PoolableObject.Pool.Spawn(poolData.arenaChampionCountUI, position, Quaternion.identity);
+        }
+
         private void OnSpawnFx(SpawnFxEvent param)
         {
             SpawnFxView(param);
