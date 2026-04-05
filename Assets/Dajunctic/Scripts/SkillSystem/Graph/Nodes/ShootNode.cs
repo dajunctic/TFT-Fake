@@ -1,19 +1,23 @@
 using UnityEngine;
 using System.Collections.Generic;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class ShootNode : SkillNode, IFxDataProvider
     {
+        [XNode.Node.InputAttribute(connectionType = XNode.Node.ConnectionType.Multiple)] public bool @in;
+        [XNode.Node.OutputAttribute(connectionType = XNode.Node.ConnectionType.Override)] public bool @out;
+
         [SerializeField, GuidReference("missile", typeof(IDummyId))] public string missileId;
         public Vector3 launcherOffset;
         public float damageMultiplier = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
-        [ActionInput] private List<ActionNode> hitActions;
-        [ActionInput] private List<ActionNode> despawnActions;
+        [XNode.Node.InputAttribute] private List<ActionNode> hitActions;
+        [XNode.Node.InputAttribute] private List<ActionNode> despawnActions;
 
-        [NodeInput] public List<IDamageTaker> targets;
+        [XNode.Node.InputAttribute] public List<IDamageTaker> targets;
 
         private IDamageTaker currentTarget;
 
@@ -22,18 +26,8 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             targets = GetInputValue<List<IDamageTaker>>(nameof(targets));
             var inTargets = targets ?? new List<IDamageTaker>();
 
-            if (_context.Services != null && _context.Services.IsDebug)
+            if (inTargets.Count == 0 || _context?.Services == null || string.IsNullOrEmpty(missileId))
             {
-                Debug.Log($"<color=#4dabf7>[ShootNode]</color> Execute: targets={inTargets.Count}, missileId='{missileId}'");
-            }
-
-            if (inTargets.Count == 0 || _context.Services == null || string.IsNullOrEmpty(missileId))
-            {
-                if (_context.Services != null && _context.Services.IsDebug)
-                {
-                    if (inTargets.Count == 0) Debug.LogWarning("<color=#4dabf7>[ShootNode]</color> No targets found!");
-                    if (string.IsNullOrEmpty(missileId)) Debug.LogWarning("<color=#4dabf7>[ShootNode]</color> missileId is EMPTY!");
-                }
                 Complete();
                 return;
             }
@@ -60,7 +54,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
                 var missile = _context.Services.SpawnMissile(missileData);
                 missile.OnHitEvent += OnHitEvent;
-
             }
 
             Complete();
@@ -70,20 +63,9 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             currentTarget = target;
 
-            if (hitActions != null)
+            var inActions = GetInputValue<List<ActionNode>>(nameof(hitActions));
+            if (inActions != null)
             {
-                var inActions = GetInputValue<List<ActionNode>>(nameof(hitActions));
-
-                if (_context?.Services != null && _context.Services.IsDebug)
-                {
-                    Debug.Log($"<color=#4dabf7>[ShootNode]</color> OnHitEvent: target={(target == null ? "<null>" : target.GetType().Name)}, resolvedHitActions={(inActions == null ? "<null>" : inActions.Count.ToString())}");
-                }
-
-                if (inActions == null || inActions.Count == 0)
-                {
-                    return;
-                }
-
                 foreach (var action in inActions)
                 {
                     if (action != null)

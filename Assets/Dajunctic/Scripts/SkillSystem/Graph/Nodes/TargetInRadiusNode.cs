@@ -16,28 +16,10 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
     {
         protected override void FindAllTargets(ref IDamageTaker currentMainTarget, List<IDamageTaker> currentAllTargets, float range)
         {
-            Debug.Log($"[TargetInRadiusNode] FindAllTargets called on node '{name}'");
-            List<IDamageTaker> foundActors = null;
+            if (!Application.isPlaying) return;
 
-            // ── Editor Preview ─────────────────
-            if (!Application.isPlaying && _context != null &&
-                _context.nodeOutputs.TryGetValue("__preview_dummies__", out var raw) &&
-                raw is List<IDamageTaker> previewDummies)
-            {
-                var ownerCA = Owner.AsCombatActor();
-                foundActors = previewDummies
-                    .Where(d =>
-                    {
-                        var dCA = d.AsCombatActor();
-                        return dCA == null || ownerCA == null || (dCA.CombatTeam != ownerCA.CombatTeam && MathUtils.InRange(ownerCA.Position, dCA.Position, range));
-                    })
-                    .ToList();
-            }
-            else if (Application.isPlaying)
-            {
-                // ── Runtime ────────────────────────────────
-                SkillHelper.ScanTargetInRadius(Owner.AsDamageTaker(), range, out foundActors);
-            }
+            List<IDamageTaker> foundActors = null;
+            SkillHelper.ScanTargetInRadius(Owner.AsDamageTaker(), range, out foundActors);
 
             currentAllTargets.Clear();
             if (foundActors != null && foundActors.Count > 0)
@@ -69,8 +51,6 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             {
                 currentMainTarget = null;
             }
-
-            Debug.Log($"<color=green>[TargetInRadiusNode <color=red><{Owner.AsCombatActor()?.DataId}></color>]</color> Found: {currentAllTargets.Count} targets.");
         }
 
         protected override IDamageTaker GetOtherMainTarget(List<IDamageTaker> allTargets)
@@ -80,8 +60,8 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         protected override bool IsCurrentMainTargetIsValid(IDamageTaker currentMainTarget, float range)
         {
-            return currentMainTarget != null
-                 && currentMainTarget.AsTeamMember().CombatTeam != Owner.AsTeamMember().CombatTeam
+            if (Owner == null || currentMainTarget == null) return false;
+            return currentMainTarget.AsTeamMember().CombatTeam != Owner.AsTeamMember().CombatTeam
                  && SkillHelper.IsInAbilityTargetingRange(OwnerOffset, OwnerRadius, currentMainTarget, range);
         }
     }

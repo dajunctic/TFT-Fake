@@ -1,0 +1,8 @@
+{
+    "assetStoreRelease": true,
+    "packageName": "dtt.publishingtools",
+    "version": "3.1.3",
+    "displayName": "Publishing Tools",
+    "documentationUrl": "Documentation.pdf",
+    "customIconPath": ""
+}

@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using Dajunctic.SkillSystem.Graph;
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.ActionNodes
 {
     public class DamageActionNode : ActionNode
     {
+        [XNode.Node.InputAttribute] public ActionNode @in;
+
         public float damageMultiplier = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 

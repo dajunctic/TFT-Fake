@@ -1,0 +1,16 @@
+{
+    "name": "DTT.AreaOfEffectRegions.Demo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f74c6252ea4779743b1dee30dc49b6db"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

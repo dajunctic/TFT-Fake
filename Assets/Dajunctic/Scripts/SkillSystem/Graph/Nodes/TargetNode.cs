@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public abstract class TargetNode : SkillNode
     {
-        [NodeOutput] public List<IDamageTaker> allTargets;
-        [NodeOutput] public IDamageTaker mainTarget;
+        [XNode.Node.InputAttribute(connectionType = XNode.Node.ConnectionType.Multiple)] public bool @in;
+        [XNode.Node.OutputAttribute(connectionType = XNode.Node.ConnectionType.Override)] public bool @out;
+
+        [XNode.Node.OutputAttribute] public List<IDamageTaker> allTargets;
+        [XNode.Node.OutputAttribute] public IDamageTaker mainTarget;
 
         [SerializeField] protected float radius = 5f;
         [SerializeField] protected Vector3 offset;
@@ -21,8 +25,8 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         private List<IDamageTaker> _allTargets;
 
         protected float Range => radius;
-        protected Vector3 OwnerOffset => Owner.AsTransform().TransformPoint(offset);
-        protected float OwnerRadius => Owner.AsCombatActor().CombatRadius;
+        protected Vector3 OwnerOffset => Owner != null ? Owner.AsTransform().TransformPoint(offset) : offset;
+        protected float OwnerRadius => Owner != null ? Owner.AsCombatActor().CombatRadius : 0f;
 
         public IDamageTaker UpdateTargets()
         {
@@ -63,7 +67,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             ClearTargets();
         }
 
-        public override object GetValue(string portName)
+        public override object GetValue(NodePort port)
         {
             if (_allTargets == null) _allTargets = new List<IDamageTaker>();
 
@@ -79,9 +83,9 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             allTargets = _allTargets;
             mainTarget = _mainTarget;
 
-            if (IsPortNameMatch(portName, nameof(allTargets))) return allTargets;
-            if (IsPortNameMatch(portName, nameof(mainTarget))) return mainTarget;
-            return base.GetValue(portName);
+            if (port.fieldName == nameof(allTargets)) return allTargets;
+            if (port.fieldName == nameof(mainTarget)) return mainTarget;
+            return null;
         }
 
         protected abstract bool IsCurrentMainTargetIsValid(IDamageTaker currentMainTarget, float range);

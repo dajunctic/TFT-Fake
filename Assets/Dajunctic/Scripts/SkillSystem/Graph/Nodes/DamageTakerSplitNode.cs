@@ -1,29 +1,28 @@
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
-    public class DamageTakerSplitNode: SkillNode
+    public class DamageTakerSplitNode : SkillNode
     {
-        [NodeInput] public IDamageTaker target;
-        [NodeOutput] public Vector3 position;
-        [NodeOutput] public Vector3 forward;
+        [XNode.Node.InputAttribute] public IDamageTaker target;
+        [XNode.Node.OutputAttribute] public Vector3 targetPosition;
+        [XNode.Node.OutputAttribute] public Vector3 forward;
 
-        public override object GetValue(string portName)
+        public override object GetValue(NodePort port)
         {
             var inTarget = GetInputValue<IDamageTaker>(nameof(target));
-            position = Vector3.zero;
-            forward = Vector3.forward;
 
-            if (inTarget != null)
+            if (port.fieldName == nameof(targetPosition))
             {
-                position = inTarget.AsTransform().Position;
-                forward = inTarget.AsTransform().Forward;
+                return inTarget != null ? inTarget.AsTransform().Position : Vector3.zero;
+            }
+            if (port.fieldName == nameof(forward))
+            {
+                return inTarget != null ? inTarget.AsTransform().Forward : Vector3.forward;
             }
 
-            if (portName == nameof(position)) return position;
-            if (portName == nameof(forward)) return forward;
-
-            return base.GetValue(portName);
+            return null;
         }
 
     }

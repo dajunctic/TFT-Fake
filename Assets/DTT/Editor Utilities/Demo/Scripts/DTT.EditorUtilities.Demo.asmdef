@@ -1,0 +1,16 @@
+{
+    "name": "DTT.EditorUtilities.Demo",
+    "references": [
+        "GUID:c6a12e1e013355540ab606f758b6c505",
+        "GUID:1711cb30f577ba1498364a78a6873853"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

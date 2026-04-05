@@ -1,0 +1,11 @@
+﻿{
+  "title": "Area of Effect Regions: get started quickly",
+  "text": "[This can be used to display regions or indicators in places something might happen. A common use case can be for attacks in an MMO that you want to telegraph the region of to your user.][Want to dive deeper? Take a look at our documentation:][l]",
+  "links": [
+    {
+      "text": "Open documentation",
+      "url": "Documentation.pdf",
+      "inline": false
+    }
+  ]
+}

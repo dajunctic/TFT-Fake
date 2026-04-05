@@ -1,18 +1,22 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class TrackingNode : SkillNode
     {
-        [NodeInput] public IDamageTaker target;
+        [XNode.Node.InputAttribute(connectionType = XNode.Node.ConnectionType.Multiple)] public bool @in;
+        [XNode.Node.OutputAttribute(connectionType = XNode.Node.ConnectionType.Override)] public bool @out;
+
+        [XNode.Node.InputAttribute] public IDamageTaker target;
 
         [SerializeField] private float duration;
         [SerializeField] private bool immediately;
 
         [SerializeField] private bool isManual;
-        [NodeInput] private Vector3 manualDirection;
+        [XNode.Node.InputAttribute] private Vector3 manualDirection;
 
         private IDamageTaker _inTarget;
         private Vector3 _inManualDirection;
@@ -45,7 +49,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             if (isManual)
             {
-                Owner.AsMovable().RotateDirection(_inManualDirection, Owner.AsCombatActor().RotateSpeed, DeltaTime, immediately);
+                Owner.AsMovable().RotateDirection(_inManualDirection, Owner.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
             }
             else
             {
@@ -57,7 +61,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
                 if (_inTarget != null && _inTarget.CanBeTarget && _inTarget != Owner)
                 {
-                    Owner.AsMovable().RotatePosition(_inTarget.MidPoint, Owner.AsCombatActor().RotateSpeed, DeltaTime, immediately);
+                    Owner.AsMovable().RotatePosition(_inTarget.MidPoint, Owner.AsCombatActor().RotateSpeed, Time.deltaTime, immediately);
                 }
 
             }
@@ -70,7 +74,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
             {
                 Rotate();
                 yield return null;
-                timeElapsed += DeltaTime;
+                timeElapsed += Time.deltaTime;
             }
 
             Complete();

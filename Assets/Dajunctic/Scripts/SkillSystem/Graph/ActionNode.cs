@@ -1,21 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph
 {
+    [XNode.Node.NodeTint("#4B0082")]
     public abstract class ActionNode : SkillNode
     {
-        [NodeOutput] public ActionNode self;
+        [XNode.Node.OutputAttribute] public ActionNode self;
 
         public virtual void Execute(object source)
         {
             Complete();
         }
 
-        public override object GetValue(string portName)
+        public override object GetValue(NodePort port)
         {
-            if (IsPortNameMatch(portName, nameof(self))) return this;
-            return base.GetValue(portName);
+            if (port.fieldName == nameof(self)) return this;
+            return null;
         }
 
         public override void Reset()

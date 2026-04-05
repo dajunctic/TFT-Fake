@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph
 {
@@ -9,8 +10,6 @@ namespace Dajunctic.SkillSystem.Graph
     {
         public SkillGraph graph;
         public CombatActor actor;
-
-        private Dictionary<string, int> _nodeTriggerCounts = new();
 
         public bool IsRunning { get; private set; }
 
@@ -26,11 +25,10 @@ namespace Dajunctic.SkillSystem.Graph
 
             foreach (var node in graph.nodes)
             {
-                node.graph = graph;
-                node.Reset();
+                if (node is SkillNode skillNode)
+                    skillNode.Reset();
             }
 
-            _nodeTriggerCounts.Clear();
             IsRunning = true;
             OnCompleted = onCompleted;
 
@@ -43,6 +41,12 @@ namespace Dajunctic.SkillSystem.Graph
 
             if (startNode != null)
                 ExecuteNode(startNode, context);
+            else
+            {
+                IsRunning = false;
+                OnCompleted?.Invoke();
+                OnCompleted = null;
+            }
         }
 
         private void ExecuteNode(SkillNode node, SkillExecutionContext context)
@@ -57,24 +61,23 @@ namespace Dajunctic.SkillSystem.Graph
 
             node.Init(context, () =>
             {
-                var outgoingLinks = graph.links
-                    .Where(l => l.baseNodeGuid == node.guid && l.portName == "Out")
-                    .ToList();
-
-                foreach (var link in outgoingLinks)
+                var outPort = node.GetOutputPort("@out");
+                if (outPort != null && outPort.IsConnected)
                 {
-                    var nextNode = graph.nodes.FirstOrDefault(n => n.guid == link.targetNodeGuid);
-                    if (nextNode == null) continue;
-
-                    if (!_nodeTriggerCounts.ContainsKey(nextNode.guid))
-                        _nodeTriggerCounts[nextNode.guid] = 0;
-                    _nodeTriggerCounts[nextNode.guid]++;
-
-                    int totalIncoming = graph.links.Count(l =>
-                        l.targetNodeGuid == nextNode.guid && l.targetPortName == "In");
-
-                    if (_nodeTriggerCounts[nextNode.guid] >= totalIncoming)
-                        ExecuteNode(nextNode, context);
+                    foreach (var connection in outPort.GetConnections())
+                    {
+                        if (connection.node is SkillNode nextNode)
+                        {
+                            ExecuteNode(nextNode, context);
+                        }
+                    }
+                }
+                else if (!(node is Nodes.ExitNode))
+                {
+                    // If no out connection and not exit node, finish.
+                    IsRunning = false;
+                    OnCompleted?.Invoke();
+                    OnCompleted = null;
                 }
             });
 

@@ -1,10 +1,15 @@
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
     public class PlayAnimNode : SkillNode
     {
+        [XNode.Node.InputAttribute(connectionType = XNode.Node.ConnectionType.Multiple)] public bool @in;
+        [XNode.Node.OutputAttribute(connectionType = XNode.Node.ConnectionType.Override)] public bool @out;
+
         public string animationName;
         public float transitionDuration = 0.1f;
         public float duration;
@@ -12,7 +17,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
 
         public override void Execute()
         {
-            var actor = _context.actor.AsCombatActor();
+            var actor = _context?.actor.AsCombatActor();
             if (actor == null)
             {
                 Complete();

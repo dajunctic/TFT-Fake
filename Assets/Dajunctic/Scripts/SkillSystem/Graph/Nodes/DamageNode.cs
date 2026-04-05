@@ -2,17 +2,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Dajunctic.SkillSystem.Graph.ActionNodes;
 using UnityEngine;
+using XNode;
 
 namespace Dajunctic.SkillSystem.Graph.Nodes
 {
+    [XNode.Node.NodeTint("#8B0000")]
+    [XNode.Node.NodeWidth(250)]
     public class DamageNode : SkillNode, IHitDataProvider, IFxDataProvider
     {
+        [XNode.Node.InputAttribute(connectionType = XNode.Node.ConnectionType.Multiple)] public bool @in;
+        [XNode.Node.OutputAttribute(connectionType = XNode.Node.ConnectionType.Override)] public bool @out;
+
         public float damageMultiplier = 1f;
         public DamageType damageType = DamageType.PhysicalDamage;
 
-        [NodeInput] private List<IDamageTaker> targets;
+        [XNode.Node.InputAttribute] private List<IDamageTaker> targets;
 
-        [ActionInput]
+        [XNode.Node.InputAttribute]
         private List<ActionNode> hitActions = new List<ActionNode>();
 
         public override void Execute()
@@ -62,8 +68,8 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             return new HitData
             {
-                targets = targets ?? new List<IDamageTaker>(),
-                hitPoints = targets.Select(t => t.MidPoint).ToList() ?? new List<Vector3>()
+                targets = GetInputValue<List<IDamageTaker>>(nameof(targets)) ?? new List<IDamageTaker>(),
+                hitPoints = (GetInputValue<List<IDamageTaker>>(nameof(targets))?.Select(t => t.MidPoint).ToList()) ?? new List<Vector3>()
             };
         }
 
@@ -71,7 +77,7 @@ namespace Dajunctic.SkillSystem.Graph.Nodes
         {
             return new FxData
             {
-                targets = targets ?? new List<IDamageTaker>()
+                targets = GetInputValue<List<IDamageTaker>>(nameof(targets)) ?? new List<IDamageTaker>()
             };
         }
     }

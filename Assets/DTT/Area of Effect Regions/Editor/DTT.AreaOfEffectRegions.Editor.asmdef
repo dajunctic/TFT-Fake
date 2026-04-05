@@ -1,0 +1,20 @@
+{
+    "name": "DTT.AreaOfEffectRegions.Editor",
+    "references": [
+        "GUID:f74c6252ea4779743b1dee30dc49b6db",
+        "GUID:c6a12e1e013355540ab606f758b6c505",
+        "GUID:1711cb30f577ba1498364a78a6873853",
+        "GUID:b5e078f64d95bba4a8ba03b5b4940114"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -8,7 +8,6 @@ namespace Dajunctic.SkillSystem.Graph
     {
         public ICombatActor actor;
         public ISkillServiceProvider Services;
-        public Dictionary<string, object> nodeOutputs = new();
 
         public SkillExecutionContext(ICombatActor actor, ISkillServiceProvider services = null)
         {
