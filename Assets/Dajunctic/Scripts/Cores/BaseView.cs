@@ -74,6 +74,11 @@ namespace Dajunctic
             _isInitialized = true;
         }
 
+        public virtual void InitializeNetwork()
+        {
+            
+        }
+
         public virtual void DoEnable()
         {
 

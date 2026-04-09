@@ -67,7 +67,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
-    - _FadeAmount: 0.6
+    - _FadeAmount: 0.5
     - _FillProgress: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -84,9 +84,9 @@ Material:
     - _ZWrite: 0
     - _direction: 0
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.5882353, g: 0.5882353, b: 0.5882353, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FillColor: {r: 0.5019608, g: 0, b: 1, a: 1}
+    - _FillColor: {r: 0.65882355, g: 0.9921569, b: 0.91372555, a: 1}
     - _PrimaryColor: {r: 1, g: 0, b: 0, a: 1}
     - _SecondaryColor: {r: 0, g: 1, b: 0.19833946, a: 1}
   m_BuildTextureStacks: []

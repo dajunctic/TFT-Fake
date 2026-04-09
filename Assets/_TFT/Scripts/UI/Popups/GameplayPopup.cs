@@ -52,18 +52,13 @@ namespace Dajunctic
 
         // Cached Systems
         private ShopSystem _shopSystem;
-        private EconomySystem _economySystem;
 
         private ShopSystem ShopSystem => _shopSystem ?? (_shopSystem = this.GetSystem<ShopSystem>());
-        private EconomySystem EconomySystem => _economySystem ?? (_economySystem = this.GetSystem<EconomySystem>());
 
         public override void ListenEvents()
         {
             base.ListenEvents();
             this.RegisterListener<ShopRefreshedEvent>(OnShopRefreshed);
-            this.RegisterListener<GoldChangedEvent>(OnGoldChanged);
-            this.RegisterListener<LevelChangedEvent>(OnLevelChanged);
-            this.RegisterListener<XPChangedEvent>(OnXPChanged);
             this.RegisterListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RegisterListener<ShopLockChangedEvent>(OnShopLockChanged);
@@ -97,9 +92,6 @@ namespace Dajunctic
         {
             base.StopListenEvents();
             this.RemoveListener<ShopRefreshedEvent>(OnShopRefreshed);
-            this.RemoveListener<GoldChangedEvent>(OnGoldChanged);
-            this.RemoveListener<LevelChangedEvent>(OnLevelChanged);
-            this.RemoveListener<XPChangedEvent>(OnXPChanged);
             this.RemoveListener<HeroDragStartedEvent>(OnHeroDragStarted);
             this.RemoveListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
@@ -145,9 +137,6 @@ namespace Dajunctic
         }
 
         private void OnShopRefreshed(ShopRefreshedEvent evt) => UpdateShop();
-        private void OnGoldChanged(GoldChangedEvent evt) => UpdateEconomy();
-        private void OnLevelChanged(LevelChangedEvent evt) => UpdateEconomy();
-        private void OnXPChanged(XPChangedEvent evt) => UpdateEconomy();
         private void OnShopLockChanged(ShopLockChangedEvent evt) => UpdateShopLockUI(evt.IsLocked);
 
         private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
@@ -182,7 +171,7 @@ namespace Dajunctic
                 }
             }
 
-            UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
+            // UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
         }
 
         private void UpdateRollRates(float[] chances)
@@ -195,35 +184,35 @@ namespace Dajunctic
 
         private void UpdateEconomy()
         {
-            if (EconomySystem == null) return;
-            var eco = EconomySystem;
-            goldText.text = eco.Gold.ToString();
-            levelText.text = "Lvl. " + eco.Level;
+            // if (EconomySystem == null) return;
+            // var eco = EconomySystem;
+            // goldText.text = eco.Gold.ToString();
+            // levelText.text = "Lvl. " + eco.Level;
 
-            if (eco.IsMaxLevel)
-            {
-                xpText.text = "MAX";
-                if (xpProgress != null) xpProgress.fillAmount = 1;
+            // if (eco.IsMaxLevel)
+            // {
+            //     xpText.text = "MAX";
+            //     if (xpProgress != null) xpProgress.fillAmount = 1;
 
-                if (buyXPButton != null) buyXPButton.SetActive(false);
-                if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(true);
-            }
-            else
-            {
-                int currentXp = eco.XP;
-                int requiredXp = eco.GetXPRequired();
-                xpText.text = $"{currentXp}/{requiredXp}";
+            //     if (buyXPButton != null) buyXPButton.SetActive(false);
+            //     if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(true);
+            // }
+            // else
+            // {
+            //     int currentXp = eco.XP;
+            //     int requiredXp = eco.GetXPRequired();
+            //     xpText.text = $"{currentXp}/{requiredXp}";
 
-                if (xpProgress != null)
-                {
-                    xpProgress.fillAmount = requiredXp > 0 ? (float)currentXp / requiredXp : 1;
-                }
+            //     if (xpProgress != null)
+            //     {
+            //         xpProgress.fillAmount = requiredXp > 0 ? (float)currentXp / requiredXp : 1;
+            //     }
 
-                if (buyXPButton != null) buyXPButton.SetActive(true);
-                if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
-            }
-            if (ShopSystem != null)
-                UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
+            //     if (buyXPButton != null) buyXPButton.SetActive(true);
+            //     if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
+            // }
+            // if (ShopSystem != null)
+            //     UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
 
         }
 

@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using Dajunctic;
-using Dajunctic.SkillSystem.Graph;
 using Sirenix.OdinInspector;
+using UnityEngine;
+using Dajunctic.SkillSystem.Commands;
 using UnityEngine;
 
 public enum SkillSlot
@@ -19,6 +20,6 @@ public class SkillData : BaseSO
     public float castRange;
     public float cooldown; 
 
-    public SkillGraph skillGraph;
+    public SkillTimelineSO skillTimeline;
 }
 

@@ -50,8 +50,7 @@ namespace Dajunctic
 
         private void ApplyAugmentEffect(AugmentData data)
         {
-            if (data.goldGrant > 0) _manager.Economy?.AddGold(data.goldGrant);
-            if (data.xpGrant > 0) _manager.Economy?.AddXP(data.xpGrant);
+           
             
             // Additional effects (Trait boosts, HP) would be implemented here
         }

@@ -53,11 +53,13 @@ namespace Dajunctic
 
         public bool CanAddUnit(int ownerId)
         {
-            if (_manager.Economy == null) return true;
-            int count = GetUnitCount(ownerId);
-            bool canAdd = count < _manager.Economy.Level;
-            if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached for player {ownerId}. Units: {count}, Level: {_manager.Economy.Level}");
-            return canAdd;
+            // if (_manager.Economy == null) return true;
+            // int count = GetUnitCount(ownerId);
+            // bool canAdd = count < _manager.Economy.Level;
+            // if (!canAdd) Debug.LogWarning($"Field Manager: Limit reached for player {ownerId}. Units: {count}, Level: {_manager.Economy.Level}");
+            // return canAdd;
+            return true;
+
         }
 
         public bool TrySnapToField(Vector3 worldPos, out Vector2Int coord, out int arenaId)

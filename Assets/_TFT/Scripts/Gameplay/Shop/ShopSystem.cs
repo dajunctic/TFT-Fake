@@ -83,12 +83,12 @@ namespace Dajunctic
         public void Reroll()
         {
             if (_data == null) return;
-            if (_manager.Economy.SpendGold(_data.shopData.rerollCost))
-            {
-                RefreshShop();
-                // Auto-unlock on manual reroll (TFT behavior)
-                if (_isShopLocked) SetShopLock(false);
-            }
+            // if (_manager.Economy.SpendGold(_data.shopData.rerollCost))
+            // {
+            //     RefreshShop();
+            //     // Auto-unlock on manual reroll (TFT behavior)
+            //     if (_isShopLocked) SetShopLock(false);
+            // }
         }
 
         private void OnRequestToggleShopLock(RequestToggleShopLockEvent evt)
@@ -106,18 +106,18 @@ namespace Dajunctic
 
         public void RefreshShop()
         {
-            if (_data == null) return;
-            int level = _manager.Economy.Level;
-            float[] chances = _data.shopData.GetChancesForLevel(level);
+            // if (_data == null) return;
+            // // int level = _manager.Economy.Level;
+            // float[] chances = _data.shopData.GetChancesForLevel(level);
 
-            for (int i = 0; i < 5; i++)
-            {
-                int rarity = RollRarity(chances);
-                _currentShop[i] = GetRandomHeroOfRarity(rarity);
-            }
+            // for (int i = 0; i < 5; i++)
+            // {
+            //     int rarity = RollRarity(chances);
+            //     _currentShop[i] = GetRandomHeroOfRarity(rarity);
+            // }
 
-            OnShopRefreshed?.Invoke();
-            this.Raise(new ShopRefreshedEvent());
+            // OnShopRefreshed?.Invoke();
+            // this.Raise(new ShopRefreshedEvent());
         }
 
         private int RollRarity(float[] chances)
@@ -155,22 +155,22 @@ namespace Dajunctic
                 return;
             }
 
-            if (_manager.Economy.SpendGold(hero.rarity))
-            {
-                // Add hero to bench
-                _manager.Bench.AddHeroToBench(localPlayerId, hero);
+            // if (_manager.Economy.SpendGold(hero.rarity))
+            // {
+            //     // Add hero to bench
+            //     _manager.Bench.AddHeroToBench(localPlayerId, hero);
 
-                Debug.Log($"[ShopSystem] Purchased {hero.displayName} for {hero.rarity} gold.");
-                _currentShop[slotIndex] = null;
+            //     Debug.Log($"[ShopSystem] Purchased {hero.displayName} for {hero.rarity} gold.");
+            //     _currentShop[slotIndex] = null;
 
-                this.Raise(new HeroBoughtEvent { Hero = hero });
-                this.Raise(new ShopRefreshedEvent());
-                OnShopRefreshed?.Invoke();
-            }
-            else
-            {
-                Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Not enough gold ({_manager.Economy.Gold}/{hero.rarity})");
-            }
+            //     this.Raise(new HeroBoughtEvent { Hero = hero });
+            //     this.Raise(new ShopRefreshedEvent());
+            //     OnShopRefreshed?.Invoke();
+            // }
+            // else
+            // {
+            //     Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Not enough gold ({_manager.Economy.Gold}/{hero.rarity})");
+            // }
         }
     }
 

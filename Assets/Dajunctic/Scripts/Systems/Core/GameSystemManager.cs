@@ -22,7 +22,6 @@ namespace Dajunctic
         public SettingsSystem Settings { get; private set; }
         public BenchSystem Bench { get; private set; }
         public FieldSystem Field { get; private set; }
-        public EconomySystem Economy { get; private set; }
         public ShopSystem Shop { get; private set; }
         public ItemSystem Items { get; private set; }
         public EmotionSystem Emotion { get; private set; }
@@ -69,7 +68,6 @@ namespace Dajunctic
             Debug.Log("<color=cyan>GameSystemManager: Creating systems...</color>");
 
             Settings = CreateSystem<SettingsSystem>();
-            Economy = CreateSystem<EconomySystem>();
             Bench = CreateSystem<BenchSystem>();
             Field = CreateSystem<FieldSystem>();
             Shop = CreateSystem<ShopSystem>();
@@ -104,7 +102,6 @@ namespace Dajunctic
 
             // Load sequentially so each system has its data before the next starts
             await Settings.LoadDataAsync();
-            await Economy.LoadDataAsync();
             await Bench.LoadDataAsync();
             await Field.LoadDataAsync();
             await Shop.LoadDataAsync();

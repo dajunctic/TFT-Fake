@@ -13,7 +13,6 @@ namespace Dajunctic
         [Header("System Data (Addressable References)")]
         public AssetReferenceT<SettingsData> settingsData;
         public AssetReferenceT<ShopSystemData> shopSystemData;
-        public AssetReferenceT<EconomySystemData> economySystemData;
         public AssetReferenceT<ItemSystemData> itemSystemData;
         public AssetReferenceT<BenchSystemData> benchSystemData;
         public AssetReferenceT<EmotionSystemData> emotionSystemData;

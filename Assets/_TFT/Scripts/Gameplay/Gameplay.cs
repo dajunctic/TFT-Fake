@@ -2,10 +2,11 @@
 using System;
 using UnityEngine;
 using System.Linq;
+using Unity.Netcode;
 
 namespace Dajunctic
 {
-    public class Gameplay : BaseView
+    public partial class Gameplay : BaseView
     {
         public static string HeroLayerName = "CombatActor";
         public static Gameplay Instance { get; private set; }
@@ -21,13 +22,13 @@ namespace Dajunctic
         private RoundSystem _roundSystem;
         private RoundSystem RoundSys => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
 
-        private GameplayPhase _currentPhase;
-        private float _timer;
-        private float _phaseDuration;
+        private NetworkVariable<GameplayPhase> _currentPhase = new NetworkVariable<GameplayPhase>();
+        private NetworkVariable<float> _timer = new NetworkVariable<float>();
+        private NetworkVariable<float> _phaseDuration = new NetworkVariable<float>();
 
-        public GameplayPhase CurrentPhase => _currentPhase;
-        public float Timer => _timer;
-        public float PhaseDuration => _phaseDuration;
+        public GameplayPhase CurrentPhase => _currentPhase.Value;
+        public float Timer => _timer.Value;
+        public float PhaseDuration => _phaseDuration.Value;
 
         public static event Action<GameplayPhase> OnPhaseChanged;
 
@@ -45,31 +46,28 @@ namespace Dajunctic
 
         void Start()
         {
-            StartPhase(GameplayPhase.Planning);
-            var economySystem = this.GetSystem<EconomySystem>();
-            if (economySystem != null)
-            {
-                economySystem.AddGold(1000); // Initial gold for testing
-            }
+            StartPhaseServer(GameplayPhase.Planning);
         }
 
         public override void Tick()
         {
             base.Tick();
 
-            if (_timer > 0)
+            if (!IsServer) return; // Only the server should control the phase timing
+
+            if (_timer.Value > 0)
             {
-                _timer -= Time.deltaTime;
-                if (_timer <= 0)
+                _timer.Value -= Time.deltaTime;
+                if (_timer.Value <= 0)
                 {
-                    OnTimerComplete();
+                    OnTimerCompleteServer();
                 }
             }
         }
 
-        private void StartPhase(GameplayPhase phase)
+        private void StartPhaseServer(GameplayPhase phase)
         {
-            _currentPhase = phase;
+            _currentPhase.Value = phase;
 
             float duration = (phase == GameplayPhase.Planning) ? planningDuration : combatDuration;
 
@@ -85,8 +83,8 @@ namespace Dajunctic
                 duration = fastModeDuration;
             }
 
-            _phaseDuration = duration;
-            _timer = _phaseDuration;
+            _phaseDuration.Value = duration;
+            _timer.Value = _phaseDuration.Value;
 
             Debug.Log($"[Gameplay] Starting Phase: {phase} for {_phaseDuration}s in round {(RoundSys != null ? RoundSys.GetRoundDisplayString() : "N/A")}");
 
@@ -123,22 +121,22 @@ namespace Dajunctic
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
         }
 
-        private void OnTimerComplete()
+        private void OnTimerCompleteServer()
         {
-            if (_currentPhase == GameplayPhase.Carousel)
+            if (_currentPhase.Value == GameplayPhase.Carousel)
             {
                 // Carousel ends, go to Planning or next round
                 AdvanceToNextRound();
                 return;
             }
 
-            if (_currentPhase == GameplayPhase.Planning)
+            if (_currentPhase.Value == GameplayPhase.Planning)
             {
-                StartPhase(GameplayPhase.Combat);
+                StartPhaseServer(GameplayPhase.Combat);
             }
             else
             {
-                HandleCombatResult();
+                HandleCombatResultServer();
                 AdvanceToNextRound();
             }
         }
@@ -151,20 +149,20 @@ namespace Dajunctic
                 
                 if (RoundSys.CurrentRoundData != null && RoundSys.CurrentRoundData.roundType == RoundType.Carousel)
                 {
-                    StartPhase(GameplayPhase.Carousel);
+                    StartPhaseServer(GameplayPhase.Carousel);
                 }
                 else
                 {
-                    StartPhase(GameplayPhase.Planning);
+                    StartPhaseServer(GameplayPhase.Planning);
                 }
             }
             else
             {
-                StartPhase(GameplayPhase.Planning);
+                StartPhaseServer(GameplayPhase.Planning);
             }
         }
 
-        private void HandleCombatResult()
+        private void HandleCombatResultServer()
         {
             var playerSystem = GameSystemManager.Instance.Player;
             var travelSystem = GameSystemManager.Instance.Travel;
@@ -188,7 +186,7 @@ namespace Dajunctic
                     // Home lost
                     int damage = stageDamage + guestUnits.Count;
                     playerSystem.ApplyDamage(pair.HomeId, damage); 
-                    if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(false);
+                    // if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(false);
                     Debug.Log($"[Gameplay] Player {pair.HomeId} lost combat on home arena. Taking {damage} damage.");
                 }
                 else if (guestUnits.Count == 0 && homeUnits.Count > 0)
@@ -196,7 +194,7 @@ namespace Dajunctic
                     // Guest lost (Home won)
                     int damage = stageDamage + homeUnits.Count;
                     playerSystem.ApplyDamage(pair.GuestId, damage);
-                    if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(true);
+                    // if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(true);
                     Debug.Log($"[Gameplay] Player {pair.GuestId} lost combat as guest. Taking {damage} damage.");
                 }
             }

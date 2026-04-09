@@ -64,31 +64,31 @@ namespace Dajunctic
 
         private void Update()
         {
-            if (GameSystemManager.Instance == null || Gameplay.Instance == null || _parentArena == null) return;
+            // if (GameSystemManager.Instance == null || Gameplay.Instance == null || _parentArena == null) return;
 
-            // Only update logic in Planning phase
-            if (Gameplay.Instance.CurrentPhase != GameplayPhase.Planning)
-            {
-                if (_canvasGroup.alpha > 0) HideUI();
-                return;
-            }
+            // // Only update logic in Planning phase
+            // if (Gameplay.Instance.CurrentPhase != GameplayPhase.Planning)
+            // {
+            //     if (_canvasGroup.alpha > 0) HideUI();
+            //     return;
+            // }
 
-            // Get current and max counts
-            int ownerId = _parentArena.OwnerID;
-            int currentUnits = GameSystemManager.Instance.Field.GetUnitCount(ownerId);
-            int maxUnits = GameSystemManager.Instance.Economy != null ? GameSystemManager.Instance.Economy.Level : 0;
+            // // Get current and max counts
+            // int ownerId = _parentArena.OwnerID;
+            // int currentUnits = GameSystemManager.Instance.Field.GetUnitCount(ownerId);
+            // int maxUnits = GameSystemManager.Instance.Economy != null ? GameSystemManager.Instance.Economy.Level : 0;
 
-            bool shouldShow = _isDraggingAnyUnit || (currentUnits < maxUnits) || (currentUnits > maxUnits);
+            // bool shouldShow = _isDraggingAnyUnit || (currentUnits < maxUnits) || (currentUnits > maxUnits);
 
-            if (shouldShow)
-            {
-                ShowUI();
-                UpdateText(currentUnits, maxUnits);
-            }
-            else
-            {
-                HideUI();
-            }
+            // if (shouldShow)
+            // {
+            //     ShowUI();
+            //     UpdateText(currentUnits, maxUnits);
+            // }
+            // else
+            // {
+            //     HideUI();
+            // }
         }
 
         private void UpdateText(int currentCount, int maxCount)

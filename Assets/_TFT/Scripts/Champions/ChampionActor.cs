@@ -242,7 +242,7 @@ namespace Dajunctic
                     }
                 }
 
-                if (GameSystemManager.Instance.Economy != null) GameSystemManager.Instance.Economy.AddGold(refundGold);
+                // if (GameSystemManager.Instance.Economy != null) GameSystemManager.Instance.Economy.AddGold(refundGold);
 
                 Debug.Log($"Sold {heroData.displayName} ({StarLevel}★) for {refundGold} gold");
                 this.Raise(new HeroSoldEvent { Hero = heroData, GoldRefunded = refundGold });
@@ -376,11 +376,10 @@ namespace Dajunctic
             if (CombatActorData != null && CombatActorData.skills.Count > 0)
             {
                 var firstSkill = CombatActorData.skills[0];
-                if (firstSkill != null && firstSkill.skillGraph != null)
+                if (firstSkill != null && firstSkill.skillTimeline != null)
                 {
-                    var runner = GetSkillGraphRunner();
-                    runner.graph = firstSkill.skillGraph;
-                    runner.Run();
+                    var runner = GetSkillCommandRunner();
+                    runner.Run(firstSkill.skillTimeline, null);
                 }
             }
         }

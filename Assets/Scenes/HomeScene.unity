@@ -292,6 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3210e373871af4eb5a2395e43e0693, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   initialize: 1
   tick: 2
   planningDuration: 10
@@ -1132,6 +1133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6483e939f5c42ff4fb133bd1c197b529, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   initialize: 1
   tick: 2
   data: {fileID: 11400000, guid: 4b08c2379d2895e4f9d5e6008d3c330e, type: 2}

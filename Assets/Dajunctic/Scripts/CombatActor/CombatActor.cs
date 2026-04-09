@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Dajunctic.SkillSystem.Graph;
+using Dajunctic.SkillSystem.Commands;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
@@ -338,22 +338,22 @@ namespace Dajunctic
 
         #endregion
 
-        #region SkillGraph
-        private SkillGraphRunner _skillGraphRunner;
-        public SkillGraphRunner GetSkillGraphRunner()
+        #region SkillCommandRunner
+        private SkillCommandRunner _skillCommandRunner;
+        public SkillCommandRunner GetSkillCommandRunner()
         {
-            if (_skillGraphRunner == null)
+            if (_skillCommandRunner == null)
             {
-                _skillGraphRunner = GetComponentInChildren<SkillGraphRunner>();
-                if (_skillGraphRunner == null)
+                _skillCommandRunner = GetComponentInChildren<SkillCommandRunner>();
+                if (_skillCommandRunner == null)
                 {
-                    var go = new GameObject("SkillGraphRunner");
+                    var go = new GameObject("SkillCommandRunner");
                     go.transform.SetParent(CachedTransform);
-                    _skillGraphRunner = go.AddComponent<SkillGraphRunner>();
-                    _skillGraphRunner.actor = this;
+                    _skillCommandRunner = go.AddComponent<SkillCommandRunner>();
+                    _skillCommandRunner.Actor = this;
                 }
             }
-            return _skillGraphRunner;
+            return _skillCommandRunner;
         }
         #endregion
 

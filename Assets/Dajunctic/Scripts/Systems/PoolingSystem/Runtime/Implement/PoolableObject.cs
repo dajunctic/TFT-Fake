@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Unity.Netcode;
 
 namespace Dajunctic
 {
-    public class PoolableObject : MonoBehaviour, IObjectPoolItem<string>
+    public class PoolableObject : NetworkBehaviour, IObjectPoolItem<string>
     {
         public ObjectPoolMetadata<string> ObjectPoolMetadata { get; set; }
         

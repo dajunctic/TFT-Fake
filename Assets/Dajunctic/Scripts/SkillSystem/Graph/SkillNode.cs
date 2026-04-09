@@ -60,10 +60,10 @@ namespace Dajunctic.SkillSystem.Graph
 
             if (Application.isPlaying)
             {
-                var runner = _context.actor.AsCombatActor()?.GetSkillGraphRunner();
-                if (runner != null)
+                var actorMb = _context.actor as MonoBehaviour;
+                if (actorMb != null)
                 {
-                    runner.StartCoroutine(DelayCoroutine(duration, onComplete));
+                    actorMb.StartCoroutine(DelayCoroutine(duration, onComplete));
                 }
                 else
                 {

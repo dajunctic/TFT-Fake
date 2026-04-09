@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using Dajunctic.SkillSystem.Graph;
+using System.Collections;
+using Dajunctic.SkillSystem.Commands;
 using UnityEngine;
 
 namespace Dajunctic
@@ -77,18 +77,17 @@ namespace Dajunctic
                 }
             }
 
-            // Run SkillGraph and wait for completion
-            if (data.skillGraph != null)
+            // Run SkillTimeline and wait for completion
+            if (data.skillTimeline != null)
             {
-                var runner = combatActor.GetSkillGraphRunner();
+                var runner = combatActor.GetSkillCommandRunner();
                 if (runner != null)
                 {
-                    bool graphFinished = false;
-                    runner.graph = data.skillGraph;
-                    runner.Run(() => graphFinished = true);
+                    bool timelineFinished = false;
+                    runner.Run(data.skillTimeline, null, () => timelineFinished = true);
 
-                    // Wait until graph reaches ExitNode
-                    while (!graphFinished)
+                    // Wait until timeline reaches the end
+                    while (!timelineFinished)
                     {
                         yield return null;
                     }
@@ -96,7 +95,7 @@ namespace Dajunctic
             }
             else
             {
-                // No graph assigned, finish immediately
+                // No timeline assigned, finish immediately
                 yield return null;
             }
 

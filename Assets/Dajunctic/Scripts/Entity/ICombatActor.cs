@@ -1,5 +1,6 @@
 using Dajunctic;
 using Dajunctic.SkillSystem.Graph;
+using Dajunctic.SkillSystem.Commands;
 using UnityEngine;
 
 namespace Dajunctic
@@ -12,7 +13,7 @@ namespace Dajunctic
         public float RotateSpeed {get;}
         public float Speed {get;}
 
-        public SkillGraphRunner GetSkillGraphRunner();
+        public SkillCommandRunner GetSkillCommandRunner();
 
 
     }
