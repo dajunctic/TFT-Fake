@@ -15,6 +15,7 @@ namespace Dajunctic
         const string DummyScene = "Dummy";
         const string HomeScene = "HomeScene";
         const string FadingScene = "FadingScene";
+        const string LobbyScene = "LobbyScene";
 
 
         static void ChangeScene(string name)
@@ -91,6 +92,12 @@ namespace Dajunctic
         static bool CanOpenHomeScene()
         {
             return CanChangeScene(HomeScene);
+        }
+
+        [MenuItem("Scenes/Lobby Scene", true, 22)]
+        static bool CanOpenLobbyScene()
+        {
+            return CanChangeScene(LobbyScene);
         }
 
         // [MenuItem("Scenes/Fading Scene", false, 22)]
