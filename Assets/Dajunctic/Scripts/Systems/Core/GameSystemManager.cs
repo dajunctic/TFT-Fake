@@ -6,11 +6,7 @@ using System.Linq;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// Central hub that creates, loads data for, and initializes all game systems.
-    /// Systems are bound in code — no drag-drop of individual systems in the Inspector.
-    /// Assign only the GameSystemManagerData SO to configure which Addressable assets to load.
-    /// </summary>
+
     public class GameSystemManager : MonoBehaviour
     {
         public static GameSystemManager Instance { get; private set; }

@@ -11,13 +11,13 @@
   <Project Path="DTT.AreaOfEffectRegions.Demo.csproj" />
   <Project Path="MCPForUnity.Runtime.csproj" />
   <Project Path="AllIn13DShaderAssemebly.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
   <Project Path="XNode.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj" />
   <Project Path="CFXREditor.csproj" />
   <Project Path="DTT.PublishingTools.Editor.csproj" />
   <Project Path="ToonyColorsPro.Demo.Editor.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="CFXRRuntime.csproj" />
   <Project Path="AllIn1SpriteShaderAssembly.csproj" />
   <Project Path="DTT.RuntimeUtilities.Demo.csproj" />
