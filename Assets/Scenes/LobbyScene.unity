@@ -737,9 +737,9 @@ GameObject:
   m_Component:
   - component: {fileID: 446757139}
   - component: {fileID: 446757137}
-  - component: {fileID: 446757138}
+  - component: {fileID: 446757140}
   m_Layer: 0
-  m_Name: LobbyMonitor
+  m_Name: LobbyNetworkManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -770,22 +770,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &446757138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 446757136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 056a8d2d078e07544a86f65718788dd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.LobbyMonitor
-  ShowTopMostFoldoutHeaderGroup: 1
-  initialize: 0
-  tick: 0
-  MaxPlayers: 8
 --- !u!4 &446757139
 Transform:
   m_ObjectHideFlags: 0
@@ -801,6 +785,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &446757140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 446757136}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a73cca1d0a47a2340af44c6dedc448d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.LobbyNetworkManager
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxPlayers: 8
 --- !u!1 &451682312
 GameObject:
   m_ObjectHideFlags: 0
@@ -945,6 +943,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3927997140
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1046,6 +1048,10 @@ PrefabInstance:
     - target: {fileID: 1148711198673350163, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2170515524
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1383,6 +1389,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1494812178
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1663,6 +1673,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2837924441
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1866,6 +1880,10 @@ PrefabInstance:
     - target: {fileID: 1148711198673350163, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 4008450101
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2095,12 +2113,14 @@ MonoBehaviour:
   notLoginGroup: {fileID: 274805542}
   loggedInGroup: {fileID: 2033526602}
   ipInputField: {fileID: 2104030459}
-  playerNameInputField: {fileID: 0}
+  playerNameInputField: {fileID: 729818786}
   hostButton: {fileID: 1407474527}
   clientButton: {fileID: 1420748955}
   ipAddress: {fileID: 1747995877}
   waitingTxt: {fileID: 2049220515}
   startGameButton: {fileID: 554046044}
+  playerListContainer: {fileID: 1908475126}
+  lobbyPlayerUIPrefab: {fileID: 6282587063005217216, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
 --- !u!1 &1407474527
 GameObject:
   m_ObjectHideFlags: 0
@@ -3018,6 +3038,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2138263743
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3628,6 +3652,10 @@ PrefabInstance:
     - target: {fileID: 1148711198673350163, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 1477978965
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4276,6 +4304,10 @@ PrefabInstance:
     - target: {fileID: 1148711198673350163, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6590505340917081014, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2978035559
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

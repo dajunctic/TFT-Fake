@@ -100,6 +100,12 @@ namespace Dajunctic
             return CanChangeScene(LobbyScene);
         }
 
+        [MenuItem("Scenes/Lobby Scene", false, 22)]
+        static void OpenLobbyScene()
+        {
+            ChangeScene(LobbyScene);
+        }
+
         // [MenuItem("Scenes/Fading Scene", false, 22)]
         // static void OpenFadingScene()
         // {
