@@ -19,6 +19,7 @@ namespace Dajunctic
         public BenchSystem Bench { get; private set; }
         public FieldSystem Field { get; private set; }
         public ShopSystem Shop { get; private set; }
+        public GlobalChampionPool GlobalChampionPool { get; private set; }
         public ItemSystem Items { get; private set; }
         public EmotionSystem Emotion { get; private set; }
         public TraitSystem Traits { get; private set; }
@@ -67,6 +68,7 @@ namespace Dajunctic
             Bench = CreateSystem<BenchSystem>();
             Field = CreateSystem<FieldSystem>();
             Shop = CreateSystem<ShopSystem>();
+            GlobalChampionPool = CreateSystem<GlobalChampionPool>();
             Items = CreateSystem<ItemSystem>();
             Emotion = CreateSystem<EmotionSystem>();
             Traits = CreateSystem<TraitSystem>();
@@ -101,6 +103,7 @@ namespace Dajunctic
             await Bench.LoadDataAsync();
             await Field.LoadDataAsync();
             await Shop.LoadDataAsync();
+            await GlobalChampionPool.LoadDataAsync();
             await Items.LoadDataAsync();
             await Emotion.LoadDataAsync();
             await Traits.LoadDataAsync();

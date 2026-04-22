@@ -1,4 +1,5 @@
 using System;
+using FishNet.Connection;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using UnityEngine;
@@ -207,6 +208,79 @@ namespace Dajunctic
             WinStreak.Value = 0;
 
             PassiveIncome.Value = 5;
+        }
+
+        // --- SHOP & CHAMPION POOL SYNC ---
+
+        [ServerRpc]
+        public void CmdRequestReroll()
+        {
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Shop == null) return;
+            
+            // Assume reroll costs 2 gold
+            if (Gold.Value >= 2)
+            {
+                ChangeGold(-2);
+                RollShop();
+            }
+        }
+
+        [ServerRpc]
+        public void CmdBuyChampion(int slotIndex)
+        {
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Shop == null) return;
+            
+            // The logic needs to verify the shop array for this specific player.
+            // But right now, ShopSystem is keeping the current shop state.
+            // If the shop state is local to each player, we should store it in PlayerDataSync.
+            // For now, this is a placeholder. The actual implementation needs to track per-player shop state on the server.
+            Debug.Log($"[Server] Player {PlayerName.Value} requested to buy hero at slot {slotIndex}");
+            
+            // 1. Get the champion ID from the player's server-side shop array.
+            // 2. Check cost vs Gold.Value.
+            // 3. Deduct Gold.
+            // 4. Add to Player's Bench.
+        }
+
+        private void RollShop()
+        {
+            var shopData = GameSystemManager.Instance.Shop.ShopSystemData;
+            var pool = GameSystemManager.Instance.GetSystem<GlobalChampionPool>();
+
+            if (shopData == null || pool == null) return;
+
+            float[] chances = shopData.shopData.GetChancesForLevel(Level.Value);
+            string[] results = new string[5];
+
+            for (int i = 0; i < 5; i++)
+            {
+                int rarity = RollRarity(chances);
+                var hero = pool.DrawChampion(rarity);
+                results[i] = hero != null ? hero.Id : "";
+            }
+
+            TargetUpdateShop(Owner, results);
+        }
+
+        [TargetRpc]
+        public void TargetUpdateShop(NetworkConnection conn, string[] championIds)
+        {
+            if (GameSystemManager.Instance != null && GameSystemManager.Instance.Shop != null)
+            {
+                GameSystemManager.Instance.Shop.SyncShopData(championIds);
+            }
+        }
+
+        private int RollRarity(float[] chances)
+        {
+            float roll = UnityEngine.Random.value;
+            float cumulative = 0;
+            for (int i = 0; i < chances.Length; i++)
+            {
+                cumulative += chances[i];
+                if (roll <= cumulative) return i + 1;
+            }
+            return 1;
         }
     }
 }

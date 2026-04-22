@@ -113,6 +113,16 @@ namespace Dajunctic
             }
         }
 
+        public void StartGame()
+        {
+            if (InstanceFinder.IsServerStarted)
+            {
+                var sld = new FishNet.Managing.Scened.SceneLoadData("HomeScene");
+                sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.All;
+                InstanceFinder.SceneManager.LoadGlobalScenes(sld);
+            }
+        }
+
         private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
             if (args.ConnectionState == LocalConnectionState.Started)

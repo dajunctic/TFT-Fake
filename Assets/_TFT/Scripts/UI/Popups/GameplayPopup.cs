@@ -97,6 +97,13 @@ namespace Dajunctic
             this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             if (playerListUI != null) playerListUI.OnPlayerClicked -= OnPlayerClicked;
+
+            if (_localPlayerSync != null)
+            {
+                _localPlayerSync.OnGoldChanged -= OnGoldChanged;
+                _localPlayerSync.OnLevelChanged -= OnLevelChanged;
+                _localPlayerSync.OnExpChanged -= OnExpChanged;
+            }
         }
 
 
@@ -113,11 +120,29 @@ namespace Dajunctic
             UpdateShopLockUI(ShopSystem != null && ShopSystem.IsShopLocked);
         }
 
+        private PlayerDataSync _localPlayerSync;
+
         private void Update()
         {
             if (Gameplay.Instance == null) return;
 
             UpdateUI();
+
+            if (_localPlayerSync == null && FishNet.InstanceFinder.IsClientStarted)
+            {
+                var conn = FishNet.InstanceFinder.ClientManager.Connection;
+                if (conn != null && conn.FirstObject != null)
+                {
+                    _localPlayerSync = conn.FirstObject.GetComponent<PlayerDataSync>();
+                    if (_localPlayerSync != null)
+                    {
+                        _localPlayerSync.OnGoldChanged += OnGoldChanged;
+                        _localPlayerSync.OnLevelChanged += OnLevelChanged;
+                        _localPlayerSync.OnExpChanged += OnExpChanged;
+                        UpdateEconomy(); // Force update
+                    }
+                }
+            }
         }
 
         private void UpdateUI()
@@ -182,38 +207,47 @@ namespace Dajunctic
             }
         }
 
+        private void OnGoldChanged(int value) => goldText.text = value.ToString();
+        private void OnLevelChanged(int value) 
+        {
+            levelText.text = "Lvl. " + value;
+            if (ShopSystem != null) UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(value));
+        }
+        private void OnExpChanged(int value) => UpdateEconomy(); // Refresh xp progress
+
         private void UpdateEconomy()
         {
-            // if (EconomySystem == null) return;
-            // var eco = EconomySystem;
-            // goldText.text = eco.Gold.ToString();
-            // levelText.text = "Lvl. " + eco.Level;
+            if (_localPlayerSync == null) return;
+            
+            goldText.text = _localPlayerSync.Gold.Value.ToString();
+            levelText.text = "Lvl. " + _localPlayerSync.Level.Value.ToString();
 
-            // if (eco.IsMaxLevel)
-            // {
-            //     xpText.text = "MAX";
-            //     if (xpProgress != null) xpProgress.fillAmount = 1;
+            int currentXp = _localPlayerSync.Exp.Value;
+            int requiredXp = _localPlayerSync.GetXPRequired();
+            
+            if (requiredXp == 0) // Max Level
+            {
+                xpText.text = "MAX";
+                if (xpProgress != null) xpProgress.fillAmount = 1;
 
-            //     if (buyXPButton != null) buyXPButton.SetActive(false);
-            //     if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(true);
-            // }
-            // else
-            // {
-            //     int currentXp = eco.XP;
-            //     int requiredXp = eco.GetXPRequired();
-            //     xpText.text = $"{currentXp}/{requiredXp}";
+                if (buyXPButton != null) buyXPButton.SetActive(false);
+                if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(true);
+            }
+            else
+            {
+                xpText.text = $"{currentXp}/{requiredXp}";
 
-            //     if (xpProgress != null)
-            //     {
-            //         xpProgress.fillAmount = requiredXp > 0 ? (float)currentXp / requiredXp : 1;
-            //     }
+                if (xpProgress != null)
+                {
+                    xpProgress.fillAmount = (float)currentXp / requiredXp;
+                }
 
-            //     if (buyXPButton != null) buyXPButton.SetActive(true);
-            //     if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
-            // }
-            // if (ShopSystem != null)
-            //     UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(eco.Level));
+                if (buyXPButton != null) buyXPButton.SetActive(true);
+                if (buyXPDisabledButton != null) buyXPDisabledButton.SetActive(false);
+            }
 
+            if (ShopSystem != null)
+                UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(_localPlayerSync.Level.Value));
         }
 
         private void OnHeroDragStarted(HeroDragStartedEvent evt)

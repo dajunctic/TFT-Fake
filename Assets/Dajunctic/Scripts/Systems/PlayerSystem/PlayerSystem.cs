@@ -31,20 +31,48 @@ namespace Dajunctic
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            
-            // Create Local Player
-            var localPlayer = new PlayerData(0, "You", Team.Player, 100);
-            _players.Add(localPlayer);
-            
-            // Create AI Opponents
-            for (int i = 1; i <= 7; i++)
+
+            if (FishNet.InstanceFinder.NetworkManager != null)
             {
-                _players.Add(new PlayerData(i, $"Bot {i}", Team.Opponent, 100));
+                FishNet.InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoadEnd;
+                FishNet.InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoadEnd;
             }
 
-            SpawnTacticians();
+            Debug.Log("<color=cyan>PlayerSystem initialized.</color>");
+        }
 
-            Debug.Log("<color=cyan>PlayerSystem initialized with 8 players.</color>");
+        private void OnSceneLoadEnd(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
+        {
+            if (!args.QueueData.AsServer) return;
+
+            // Wait for HomeScene to be the loaded scene
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "HomeScene")
+            {
+                SetupPlayersFromLobby();
+                SpawnTacticians();
+            }
+        }
+
+        private void SetupPlayersFromLobby()
+        {
+            _players.Clear();
+            if (LobbyNetworkManager.Instance == null) return;
+
+            // Create real players
+            foreach (var p in LobbyNetworkManager.Instance.Players)
+            {
+                var pd = new PlayerData(p.PlayerIndex, p.PlayerName, Team.Player, 100);
+                pd.ClientId = p.ClientId;
+                _players.Add(pd);
+            }
+
+            // Fill the rest with Bots up to 8
+            int nextId = _players.Count;
+            while (_players.Count < 8)
+            {
+                _players.Add(new PlayerData(nextId, $"Bot {nextId}", Team.Opponent, 100));
+                nextId++;
+            }
         }
 
         private void SpawnTacticians()
@@ -69,6 +97,20 @@ namespace Dajunctic
                 if (actor != null)
                 {
                     actor.OwnerID = player.Id;
+
+                    if (FishNet.InstanceFinder.IsServerStarted)
+                    {
+                        var clients = FishNet.InstanceFinder.ServerManager.Clients;
+                        if (player.ClientId >= 0 && clients.TryGetValue(player.ClientId, out var clientConn))
+                        {
+                            FishNet.InstanceFinder.ServerManager.Spawn(tacticianObj, clientConn);
+                        }
+                        else
+                        {
+                            FishNet.InstanceFinder.ServerManager.Spawn(tacticianObj);
+                        }
+                    }
+
                     actor.Initialize();
                     actor.StopListenEvents();
                     actor.ListenEvents();
@@ -132,6 +174,7 @@ namespace Dajunctic
     public class PlayerData
     {
         public int Id;
+        public int ClientId = -1;
         public string Name;
         public Team Team;
         public int HP;

@@ -11,7 +11,8 @@ namespace Dajunctic
 
         public override string DataId => name;
         public override bool CanBeTarget => true;
-        public bool IsLocalPlayer => OwnerID == 0;
+        private FishNet.Object.NetworkObject _netObj;
+        public bool IsLocalPlayer => _netObj != null && _netObj.IsOwner;
 
 
         
@@ -24,6 +25,7 @@ namespace Dajunctic
             base.Initialize();
             if (_tacticianInitialized) return;
             _tacticianInitialized = true;
+            _netObj = GetComponent<FishNet.Object.NetworkObject>();
 
             if (CombatActorData is TacticianData tacticianData)
             {
@@ -104,8 +106,13 @@ namespace Dajunctic
             if (_camera != null)
             {
                 FollowCamera followCam = _camera.GetComponent<FollowCamera>();
-                if (followCam != null && followCam.target != null)
+                if (followCam != null)
                 {
+                    if (followCam.target != this.transform)
+                    {
+                        followCam.target = this.transform;
+                    }
+
                     TacticianActor viewTarget = followCam.target.GetComponent<TacticianActor>();
                     if (viewTarget != null && viewTarget.OwnerID != this.OwnerID)
                     {

@@ -15,6 +15,7 @@ namespace Dajunctic
 
         private bool _isShopLocked;
         public bool IsShopLocked => _isShopLocked;
+        public ShopSystemData ShopSystemData => _data;
         public ShopData ShopData => _data?.shopData;
         public List<ChampionData> AllHeroes => _data?.allHeroes;
         private GameSystemManager _manager;
@@ -42,12 +43,21 @@ namespace Dajunctic
 
         private void OnRequestReroll(RequestRerollEvent evt)
         {
-            Reroll();
+            // Triggers network request via PlayerDataSync
+            var localPlayerSync = FishNet.InstanceFinder.ClientManager.Connection.FirstObject?.GetComponent<PlayerDataSync>();
+            if (localPlayerSync != null)
+            {
+                localPlayerSync.CmdRequestReroll();
+            }
         }
 
         private void OnRequestBuyHero(RequestBuyHeroEvent evt)
         {
-            BuyHero(evt.SlotIndex);
+            var localPlayerSync = FishNet.InstanceFinder.ClientManager.Connection.FirstObject?.GetComponent<PlayerDataSync>();
+            if (localPlayerSync != null)
+            {
+                localPlayerSync.CmdBuyChampion(evt.SlotIndex);
+            }
         }
 
         public void Shutdown()
@@ -102,6 +112,27 @@ namespace Dajunctic
             _isShopLocked = locked;
             this.Raise(new ShopLockChangedEvent { IsLocked = _isShopLocked });
             Debug.Log($"<color=cyan>ShopSystem: Shop {(_isShopLocked ? "LOCKED" : "UNLOCKED")}</color>");
+        }
+
+        // Called by PlayerDataSync when Server sends TargetUpdateShop
+        public void SyncShopData(string[] championIds)
+        {
+            if (_data == null || _data.allHeroes == null) return;
+            
+            for (int i = 0; i < 5; i++)
+            {
+                if (string.IsNullOrEmpty(championIds[i]))
+                {
+                    _currentShop[i] = null;
+                }
+                else
+                {
+                    _currentShop[i] = _data.allHeroes.FirstOrDefault(h => h.Id == championIds[i]);
+                }
+            }
+
+            OnShopRefreshed?.Invoke();
+            this.Raise(new ShopRefreshedEvent());
         }
 
         public void RefreshShop()
