@@ -875,6 +875,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd94f63f5dc94584ba4339c4a8e660c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.PlayerUI
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   scaleTransform: {fileID: 7943536774566807819}

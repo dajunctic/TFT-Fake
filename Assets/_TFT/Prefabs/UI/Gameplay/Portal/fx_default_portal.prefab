@@ -45,6 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324a00d0afca547409f8198e1e661098, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.FxView
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   particle: {fileID: 4635354283967582497}

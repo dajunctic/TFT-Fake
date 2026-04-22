@@ -44,7 +44,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 112a0f6a626c7c942847d0d33a6f9d12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 0
   tick: 0
   anchorType: 1

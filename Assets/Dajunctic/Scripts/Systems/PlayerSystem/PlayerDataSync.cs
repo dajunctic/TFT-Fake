@@ -1,36 +1,49 @@
 using System;
-using Unity.Netcode;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 using UnityEngine;
 
 namespace Dajunctic
 {
-    public class PlayerDataSync: BaseView
+    public class PlayerDataSync: NetworkBehaviour
     {   
         public const int MAX_LEVEL = 10;
         private readonly int[] EXP_REQUIREMENTS = { 0, 2, 2, 6, 10, 20, 36, 56, 80, 100 }; 
 
-        public NetworkVariable<ulong> ClientId = new(0);
-        public NetworkVariable<string> PlayerName = new("");
+        public readonly SyncVar<ulong> ClientId = new SyncVar<ulong>(0);
+        public readonly SyncVar<string> PlayerName = new SyncVar<string>("");
 
-        public NetworkVariable<int> Heath = new(100);
-        public NetworkVariable<int> Gold = new(0);
-        public NetworkVariable<int> Level = new(1);
-        public NetworkVariable<int> Exp = new(0);
+        public readonly SyncVar<int> Heath = new SyncVar<int>(100);
+        public readonly SyncVar<int> Gold = new SyncVar<int>(0);
+        public readonly SyncVar<int> Level = new SyncVar<int>(1);
+        public readonly SyncVar<int> Exp = new SyncVar<int>(0);
 
-        public NetworkVariable<int> LoseStreak = new(0);
-        public NetworkVariable<int> WinStreak = new(0);
+        public readonly SyncVar<int> LoseStreak = new SyncVar<int>(0);
+        public readonly SyncVar<int> WinStreak = new SyncVar<int>(0);
 
         
-        public NetworkVariable<int> PassiveIncome = new(5);
+        public readonly SyncVar<int> PassiveIncome = new SyncVar<int>(5);
 
         public event Action<int> OnHealthChanged;
         public event Action<int> OnGoldChanged;
         public event Action<int> OnLevelChanged;
         public event Action<int> OnExpChanged;
 
-        public override void Initialize()
+        private void OnHealthSync(int prev, int next, bool asServer) => OnHealthChanged?.Invoke(next);
+        private void OnGoldSync(int prev, int next, bool asServer) => OnGoldChanged?.Invoke(next);
+        private void OnLevelSync(int prev, int next, bool asServer) => OnLevelChanged?.Invoke(next);
+        private void OnExpSync(int prev, int next, bool asServer) => OnExpChanged?.Invoke(next);
+
+        protected void Awake()
         {
-            base.Initialize();
+            Heath.OnChange += OnHealthSync;
+            Gold.OnChange += OnGoldSync;
+            Level.OnChange += OnLevelSync;
+            Exp.OnChange += OnExpSync;
+        }
+
+        public void Initialize()
+        {
             ClearState();
         }
 
@@ -54,7 +67,7 @@ namespace Dajunctic
                 return;
             }
             Heath.Value += amount;
-            OnHealthChanged?.Invoke(Heath.Value);
+            // OnHealthChanged?.Invoke(Heath.Value); // Removed because SyncVar OnChange will handle it on both server and client
         }
 
         public void ChangeGold(int amount)
@@ -65,7 +78,7 @@ namespace Dajunctic
                 return;
             }
             Gold.Value += amount;
-            OnGoldChanged?.Invoke(Gold.Value);
+            // OnGoldChanged?.Invoke(Gold.Value);
         }
 
         public void ChangeLevel(int amount)
@@ -76,7 +89,7 @@ namespace Dajunctic
                 return;
             }
             Level.Value += amount;
-            OnLevelChanged?.Invoke(Level.Value);
+            // OnLevelChanged?.Invoke(Level.Value);
         }
 
         public void ChangeExp(int amount)
@@ -87,7 +100,7 @@ namespace Dajunctic
                 return;
             }
             Exp.Value += amount;
-            OnExpChanged?.Invoke(Exp.Value);
+            // OnExpChanged?.Invoke(Exp.Value);
 
             CheckLevelUp();
         }
@@ -105,7 +118,7 @@ namespace Dajunctic
             {
                 Exp.Value -= required;
                 Level.Value++;
-                OnLevelChanged?.Invoke(Level.Value);
+                // OnLevelChanged?.Invoke(Level.Value);
 
                 if (Level.Value >= MAX_LEVEL)
                 {

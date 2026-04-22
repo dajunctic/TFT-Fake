@@ -2,11 +2,11 @@
 using System;
 using UnityEngine;
 using System.Linq;
-using Unity.Netcode;
-
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 namespace Dajunctic
 {
-    public partial class Gameplay : BaseView
+    public partial class Gameplay : NetworkBehaviour
     {
         public static string HeroLayerName = "CombatActor";
         public static Gameplay Instance { get; private set; }
@@ -22,9 +22,9 @@ namespace Dajunctic
         private RoundSystem _roundSystem;
         private RoundSystem RoundSys => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
 
-        private NetworkVariable<GameplayPhase> _currentPhase = new NetworkVariable<GameplayPhase>();
-        private NetworkVariable<float> _timer = new NetworkVariable<float>();
-        private NetworkVariable<float> _phaseDuration = new NetworkVariable<float>();
+        private readonly SyncVar<GameplayPhase> _currentPhase = new SyncVar<GameplayPhase>();
+        private readonly SyncVar<float> _timer = new SyncVar<float>();
+        private readonly SyncVar<float> _phaseDuration = new SyncVar<float>();
 
         public GameplayPhase CurrentPhase => _currentPhase.Value;
         public float Timer => _timer.Value;
@@ -32,15 +32,13 @@ namespace Dajunctic
 
         public static event Action<GameplayPhase> OnPhaseChanged;
 
-        protected override void Awake()
+        protected void Awake()
         {
-            base.Awake();
             Instance = this;
         }
 
-        public override void Initialize()
+        public void Initialize()
         {
-            base.Initialize();
             // StartPhase(GameplayPhase.Planning);
         }
 
@@ -49,10 +47,8 @@ namespace Dajunctic
             StartPhaseServer(GameplayPhase.Planning);
         }
 
-        public override void Tick()
+        void Update()
         {
-            base.Tick();
-
             if (!IsServer) return; // Only the server should control the phase timing
 
             if (_timer.Value > 0)
@@ -86,7 +82,7 @@ namespace Dajunctic
             _phaseDuration.Value = duration;
             _timer.Value = _phaseDuration.Value;
 
-            Debug.Log($"[Gameplay] Starting Phase: {phase} for {_phaseDuration}s in round {(RoundSys != null ? RoundSys.GetRoundDisplayString() : "N/A")}");
+            Debug.Log($"[Gameplay] Starting Phase: {phase} for {_phaseDuration.Value}s in round {(RoundSys != null ? RoundSys.GetRoundDisplayString() : "N/A")}");
 
             if (phase == GameplayPhase.Planning)
             {

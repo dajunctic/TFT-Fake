@@ -1,8 +1,9 @@
 using TMPro;
-using Unity.Netcode.Transports.UTP;
-using Unity.Netcode;
 using UnityEngine;
 using System.Collections.Generic;
+using FishNet;
+using FishNet.Object.Synchronizing;
+using FishNet.Transporting;
 
 namespace Dajunctic
 {
@@ -23,14 +24,11 @@ namespace Dajunctic
         [SerializeField] Transform playerListContainer;
         [SerializeField] LobbyPlayerUI lobbyPlayerUIPrefab;
 
-        private UnityTransport transport;
         private bool isLogin;
         private readonly List<LobbyPlayerUI> lobbyPlayerUIs = new();
 
         private void Start()
         {
-            transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
-
             if (ipInputField != null) ipInputField.text = "127.0.0.1";
 
             // Xoá bất kỳ child còn sót lại trong container
@@ -44,12 +42,14 @@ namespace Dajunctic
 
         public override void ListenEvents()
         {
-            // Lắng nghe khi LobbyNetworkManager spawn xong (cả host lẫn client)
+            // Lắng nghe khi LobbyNetworkManager spawn xong
             LobbyNetworkManager.OnManagerSpawned += OnManagerReady;
 
-            // Nếu đã spawn rồi (ví dụ scene reload) thì gọi luôn
             if (LobbyNetworkManager.Instance != null)
                 SubscribeToPlayerList();
+                
+            if (InstanceFinder.ClientManager != null)
+                InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
         }
 
         public override void StopListenEvents()
@@ -57,23 +57,26 @@ namespace Dajunctic
             LobbyNetworkManager.OnManagerSpawned -= OnManagerReady;
 
             if (LobbyNetworkManager.Instance != null)
-                LobbyNetworkManager.Instance.Players.OnListChanged -= OnPlayerListChanged;
+                LobbyNetworkManager.Instance.Players.OnChange -= OnPlayerListChanged;
+                
+            if (InstanceFinder.ClientManager != null)
+                InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
         }
 
         private void OnManagerReady()
         {
             SubscribeToPlayerList();
-            if (isLogin) UpdateLobby();
+            if (isLogin) OnChanged();
         }
 
         private void SubscribeToPlayerList()
         {
             // Gỡ trước để tránh duplicate
-            LobbyNetworkManager.Instance.Players.OnListChanged -= OnPlayerListChanged;
-            LobbyNetworkManager.Instance.Players.OnListChanged += OnPlayerListChanged;
+            LobbyNetworkManager.Instance.Players.OnChange -= OnPlayerListChanged;
+            LobbyNetworkManager.Instance.Players.OnChange += OnPlayerListChanged;
         }
 
-        private void OnPlayerListChanged(NetworkListEvent<LobbyPlayerData> changeEvent)
+        private void OnPlayerListChanged(SyncListOperation op, int index, LobbyPlayerData oldItem, LobbyPlayerData newItem, bool asServer)
         {
             // Bất kỳ thay đổi nào (thêm/xoá/sửa) đều rebuild UI
             if (isLogin) UpdateLobby();
@@ -83,11 +86,13 @@ namespace Dajunctic
 
         public void HostGame()
         {
-            // Lắng nghe khi bản thân (host) connect để gửi tên thật
-            NetworkManager.Singleton.OnClientConnectedCallback += OnSelfConnected;
-            NetworkManager.Singleton.StartHost();
-            isLogin = true;
-            OnChanged();
+            if (InstanceFinder.ServerManager != null && InstanceFinder.ClientManager != null)
+            {
+                InstanceFinder.ServerManager.StartConnection();
+                InstanceFinder.ClientManager.StartConnection();
+                isLogin = true;
+                OnChanged();
+            }
         }
 
         public void JoinGame()
@@ -100,26 +105,25 @@ namespace Dajunctic
                 return;
             }
 
-            transport.SetConnectionData(targetIP, transport.ConnectionData.Port);
-            NetworkManager.Singleton.StartClient();
-            isLogin = true;
-            OnChanged();
-
-            // Sau khi kết nối thành công, gửi tên lên server
-            NetworkManager.Singleton.OnClientConnectedCallback += OnSelfConnected;
+            if (InstanceFinder.ClientManager != null)
+            {
+                InstanceFinder.ClientManager.StartConnection(targetIP);
+                isLogin = true;
+                OnChanged();
+            }
         }
 
-        private void OnSelfConnected(ulong clientId)
+        private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
-            if (clientId != NetworkManager.Singleton.LocalClientId) return;
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnSelfConnected;
+            if (args.ConnectionState == LocalConnectionState.Started)
+            {
+                string playerName = (playerNameInputField != null && !string.IsNullOrWhiteSpace(playerNameInputField.text))
+                    ? playerNameInputField.text
+                    : $"Player {InstanceFinder.ClientManager.Connection.ClientId}";
 
-            string playerName = (playerNameInputField != null && !string.IsNullOrWhiteSpace(playerNameInputField.text))
-                ? playerNameInputField.text
-                : $"Player {clientId}";
-
-            if (LobbyNetworkManager.Instance != null)
-                LobbyNetworkManager.Instance.RegisterSelf(playerName);
+                if (LobbyNetworkManager.Instance != null)
+                    LobbyNetworkManager.Instance.RegisterSelf(playerName);
+            }
         }
 
         // ── UI ──────────────────────────────────────────────────────────────────
@@ -131,17 +135,18 @@ namespace Dajunctic
                 notLoginGroup.SetActive(false);
                 loggedInGroup.SetActive(true);
 
-                bool isServer = NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer;
+                bool isServer = InstanceFinder.IsServerStarted;
 
                 if (isServer)
                 {
-                    ipAddress.text = $"Host IP: {transport.ConnectionData.Address}";
+                    ipAddress.text = $"Host IP: Local";
                     waitingTxt.SetActive(false);
                     startGameButton.SetActive(true);
                 }
                 else
                 {
-                    ipAddress.text = $"Connected to: {transport.ConnectionData.Address}";
+                    string targetIP = ipInputField != null ? ipInputField.text : "Unknown";
+                    ipAddress.text = $"Connected to: {targetIP}";
                     waitingTxt.SetActive(true);
                     startGameButton.SetActive(false);
                 }
@@ -166,10 +171,10 @@ namespace Dajunctic
 
             if (LobbyNetworkManager.Instance == null) return;
 
-            // Duyệt NetworkList — cả Server lẫn Client đều có dữ liệu đầy đủ
+            // Duyệt SyncList
             foreach (var data in LobbyNetworkManager.Instance.Players)
             {
-                var player = new LobbyPlayer(data.ClientId, data.PlayerName.ToString(), data.PlayerIndex, data.IsHost);
+                var player = new LobbyPlayer(data.ClientId, data.PlayerName, data.PlayerIndex, data.IsHost);
                 var ui     = Instantiate(lobbyPlayerUIPrefab, playerListContainer);
                 ui.SetLobbyPlayer(player);
                 lobbyPlayerUIs.Add(ui);

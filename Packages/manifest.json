@@ -13,7 +13,7 @@
     "com.unity.multiplayer.center.quickstart": "1.1.1",
     "com.unity.multiplayer.playmode": "2.0.2",
     "com.unity.multiplayer.tools": "2.2.8",
-    "com.unity.netcode.gameobjects": "2.11.0",
+    "com.firstgeargames.fishnet": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
     "com.unity.nuget.newtonsoft-json": "3.2.2",
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.unity.services.multiplayer": "2.2.0",

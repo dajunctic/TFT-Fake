@@ -1,15 +1,21 @@
 ﻿<Solution>
   <Project Path="MCPForUnity.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="FishNet.Runtime.csproj" />
+  <Project Path="SynapseSocket.csproj" />
+  <Project Path="GameKit.Dependencies.csproj" />
   <Project Path="AllIn13DShaderAssemebly.Editor.csproj" />
   <Project Path="DTT.RuntimeUtilities.Runtime.csproj" />
   <Project Path="AllIn13DShaderDemoScriptsAssembly.csproj" />
+  <Project Path="FishNet.Codegen.Cecil.csproj" />
   <Project Path="XNodeEditor.csproj" />
   <Project Path="DTT.AreaOfEffectRegions.Runtime.csproj" />
   <Project Path="DTT.EditorUtilities.Editor.csproj" />
+  <Project Path="Unity.FishNet.Codegen.csproj" />
   <Project Path="DTT.AreaOfEffectRegions.Editor.csproj" />
   <Project Path="DTT.AreaOfEffectRegions.Demo.csproj" />
   <Project Path="MCPForUnity.Runtime.csproj" />
+  <Project Path="FishNet.Demos.csproj" />
   <Project Path="AllIn13DShaderAssemebly.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />

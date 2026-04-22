@@ -12,15 +12,15 @@ namespace Dajunctic{
             base.ListenEvents();
             this.RegisterListener<ShowFadingUIEvent>(param => OnShow());
             this.RegisterListener<HideFadingUIEvent>(param => OnHide());
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            SceneManager.sceneUnloaded += OnSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded += OnSceneUnloaded;
         }
 
         public override void StopListenEvents()
         {
             base.StopListenEvents();
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+            UnityEngine.SceneManagement.SceneManager.sceneUnloaded -= OnSceneUnloaded;
         }
 
         void OnShow()

@@ -10,6 +10,22 @@
       },
       "hash": "7d4ecbd3bf148efbb6c9c07b28fdedd5c44855e8"
     },
+    "com.firstgeargames.fishnet": {
+      "version": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1",
+        "com.unity.ugui": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.particlesystem": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.physics2d": "1.0.0",
+        "com.unity.modules.ui": "1.0.0"
+      },
+      "hash": "de19b5d66459f60400ffd0edc443c4da173a01e7"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -163,16 +179,6 @@
         "com.unity.nuget.mono-cecil": "1.11.4",
         "com.unity.modules.uielements": "1.0.0",
         "com.unity.nuget.newtonsoft-json": "3.2.1"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.netcode.gameobjects": {
-      "version": "2.11.0",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.transport": "2.6.0",
-        "com.unity.nuget.mono-cecil": "1.11.4"
       },
       "url": "https://packages.unity.com"
     },

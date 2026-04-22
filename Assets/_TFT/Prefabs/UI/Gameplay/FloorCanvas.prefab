@@ -329,6 +329,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f7b65685537406468545aa658ed2e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ArenaChampionCountUI
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   _championCountText: {fileID: 88188588264430584}
   _canvasGroup: {fileID: 7162733605837727975}
   _iconImage: {fileID: 2770010176440185176}

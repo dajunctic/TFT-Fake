@@ -1,12 +1,16 @@
-using Unity.Netcode;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
+using FishNet.Connection;
+using FishNet.Transporting;
 using UnityEngine;
+using System.Linq;
 
 namespace Dajunctic
 {
     /// <summary>
     /// NetworkBehaviour trung tâm cho lobby:
     /// - Kiểm duyệt kết nối (approval check / max players)
-    /// - Quản lý danh sách player (NetworkList tự đồng bộ tới mọi client)
+    /// - Quản lý danh sách player (SyncList tự đồng bộ tới mọi client)
     /// </summary>
     public class LobbyNetworkManager : NetworkBehaviour
     {
@@ -17,8 +21,8 @@ namespace Dajunctic
 
         [SerializeField] private int maxPlayers = 8;
 
-        // NetworkList tự động sync Server → tất cả Client
-        public NetworkList<LobbyPlayerData> Players { get; private set; }
+        // SyncList tự động sync Server → tất cả Client
+        public readonly SyncList<LobbyPlayerData> Players = new SyncList<LobbyPlayerData>();
 
         private void Awake()
         {
@@ -28,73 +32,57 @@ namespace Dajunctic
                 return;
             }
             Instance = this;
-
-            // NetworkList phải khởi tạo trong Awake (trước OnNetworkSpawn)
-            Players = new NetworkList<LobbyPlayerData>();
-
-            // Đăng ký approval check ngay từ đầu (trước cả khi Start Host)
-            if (NetworkManager.Singleton != null)
-                NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
         }
 
-        private void OnDestroy()
+        public override void OnStartNetwork()
         {
-            if (NetworkManager.Singleton != null)
-                NetworkManager.Singleton.ConnectionApprovalCallback -= ApprovalCheck;
-        }
-
-        public override void OnNetworkSpawn()
-        {
-            if (IsServer)
-            {
-                NetworkManager.Singleton.OnClientConnectedCallback  += ServerOnClientConnected;
-                NetworkManager.Singleton.OnClientDisconnectCallback += ServerOnClientDisconnected;
-            }
-
+            base.OnStartNetwork();
             // Thông báo cho LobbyPopup (và bất kỳ ai) biết Instance đã sẵn sàng
             OnManagerSpawned?.Invoke();
         }
 
-        public override void OnNetworkDespawn()
+        public override void OnStartServer()
         {
-            if (!IsServer) return;
+            base.OnStartServer();
+            ServerManager.OnRemoteConnectionState += ServerOnRemoteConnectionState;
+        }
 
-            NetworkManager.Singleton.OnClientConnectedCallback  -= ServerOnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback -= ServerOnClientDisconnected;
+        public override void OnStopServer()
+        {
+            base.OnStopServer();
+            if (ServerManager != null)
+                ServerManager.OnRemoteConnectionState -= ServerOnRemoteConnectionState;
         }
 
         // ── Approval Check (từ LobbyMonitor) ────────────────────────────────────
 
-        private void ApprovalCheck(
-            NetworkManager.ConnectionApprovalRequest request,
-            NetworkManager.ConnectionApprovalResponse response)
+        private void ServerOnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
         {
-            int currentCount = NetworkManager.Singleton.ConnectedClients.Count;
-
-            if (currentCount >= maxPlayers)
+            if (args.ConnectionState == RemoteConnectionState.Started)
             {
-                response.Approved = false;
-                response.Reason   = "Lobby is full.";
-                Debug.Log($"LobbyNetworkManager: Rejected — lobby full ({currentCount}/{maxPlayers}).");
-            }
-            else
-            {
-                response.Approved = true;
-                Debug.Log($"LobbyNetworkManager: Approved ({currentCount + 1}/{maxPlayers}).");
-            }
+                int currentCount = ServerManager.Clients.Count;
 
-            response.Pending = false;
+                if (currentCount > maxPlayers)
+                {
+                    Debug.Log($"LobbyNetworkManager: Rejected — lobby full ({currentCount}/{maxPlayers}).");
+                    conn.Disconnect(false);
+                }
+                else
+                {
+                    Debug.Log($"LobbyNetworkManager: Approved ({currentCount}/{maxPlayers}).");
+                    // Tên tạm — client sẽ gửi tên thật qua RegisterSelf ServerRpc
+                    AddOrUpdatePlayer(conn.ClientId, $"Player {conn.ClientId}", conn.ClientId == ServerManager.Clients.First().Value.ClientId);
+                }
+            }
+            else if (args.ConnectionState == RemoteConnectionState.Stopped)
+            {
+                ServerOnClientDisconnected(conn.ClientId);
+            }
         }
 
         // ── Player List Management ───────────────────────────────────────────────
 
-        private void ServerOnClientConnected(ulong clientId)
-        {
-            // Tên tạm — client sẽ gửi tên thật qua RegisterSelf ServerRpc
-            AddOrUpdatePlayer(clientId, $"Player {clientId}");
-        }
-
-        private void ServerOnClientDisconnected(ulong clientId)
+        private void ServerOnClientDisconnected(int clientId)
         {
             for (int i = 0; i < Players.Count; i++)
             {
@@ -106,19 +94,30 @@ namespace Dajunctic
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void RegisterSelfServerRpc(ulong clientId, string playerName)
+        public void RegisterSelfServerRpc(string playerName, NetworkConnection caller = null)
         {
-            AddOrUpdatePlayer(clientId, playerName);
+            // Update player name when they explicitly register. Maintain their host status.
+            bool isHost = false;
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].ClientId == caller.ClientId)
+                {
+                    isHost = Players[i].IsHost;
+                    break;
+                }
+            }
+            AddOrUpdatePlayer(caller.ClientId, playerName, isHost);
         }
 
-        private void AddOrUpdatePlayer(ulong clientId, string playerName)
+        private void AddOrUpdatePlayer(int clientId, string playerName, bool isHost)
         {
-            // Nếu đã có thì cập nhật tên
+            // Nếu đã có thì cập nhật
             for (int i = 0; i < Players.Count; i++)
             {
                 if (Players[i].ClientId != clientId) continue;
                 var existing = Players[i];
                 existing.PlayerName = playerName;
+                existing.IsHost = isHost;
                 Players[i] = existing;
                 return;
             }
@@ -129,7 +128,7 @@ namespace Dajunctic
                 ClientId    = clientId,
                 PlayerName  = playerName,
                 PlayerIndex = Players.Count + 1,
-                IsHost      = clientId == NetworkManager.Singleton.LocalClientId
+                IsHost      = isHost
             });
         }
 
@@ -150,8 +149,7 @@ namespace Dajunctic
         /// </summary>
         public void RegisterSelf(string playerName)
         {
-            ulong id = NetworkManager.Singleton.LocalClientId;
-            RegisterSelfServerRpc(id, playerName);
+            RegisterSelfServerRpc(playerName);
         }
     }
 }

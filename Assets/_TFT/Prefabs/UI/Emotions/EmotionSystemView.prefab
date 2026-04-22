@@ -817,6 +817,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9406c8df248a640bdd4c8fef62f1c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   piUIManager: {fileID: 6570306805884752702}

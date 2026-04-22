@@ -503,6 +503,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce248582aefe294385927f01d7bac67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 0
   tick: 0
   icon: {fileID: 8827019301532748239}

@@ -174,6 +174,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2acc2549a29ba1448e8f00cc8418e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.TraitDescriptionUI
+  _componentIndexCache: 4
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   traitIcon: {fileID: 9133742739096507108}
@@ -1259,6 +1262,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c87b159372659bf4f98067164faa05b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ShopStreakUI
+  _componentIndexCache: 5
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 0
   tick: 0
   winStreakIcon: {fileID: 3052987203043005419}
@@ -1317,6 +1323,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233d93b903b40064cbabdc26cdcf2e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundUI
+  _componentIndexCache: 1
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   roundText: {fileID: 4582187831719687055}
@@ -2349,6 +2358,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5ad04f426f1f3547a1c8b31a99fbc57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 3
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   traitItemPrefab: {fileID: 5235102546313730278, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
@@ -5839,6 +5851,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1534cc1b5213b49bfb06ebd5a00b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _componentIndexCache: 0
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   timerText: {fileID: 7204112573001847717}
@@ -7528,6 +7543,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f97b9ed5075d36142822716139ca3bab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChatUI
+  _componentIndexCache: 2
+  _addedNetworkObject: {fileID: 0}
+  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   inputField: {fileID: 605841727192497614}
@@ -8795,6 +8813,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -8948,6 +8994,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -9649,6 +9723,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -10017,6 +10119,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 250594897752661140, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -10888,6 +11018,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -11774,6 +11932,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -12233,6 +12419,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -12813,6 +13027,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8233468205978149641}
     m_Modifications:
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: -4591681870525915226, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
+      objectReference: {fileID: 0}
     - target: {fileID: 3250339890141771929, guid: 211152a48a883f244bc0da11fc81e921, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -13347,6 +13589,34 @@ PrefabInstance:
     - target: {fileID: 8248556343147288361, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: <IsNested>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: <PrefabId>k__BackingField
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: <AssetPathHash>k__BackingField
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: <ComponentIndex>k__BackingField
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: InitializedParentNetworkBehaviour
+      value: 
+      objectReference: {fileID: 8499347749602387878}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: SerializedTransformProperties.Position.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 9053271111733735894, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
+      propertyPath: SerializedTransformProperties.Position.y
+      value: -50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
