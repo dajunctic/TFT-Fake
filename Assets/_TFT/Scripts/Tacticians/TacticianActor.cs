@@ -13,9 +13,12 @@ namespace Dajunctic
         public override bool CanBeTarget => true;
         private FishNet.Object.NetworkObject _netObj;
         public bool IsLocalPlayer => _netObj != null && _netObj.IsOwner;
-
-
         
+        public new int OwnerID 
+        {
+            get => _netObj != null && _netObj.IsSpawned ? _netObj.OwnerId : base.OwnerID;
+            set => base.OwnerID = value;
+        }
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;

@@ -142,14 +142,29 @@ namespace Dajunctic
             }
         }
 
+        public string RequestedPlayerName { get; set; }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            string pName = !string.IsNullOrWhiteSpace(RequestedPlayerName) 
+                ? RequestedPlayerName 
+                : $"Player {FishNet.InstanceFinder.ClientManager.Connection.ClientId}";
+            
+            RegisterSelf(pName);
+        }
+
         // ── Public API ───────────────────────────────────────────────────────────
 
         /// <summary>
-        /// Gọi từ LobbyPopup sau khi client kết nối thành công để đăng ký tên thật.
+        /// Gửi RPC lên Server để đăng ký tên thật.
         /// </summary>
         public void RegisterSelf(string playerName)
         {
-            RegisterSelfServerRpc(playerName);
+            if (IsClientInitialized)
+            {
+                RegisterSelfServerRpc(playerName);
+            }
         }
     }
 }

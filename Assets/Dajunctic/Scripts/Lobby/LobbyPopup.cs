@@ -90,6 +90,7 @@ namespace Dajunctic
         {
             if (InstanceFinder.ServerManager != null && InstanceFinder.ClientManager != null)
             {
+                SetRequestedPlayerName();
                 InstanceFinder.ServerManager.StartConnection();
                 InstanceFinder.ClientManager.StartConnection();
                 isLogin = true;
@@ -109,9 +110,18 @@ namespace Dajunctic
 
             if (InstanceFinder.ClientManager != null)
             {
+                SetRequestedPlayerName();
                 InstanceFinder.ClientManager.StartConnection(targetIP);
                 isLogin = true;
                 OnChanged();
+            }
+        }
+
+        private void SetRequestedPlayerName()
+        {
+            if (LobbyNetworkManager.Instance != null && playerNameInputField != null)
+            {
+                LobbyNetworkManager.Instance.RequestedPlayerName = playerNameInputField.text;
             }
         }
 
@@ -132,15 +142,7 @@ namespace Dajunctic
 
         private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
-            if (args.ConnectionState == LocalConnectionState.Started)
-            {
-                string playerName = (playerNameInputField != null && !string.IsNullOrWhiteSpace(playerNameInputField.text))
-                    ? playerNameInputField.text
-                    : $"Player {InstanceFinder.ClientManager.Connection.ClientId}";
-
-                if (LobbyNetworkManager.Instance != null)
-                    LobbyNetworkManager.Instance.RegisterSelf(playerName);
-            }
+            // Registration moved to LobbyNetworkManager.OnStartClient
         }
 
         // ── UI ──────────────────────────────────────────────────────────────────

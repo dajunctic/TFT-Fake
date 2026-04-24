@@ -1,12 +1,17 @@
 using UnityEngine;
+using FishNet.Object;
+using FishNet.Object.Synchronizing;
 
 namespace Dajunctic
 {
-    public class Arena : MonoBehaviour
+    public class Arena : NetworkBehaviour
     {
-        [Header("Settings")]
-        public int OwnerID = -1;
-        public string OwnerName = "None";
+        [Header("Settings (Synced)")]
+        private readonly SyncVar<int> _ownerId = new SyncVar<int>(-1);
+        private readonly SyncVar<string> _ownerName = new SyncVar<string>("None");
+
+        public int OwnerID { get => _ownerId.Value; set => _ownerId.Value = value; }
+        public string OwnerName { get => _ownerName.Value; set => _ownerName.Value = value; }
 
         [Header("References")]
         public HexAreaView FieldArea;
@@ -15,16 +20,41 @@ namespace Dajunctic
         public Transform TacticianSpawnPoint;
         [SerializeField, GuidReference("fx", typeof(IDummyId))] private string fxGuid;
 
-        public void Initialize(int ownerId, string ownerName)
+        private void Awake()
+        {
+            _ownerId.OnChange += OnOwnerIdChanged;
+        }
+
+        private void OnOwnerIdChanged(int prev, int next, bool asServer)
+        {
+            if (next != -1 && !asServer) 
+            {
+                RegisterToSystems();
+            }
+        }
+
+        public override void OnStartClient()
+        {
+            base.OnStartClient();
+            if (OwnerID != -1) RegisterToSystems();
+        }
+
+        public void SetOwnerServer(int ownerId, string ownerName)
         {
             OwnerID = ownerId;
             OwnerName = ownerName;
-
+            
             if (FieldArea != null) FieldArea.Initialize();
             if (BenchArea != null) BenchArea.Initialize();
             SpawnChampionCountUI();
 
             RegisterToSystems();
+        }
+
+        public void Initialize(int ownerId, string ownerName)
+        {
+            // For backward compatibility or local tests
+            SetOwnerServer(ownerId, ownerName);
         }
 
         private void Start()
@@ -47,17 +77,15 @@ namespace Dajunctic
             }
         }
 
-        private void Awake()
-        {
-            if (OwnerID != -1) RegisterToSystems();
-        }
-
         private void RegisterToSystems()
         {
             if (GameSystemManager.Instance == null) return;
+            // Prevent duplicate registration if already registered
+            if (GameSystemManager.Instance.Field.GetArena(OwnerID) == this) return;
+
             GameSystemManager.Instance.Field.RegisterArena(this);
             GameSystemManager.Instance.Bench.RegisterArena(this, fxGuid);
-            Debug.Log($"Arena registered for player {OwnerID}");
+            Debug.Log($"Arena registered for player {OwnerID} on {(IsServer ? "Server" : "Client")}");
         }
 
         public Vector3 GetFieldWorldPosition(Vector2Int coord)

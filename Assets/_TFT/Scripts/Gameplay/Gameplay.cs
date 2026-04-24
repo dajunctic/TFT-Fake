@@ -86,7 +86,7 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Planning)
             {
-                this.Raise(new ShowPopupEvent { PopupType = typeof(GameplayPopup), ShowMode = PopupShowMode.DoNothing });
+                ShowPlanningPopupRpc();
                 
                 // Return everyone home when planning starts
                 if (GameSystemManager.Instance.Travel != null)
@@ -115,6 +115,12 @@ namespace Dajunctic
 
             OnPhaseChanged?.Invoke(phase);
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
+        }
+
+        [ObserversRpc(RunLocally = true)]
+        private void ShowPlanningPopupRpc()
+        {
+            this.Raise(new ShowPopupEvent { PopupType = typeof(GameplayPopup), ShowMode = PopupShowMode.DoNothing });
         }
 
         private void OnTimerCompleteServer()

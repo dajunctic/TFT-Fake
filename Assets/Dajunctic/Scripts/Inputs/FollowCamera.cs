@@ -28,6 +28,13 @@ namespace Dajunctic
         {
             if (target != null && GameSystemManager.Instance != null && GameSystemManager.Instance.Field != null)
             {
+                var tactician = target.GetComponent<TacticianActor>();
+                if (tactician != null)
+                {
+                    Arena targetArena = GameSystemManager.Instance.Field.GetArena(tactician.OwnerID);
+                    if (targetArena != null) return targetArena.transform.position;
+                }
+
                 var arenas = GameSystemManager.Instance.Field.GetAllArenas();
                 if (arenas != null && arenas.Count > 0)
                 {

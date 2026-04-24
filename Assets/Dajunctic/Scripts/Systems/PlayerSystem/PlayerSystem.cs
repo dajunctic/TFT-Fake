@@ -14,7 +14,19 @@ namespace Dajunctic
         private TacticianData DefaultTacticianData => _data != null ? _data.defaultTacticianData : null;
         
         public IReadOnlyList<PlayerData> Players => _players;
-        public PlayerData LocalPlayer => _players.Find(p => p.Team == Team.Player);
+        public PlayerData LocalPlayer 
+        {
+            get 
+            {
+                if (FishNet.InstanceFinder.ClientManager != null && FishNet.InstanceFinder.ClientManager.Connection != null)
+                {
+                    int localClientId = FishNet.InstanceFinder.ClientManager.Connection.ClientId;
+                    var p = _players.Find(x => x.ClientId == localClientId);
+                    if (p != null) return p;
+                }
+                return _players.Find(p => p.Team == Team.Player);
+            }
+        }
 
         public static event Action<PlayerData> OnPlayerInfoChanged;
 
