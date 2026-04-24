@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d692be86667b974aa2e970509836d5a, type: 3}
+  m_Name: tft_anya
+  m_EditorClassIdentifier: 
+  id: tft_anya
+  movement:
+    moveSpeed: 2.5
+    rotateSpeed: 4
+    height: 1.2
+    radius: 0.25
+    acceleration: 48
+    movementType: 0
+  stats:
+    maxHp: 500
+    armor: 20
+    magicResist: 20
+    attackDamage: 50
+    abilityPower: 100
+    attackSpeed: 0.65
+    attackRange: 1
+    critChance: 0.25
+    critDamage: 1.4
+    maxMana: 100
+    startingMana: 0
+  skills: []
+  displayName: Anya
+  animalType: 
+  icon: {fileID: 0}
+  prefab: {fileID: 4136254893814224470, guid: fc22b4dbdd06f0d4aaf0deff3fcc57c7, type: 3}
+  tier: 1
+  isBoss: 0

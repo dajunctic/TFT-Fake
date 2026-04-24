@@ -1,0 +1,30 @@
+{
+    "name": "ShaderCrew.TheToonShader.3D.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "GUID:15fc0a57446b3144c949da3e2b9737a9",
+        "GUID:516a5277b8c3b4f4c8cc86b77b1591ff",
+        "GUID:771e886dc8ff2624f9fb1e98ab52afc2",
+        "GUID:83e2004185752be4684414733d22e0e7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "",
+            "define": "USING_URP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "",
+            "define": "USING_HDRP"
+        }
+    ],
+    "noEngineReferences": false
+}

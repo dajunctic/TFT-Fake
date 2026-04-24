@@ -16,6 +16,20 @@
       },
       "hash": "de19b5d66459f60400ffd0edc443c4da173a01e7"
     },
+    "com.shadercrew.the-toon-shader.3d": {
+      "version": "file:com.shadercrew.the-toon-shader.3d",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.shadercrew.the-toon-shader.core": "1.3.2"
+      }
+    },
+    "com.shadercrew.the-toon-shader.core": {
+      "version": "file:com.shadercrew.the-toon-shader.core",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

@@ -70,31 +70,55 @@ namespace Dajunctic
             _players.Clear();
             if (LobbyNetworkManager.Instance == null) return;
 
+            List<TacticianData> pool = new List<TacticianData>();
+            if (_data != null)
+            {
+                if (_data.availableTacticians != null && _data.availableTacticians.Length > 0)
+                    pool.AddRange(_data.availableTacticians);
+                else if (_data.defaultTacticianData != null)
+                    pool.Add(_data.defaultTacticianData);
+            }
+
             // Create real players
             foreach (var p in LobbyNetworkManager.Instance.Players)
             {
-                var pd = new PlayerData(p.PlayerIndex, p.PlayerName, Team.Player, 100);
+                var pd = new PlayerData(p.ClientId, p.PlayerName, Team.Player, 100);
                 pd.ClientId = p.ClientId;
+                AssignRandomTactician(pd, pool);
                 _players.Add(pd);
             }
 
             // Fill the rest with Bots up to 8
-            int nextId = _players.Count;
+            int nextId = 100;
             while (_players.Count < 8)
             {
-                _players.Add(new PlayerData(nextId, $"Bot {nextId}", Team.Opponent, 100));
+                var pd = new PlayerData(nextId, $"Bot {nextId}", Team.Opponent, 100);
+                AssignRandomTactician(pd, pool);
+                _players.Add(pd);
                 nextId++;
+            }
+        }
+
+        private void AssignRandomTactician(PlayerData pd, List<TacticianData> pool)
+        {
+            if (pool.Count > 0)
+            {
+                int idx = UnityEngine.Random.Range(0, pool.Count);
+                pd.AssignedTacticianData = pool[idx];
+                pool.RemoveAt(idx); // Remove to ensure uniqueness
+            }
+            else
+            {
+                // Fallback if pool is empty (more players than tacticians)
+                if (_data != null && _data.availableTacticians != null && _data.availableTacticians.Length > 0)
+                    pd.AssignedTacticianData = _data.availableTacticians[UnityEngine.Random.Range(0, _data.availableTacticians.Length)];
+                else if (_data != null)
+                    pd.AssignedTacticianData = _data.defaultTacticianData;
             }
         }
 
         private void SpawnTacticians()
         {
-            if (DefaultTacticianData == null)
-            {
-                Debug.LogWarning("PlayerSystem: No defaultTacticianData assigned in GameSystemManagerData!");
-                return;
-            }
-
             foreach (var player in _players)
             {
                 if (player.Tactician != null) continue;
@@ -102,8 +126,12 @@ namespace Dajunctic
                 Arena arena = _manager.Field.GetArena(player.Id);
                 if (arena == null) continue;
 
+                TacticianData dataToSpawn = player.AssignedTacticianData;
+                if (dataToSpawn == null) dataToSpawn = DefaultTacticianData;
+                if (dataToSpawn == null || dataToSpawn.prefab == null) continue;
+
                 Vector3 spawnPos = arena.TacticianSpawnPoint != null ? arena.TacticianSpawnPoint.position : arena.transform.position;
-                GameObject tacticianObj = Instantiate(DefaultTacticianData.prefab, spawnPos, arena.transform.rotation);
+                GameObject tacticianObj = Instantiate(dataToSpawn.prefab, spawnPos, arena.transform.rotation);
                 TacticianActor actor = tacticianObj.GetComponent<TacticianActor>();
                 
                 if (actor != null)
@@ -194,6 +222,7 @@ namespace Dajunctic
         public int WinStreak;
         public int LossStreak;
         public TacticianActor Tactician;
+        public TacticianData AssignedTacticianData;
 
         public PlayerData(int id, string name, Team team, int hp)
         {

@@ -6,5 +6,6 @@ namespace Dajunctic
     public class PlayerSystemData : ScriptableObject
     {
         public TacticianData defaultTacticianData;
+        public TacticianData[] availableTacticians;
     }
 }

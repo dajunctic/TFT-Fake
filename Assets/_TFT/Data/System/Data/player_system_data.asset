@@ -13,3 +13,6 @@ MonoBehaviour:
   m_Name: player_system_data
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.PlayerSystemData
   defaultTacticianData: {fileID: 11400000, guid: 67bca5b3ec6530643bf8fb3b31c8d833, type: 2}
+  availableTacticians:
+  - {fileID: 11400000, guid: 67bca5b3ec6530643bf8fb3b31c8d833, type: 2}
+  - {fileID: 11400000, guid: 36f2022eead3b1942965482b44374770, type: 2}

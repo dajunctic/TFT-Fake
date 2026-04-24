@@ -1,0 +1,21 @@
+{
+  "name": "com.shadercrew.the-toon-shader.core",
+  "displayName": "The Toon Shader-Core",
+  "version": "1.3.2",
+  "author": {
+    "name": "ShaderCrew",
+    "email": "support@shadercrew.com",
+    "url": "https://www.shadercrew.com/"
+  },
+  "unity": "2020.1",
+  "keywords": [
+    "Toon Shader",
+    "toon",
+    "cartoon",
+    "Shader"
+  ],
+  "documentationUrl": "",
+  "type": "tool",
+  "hideInEditor": false,
+  "description": "Core functionality and shared utilities for all 2D and 3D The Toon Shader.\nIncludes base scripts, common resources, and foundational systems used by both 2D and 3D Toon Shader packages.\n\nNote: This package is a dependency for The Toon Shader-2D and The Toon Shader-3D. It is not intended for direct use in projects."
+}

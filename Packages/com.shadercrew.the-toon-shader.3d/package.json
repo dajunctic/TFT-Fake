@@ -1,0 +1,36 @@
+{
+  "name": "com.shadercrew.the-toon-shader.3d",
+  "displayName": "The Toon Shader-3D",
+  "version": "1.3.2",
+  "author": {
+    "name": "ShaderCrew",
+    "email": "support@shadercrew.com",
+    "url": "https://www.shadercrew.com/"
+  },
+  "unity": "2020.1",
+  "samples": [
+    {
+      "displayName": "The Toon Shader Examples",
+      "description": "Examples of The Toon Shader",
+      "path": "Samples~"
+    },
+    {
+      "displayName": "The Toon X STS Shader Examples(Requires STS Asset and Regular Toon Samples))",
+      "description": "Examples of The Toon Shader combined with STS",
+      "path": "SamplesForSTS~"
+    }
+  ],
+  "keywords": [
+    "Toon Shader",
+    "toon",
+    "cartoon",
+    "Shader"
+  ],
+  "documentationUrl": "",
+  "type": "tool",
+  "hideInEditor": false,
+  "dependencies": {
+    "com.shadercrew.the-toon-shader.core": "1.3.2"
+  },
+  "description": "Advanced toon shading for 3D projects in Unity, supporting both URP and BiRP render pipelines.\nDelivers high-quality stylized rendering with cell shading, ramp shading, procedural hatching and halftones and robust lighting options."
+}
