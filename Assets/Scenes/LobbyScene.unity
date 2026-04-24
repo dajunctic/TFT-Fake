@@ -2225,6 +2225,12 @@ MonoBehaviour:
   startGameButton: {fileID: 554046044}
   playerListContainer: {fileID: 1908475126}
   lobbyPlayerUIPrefab: {fileID: 6282587063005217216, guid: e5c3d334a9679544ab318dea9703b6e8, type: 3}
+  homeScene:
+    m_AssetGUID: 3defb3e439bc406488f099140d908047
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
 --- !u!1 &1407474527
 GameObject:
   m_ObjectHideFlags: 0

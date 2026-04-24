@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.coplaydev.coplay": "https://github.com/CoplayDev/coplay-unity-plugin.git#beta",
+    "com.firstgeargames.fishnet": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.addressables": "2.9.0",
     "com.unity.ai.navigation": "2.0.10",
@@ -13,7 +13,6 @@
     "com.unity.multiplayer.center.quickstart": "1.1.1",
     "com.unity.multiplayer.playmode": "2.0.2",
     "com.unity.multiplayer.tools": "2.2.8",
-    "com.firstgeargames.fishnet": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
     "com.unity.nuget.newtonsoft-json": "3.2.2",
     "com.unity.render-pipelines.universal": "17.3.0",
     "com.unity.services.multiplayer": "2.2.0",

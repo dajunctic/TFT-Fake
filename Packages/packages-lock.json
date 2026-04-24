@@ -1,15 +1,5 @@
 {
   "dependencies": {
-    "com.coplaydev.coplay": {
-      "version": "https://github.com/CoplayDev/coplay-unity-plugin.git#beta",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.inputsystem": "1.1.1",
-        "com.unity.cloud.gltfast": "6.12.1"
-      },
-      "hash": "7d4ecbd3bf148efbb6c9c07b28fdedd5c44855e8"
-    },
     "com.firstgeargames.fishnet": {
       "version": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
       "depth": 0,

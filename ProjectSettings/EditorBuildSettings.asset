@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/NGO_Minimal_Setup/NGO_Setup.unity
     guid: 65d9a5be49c2c86428b18ab76bcf47a6
+  - enabled: 1
+    path: Assets/Scenes/InitializeScene.unity
+    guid: d8089944eac199441ab9c2ae15339659
+  - enabled: 1
+    path: Assets/Scenes/HomeScene.unity
+    guid: 3defb3e439bc406488f099140d908047
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 8f64e2a8615f7db4b8932b2a1f412405, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

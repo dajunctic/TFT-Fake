@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FishNet;
 using FishNet.Object.Synchronizing;
 using FishNet.Transporting;
+using UnityEngine.AddressableAssets;
 
 namespace Dajunctic
 {
@@ -23,6 +24,7 @@ namespace Dajunctic
         [SerializeField] GameObject startGameButton;
         [SerializeField] Transform playerListContainer;
         [SerializeField] LobbyPlayerUI lobbyPlayerUIPrefab;
+        [SerializeField] AssetReference homeScene;
 
         private bool isLogin;
         private readonly List<LobbyPlayerUI> lobbyPlayerUIs = new();
@@ -47,7 +49,7 @@ namespace Dajunctic
 
             if (LobbyNetworkManager.Instance != null)
                 SubscribeToPlayerList();
-                
+
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
         }
@@ -58,7 +60,7 @@ namespace Dajunctic
 
             if (LobbyNetworkManager.Instance != null)
                 LobbyNetworkManager.Instance.Players.OnChange -= OnPlayerListChanged;
-                
+
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
         }
@@ -117,7 +119,12 @@ namespace Dajunctic
         {
             if (InstanceFinder.IsServerStarted)
             {
-                var sld = new FishNet.Managing.Scened.SceneLoadData("HomeScene");
+#if UNITY_EDITOR
+                string sceneName = homeScene != null && homeScene.editorAsset != null ? homeScene.editorAsset.name : "HomeScene";
+#else
+                string sceneName = homeScene != null && homeScene.RuntimeKeyIsValid() ? homeScene.RuntimeKey.ToString() : "HomeScene";
+#endif
+                var sld = new FishNet.Managing.Scened.SceneLoadData(sceneName);
                 sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.All;
                 InstanceFinder.SceneManager.LoadGlobalScenes(sld);
             }
@@ -185,7 +192,7 @@ namespace Dajunctic
             foreach (var data in LobbyNetworkManager.Instance.Players)
             {
                 var player = new LobbyPlayer(data.ClientId, data.PlayerName, data.PlayerIndex, data.IsHost);
-                var ui     = Instantiate(lobbyPlayerUIPrefab, playerListContainer);
+                var ui = Instantiate(lobbyPlayerUIPrefab, playerListContainer);
                 ui.SetLobbyPlayer(player);
                 lobbyPlayerUIs.Add(ui);
             }
