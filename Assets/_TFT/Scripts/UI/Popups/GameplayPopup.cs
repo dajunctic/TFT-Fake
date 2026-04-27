@@ -64,6 +64,7 @@ namespace Dajunctic
             this.RegisterListener<ShopLockChangedEvent>(OnShopLockChanged);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             if (playerListUI != null) playerListUI.OnPlayerClicked += OnPlayerClicked;
+            PlayerSystem.OnPlayerListInitialized += UpdatePlayerList;
         }
 
 
@@ -97,6 +98,7 @@ namespace Dajunctic
             this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             if (playerListUI != null) playerListUI.OnPlayerClicked -= OnPlayerClicked;
+            PlayerSystem.OnPlayerListInitialized -= UpdatePlayerList;
 
             if (_localPlayerSync != null)
             {

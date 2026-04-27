@@ -104,6 +104,7 @@ namespace Dajunctic
             {
                 if (t.IsLocalPlayer)
                 {
+                    Debug.Log($"[FollowCamera] Found local tactician: {t.gameObject.name} (OwnerID: {t.OwnerID}). Snapping to it.");
                     target = t.transform;
                     SnapToTarget();
                     return;

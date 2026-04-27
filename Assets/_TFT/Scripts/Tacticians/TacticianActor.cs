@@ -31,6 +31,13 @@ namespace Dajunctic
         private bool _tacticianLinked = false;
         protected virtual void Update()
         {
+            if (!_eventsListened && IsLocalPlayer)
+            {
+                _eventsListened = true;
+                StopListenEvents();
+                ListenEvents();
+            }
+
             if (!_tacticianLinked)
             {
                 int resolvedOwnerId = _netObj != null && _netObj.IsSpawned ? _netObj.OwnerId : -1;
@@ -114,6 +121,7 @@ namespace Dajunctic
             }
         }
 
+        private bool _eventsListened = false;
 
         private void OnRightClick(Vector2 mousePosition)
         {

@@ -29,6 +29,7 @@ namespace Dajunctic
         }
 
         public static event Action<PlayerData> OnPlayerInfoChanged;
+        public static event Action OnPlayerListInitialized;
 
         public async Task LoadDataAsync()
         {
@@ -89,16 +90,8 @@ namespace Dajunctic
                 AssignRandomTactician(pd, pool);
                 _players.Add(pd);
             }
-
-            // Fill the rest with Bots up to 8
-            int nextId = 100;
-            while (_players.Count < 8)
-            {
-                var pd = new PlayerData(nextId, $"Bot {nextId}", Team.Opponent, 100);
-                AssignRandomTactician(pd, pool);
-                _players.Add(pd);
-                nextId++;
-            }
+            
+            OnPlayerListInitialized?.Invoke();
         }
 
         private void AssignRandomTactician(PlayerData pd, List<TacticianData> pool)
@@ -133,6 +126,7 @@ namespace Dajunctic
                 if (dataToSpawn == null || dataToSpawn.prefab == null) continue;
 
                 Vector3 spawnPos = arena.TacticianSpawnPoint != null ? arena.TacticianSpawnPoint.position : arena.transform.position;
+                Debug.Log($"[PlayerSystem] Target Arena for {player.Name} is at {arena.transform.position}. Spawn pos: {spawnPos}");
                 GameObject tacticianObj = Instantiate(dataToSpawn.prefab, spawnPos, arena.transform.rotation);
                 TacticianActor actor = tacticianObj.GetComponent<TacticianActor>();
                 
@@ -145,10 +139,12 @@ namespace Dajunctic
                         var clients = FishNet.InstanceFinder.ServerManager.Clients;
                         if (player.ClientId >= 0 && clients.TryGetValue(player.ClientId, out var clientConn))
                         {
+                            Debug.Log($"[PlayerSystem] Spawning tactician for player {player.Name} (ID:{player.Id}, ClientId:{player.ClientId}) at {spawnPos} with connection {clientConn.ClientId}");
                             FishNet.InstanceFinder.ServerManager.Spawn(tacticianObj, clientConn);
                         }
                         else
                         {
+                            Debug.LogWarning($"[PlayerSystem] Could not find connection for player {player.Name} (ClientId:{player.ClientId}), spawning without owner.");
                             FishNet.InstanceFinder.ServerManager.Spawn(tacticianObj);
                         }
                     }
@@ -163,8 +159,26 @@ namespace Dajunctic
 
         private void Update()
         {
+            // Sync HP from PlayerDataSync to PlayerData for UI update on client
+            if (FishNet.InstanceFinder.IsClientStarted)
+            {
+                var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+                foreach (var sync in syncs)
+                {
+                    var target = _players.Find(p => p.ClientId == (int)sync.ClientId.Value);
+                    if (target != null)
+                    {
+                        if (target.HP != sync.Heath.Value)
+                        {
+                            target.HP = sync.Heath.Value;
+                            OnPlayerInfoChanged?.Invoke(target);
+                        }
+                    }
+                }
+            }
+
             // Optional: Keep trying to spawn if any are missing (e.g. late registration)
-            if (_players.Any(p => p.Tactician == null))
+            if (FishNet.InstanceFinder.IsServerStarted && _players.Any(p => p.Tactician == null))
             {
                 SpawnTacticians();
             }
@@ -172,12 +186,31 @@ namespace Dajunctic
 
         public void ApplyDamage(int playerId, int damage)
         {
+            if (!FishNet.InstanceFinder.IsServerStarted) return; // Only server can apply damage
+
             var target = _players.Find(p => p.Id == playerId);
             if (target != null)
             {
                 target.HP = Mathf.Max(0, target.HP - damage);
+                
+                // Cập nhật lại vào PlayerDataSync để đồng bộ với Client
+                var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+                foreach(var sync in syncs)
+                {
+                    if ((int)sync.ClientId.Value == target.ClientId)
+                    {
+                        sync.Heath.Value = target.HP;
+                        break;
+                    }
+                }
+
                 OnPlayerInfoChanged?.Invoke(target);
                 Debug.Log($"<color=red>[PlayerSystem] {target.Name} (ID:{playerId}) took {damage} damage. HP: {target.HP}</color>");
+                
+                if (target.HP <= 0)
+                {
+                    Debug.Log($"<color=red>[PlayerSystem] {target.Name} IS DEFEATED!</color>");
+                }
             }
         }
 

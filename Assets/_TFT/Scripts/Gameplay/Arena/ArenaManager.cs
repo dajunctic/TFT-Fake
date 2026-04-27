@@ -95,14 +95,6 @@ namespace Dajunctic
                 }
             }
 
-            // 2. Spawn cho Bot để lấp đầy 8 sân
-            int botId = 100;
-            while (spawnIndex < spawnPoints.Length)
-            {
-                SpawnSingleArena(spawnPoints[spawnIndex], botId, $"Bot {botId}");
-                spawnIndex++;
-                botId++;
-            }
         }
 
         private void ServerOnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)

@@ -25,6 +25,7 @@ namespace Dajunctic
 
         public void Initialize(IReadOnlyList<PlayerData> players)
         {
+            Debug.Log($"[PlayerListUI] Initialize called with {players.Count} players. playerUIs count: {playerUIs.Count}");
             for (int i = 0; i < playerUIs.Count; i++)
             {
                 if (i < players.Count)
@@ -89,49 +90,15 @@ namespace Dajunctic
         {
             if (playerUIs == null || playerUIs.Count <= 1) return;
 
-            // 1. Record current world positions
-            Dictionary<PlayerUI, Vector3> oldPositions = new Dictionary<PlayerUI, Vector3>();
-            foreach (var ui in playerUIs) oldPositions[ui] = ui.transform.position;
-
-            // 2. Sort the internal list and sibling index
+            // 1. Sort the internal list
             playerUIs = playerUIs.OrderByDescending(ui => ui.Data != null ? ui.Data.HP : -1)
                                  .ThenBy(ui => ui.Data != null ? ui.Data.Id : 0)
                                  .ToList();
 
-            RectTransform parentRect = (RectTransform)playerUIs[0].transform.parent;
+            // 2. Set sibling index
             for (int i = 0; i < playerUIs.Count; i++)
             {
                 playerUIs[i].transform.SetSiblingIndex(i);
-            }
-
-            // 3. Force layout rebuild
-            var layoutGroup = parentRect.GetComponent<VerticalLayoutGroup>();
-            if (layoutGroup != null) layoutGroup.enabled = true;
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(parentRect);
-
-            // 4. Record new positions
-            Dictionary<PlayerUI, Vector3> targetPositions = new Dictionary<PlayerUI, Vector3>();
-            foreach (var ui in playerUIs)
-            {
-                targetPositions[ui] = ui.transform.position;
-                ui.transform.position = oldPositions[ui];
-            }
-
-            // 5. Disable layout group during animation
-            if (layoutGroup != null) layoutGroup.enabled = false;
-
-            // 6. Animate
-            int completedCount = 0;
-            foreach (var ui in playerUIs)
-            {
-                ui.transform.DOMove(targetPositions[ui], 0.8f).SetEase(Ease.OutCubic).OnComplete(() => {
-                    completedCount++;
-                    if (completedCount == playerUIs.Count && layoutGroup != null)
-                    {
-                        layoutGroup.enabled = true;
-                    }
-                });
             }
         }
     }
