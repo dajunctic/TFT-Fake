@@ -28,14 +28,11 @@ namespace Dajunctic
 
         void Start()
         {
-            // if (fadingScene != null)
-            // {
-            //     await Addressables.LoadSceneAsync(fadingScene, LoadSceneMode.Single).Task;
-            //     this.Raise(new ShowFadingUIEvent());
-            // }
-            
-            AddressableUtils.LoadScene(launcherScene);
-           
+            // Load DummyScene trước để đảm bảo Unity luôn có ít nhất 2 scene (tránh lỗi Unloading last loaded scene)
+            SceneManager.LoadSceneAsync("Dummy", LoadSceneMode.Additive).completed += (op) =>
+            {
+                AddressableUtils.LoadScene(launcherScene);
+            };
         }
     }
 }

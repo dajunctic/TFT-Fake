@@ -1,6 +1,7 @@
 using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
+using Unity.AI.Navigation;
 
 namespace Dajunctic
 {
@@ -23,6 +24,11 @@ namespace Dajunctic
         private void Awake()
         {
             _ownerId.OnChange += OnOwnerIdChanged;
+            var surface = GetComponent<NavMeshSurface>();
+            if (surface != null)
+            {
+                surface.BuildNavMesh();
+            }
         }
 
         private void OnOwnerIdChanged(int prev, int next, bool asServer)
@@ -85,7 +91,7 @@ namespace Dajunctic
 
             GameSystemManager.Instance.Field.RegisterArena(this);
             GameSystemManager.Instance.Bench.RegisterArena(this, fxGuid);
-            Debug.Log($"Arena registered for player {OwnerID} on {(IsServer ? "Server" : "Client")}");
+            Debug.Log($"Arena registered for player {OwnerID} on {(IsServerInitialized ? "Server" : "Client")}");
         }
 
         public Vector3 GetFieldWorldPosition(Vector2Int coord)

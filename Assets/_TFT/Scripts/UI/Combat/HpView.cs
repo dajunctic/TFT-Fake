@@ -33,6 +33,10 @@ namespace Dajunctic
 
         public virtual void Initialize(CombatActor owner, int starLevel)
         {
+            // Reset Canvas worldCamera to prevent Unity UI MissingReferenceException if previous camera was destroyed
+            var canvas = GetComponent<Canvas>();
+            if (canvas != null) canvas.worldCamera = Camera.main;
+
             // Unsubscribe from previous owner if exists
             if (_owner != null && _owner != owner)
             {

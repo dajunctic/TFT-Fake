@@ -34,7 +34,7 @@ namespace Dajunctic
         {
             if (GameSystemManager.Instance.Config != null && GameSystemManager.Instance.Config.playerSystemData != null)
             {
-                var handle = GameSystemManager.Instance.Config.playerSystemData.LoadAssetAsync<PlayerSystemData>();
+                var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<PlayerSystemData>(GameSystemManager.Instance.Config.playerSystemData);
                 _data = await handle.Task;
                 Debug.Log("<color=cyan>PlayerSystem data loaded via Addressables</color>");
             }
@@ -55,13 +55,15 @@ namespace Dajunctic
 
         private void OnSceneLoadEnd(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
         {
-            if (!args.QueueData.AsServer) return;
-
             // Wait for HomeScene to be the loaded scene
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "HomeScene")
             {
                 SetupPlayersFromLobby();
-                SpawnTacticians();
+                
+                if (args.QueueData.AsServer)
+                {
+                    SpawnTacticians();
+                }
             }
         }
 

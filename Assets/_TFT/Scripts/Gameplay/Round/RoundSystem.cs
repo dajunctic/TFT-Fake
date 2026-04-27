@@ -25,7 +25,7 @@ namespace Dajunctic
         {
             if (GameSystemManager.Instance.Config != null && GameSystemManager.Instance.Config.roundSystemData != null)
             {
-                var handle = GameSystemManager.Instance.Config.roundSystemData.LoadAssetAsync<RoundSystemData>();
+                var handle = Addressables.LoadAssetAsync<RoundSystemData>(GameSystemManager.Instance.Config.roundSystemData);
                 _data = await handle.Task;
                 Debug.Log("<color=cyan>RoundSystem data loaded via Addressables</color>");
             }

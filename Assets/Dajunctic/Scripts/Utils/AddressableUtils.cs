@@ -19,6 +19,14 @@ namespace Dajunctic
             _ = LoadSceneAsync(sceneRef, onCompleted, onProgress, onFailed);
         }
 
+        public static void UnloadCurrentScene()
+        {
+            if (currentSceneHandle.IsValid())
+            {
+                Addressables.UnloadSceneAsync(currentSceneHandle);
+            }
+        }
+
 
         public static async Task LoadSceneAsync(AssetReference sceneRef, Action onCompleted=null, Action<float> onProgress=null, Action onFailed=null)
         {

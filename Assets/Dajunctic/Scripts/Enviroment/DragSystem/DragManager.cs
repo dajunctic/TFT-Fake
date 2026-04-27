@@ -19,7 +19,6 @@ namespace Dajunctic
 
         private void Awake()
         {
-            mainCamera = Camera.main;
             // Find all potential snap targets in the scene
             var targets = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
             foreach (var target in targets)
@@ -53,6 +52,9 @@ namespace Dajunctic
 
         private void TryStartDrag()
         {
+            if (mainCamera == null) mainCamera = Camera.main;
+            if (mainCamera == null) return;
+
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
             {
@@ -84,6 +86,9 @@ namespace Dajunctic
 
         private void UpdateDrag()
         {
+            if (mainCamera == null) mainCamera = Camera.main;
+            if (mainCamera == null) return;
+
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
             {
@@ -101,6 +106,9 @@ namespace Dajunctic
 
         private void StopDrag()
         {
+            if (mainCamera == null) mainCamera = Camera.main;
+            if (mainCamera == null) return;
+
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             Vector3 finalPos = currentDragged.GetTransform().position;
             

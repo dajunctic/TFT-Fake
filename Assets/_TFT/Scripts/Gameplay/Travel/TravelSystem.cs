@@ -16,7 +16,7 @@ namespace Dajunctic
         {
             if (GameSystemManager.Instance.Config != null && GameSystemManager.Instance.Config.travelSystemData != null)
             {
-                var handle = GameSystemManager.Instance.Config.travelSystemData.LoadAssetAsync<TravelSystemData>();
+                var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<TravelSystemData>(GameSystemManager.Instance.Config.travelSystemData);
                 _data = await handle.Task;
                 Debug.Log("<color=cyan>TravelSystem data loaded via Addressables</color>");
             }

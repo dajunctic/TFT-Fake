@@ -3,7 +3,6 @@ using Dajunctic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Dajunctic.SkillSystem.Commands;
-using UnityEngine;
 
 public enum SkillSlot
 {

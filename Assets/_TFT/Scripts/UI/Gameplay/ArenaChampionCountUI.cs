@@ -110,12 +110,12 @@ namespace Dajunctic
         private void HandleGlobalDragStart(IDraggable draggable)
         {
             // Optional: you can check if draggable belongs to this owner, but TFT shows it regardless
-            _isDraggingAnyUnit = true;
+            // _isDraggingAnyUnit = true;
         }
 
         private void HandleGlobalDragEnd(IDraggable draggable)
         {
-            _isDraggingAnyUnit = false;
+            // _isDraggingAnyUnit = false;
         }
 
         private void HandlePhaseChanged(GameplayPhase phase)

@@ -50,7 +50,7 @@ namespace Dajunctic
 
         public void SetPlayerInfo(ulong clientId, string playerName)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("SetPlayerInfo should only be called on the server!");
                 return;
@@ -62,7 +62,7 @@ namespace Dajunctic
 
         public void ChangeHealth(int amount)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ChangeHealth should only be called on the server!");
                 return;
@@ -73,7 +73,7 @@ namespace Dajunctic
 
         public void ChangeGold(int amount)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ChangeGold should only be called on the server!");
                 return;
@@ -84,7 +84,7 @@ namespace Dajunctic
 
         public void ChangeLevel(int amount)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ChangeLevel should only be called on the server!");
                 return;
@@ -95,7 +95,7 @@ namespace Dajunctic
 
         public void ChangeExp(int amount)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ChangeExp should only be called on the server!");
                 return;
@@ -139,7 +139,7 @@ namespace Dajunctic
 
         public void ApplyEndRoundIncome()
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ApplyEndRoundIncome should only be called on the server!");
                 return;
@@ -165,7 +165,7 @@ namespace Dajunctic
 
         public void RegisterResult(bool win)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("RegisterResult should only be called on the server!");
                 return;
@@ -184,7 +184,7 @@ namespace Dajunctic
 
         public void ChangePassIncome(int amount)
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ChangePassiveIncome should only be called on the server!");
                 return;
@@ -194,7 +194,7 @@ namespace Dajunctic
 
         public void ClearState()
         {
-            if (!IsServer)
+            if (!IsServerInitialized)
             {
                 Debug.LogWarning("ClearState should only be called on the server!");
                 return;

@@ -17,7 +17,7 @@ namespace Dajunctic
 
         [Header("Settings")]
         [SerializeField] private int maxMessages = 50;
-        [SerializeField] private float fadeOutTime = 5f;
+        // [SerializeField] private float fadeOutTime = 5f;
 
         private List<ChatMessageUI> _activeMessages = new List<ChatMessageUI>();
         private bool _isFocused;

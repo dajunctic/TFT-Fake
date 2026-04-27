@@ -60,9 +60,13 @@ namespace Dajunctic
             if (target != null)
             {
                 var tactician = target.GetComponent<TacticianActor>();
-                if (tactician != null && tactician.OwnerID != 0)
+                if (tactician != null && GameSystemManager.Instance != null && GameSystemManager.Instance.Player != null)
                 {
-                    return true;
+                    var localPlayer = GameSystemManager.Instance.Player.LocalPlayer;
+                    // Flip camera ONLY if we are looking at someone else's board AND we want that behavior
+                    // But usually in TFT, all boards face the same way so we don't flip. 
+                    // Let's just return false for now to keep the camera angle consistent for all players!
+                    return false;
                 }
             }
             return false;
@@ -95,14 +99,15 @@ namespace Dajunctic
 
         private void FindLocalTactician()
         {
-            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Player == null)
-                return;
-
-            var localPlayer = GameSystemManager.Instance.Player.LocalPlayer;
-            if (localPlayer != null && localPlayer.Tactician != null)
+            var tacticians = FindObjectsByType<TacticianActor>(FindObjectsSortMode.None);
+            foreach (var t in tacticians)
             {
-                target = localPlayer.Tactician.transform;
-                SnapToTarget();
+                if (t.IsLocalPlayer)
+                {
+                    target = t.transform;
+                    SnapToTarget();
+                    return;
+                }
             }
         }
 

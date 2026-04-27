@@ -45,14 +45,14 @@ namespace Dajunctic
             {
                 if (poolData.playerHpView == null) return;
                 var instance = PoolableObject.Pool.Spawn(poolData.playerHpView, position, Quaternion.identity);
-                instance.CachedTransform.parent = param.owner.CachedTransform;
+                instance.CachedTransform.SetParent(param.owner.CachedTransform, false);
                 instance.Initialize(param.owner, starLevel);
             }
             else
             {
                 if (poolData.hpView == null) return;
                 var instance = PoolableObject.Pool.Spawn(poolData.hpView, position, Quaternion.identity);
-                instance.CachedTransform.parent = param.owner.CachedTransform;
+                instance.CachedTransform.SetParent(param.owner.CachedTransform, false);
                 instance.Initialize(param.owner, starLevel);
             }
         }

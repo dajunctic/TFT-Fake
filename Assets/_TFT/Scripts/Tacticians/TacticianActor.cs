@@ -16,12 +16,60 @@ namespace Dajunctic
         
         public new int OwnerID 
         {
-            get => _netObj != null && _netObj.IsSpawned ? _netObj.OwnerId : base.OwnerID;
+            get => _netObj != null && _netObj.IsSpawned && _netObj.OwnerId != -1 ? _netObj.OwnerId : base.OwnerID;
             set => base.OwnerID = value;
         }
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;
+
+        protected virtual void Start()
+        {
+            if (_netObj == null) _netObj = GetComponent<FishNet.Object.NetworkObject>();
+        }
+
+        private bool _tacticianLinked = false;
+        protected virtual void Update()
+        {
+            if (!_tacticianLinked)
+            {
+                int resolvedOwnerId = _netObj != null && _netObj.IsSpawned ? _netObj.OwnerId : -1;
+                
+                if (resolvedOwnerId == -1 && GameSystemManager.Instance != null && GameSystemManager.Instance.Field != null)
+                {
+                    var arenas = GameSystemManager.Instance.Field.GetAllArenas();
+                    if (arenas != null)
+                    {
+                        foreach(var a in arenas)
+                        {
+                            Vector3 spawnPos = a.TacticianSpawnPoint != null ? a.TacticianSpawnPoint.position : a.transform.position;
+                            if (Vector3.Distance(transform.position, spawnPos) < 2f)
+                            {
+                                resolvedOwnerId = a.OwnerID;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (resolvedOwnerId != -1)
+                {
+                    base.OwnerID = resolvedOwnerId;
+                    if (GameSystemManager.Instance != null && GameSystemManager.Instance.Player != null)
+                    {
+                        foreach (var p in GameSystemManager.Instance.Player.Players)
+                        {
+                            if (p.Id == resolvedOwnerId)
+                            {
+                                p.Tactician = this;
+                                _tacticianLinked = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         public override void Initialize()
         {

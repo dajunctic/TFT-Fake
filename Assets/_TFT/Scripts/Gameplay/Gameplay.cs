@@ -42,14 +42,15 @@ namespace Dajunctic
             // StartPhase(GameplayPhase.Planning);
         }
 
-        void Start()
+        public override void OnStartServer()
         {
+            base.OnStartServer();
             StartPhaseServer(GameplayPhase.Planning);
         }
 
         void Update()
         {
-            if (!IsServer) return; // Only the server should control the phase timing
+            if (!IsServerInitialized) return; // Only the server should control the phase timing
 
             if (_timer.Value > 0)
             {
@@ -117,7 +118,7 @@ namespace Dajunctic
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
         }
 
-        [ObserversRpc(RunLocally = true)]
+        [ObserversRpc(RunLocally = true, BufferLast = true)]
         private void ShowPlanningPopupRpc()
         {
             this.Raise(new ShowPopupEvent { PopupType = typeof(GameplayPopup), ShowMode = PopupShowMode.DoNothing });

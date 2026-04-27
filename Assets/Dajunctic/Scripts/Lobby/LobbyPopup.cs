@@ -39,6 +39,9 @@ namespace Dajunctic
                 Destroy(playerListContainer.GetChild(i).gameObject);
             }
 
+            // Đảm bảo luôn có Dummy scene chạy ngầm để FishNet không crash khi Unload LobbyScene
+            UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Dummy", UnityEngine.SceneManagement.LoadSceneMode.Additive);
+
             OnChanged();
         }
 
@@ -52,6 +55,9 @@ namespace Dajunctic
 
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
+
+            if (InstanceFinder.SceneManager != null)
+                InstanceFinder.SceneManager.OnLoadEnd += OnHomeSceneLoaded;
         }
 
         public override void StopListenEvents()
@@ -63,6 +69,9 @@ namespace Dajunctic
 
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
+
+            if (InstanceFinder.SceneManager != null)
+                InstanceFinder.SceneManager.OnLoadEnd -= OnHomeSceneLoaded;
         }
 
         private void OnManagerReady()
@@ -135,8 +144,27 @@ namespace Dajunctic
                 string sceneName = homeScene != null && homeScene.RuntimeKeyIsValid() ? homeScene.RuntimeKey.ToString() : "HomeScene";
 #endif
                 var sld = new FishNet.Managing.Scened.SceneLoadData(sceneName);
-                sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.All;
+                sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.None; // Tránh lỗi unload scene cuối cùng
+                
                 InstanceFinder.SceneManager.LoadGlobalScenes(sld);
+            }
+        }
+
+        private void OnHomeSceneLoaded(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
+        {
+            // Kiểm tra xem đã load xong HomeScene chưa
+            foreach (var scene in args.LoadedScenes)
+            {
+                if (scene.name.Contains("HomeScene"))
+                {
+                    InstanceFinder.SceneManager.OnLoadEnd -= OnHomeSceneLoaded;
+                    // Bây giờ HomeScene đã load xong (không còn là scene cuối cùng nữa), có thể unload LauncherScene an toàn
+                    AddressableUtils.UnloadCurrentScene();
+                    
+                    // Xóa Dummy scene
+                    UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("Dummy");
+                    break;
+                }
             }
         }
 
