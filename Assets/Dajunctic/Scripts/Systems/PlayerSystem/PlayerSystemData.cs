@@ -7,5 +7,6 @@ namespace Dajunctic
     {
         public TacticianData defaultTacticianData;
         public TacticianData[] availableTacticians;
+        public GameObject playerDataSyncPrefab;
     }
 }

@@ -16,3 +16,4 @@ MonoBehaviour:
   availableTacticians:
   - {fileID: 11400000, guid: 67bca5b3ec6530643bf8fb3b31c8d833, type: 2}
   - {fileID: 11400000, guid: 36f2022eead3b1942965482b44374770, type: 2}
+  playerDataSyncPrefab: {fileID: 4823866225688487337, guid: eb0ce9ed106eba544994362c2aea428d, type: 3}

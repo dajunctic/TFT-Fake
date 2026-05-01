@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using FishNet.Object;
+using FishNet.Object;
 
 namespace Dajunctic
 {
     public class TacticianActor : CombatActor
     {
+        private TacticianNetworkMovement _networkMovement;
         [Header("Tacticians")]
         public int Tier { get; private set; } = 1;
         public bool IsBoss { get; private set; } = false;
@@ -19,6 +22,9 @@ namespace Dajunctic
             get => _netObj != null && _netObj.IsSpawned && _netObj.OwnerId != -1 ? _netObj.OwnerId : base.OwnerID;
             set => base.OwnerID = value;
         }
+
+        protected override ActorMovementType ActorMovementType => ActorMovementType.Navmesh;
+
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;
@@ -103,6 +109,8 @@ namespace Dajunctic
             }
 
             this.Raise(new SpawnHpViewEvent { owner = this, starLevel = Tier });
+            
+            _networkMovement = GetComponent<TacticianNetworkMovement>();
         }
 
         public override void StopListenEvents()
@@ -152,6 +160,19 @@ namespace Dajunctic
                 }
 
                 MovePosition(targetPosition, Speed, RotateSpeed, Time.deltaTime);
+                if (IsLocalPlayer && _networkMovement != null)
+                {
+                    _networkMovement.CmdMoveTo(targetPosition);
+                }
+            }
+        }
+
+        public override void Teleport(Vector3 position, bool checkNavMesh, bool fx = false)
+        {
+            base.Teleport(position, checkNavMesh, fx);
+            if (IsLocalPlayer && _networkMovement != null)
+            {
+                _networkMovement.CmdTeleport(position, checkNavMesh, fx);
             }
         }
 

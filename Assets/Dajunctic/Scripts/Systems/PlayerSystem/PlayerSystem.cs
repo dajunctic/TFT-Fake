@@ -10,6 +10,8 @@ namespace Dajunctic
     {
         private GameSystemManager _manager;
         private List<PlayerData> _players = new List<PlayerData>();
+        private bool _hasSetupFromSync = false;
+        private bool _tacticiansSpawned = false;
         private PlayerSystemData _data;
         private TacticianData DefaultTacticianData => _data != null ? _data.defaultTacticianData : null;
         
@@ -54,24 +56,46 @@ namespace Dajunctic
             Debug.Log("<color=cyan>PlayerSystem initialized.</color>");
         }
 
+        private bool _sceneSetupDone = false;
+
         private void OnSceneLoadEnd(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
         {
             // Wait for HomeScene to be the loaded scene
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "HomeScene")
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "HomeScene") return;
+            
+            // On Host, OnLoadEnd fires TWICE (once AsServer, once as Client).
+            // We must only run setup once to avoid clearing _players and double-spawning.
+            if (_sceneSetupDone) return;
+            _sceneSetupDone = true;
+            
+            _hasSetupFromSync = false;
+            _tacticiansSpawned = false;
+
+            if (FishNet.InstanceFinder.IsServerStarted)
             {
+                // Server/Host: setup from lobby data, spawn PlayerDataSync + Tacticians
                 SetupPlayersFromLobby();
-                
-                if (args.QueueData.AsServer)
-                {
-                    SpawnTacticians();
-                }
+                SpawnPlayerDataSyncs();
+                SpawnTacticians();
+                _tacticiansSpawned = true;
+                Debug.Log($"[PlayerSystem] Server setup complete. Players: {_players.Count}");
+            }
+            else
+            {
+                // Client: Update() will populate _players from PlayerDataSync network objects.
+                Debug.Log("[PlayerSystem] Client detected. Will populate players from PlayerDataSync network objects.");
             }
         }
 
         private void SetupPlayersFromLobby()
         {
             _players.Clear();
-            if (LobbyNetworkManager.Instance == null) return;
+
+            // Server always has LobbyNetworkManager.Instance alive at this point
+            var lobbyPlayers = LobbyNetworkManager.Instance != null 
+                ? LobbyNetworkManager.Instance.Players.ToList() 
+                : LobbyNetworkManager.CachedPlayers;
+            if (lobbyPlayers == null || lobbyPlayers.Count == 0) return;
 
             List<TacticianData> pool = new List<TacticianData>();
             if (_data != null)
@@ -83,7 +107,7 @@ namespace Dajunctic
             }
 
             // Create real players
-            foreach (var p in LobbyNetworkManager.Instance.Players)
+            foreach (var p in lobbyPlayers)
             {
                 var pd = new PlayerData(p.ClientId, p.PlayerName, Team.Player, 100);
                 pd.ClientId = p.ClientId;
@@ -109,6 +133,68 @@ namespace Dajunctic
                     pd.AssignedTacticianData = _data.availableTacticians[UnityEngine.Random.Range(0, _data.availableTacticians.Length)];
                 else if (_data != null)
                     pd.AssignedTacticianData = _data.defaultTacticianData;
+            }
+        }
+
+        private GameObject _playerDataSyncPrefab;
+        
+        private void SpawnPlayerDataSyncs()
+        {
+            // Find the PlayerDataSync prefab from FishNet's registered prefabs
+            if (_playerDataSyncPrefab == null)
+            {
+                if (_data != null && _data.playerDataSyncPrefab != null)
+                {
+                    _playerDataSyncPrefab = _data.playerDataSyncPrefab;
+                }
+                else
+                {
+                    // Search FishNet's spawnable prefabs for the PlayerDataSync prefab
+                    var spawnablePrefabs = FishNet.InstanceFinder.NetworkManager.SpawnablePrefabs;
+                    int count = spawnablePrefabs.GetObjectCount();
+                    for (int i = 0; i < count; i++)
+                    {
+                        var nob = spawnablePrefabs.GetObject(true, i);
+                        if (nob != null && nob.GetComponent<PlayerDataSync>() != null)
+                        {
+                            _playerDataSyncPrefab = nob.gameObject;
+                            Debug.Log($"[PlayerSystem] Found PlayerDataSync prefab from FishNet registry: {nob.name}");
+                            break;
+                        }
+                    }
+                }
+                
+                if (_playerDataSyncPrefab == null)
+                {
+                    Debug.LogError("[PlayerSystem] Cannot find PlayerDataSync prefab! Make sure it's registered in DefaultPrefabObjects.");
+                    return;
+                }
+            }
+
+            foreach (var player in _players)
+            {
+                var obj = Instantiate(_playerDataSyncPrefab);
+                var sync = obj.GetComponent<PlayerDataSync>();
+
+                // Give ownership to the correct client
+                var clients = FishNet.InstanceFinder.ServerManager.Clients;
+                if (player.ClientId >= 0 && clients.TryGetValue(player.ClientId, out var clientConn))
+                {
+                    FishNet.InstanceFinder.ServerManager.Spawn(obj, clientConn);
+                    Debug.Log($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) with owner.");
+                }
+                else
+                {
+                    FishNet.InstanceFinder.ServerManager.Spawn(obj);
+                    Debug.Log($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) without owner.");
+                }
+
+                // Set synced data
+                if (sync != null)
+                {
+                    sync.SetPlayerInfo((ulong)player.ClientId, player.Name);
+                    sync.Initialize();
+                }
             }
         }
 
@@ -159,13 +245,52 @@ namespace Dajunctic
 
         private void Update()
         {
-            // Sync HP from PlayerDataSync to PlayerData for UI update on client
-            if (FishNet.InstanceFinder.IsClientStarted)
+            // Client: discover players from spawned PlayerDataSync network objects
+            if (FishNet.InstanceFinder.IsClientStarted && !_hasSetupFromSync)
+            {
+                var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+                bool anyAdded = false;
+                
+                foreach (var sync in syncs)
+                {
+                    var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
+                    if (nob == null || !nob.IsSpawned) continue;
+                    if (string.IsNullOrEmpty(sync.PlayerName.Value)) continue;
+
+                    int syncClientId = (int)sync.ClientId.Value;
+                    var existing = _players.Find(p => p.ClientId == syncClientId);
+                    if (existing != null) continue;
+
+                    var pd = new PlayerData(syncClientId, sync.PlayerName.Value, Team.Player, sync.Heath.Value);
+                    pd.ClientId = syncClientId;
+                    _players.Add(pd);
+                    anyAdded = true;
+                    Debug.Log($"[PlayerSystem] Client: Added player {pd.Name} (ClientId:{pd.ClientId}) from PlayerDataSync.");
+                }
+
+                if (anyAdded && _players.Count > 0)
+                {
+                    _hasSetupFromSync = true;
+                    
+                    // Link existing TacticianActors to their players
+                    LinkTacticiansToPlayers();
+                    
+                    OnPlayerListInitialized?.Invoke();
+                    Debug.Log($"[PlayerSystem] Client player list initialized with {_players.Count} players.");
+                }
+            }
+
+            // Client: continuously sync HP from PlayerDataSync
+            if (FishNet.InstanceFinder.IsClientStarted && _hasSetupFromSync)
             {
                 var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
                 foreach (var sync in syncs)
                 {
-                    var target = _players.Find(p => p.ClientId == (int)sync.ClientId.Value);
+                    var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
+                    if (nob == null || !nob.IsSpawned) continue;
+                    
+                    int syncClientId = (int)sync.ClientId.Value;
+                    var target = _players.Find(p => p.ClientId == syncClientId);
                     if (target != null)
                     {
                         if (target.HP != sync.Heath.Value)
@@ -175,12 +300,41 @@ namespace Dajunctic
                         }
                     }
                 }
+
+                // Continuously try to link tacticians if any are missing
+                if (_players.Exists(p => p.Tactician == null))
+                {
+                    LinkTacticiansToPlayers();
+                }
             }
 
-            // Optional: Keep trying to spawn if any are missing (e.g. late registration)
-            if (FishNet.InstanceFinder.IsServerStarted && _players.Any(p => p.Tactician == null))
+            // Server: retry tactician spawn ONCE if initial spawn missed some
+            if (FishNet.InstanceFinder.IsServerStarted && !_tacticiansSpawned && _players.Count > 0)
             {
                 SpawnTacticians();
+                _tacticiansSpawned = true;
+            }
+        }
+
+        private void LinkTacticiansToPlayers()
+        {
+            var tacticians = FindObjectsByType<TacticianActor>(FindObjectsSortMode.None);
+            foreach (var actor in tacticians)
+            {
+                var nob = actor.GetComponent<FishNet.Object.NetworkObject>();
+                if (nob == null || !nob.IsSpawned) continue;
+
+                int ownerId = nob.OwnerId;
+                var player = _players.Find(p => p.ClientId == ownerId);
+                if (player != null && player.Tactician == null)
+                {
+                    player.Tactician = actor;
+                    actor.OwnerID = ownerId;
+                    actor.Initialize(); // Ensure client side initializes properly
+                    actor.StopListenEvents();
+                    actor.ListenEvents(); // Enable input if local player
+                    Debug.Log($"[PlayerSystem] Linked tactician {actor.name} to player {player.Name} (ClientId:{ownerId})");
+                }
             }
         }
 

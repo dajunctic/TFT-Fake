@@ -4,6 +4,7 @@ using FishNet.Connection;
 using FishNet.Transporting;
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Dajunctic
 {
@@ -23,6 +24,13 @@ namespace Dajunctic
 
         // SyncList tự động sync Server → tất cả Client
         public readonly SyncList<LobbyPlayerData> Players = new SyncList<LobbyPlayerData>();
+        
+        public static List<LobbyPlayerData> CachedPlayers = new List<LobbyPlayerData>();
+
+        private void OnPlayersChanged(FishNet.Object.Synchronizing.SyncListOperation op, int index, LobbyPlayerData oldItem, LobbyPlayerData newItem, bool asServer)
+        {
+            CachedPlayers = Players.ToList();
+        }
 
         private void Awake()
         {
@@ -32,6 +40,7 @@ namespace Dajunctic
                 return;
             }
             Instance = this;
+            Players.OnChange += OnPlayersChanged;
         }
 
         public override void OnStartNetwork()

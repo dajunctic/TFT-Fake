@@ -369,7 +369,7 @@ namespace Dajunctic
                                     : targetArena.GuestSpawnPoint;
 
                                 Vector3 spawnPos = spawnTransform != null ? spawnTransform.position : targetArena.transform.position;
-                                localTactician.Teleport(spawnPos, true, true);
+                                localTactician.Teleport(spawnPos, false, true); // Don't use NavMesh
                             }
                         }
                     }

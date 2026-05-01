@@ -207,7 +207,7 @@ namespace Dajunctic
             RotateDirection(position - Position, rotateSpeed, deltaTime, immediately);
         }
 
-        public void Teleport(Vector3 position, bool checkNavMesh, bool fx = false)
+        public virtual void Teleport(Vector3 position, bool checkNavMesh, bool fx = false)
         {
             if (MoveAgent != null)
             {
