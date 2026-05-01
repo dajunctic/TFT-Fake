@@ -188,17 +188,17 @@ namespace Dajunctic
                 FollowCamera followCam = _camera.GetComponent<FollowCamera>();
                 if (followCam != null)
                 {
-                    if (followCam.target != this.transform)
-                    {
-                        followCam.target = this.transform;
-                    }
+                    // Removed unconditional camera lock to allow viewing other players' arenas
 
-                    TacticianActor viewTarget = followCam.target.GetComponent<TacticianActor>();
-                    if (viewTarget != null && viewTarget.OwnerID != this.OwnerID)
+                    if (followCam.target != null)
                     {
-                        if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat)
+                        TacticianActor viewTarget = followCam.target.GetComponent<TacticianActor>();
+                        if (viewTarget != null && viewTarget.OwnerID != this.OwnerID)
                         {
-                            return; // Block joystick during combat on another arena
+                            if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat)
+                            {
+                                return; // Block joystick during combat on another arena
+                            }
                         }
                     }
                 }
@@ -217,7 +217,6 @@ namespace Dajunctic
             
             if (inputDirection.sqrMagnitude > 0f)
             {
-                
                 Vector3 moveDir = new Vector3(inputDirection.x, 0, inputDirection.y);
                 
                 if (_cameraTransform != null)
@@ -233,6 +232,17 @@ namespace Dajunctic
                 }
 
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
+                if (IsLocalPlayer && _networkMovement != null)
+                {
+                    _networkMovement.SendMoveDirection(moveDir);
+                }
+            }
+            else
+            {
+                if (IsLocalPlayer && _networkMovement != null)
+                {
+                    _networkMovement.SendMoveDirection(Vector3.zero);
+                }
             }
         }
 

@@ -246,7 +246,7 @@ namespace Dajunctic
         private void Update()
         {
             // Client: discover players from spawned PlayerDataSync network objects
-            if (FishNet.InstanceFinder.IsClientStarted && !_hasSetupFromSync)
+            if (FishNet.InstanceFinder.IsClientStarted)
             {
                 var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
                 bool anyAdded = false;

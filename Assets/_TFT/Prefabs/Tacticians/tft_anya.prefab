@@ -47,8 +47,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad70fbfd3b528f44bd233f23f56644f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.TacticianActor
-  initialize: 0
-  tick: 0
+  initialize: 1
+  tick: 2
   animator: {fileID: 5893580461586427196}
   midPoint: {fileID: 8302493779118090936}
   headPoint: {fileID: 221621554839091244}

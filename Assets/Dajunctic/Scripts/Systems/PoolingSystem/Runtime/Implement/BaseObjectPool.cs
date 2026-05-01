@@ -48,20 +48,35 @@ namespace Dajunctic
         public bool TryPop(TKeyType id, out TValueType value)
         {
             Initialize();
-            if (!_pools.ContainsKey(id) || _pools[id].Count == 0)
+            if (!_pools.ContainsKey(id))
             {
                 value = default;
                 return false;
             }
 
-            value = _pools[id].Pop();
-
-            if (value is MonoBehaviour m)
+            while (_pools[id].Count > 0)
             {
-                m.transform.SetParent(null);
-                SceneManager.MoveGameObjectToScene(m.gameObject, SceneManager.GetActiveScene());
+                value = _pools[id].Pop();
+                
+                if (value is MonoBehaviour m)
+                {
+                    if (m == null || m.gameObject == null)
+                    {
+                        continue;
+                    }
+                    m.transform.SetParent(null);
+                    SceneManager.MoveGameObjectToScene(m.gameObject, SceneManager.GetActiveScene());
+                }
+                else if (value == null)
+                {
+                    continue;
+                }
+                
+                return true;
             }
-            return true;
+            
+            value = default;
+            return false;
         }
 
         public void Push(TValueType value)

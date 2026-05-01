@@ -64,12 +64,19 @@ namespace Dajunctic
         public override void Tick()
         {
             base.Tick();
+
+            // Clear stale MoveAgent reference if the pooled GameObject was destroyed (e.g. scene reload)
+            if (MoveAgent != null && !MoveAgent.Initialized)
+            {
+                MoveAgent = null;
+            }
+
             if (root != null)
             {
                 root.Evaluate();
             }
 
-            float realSpeed = MoveAgent != null ? MoveAgent.Velocity.magnitude : 0f;
+            float realSpeed = MoveAgentAlive ? MoveAgent.Velocity.magnitude : 0f;
             float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
 
             animator.SetFloat("Speed", normalizedSpeed);
@@ -117,9 +124,12 @@ namespace Dajunctic
 
         #region Movement
         public IMoveAgent MoveAgent;
-        public virtual bool CanMove => IsViewLoaded && MoveAgent != null && MoveAgent.CanMove;
-        public bool IsMoving => MoveAgent != null && MoveAgent.IsMoving;
-        public Vector3 Velocity => MoveAgent != null ? MoveAgent.Velocity : Vector3.zero;
+        public virtual bool CanMove => IsViewLoaded && MoveAgentAlive && MoveAgent.CanMove;
+        public bool IsMoving => MoveAgentAlive && MoveAgent.IsMoving;
+        public Vector3 Velocity => MoveAgentAlive ? MoveAgent.Velocity : Vector3.zero;
+
+        // Safe guard: checks MoveAgent is not null AND its underlying GameObject wasn't destroyed
+        bool MoveAgentAlive => MoveAgent != null && MoveAgent.Initialized;
         protected virtual ActorMovementType ActorMovementType => combatActorData.movement.movementType;
         public virtual MovementPriority AvoidancePriority
         {
@@ -263,7 +273,7 @@ namespace Dajunctic
 
         void SyncTransform()
         {
-            if (MoveAgent != null && MoveAgent.Initialized && MoveAgent.IsEnabled)
+            if (MoveAgentAlive && MoveAgent.IsEnabled)
             {
                 Position = MoveAgent.Position;
                 Forward = MoveAgent.Forward;
