@@ -28,6 +28,7 @@ namespace Dajunctic
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;
+        private bool _debugLoggedOnce;
 
         protected virtual void Start()
         {
@@ -176,8 +177,17 @@ namespace Dajunctic
             }
         }
 
+        private float _tickDebugTimer;
         public override void Tick()
         {
+            // DEBUG: confirm Tick is running (log once per second max)
+            _tickDebugTimer += Time.deltaTime;
+            if (_tickDebugTimer > 1f)
+            {
+                _tickDebugTimer = 0;
+                Debug.Log($"[Tick ALIVE] {gameObject.name} IsLocalPlayer={IsLocalPlayer} frame={Time.frameCount}");
+            }
+            
             base.Tick();
 
             if (!IsLocalPlayer) return;
@@ -232,6 +242,14 @@ namespace Dajunctic
                 }
 
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
+                
+                // DEBUG: one-time log to trace RPC condition
+                if (!_debugLoggedOnce)
+                {
+                    _debugLoggedOnce = true;
+                    Debug.Log($"[TacticianActor Tick] name={gameObject.name} IsLocalPlayer={IsLocalPlayer} _networkMovement={_networkMovement != null} _netObj={_netObj != null} IsOwner={(_netObj != null ? _netObj.IsOwner.ToString() : "N/A")} IsSpawned={(_netObj != null ? _netObj.IsSpawned.ToString() : "N/A")}");
+                }
+                
                 if (IsLocalPlayer && _networkMovement != null)
                 {
                     _networkMovement.SendMoveDirection(moveDir);
@@ -239,6 +257,7 @@ namespace Dajunctic
             }
             else
             {
+                _debugLoggedOnce = false; // Reset when joystick released so we log again next time
                 if (IsLocalPlayer && _networkMovement != null)
                 {
                     _networkMovement.SendMoveDirection(Vector3.zero);

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 565250275084573456}
   - component: {fileID: 6551470456041174059}
   - component: {fileID: 3348831169066878599}
-  - component: {fileID: 1620820600535030788}
+  - component: {fileID: 3143173071917452031}
   m_Layer: 0
   m_Name: tft_annie
   m_TagString: Untagged
@@ -111,7 +111,7 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0, w: 0}
     Scale: {x: 0, y: 0, z: 0}
     IsValid: 0
---- !u!114 &1620820600535030788
+--- !u!114 &3143173071917452031
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

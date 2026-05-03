@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1552706171008444067}
   - component: {fileID: 4396723384820992847}
   - component: {fileID: 1410054024938708769}
-  - component: {fileID: 4151301480922323270}
+  - component: {fileID: 3025138007453545455}
   m_Layer: 0
   m_Name: tft_anya
   m_TagString: Untagged
@@ -111,7 +111,7 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0, w: 0}
     Scale: {x: 0, y: 0, z: 0}
     IsValid: 0
---- !u!114 &4151301480922323270
+--- !u!114 &3025138007453545455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

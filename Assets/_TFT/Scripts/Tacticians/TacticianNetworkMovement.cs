@@ -15,12 +15,14 @@ namespace Dajunctic
         [ServerRpc]
         public void CmdMoveTo(Vector3 position)
         {
+            Debug.Log($"[CmdMoveTo] Server received pos={position} from {gameObject.name}");
             RpcMoveTo(position, transform.position);
         }
 
         [ObserversRpc(ExcludeOwner = true)]
         public void RpcMoveTo(Vector3 position, Vector3 serverPos)
         {
+            Debug.Log($"[RpcMoveTo] Client received pos={position} actor={(_actor != null ? "OK" : "NULL")}");
             if (_actor == null) return;
             
             // Correct drift if needed
@@ -34,12 +36,14 @@ namespace Dajunctic
         [ServerRpc]
         public void CmdTeleport(Vector3 position, bool checkNavMesh, bool fx)
         {
+            Debug.Log($"[CmdTeleport] Server received pos={position}");
             RpcTeleport(position, checkNavMesh, fx);
         }
 
         [ObserversRpc(ExcludeOwner = true)]
         public void RpcTeleport(Vector3 position, bool checkNavMesh, bool fx)
         {
+            Debug.Log($"[RpcTeleport] Client received pos={position} actor={(_actor != null ? "OK" : "NULL")}");
             if (_actor == null) return;
             _actor.Teleport(position, checkNavMesh, fx);
         }
@@ -56,6 +60,7 @@ namespace Dajunctic
             {
                 _lastSentMoveDir = dir;
                 _lastSendTime = Time.time;
+                Debug.Log($"[SendMoveDir] IsOwner={IsOwner}, IsServer={IsServer}, dir={dir}, IsSpawned={IsSpawned}");
                 CmdMoveDirection(dir, transform.position);
             }
         }
@@ -63,6 +68,7 @@ namespace Dajunctic
         [ServerRpc]
         public void CmdMoveDirection(Vector3 direction, Vector3 position)
         {
+            Debug.Log($"[CmdMoveDir] Received on server, dir={direction}");
             RpcMoveDirection(direction, position);
         }
 
