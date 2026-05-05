@@ -66,9 +66,15 @@ namespace Dajunctic
             base.Tick();
 
             // Clear stale MoveAgent reference if the pooled GameObject was destroyed (e.g. scene reload)
+            // or if NavMeshAgent couldn't place itself on NavMesh (e.g. client spawned at wrong position)
             if (MoveAgent != null && !MoveAgent.Initialized)
             {
                 MoveAgent = null;
+                // Re-initialize immediately at the CURRENT transform position
+                // (fixes client-side: prefab spawned at default pos, NavMesh failed, now actor is at real pos)
+                Position = CachedTransform.position;
+                Forward = CachedTransform.forward;
+                InitializeMoveAgent();
             }
 
             if (root != null)

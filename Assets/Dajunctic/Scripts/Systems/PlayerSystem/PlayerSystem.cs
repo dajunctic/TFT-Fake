@@ -236,8 +236,12 @@ namespace Dajunctic
                     }
 
                     actor.Initialize();
-                    actor.StopListenEvents();
-                    actor.ListenEvents();
+                    // RewarpMoveAgent: đảm bảo NavMeshAgent warp về đúng vị trí spawn
+                    // (fix trường hợp Initialize chạy trong Awake với vị trí prefab sai)
+                    actor.RewarpMoveAgent();
+                    // Không gọi StopListenEvents/ListenEvents ở đây.
+                    // Trên host: IsOwner đúng ngay, Update() sẽ đăng ký.
+                    // Trên client: NetworkObject chưa đồng bộ IsOwner kịp, Update() sẽ chờ.
                     player.Tactician = actor;
                 }
             }
@@ -331,8 +335,7 @@ namespace Dajunctic
                     player.Tactician = actor;
                     actor.OwnerID = ownerId;
                     actor.Initialize(); // Ensure client side initializes properly
-                    actor.StopListenEvents();
-                    actor.ListenEvents(); // Enable input if local player
+                    actor.RewarpMoveAgent(); // Fix NavMesh vị trí sau khi đã spawn đúng chỗ
                     Debug.Log($"[PlayerSystem] Linked tactician {actor.name} to player {player.Name} (ClientId:{ownerId})");
                 }
             }

@@ -36,13 +36,16 @@ namespace Dajunctic
         }
 
         private bool _tacticianLinked = false;
+        private bool _rewarpDone = false;
         protected virtual void Update()
         {
+            // Nếu chưa đăng ký và IsOwner đã sẵn sàng → đăng ký input
             if (!_eventsListened && IsLocalPlayer)
             {
-                _eventsListened = true;
-                StopListenEvents();
-                ListenEvents();
+                StopListenEvents(); // clean + reset _eventsListened
+                ListenEvents();     // đăng ký + set _eventsListened = true
+                // Warp lại MoveAgent về vị trí thực tế (FishNet đã sync transform tới đây rồi)
+                RewarpMoveAgent();
             }
 
             if (!_tacticianLinked)
@@ -77,6 +80,8 @@ namespace Dajunctic
                             {
                                 p.Tactician = this;
                                 _tacticianLinked = true;
+                                // Warp ngay sau khi link: transform đã ở đúng vị trí rồi
+                                RewarpMoveAgent();
                                 break;
                             }
                         }
@@ -88,9 +93,19 @@ namespace Dajunctic
         public override void Initialize()
         {
             base.Initialize();
-            if (_tacticianInitialized) return;
+
+            // Luôn update _netObj và _networkMovement (có thể null lúc Awake)
+            if (_netObj == null) _netObj = GetComponent<FishNet.Object.NetworkObject>();
+            if (_networkMovement == null) _networkMovement = GetComponent<TacticianNetworkMovement>();
+
+            if (_tacticianInitialized) 
+            {
+                // Đã init rồi → chỉ cần warp lại MoveAgent về đúng vị trí hiện tại
+                // (trường hợp Awake init với vị trí prefab sai)
+                RewarpMoveAgent();
+                return;
+            }
             _tacticianInitialized = true;
-            _netObj = GetComponent<FishNet.Object.NetworkObject>();
 
             if (CombatActorData is TacticianData tacticianData)
             {
@@ -101,23 +116,34 @@ namespace Dajunctic
             if (MoveAgent != null)
             {
                 MoveAgent.ToggleMoveCollision(false);
+                // Warp về đúng vị trí hiện tại (tránh trường hợp Awake init ở pos sai)
+                RewarpMoveAgent();
             }
 
-             if (Camera.main != null)
+            if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
                 _camera = Camera.main;
             }
 
             this.Raise(new SpawnHpViewEvent { owner = this, starLevel = Tier });
-            
-            _networkMovement = GetComponent<TacticianNetworkMovement>();
+        }
+
+        /// <summary>Warp MoveAgent về vị trí thực của actor. Gọi sau khi actor đã spawn ở đúng vị trí.</summary>
+        public void RewarpMoveAgent()
+        {
+            if (MoveAgent != null && MoveAgent.Initialized)
+            {
+                MoveAgent.Warp(transform.position);
+                Debug.Log($"[TacticianActor] RewarpMoveAgent → {transform.position} for {gameObject.name}");
+            }
         }
 
         public override void StopListenEvents()
         {
             base.StopListenEvents();
             InputManager.OnRightClickEvent -= OnRightClick;
+            _eventsListened = false; // Reset để Update() có thể đăng ký lại khi IsOwner sẵn sàng
         }
 
         public override void ListenEvents()
@@ -127,6 +153,7 @@ namespace Dajunctic
             if (IsLocalPlayer)
             {
                 InputManager.OnRightClickEvent += OnRightClick;
+                _eventsListened = true;
             }
         }
 
@@ -135,7 +162,7 @@ namespace Dajunctic
         private void OnRightClick(Vector2 mousePosition)
         {
             if (_camera == null) _camera = Camera.main;
-            if (_camera == null) return;
+            if (_camera == null) { Debug.LogError("[OnRightClick] Camera is null!"); return; }
 
             FollowCamera followCam = _camera.GetComponent<FollowCamera>();
             if (followCam != null && followCam.target != null)
@@ -154,17 +181,31 @@ namespace Dajunctic
             if (Physics.Raycast(ray, out RaycastHit hitInfo))
             {
                 var targetPosition = hitInfo.point;
+                bool onNavMesh = UnityEngine.AI.NavMesh.SamplePosition(targetPosition, out UnityEngine.AI.NavMeshHit navHit, 5f, UnityEngine.AI.NavMesh.AllAreas);
+                if (onNavMesh) targetPosition = navHit.position;
 
-                if (UnityEngine.AI.NavMesh.SamplePosition(targetPosition, out UnityEngine.AI.NavMeshHit navHit, 5f, UnityEngine.AI.NavMesh.AllAreas))
-                {
-                    targetPosition = navHit.position;
-                }
+                // Debug toàn bộ trạng thái trước khi move
+                bool agentOnMesh = MoveAgent != null && MoveAgent.Initialized && 
+                                   (MoveAgent as NavMeshMoveAgent) != null &&
+                                   (MoveAgent as NavMeshMoveAgent).GetComponent<UnityEngine.AI.NavMeshAgent>()?.isOnNavMesh == true;
+                Debug.Log($"[OnRightClick] actor={gameObject.name} | IsLocalPlayer={IsLocalPlayer} | " +
+                          $"MoveAgent={MoveAgent != null} | MoveAgent.Init={MoveAgent?.Initialized} | " +
+                          $"agentOnNavMesh={agentOnMesh} | rayHit={hitInfo.point} | " +
+                          $"navMeshSample={onNavMesh} | target={targetPosition} | " +
+                          $"actor.pos={transform.position}");
+
+                // Đảm bảo NavMeshAgent ở đúng vị trí actor trước khi move
+                RewarpMoveAgent();
 
                 MovePosition(targetPosition, Speed, RotateSpeed, Time.deltaTime);
                 if (IsLocalPlayer && _networkMovement != null)
                 {
                     _networkMovement.CmdMoveTo(targetPosition);
                 }
+            }
+            else
+            {
+                Debug.LogWarning($"[OnRightClick] Physics.Raycast MISSED! No collider hit. actor={gameObject.name}");
             }
         }
 
