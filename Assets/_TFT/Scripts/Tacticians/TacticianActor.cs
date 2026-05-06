@@ -283,26 +283,10 @@ namespace Dajunctic
                 }
 
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
-                
-                // DEBUG: one-time log to trace RPC condition
-                if (!_debugLoggedOnce)
-                {
-                    _debugLoggedOnce = true;
-                    Debug.Log($"[TacticianActor Tick] name={gameObject.name} IsLocalPlayer={IsLocalPlayer} _networkMovement={_networkMovement != null} _netObj={_netObj != null} IsOwner={(_netObj != null ? _netObj.IsOwner.ToString() : "N/A")} IsSpawned={(_netObj != null ? _netObj.IsSpawned.ToString() : "N/A")}");
-                }
-                
-                if (IsLocalPlayer && _networkMovement != null)
-                {
-                    _networkMovement.SendMoveDirection(moveDir);
-                }
             }
             else
             {
-                _debugLoggedOnce = false; // Reset when joystick released so we log again next time
-                if (IsLocalPlayer && _networkMovement != null)
-                {
-                    _networkMovement.SendMoveDirection(Vector3.zero);
-                }
+                _debugLoggedOnce = false;
             }
         }
 

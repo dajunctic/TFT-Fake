@@ -97,6 +97,9 @@ namespace Dajunctic
 
             _cachedTransform.position = _owner.HeadPoint + offset;
 
+            // Re-fetch camera each frame if not available (camera may not be ready at init time,
+            // or the local player camera is different from Camera.main on the observer)
+            if (_mainCamera == null) _mainCamera = Camera.main;
             if (_mainCamera != null)
             {
                 _cachedTransform.rotation = _mainCamera.transform.rotation;

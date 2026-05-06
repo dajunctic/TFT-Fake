@@ -56,6 +56,9 @@ namespace Dajunctic
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState += OnClientConnectionState;
 
+            if (InstanceFinder.ServerManager != null)
+                InstanceFinder.ServerManager.OnServerConnectionState += OnServerConnectionState;
+
             if (InstanceFinder.SceneManager != null)
                 InstanceFinder.SceneManager.OnLoadEnd += OnHomeSceneLoaded;
         }
@@ -69,6 +72,9 @@ namespace Dajunctic
 
             if (InstanceFinder.ClientManager != null)
                 InstanceFinder.ClientManager.OnClientConnectionState -= OnClientConnectionState;
+
+            if (InstanceFinder.ServerManager != null)
+                InstanceFinder.ServerManager.OnServerConnectionState -= OnServerConnectionState;
 
             if (InstanceFinder.SceneManager != null)
                 InstanceFinder.SceneManager.OnLoadEnd -= OnHomeSceneLoaded;
@@ -100,6 +106,8 @@ namespace Dajunctic
             if (InstanceFinder.ServerManager != null && InstanceFinder.ClientManager != null)
             {
                 SetRequestedPlayerName();
+                ParseIpPort(out string ip, out ushort port);
+                ApplyTransportSettings(ip, port);
                 InstanceFinder.ServerManager.StartConnection();
                 InstanceFinder.ClientManager.StartConnection();
                 isLogin = true;
@@ -109,9 +117,9 @@ namespace Dajunctic
 
         public void JoinGame()
         {
-            string targetIP = ipInputField != null ? ipInputField.text : string.Empty;
+            ParseIpPort(out string ip, out ushort port);
 
-            if (string.IsNullOrEmpty(targetIP))
+            if (string.IsNullOrEmpty(ip))
             {
                 Debug.LogError("LobbyPopup: IP address is empty. Please enter a valid IP.");
                 return;
@@ -120,9 +128,40 @@ namespace Dajunctic
             if (InstanceFinder.ClientManager != null)
             {
                 SetRequestedPlayerName();
-                InstanceFinder.ClientManager.StartConnection(targetIP);
+                ApplyTransportSettings(ip, port);
+                InstanceFinder.ClientManager.StartConnection(ip);
                 isLogin = true;
                 OnChanged();
+            }
+        }
+
+        /// <summary>Parse "ip" or "ip:port" from the input field.</summary>
+        private void ParseIpPort(out string ip, out ushort port)
+        {
+            string raw = ipInputField != null ? ipInputField.text.Trim() : "127.0.0.1";
+            port = 7770; // Tugboat default
+
+            int colonIdx = raw.LastIndexOf(':');
+            if (colonIdx >= 0 && ushort.TryParse(raw.Substring(colonIdx + 1), out ushort parsedPort))
+            {
+                ip = raw.Substring(0, colonIdx);
+                port = parsedPort;
+            }
+            else
+            {
+                ip = raw;
+            }
+        }
+
+        /// <summary>Apply IP and port to Tugboat transport before connecting.</summary>
+        private void ApplyTransportSettings(string ip, ushort port)
+        {
+            var transport = InstanceFinder.NetworkManager?.TransportManager?.Transport;
+            if (transport != null)
+            {
+                transport.SetPort(port);
+                transport.SetClientAddress(ip);
+                Debug.Log($"[LobbyPopup] Transport configured → {ip}:{port}");
             }
         }
 
@@ -170,7 +209,19 @@ namespace Dajunctic
 
         private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
-            // Registration moved to LobbyNetworkManager.OnStartClient
+            // When client fails to connect (e.g. port busy, host unreachable), reset to login screen
+            if (args.ConnectionState == LocalConnectionState.Stopped && isLogin && !InstanceFinder.IsServerStarted)
+            {
+                isLogin = false;
+                OnChanged();
+                Debug.LogWarning("[LobbyPopup] Connection failed — reset to login screen. If hosting, the port may be in use. Try restarting Unity.");
+            }
+        }
+
+        private void OnServerConnectionState(ServerConnectionStateArgs args)
+        {
+            // Server started successfully — refresh UI to show Start Game button
+            if (isLogin) OnChanged();
         }
 
         // ── UI ──────────────────────────────────────────────────────────────────

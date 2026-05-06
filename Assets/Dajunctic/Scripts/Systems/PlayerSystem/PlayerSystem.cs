@@ -276,7 +276,7 @@ namespace Dajunctic
                 {
                     _hasSetupFromSync = true;
                     
-                    // Link existing TacticianActors to their players
+                    // Link existing TacticianActors to their players (one-time on new player discovery)
                     LinkTacticiansToPlayers();
                     
                     OnPlayerListInitialized?.Invoke();
@@ -304,12 +304,9 @@ namespace Dajunctic
                         }
                     }
                 }
-
-                // Continuously try to link tacticians if any are missing
-                if (_players.Exists(p => p.Tactician == null))
-                {
-                    LinkTacticiansToPlayers();
-                }
+                // NOTE: Do NOT call LinkTacticiansToPlayers() here every frame.
+                // It calls Initialize() + RewarpMoveAgent() which interrupts NavMesh pathfinding → jitter.
+                // Linking is done once when players are discovered above.
             }
 
             // Server: retry tactician spawn ONCE if initial spawn missed some
