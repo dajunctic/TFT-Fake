@@ -45,6 +45,21 @@ namespace Dajunctic
         public override void OnStartServer()
         {
             base.OnStartServer();
+            // Chờ PlayerSystem spawn xong PlayerDataSync trước khi bắt đầu phase đầu tiên.
+            // Nếu list đã có sẵn (edge case) thì gọi luôn.
+            if (GameSystemManager.Instance?.Player?.Players.Count > 0)
+            {
+                StartPhaseServer(GameplayPhase.Planning);
+            }
+            else
+            {
+                PlayerSystem.OnPlayerListInitialized += OnPlayersReady;
+            }
+        }
+
+        private void OnPlayersReady()
+        {
+            PlayerSystem.OnPlayerListInitialized -= OnPlayersReady;
             StartPhaseServer(GameplayPhase.Planning);
         }
 
@@ -93,6 +108,13 @@ namespace Dajunctic
                 if (GameSystemManager.Instance.Travel != null)
                 {
                     GameSystemManager.Instance.Travel.ReturnAllUnits();
+                }
+
+                // Auto-roll shop for all players at the start of planning phase
+                var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+                foreach (var sync in playerSyncs)
+                {
+                    sync.ServerRollShop();
                 }
             }
 

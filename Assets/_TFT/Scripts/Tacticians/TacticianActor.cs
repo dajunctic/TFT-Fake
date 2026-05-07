@@ -226,7 +226,7 @@ namespace Dajunctic
             if (_tickDebugTimer > 1f)
             {
                 _tickDebugTimer = 0;
-                Debug.Log($"[Tick ALIVE] {gameObject.name} IsLocalPlayer={IsLocalPlayer} frame={Time.frameCount}");
+                // Debug.Log($"[Tick ALIVE] {gameObject.name} IsLocalPlayer={IsLocalPlayer} frame={Time.frameCount}");
             }
             
             base.Tick();

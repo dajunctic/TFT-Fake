@@ -174,9 +174,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2acc2549a29ba1448e8f00cc8418e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.TraitDescriptionUI
-  _componentIndexCache: 4
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   traitIcon: {fileID: 9133742739096507108}
@@ -1262,9 +1259,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c87b159372659bf4f98067164faa05b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ShopStreakUI
-  _componentIndexCache: 5
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 0
   tick: 0
   winStreakIcon: {fileID: 3052987203043005419}
@@ -1323,9 +1317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 233d93b903b40064cbabdc26cdcf2e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundUI
-  _componentIndexCache: 1
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   roundText: {fileID: 4582187831719687055}
@@ -2358,9 +2349,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5ad04f426f1f3547a1c8b31a99fbc57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 3
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   traitItemPrefab: {fileID: 5235102546313730278, guid: c8991a4385c966c47913f02c4fc76dcd, type: 3}
@@ -5851,9 +5839,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b1534cc1b5213b49bfb06ebd5a00b30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   timerText: {fileID: 7204112573001847717}
@@ -5895,6 +5880,7 @@ MonoBehaviour:
   fpsTxt: {fileID: 576507009013157745}
   pingTxt: {fileID: 5045712296612343697}
   playerListUI: {fileID: 7342777865550274532}
+  streakUI: {fileID: 5541086757337970261}
   fightInfoBtn: {fileID: 1886707024548374218}
   playerInfoBtn: {fileID: 6450499722275909577}
   playerInfoDisabledBtn: {fileID: 2337551745652850552}
@@ -7543,9 +7529,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f97b9ed5075d36142822716139ca3bab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChatUI
-  _componentIndexCache: 2
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   initialize: 1
   tick: 2
   inputField: {fileID: 605841727192497614}
@@ -7554,7 +7537,6 @@ MonoBehaviour:
   scrollRect: {fileID: 7066924492908315238}
   chatGroup: {fileID: 2784466700312055934}
   maxMessages: 50
-  fadeOutTime: 5
 --- !u!225 &2784466700312055934
 CanvasGroup:
   m_ObjectHideFlags: 0

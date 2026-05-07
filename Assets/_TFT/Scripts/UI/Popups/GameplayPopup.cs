@@ -43,6 +43,9 @@ namespace Dajunctic
         [Header("Player Lists")]
         [SerializeField] private PlayerListUI playerListUI;
 
+        [Header("Streak UI")]
+        [SerializeField] private ShopStreakUI streakUI;
+
         [SerializeField] private GameObject fightInfoBtn;
         [SerializeField] private GameObject playerInfoBtn;
         [SerializeField] private GameObject playerInfoDisabledBtn;
@@ -77,6 +80,12 @@ namespace Dajunctic
 
             var itemSystem = this.GetSystem<ItemSystem>();
             if (itemSystem != null) itemSystem.RefreshAllVisuals();
+
+            // Pull current shop state now that the popup is active and ListenEvents() has run.
+            // This covers the case where TargetUpdateShop fired while popup was still disabled
+            // (which happens on host because ObserversRpc RunLocally=true fires synchronously).
+            UpdateShop();
+            UpdateStreak();
         }
 
         public override void BeforeDismiss()
@@ -105,6 +114,8 @@ namespace Dajunctic
                 _localPlayerSync.OnGoldChanged -= OnGoldChanged;
                 _localPlayerSync.OnLevelChanged -= OnLevelChanged;
                 _localPlayerSync.OnExpChanged -= OnExpChanged;
+                _localPlayerSync.OnWinStreakChanged -= OnStreakChanged;
+                _localPlayerSync.OnLoseStreakChanged -= OnStreakChanged;
             }
         }
 
@@ -116,13 +127,32 @@ namespace Dajunctic
             Instance = this;
             base.BeforeShow(data);
             UpdateUI();
-            UpdateShop();
+            // NOTE: Do NOT call UpdateShop() here. Shop data has not yet arrived from server.
+            // UpdateShop() will be called automatically when ShopRefreshedEvent fires (after TargetUpdateShop RPC).
+            // We only reset the slots to their empty state here.
+            ResetShopSlots();
             UpdateEconomy();
             UpdatePlayerList();
             UpdateShopLockUI(ShopSystem != null && ShopSystem.IsShopLocked);
         }
 
         private PlayerDataSync _localPlayerSync;
+
+        /// <summary>
+        /// Finds the PlayerDataSync owned by the local client.
+        /// Must search all objects because Connection.FirstObject is the Tactician, not PlayerDataSync.
+        /// </summary>
+        private PlayerDataSync FindLocalPlayerSync()
+        {
+            if (!FishNet.InstanceFinder.IsClientStarted) return null;
+            var allSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+            foreach (var sync in allSyncs)
+            {
+                var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
+                if (nob != null && nob.IsOwner) return sync;
+            }
+            return null;
+        }
 
         private void Update()
         {
@@ -132,17 +162,16 @@ namespace Dajunctic
 
             if (_localPlayerSync == null && FishNet.InstanceFinder.IsClientStarted)
             {
-                var conn = FishNet.InstanceFinder.ClientManager.Connection;
-                if (conn != null && conn.FirstObject != null)
+                _localPlayerSync = FindLocalPlayerSync();
+                if (_localPlayerSync != null)
                 {
-                    _localPlayerSync = conn.FirstObject.GetComponent<PlayerDataSync>();
-                    if (_localPlayerSync != null)
-                    {
-                        _localPlayerSync.OnGoldChanged += OnGoldChanged;
-                        _localPlayerSync.OnLevelChanged += OnLevelChanged;
-                        _localPlayerSync.OnExpChanged += OnExpChanged;
-                        UpdateEconomy(); // Force update
-                    }
+                    _localPlayerSync.OnGoldChanged += OnGoldChanged;
+                    _localPlayerSync.OnLevelChanged += OnLevelChanged;
+                    _localPlayerSync.OnExpChanged += OnExpChanged;
+                    _localPlayerSync.OnWinStreakChanged += OnStreakChanged;
+                    _localPlayerSync.OnLoseStreakChanged += OnStreakChanged;
+                    UpdateEconomy(); // Force update once found
+                    UpdateStreak();
                 }
             }
         }
@@ -191,6 +220,7 @@ namespace Dajunctic
                         rarityBg = cardRarities.GetIndex(shop[i].rarity - 1);
                     }
                     slots[i].Setup(i, shop[i], rarityBg);
+                    slots[i].gameObject.SetActive(true); // Ensure slot is visible
                 }
                 else
                 {
@@ -199,6 +229,15 @@ namespace Dajunctic
             }
 
             // UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
+        }
+
+        /// <summary>Reset all shop slots to empty/hidden state (called before shop data arrives).</summary>
+        private void ResetShopSlots()
+        {
+            foreach (var slot in slots)
+            {
+                if (slot != null) slot.gameObject.SetActive(false);
+            }
         }
 
         private void UpdateRollRates(float[] chances)
@@ -216,6 +255,15 @@ namespace Dajunctic
             if (ShopSystem != null) UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(value));
         }
         private void OnExpChanged(int value) => UpdateEconomy(); // Refresh xp progress
+        private void OnStreakChanged(int value) => UpdateStreak();
+
+        private void UpdateStreak()
+        {
+            if (streakUI == null || _localPlayerSync == null) return;
+            // Positive = win streak, Negative = lose streak (net streak value)
+            int netStreak = _localPlayerSync.WinStreak.Value - _localPlayerSync.LoseStreak.Value;
+            streakUI.UpdateStreak(netStreak);
+        }
 
         private void UpdateEconomy()
         {

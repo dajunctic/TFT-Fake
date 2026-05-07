@@ -34,6 +34,7 @@ namespace Dajunctic
             _manager = manager;
 
             this.RegisterListener<RequestRerollEvent>(OnRequestReroll);
+            this.RegisterListener<RequestBuyXPEvent>(OnRequestBuyXP);
             this.RegisterListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             this.RegisterListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
@@ -41,19 +42,48 @@ namespace Dajunctic
             Debug.Log("<color=cyan>ShopSystem initialized</color>");
         }
 
+        /// <summary>
+        /// Finds the PlayerDataSync NetworkObject owned by the local client.
+        /// We cannot use Connection.FirstObject because that returns the Tactician (spawned first).
+        /// Instead, search all spawned PlayerDataSync objects and find the one this client owns.
+        /// </summary>
+        private PlayerDataSync GetLocalPlayerSync()
+        {
+            if (!FishNet.InstanceFinder.IsClientStarted) return null;
+
+            var allSyncs = UnityEngine.Object.FindObjectsByType<PlayerDataSync>(UnityEngine.FindObjectsSortMode.None);
+            foreach (var sync in allSyncs)
+            {
+                var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
+                if (nob != null && nob.IsOwner)
+                    return sync;
+            }
+
+            Debug.LogWarning("[ShopSystem] Could not find local PlayerDataSync (IsOwner). ServerRpc will not be sent.");
+            return null;
+        }
+
         private void OnRequestReroll(RequestRerollEvent evt)
         {
-            // Triggers network request via PlayerDataSync
-            var localPlayerSync = FishNet.InstanceFinder.ClientManager.Connection.FirstObject?.GetComponent<PlayerDataSync>();
+            var localPlayerSync = GetLocalPlayerSync();
             if (localPlayerSync != null)
             {
                 localPlayerSync.CmdRequestReroll();
             }
         }
 
+        private void OnRequestBuyXP(RequestBuyXPEvent evt)
+        {
+            var localPlayerSync = GetLocalPlayerSync();
+            if (localPlayerSync != null)
+            {
+                localPlayerSync.CmdBuyXP();
+            }
+        }
+
         private void OnRequestBuyHero(RequestBuyHeroEvent evt)
         {
-            var localPlayerSync = FishNet.InstanceFinder.ClientManager.Connection.FirstObject?.GetComponent<PlayerDataSync>();
+            var localPlayerSync = GetLocalPlayerSync();
             if (localPlayerSync != null)
             {
                 localPlayerSync.CmdBuyChampion(evt.SlotIndex);
@@ -63,6 +93,7 @@ namespace Dajunctic
         public void Shutdown()
         {
             this.RemoveListener<RequestRerollEvent>(OnRequestReroll);
+            this.RemoveListener<RequestBuyXPEvent>(OnRequestBuyXP);
             this.RemoveListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             this.RemoveListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
@@ -78,15 +109,10 @@ namespace Dajunctic
         {
             if (evt.Phase == GameplayPhase.Planning)
             {
+                // Server handles auto-rolling via Gameplay.StartPhaseServer → PlayerDataSync.ServerRollShop
+                // Client just needs to unlock the shop for the next round
                 if (_isShopLocked)
-                {
-                    // Shop locked: keep current shop, auto-unlock (TFT behavior: lock lasts 1 round)
                     SetShopLock(false);
-                }
-                else
-                {
-                    RefreshShop();
-                }
             }
         }
 

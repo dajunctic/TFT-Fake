@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Dajunctic
@@ -52,13 +53,23 @@ namespace Dajunctic
 
         private void InitializeDictionary()
         {
-            if (data == null || data.Prefabs == null) return;
+            if (data == null)
+            {
+                Debug.LogError("[PopupController] PopupControllerData is NULL! Please assign it in the Inspector.");
+                return;
+            }
+            if (data.Prefabs == null || data.Prefabs.Count == 0)
+            {
+                Debug.LogError("[PopupController] PopupControllerData.Prefabs list is empty! Add popup prefabs to it in the Inspector.");
+                return;
+            }
 
             foreach (var prefab in data.Prefabs)
             {
                 if (prefab != null)
                 {
                     popupDictionary[prefab.GetType()] = prefab;
+                    Debug.Log($"[PopupController] Registered popup: {prefab.GetType().Name}");
                 }
             }
         }
@@ -101,7 +112,13 @@ namespace Dajunctic
 
             if (!popupDictionary.TryGetValue(type, out var prefab))
             {
-                Debug.LogError($"Popup of type {type.Name} not found in PopupControllerData!");
+                string registered = popupDictionary.Count > 0
+                    ? string.Join(", ", popupDictionary.Keys.Select(k => k.Name))
+                    : "(none)";
+                Debug.LogError($"[PopupController] Popup '{type.Name}' not found in PopupControllerData!\n" +
+                               $"→ FIX: Open the PopupController GameObject in the Inspector, find the 'Data' (PopupControllerData) asset, " +
+                               $"and add the '{type.Name}' prefab to the 'Prefabs' list.\n" +
+                               $"Currently registered: {registered}");
                 return null;
             }
 
