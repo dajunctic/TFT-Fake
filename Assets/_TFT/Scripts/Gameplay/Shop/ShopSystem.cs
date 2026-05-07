@@ -143,8 +143,21 @@ namespace Dajunctic
         // Called by PlayerDataSync when Server sends TargetUpdateShop
         public void SyncShopData(string[] championIds)
         {
-            if (_data == null || _data.allHeroes == null) return;
-            
+            if (_data == null)
+            {
+                Debug.LogError("[ShopSystem] SyncShopData called but _data (ShopSystemData) is null! " +
+                               "Ensure ShopSystemData is assigned and loaded via Addressables.");
+                return;
+            }
+
+            if (_data.allHeroes == null || _data.allHeroes.Count == 0)
+            {
+                Debug.LogError("[ShopSystem] SyncShopData: allHeroes is empty! " +
+                               "Add ChampionData entries to ShopSystemData.allHeroes in the Inspector.");
+                return;
+            }
+
+            int resolved = 0;
             for (int i = 0; i < 5; i++)
             {
                 if (string.IsNullOrEmpty(championIds[i]))
@@ -153,9 +166,15 @@ namespace Dajunctic
                 }
                 else
                 {
-                    _currentShop[i] = _data.allHeroes.FirstOrDefault(h => h.Id == championIds[i]);
+                    _currentShop[i] = _data.allHeroes.FirstOrDefault(h => h != null && h.Id == championIds[i]);
+                    if (_currentShop[i] != null) resolved++;
+                    else Debug.LogWarning($"[ShopSystem] SyncShopData: id='{championIds[i]}' not found in allHeroes. " +
+                                          "Check ChampionData.Id matches exactly.");
                 }
             }
+
+            Debug.Log($"<color=cyan>[ShopSystem] SyncShopData: resolved {resolved}/5 champions " +
+                      $"(allHeroes={_data.allHeroes.Count}).</color>");
 
             OnShopRefreshed?.Invoke();
             this.Raise(new ShopRefreshedEvent());

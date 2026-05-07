@@ -207,10 +207,29 @@ namespace Dajunctic
 
         private void UpdateShop()
         {
-            if (ShopSystem == null) return;
+            if (ShopSystem == null)
+            {
+                Debug.LogWarning("[GameplayPopup] UpdateShop: ShopSystem not found.");
+                return;
+            }
+
+            if (slots == null || slots.Count == 0)
+            {
+                Debug.LogError("[GameplayPopup] UpdateShop: 'slots' list is empty! " +
+                               "Assign 5 ShopSlotView references in the GameplayPopup prefab Inspector.");
+                return;
+            }
+
             var shop = ShopSystem.CurrentShop;
+            int shown = 0;
             for (int i = 0; i < slots.Count; i++)
             {
+                if (slots[i] == null)
+                {
+                    Debug.LogWarning($"[GameplayPopup] slots[{i}] is null — check Inspector assignment.");
+                    continue;
+                }
+
                 if (i < shop.Length && shop[i] != null)
                 {
                     Sprite rarityBg = null;
@@ -220,7 +239,8 @@ namespace Dajunctic
                         rarityBg = cardRarities.GetIndex(shop[i].rarity - 1);
                     }
                     slots[i].Setup(i, shop[i], rarityBg);
-                    slots[i].gameObject.SetActive(true); // Ensure slot is visible
+                    slots[i].gameObject.SetActive(true);
+                    shown++;
                 }
                 else
                 {
@@ -228,6 +248,7 @@ namespace Dajunctic
                 }
             }
 
+            Debug.Log($"<color=cyan>[GameplayPopup] UpdateShop: {shown}/{slots.Count} slots filled.</color>");
             // UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
         }
 

@@ -127,6 +127,10 @@ namespace Dajunctic
             foreach (var system in _systems)
                 system.Initialize(this);
 
+            // Initialize champion pool AFTER all systems have _manager set
+            // and Shop data is confirmed loaded.
+            GlobalChampionPool.InitializeAfterDataLoad();
+
             Debug.Log("<color=cyan>GameSystemManager: All systems initialized.</color>");
         }
 
