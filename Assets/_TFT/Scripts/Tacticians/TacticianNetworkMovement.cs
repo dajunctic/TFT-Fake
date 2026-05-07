@@ -50,6 +50,33 @@ namespace Dajunctic
             _actor.Teleport(position, checkNavMesh, fx);
         }
 
+        // ── Emote (biểu cảm) ─────────────────────────────────────────────────
+
+        /// <summary>
+        /// Owner calls this to request the server broadcast an emote.
+        /// requireOwnership = true (default) ensures only the owner can trigger their own emote.
+        /// </summary>
+        [ServerRpc]
+        public void CmdPlayEmote(int emoteIndex)
+        {
+            RpcPlayEmote(emoteIndex);
+        }
+
+        /// <summary>
+        /// Server → all clients (including owner) spawn the EmotionView on this tactician.
+        /// RunLocally = true so the owner also sees their own emote immediately.
+        /// </summary>
+        [ObserversRpc(RunLocally = true)]
+        private void RpcPlayEmote(int emoteIndex)
+        {
+            if (_actor == null) return;
+
+            var emotionSystem = GameSystemManager.Instance?.Emotion;
+            if (emotionSystem == null) return;
+
+            emotionSystem.SpawnEmotionOnActor(_actor, emoteIndex);
+        }
+
         // ── Observer update: continuous MovePosition (mirrors offline Tick) ───
         private void Update()
         {

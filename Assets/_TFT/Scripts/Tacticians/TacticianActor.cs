@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FishNet.Object;
-using FishNet.Object;
 
 namespace Dajunctic
 {
@@ -28,7 +27,6 @@ namespace Dajunctic
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;
-        private bool _debugLoggedOnce;
 
         protected virtual void Start()
         {
@@ -36,7 +34,6 @@ namespace Dajunctic
         }
 
         private bool _tacticianLinked = false;
-        private bool _rewarpDone = false;
         protected virtual void Update()
         {
             // Nếu chưa đăng ký và IsOwner đã sẵn sàng → đăng ký input
@@ -283,10 +280,6 @@ namespace Dajunctic
                 }
 
                 MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
-            }
-            else
-            {
-                _debugLoggedOnce = false;
             }
         }
 
