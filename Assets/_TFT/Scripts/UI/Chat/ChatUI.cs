@@ -17,11 +17,21 @@ namespace Dajunctic
 
         [Header("Settings")]
         [SerializeField] private int maxMessages = 50;
-        // [SerializeField] private float fadeOutTime = 5f;
+
+        [Header("Auto-Show Settings")]
+        [Tooltip("Seconds the chat stays visible after receiving a message (when chat was closed and user hasn't opened it manually).")]
+        [SerializeField] private float autoHideDelay = 5f;
 
         private List<ChatMessageUI> _activeMessages = new List<ChatMessageUI>();
         private bool _isFocused;
-        private bool _isOpen; // Trạng thái đóng/mở tuyệt đối của Chat
+
+        /// <summary>true = fully open (user explicitly opened, input active); false = fully closed.</summary>
+        private bool _isOpen;
+
+        /// <summary>true = temporarily visible due to incoming message; will auto-hide.</summary>
+        private bool _isAutoShowing;
+
+        private Coroutine _autoHideCoroutine;
 
         public override void Initialize()
         {
@@ -31,8 +41,9 @@ namespace Dajunctic
             inputField.onDeselect.AddListener(_ => OnInputFocus(false));
             inputField.onSubmit.AddListener(OnSubmit);
 
-            // Khởi tạo ở trạng thái đóng
+            // Start closed
             _isOpen = false;
+            _isAutoShowing = false;
             UpdateLayout();
         }
 
@@ -50,21 +61,26 @@ namespace Dajunctic
 
         private void Update()
         {
-            // Chỉ xử lý phím Enter trong Update khi Chat đang ĐÓNG hoặc mất FOCUS
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                if (!_isOpen)
+                bool isVisible = _isOpen || _isAutoShowing;
+
+                if (!isVisible)
                 {
-                    // Đang đóng hoàn toàn -> Mở ra
-                    _isOpen = true;
-                    UpdateLayout();
-                    FocusChat();
+                    // Hoàn toàn ẩn → mở ra
+                    OpenManually();
                 }
-                else if (!_isFocused)
+                else if (string.IsNullOrWhiteSpace(inputField.text))
                 {
-                    // Đang mở nhưng click ra ngoài -> Focus lại để gõ tiếp
-                    FocusChat();
+                    // Đang hiển thị (bất kỳ dạng nào) + Enter + không có text → ẩn đi
+                    CloseChat();
                 }
+                else if (!_isOpen)
+                {
+                    // Auto-showing và có text → mở để gõ tiếp
+                    OpenManually();
+                }
+                // else: đang mở + focused + có text → OnSubmit xử lý
             }
         }
 
@@ -74,9 +90,18 @@ namespace Dajunctic
             inputField.Select();
         }
 
+        // ── Message received ─────────────────────────────────────────────────
+
         private void OnMessageReceived(ChatMessageEvent evt)
         {
             AddMessage(evt.Message);
+
+            // Auto-show when closed and the message is from another player
+            // (skip System messages so the welcome message doesn't force-open the UI)
+            if (!_isOpen && evt.Message.Type != ChatMessageType.System)
+            {
+                AutoShow();
+            }
         }
 
         private void AddMessage(ChatMessage message)
@@ -93,7 +118,6 @@ namespace Dajunctic
                 _activeMessages.RemoveAt(0);
             }
 
-            // Đợi đến cuối frame để Layout Groups cập nhật kích thước rồi mới cuộn
             StartCoroutine(ScrollToBottomCoroutine());
         }
 
@@ -108,26 +132,76 @@ namespace Dajunctic
             }
         }
 
+        // ── Auto-show (read-only, timed) ─────────────────────────────────────
+
+        private void AutoShow()
+        {
+            _isAutoShowing = true;
+            UpdateLayout();
+
+            // Reset timer on each new incoming message
+            if (_autoHideCoroutine != null) StopCoroutine(_autoHideCoroutine);
+            _autoHideCoroutine = StartCoroutine(AutoHideCoroutine());
+        }
+
+        private IEnumerator AutoHideCoroutine()
+        {
+            yield return new WaitForSeconds(autoHideDelay);
+
+            // Only hide if the user hasn't manually opened the chat
+            if (!_isOpen)
+            {
+                _isAutoShowing = false;
+                UpdateLayout();
+            }
+            _autoHideCoroutine = null;
+        }
+
+        // ── Manual open ──────────────────────────────────────────────────────
+
+        private void OpenManually()
+        {
+            // Cancel auto-hide — user is taking control
+            if (_autoHideCoroutine != null)
+            {
+                StopCoroutine(_autoHideCoroutine);
+                _autoHideCoroutine = null;
+            }
+
+            _isAutoShowing = false;
+            _isOpen = true;
+            UpdateLayout();
+            FocusChat();
+        }
+
+        // ── Submit (Enter key while focused) ─────────────────────────────────
+
         private void OnSubmit(string text)
         {
-            // OnSubmit được gọi khi phím Enter được nhấn trong lúc đang focus
             if (string.IsNullOrWhiteSpace(text))
             {
-                // Nếu ô text trống và nhấn Enter -> ĐÓNG CHAT
-                _isOpen = false;
-                inputField.text = "";
-                inputField.DeactivateInputField();
-                UpdateLayout();
+                CloseChat();
             }
             else
             {
-                // Nếu có text -> Gửi tin nhắn
                 this.Raise(new RequestSendMessageEvent { Content = text });
-                
-                // Xóa text và giữ nguyên trạng thái mở, focus lại để gõ tiếp
                 inputField.text = "";
                 FocusChat();
             }
+        }
+
+        private void CloseChat()
+        {
+            if (_autoHideCoroutine != null)
+            {
+                StopCoroutine(_autoHideCoroutine);
+                _autoHideCoroutine = null;
+            }
+            _isOpen = false;
+            _isAutoShowing = false;
+            inputField.text = "";
+            inputField.DeactivateInputField();
+            UpdateLayout();
         }
 
         private void OnInputFocus(bool focused)
@@ -135,20 +209,17 @@ namespace Dajunctic
             _isFocused = focused;
         }
 
+        // ── Layout ───────────────────────────────────────────────────────────
+
         private void UpdateLayout()
         {
-            if (_isOpen)
-            {
-                chatGroup.alpha = 1f;
-                chatGroup.interactable = true;
-                chatGroup.blocksRaycasts = true;
-            }
-            else
-            {
-                chatGroup.alpha = 0f;
-                chatGroup.interactable = false;
-                chatGroup.blocksRaycasts = false;
-            }
+            bool visible = _isOpen || _isAutoShowing;
+
+            chatGroup.alpha = visible ? 1f : 0f;
+
+            // Input is only interactive when the user explicitly opened the chat
+            chatGroup.interactable = _isOpen;
+            chatGroup.blocksRaycasts = _isOpen;
         }
     }
 }
