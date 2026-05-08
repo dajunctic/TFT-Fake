@@ -57,19 +57,17 @@ namespace Dajunctic
 
         private bool IsFlipped()
         {
-            if (target != null)
-            {
-                var tactician = target.GetComponent<TacticianActor>();
-                if (tactician != null && GameSystemManager.Instance != null && GameSystemManager.Instance.Player != null)
-                {
-                    var localPlayer = GameSystemManager.Instance.Player.LocalPlayer;
-                    // Flip camera ONLY if we are looking at someone else's board AND we want that behavior
-                    // But usually in TFT, all boards face the same way so we don't flip. 
-                    // Let's just return false for now to keep the camera angle consistent for all players!
-                    return false;
-                }
-            }
-            return false;
+            if (target == null) return false;
+            if (GameSystemManager.Instance == null || GameSystemManager.Instance.Player == null) return false;
+
+            var localPlayer = GameSystemManager.Instance.Player.LocalPlayer;
+            if (localPlayer == null) return false;
+
+            var tactician = target.GetComponent<TacticianActor>();
+            if (tactician == null) return false;
+
+            // Flip camera when viewing another player's arena (like TFT)
+            return tactician.OwnerID != localPlayer.Id;
         }
 
         void LateUpdate()

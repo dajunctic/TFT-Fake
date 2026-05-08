@@ -70,12 +70,8 @@ namespace Dajunctic
             transform.position += amount;
         }
 
-        public void MoveDirection(Vector3 direction, float moveSpeed, float rotateSpeed, float deltaTime)
-        {
-            // For HexGrid, we usually move to specific tiles, but we can implement basic direction
-            transform.position += direction * moveSpeed * deltaTime;
-            RotateDirection(direction, rotateSpeed, deltaTime, false);
-        }
+
+
 
         public void MovePosition(Vector3 position, float moveSpeed, float rotateSpeed, float stoppingDistance)
         {

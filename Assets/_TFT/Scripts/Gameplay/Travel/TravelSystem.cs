@@ -94,10 +94,25 @@ namespace Dajunctic
                     // Save original state
                     _travelingUnits[unit] = (pair.GuestId, unit.CachedTransform.position, unit.CurrentFieldCoord, true);
                     
-                    unit.Teleport(guestSpawnPos, false);
+                    int idx = guestUnits.IndexOf(unit);
+                    
+                    // First try to place them on the actual GuestFieldArea tile that corresponds to their Home position
+                    Vector3 spawnPos;
+                    if (homeArena.GuestFieldArea != null)
+                    {
+                        // Reflect the coordinates if needed, but for now just use the same coordinates on the GuestField
+                        spawnPos = homeArena.GetGuestFieldWorldPosition(unit.CurrentFieldCoord);
+                    }
+                    else
+                    {
+                        // Fallback to spawn point + offset
+                        spawnPos = guestSpawnPos + Vector3.right * (idx % 4 * 1.2f) + Vector3.forward * (idx / 4 * 1.2f);
+                    }
 
-                    // Re-register to Home Arena for combat detection
-                    _manager.Field.RegisterHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
+                    unit.Teleport(spawnPos, true);
+
+                    // Register to Home Arena's guest field for combat detection
+                    _manager.Field.RegisterGuestHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
                 }
 
                 // Also teleport the Guest's Tactician
@@ -107,7 +122,7 @@ namespace Dajunctic
                     var tactician = guestData.Tactician;
                     _travelingUnits[tactician] = (pair.GuestId, tactician.CachedTransform.position, Vector2Int.zero, false);
                     
-                    tactician.Teleport(guestSpawnPos, false);
+                    tactician.Teleport(guestSpawnPos, true);
                 }
             }
         }
@@ -127,12 +142,12 @@ namespace Dajunctic
                     if (isChampion && unit is ChampionActor champion)
                     {
                         Vector3 homePos = originalArena.GetFieldWorldPosition(originalCoord);
-                        champion.Teleport(homePos, false);
+                        champion.Teleport(homePos, true);
                         _manager.Field.RegisterHeroToTile(champion, originalCoord, originalArenaId);
                     }
                     else
                     {
-                        unit.Teleport(originalPos, false);
+                        unit.Teleport(originalPos, true);
                     }
                 }
             }

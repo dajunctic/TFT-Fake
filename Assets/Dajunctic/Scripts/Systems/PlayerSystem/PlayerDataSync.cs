@@ -292,13 +292,44 @@ namespace Dajunctic
             ChangeGold(-hero.rarity);
             _serverShop[slotIndex] = "";
 
-            // Tell client to spawn the champion locally on their bench
-            TargetSpawnHeroOnBench(Owner, heroId);
+            // Tell everyone to spawn the champion via NetworkSpawn
+            SpawnChampionOnServer(heroId, ownerId);
 
             // Update shop display so the slot shows as empty
             TargetUpdateShop(Owner, _serverShop);
+        }
 
-            Debug.Log($"[Server] {PlayerName.Value} bought {hero.displayName} for {hero.rarity} gold.");
+        private void SpawnChampionOnServer(string heroId, int ownerId)
+        {
+            var allHeroes = GameSystemManager.Instance?.Shop?.ShopSystemData?.allHeroes;
+            if (allHeroes == null) return;
+
+            var hero = allHeroes.FirstOrDefault(h => h.Id == heroId);
+            if (hero == null || hero.prefab == null) return;
+
+            var bench = GameSystemManager.Instance?.Bench;
+            var arena = bench?.GetArena(ownerId);
+            if (arena == null) return;
+
+            Vector2Int coord = bench.GetFirstEmptyTileCoord(ownerId);
+            if (coord.x == -1) return; // Should not happen due to CanAcceptHero check
+            
+            Vector3 worldPos = arena.GetBenchWorldPosition(coord);
+
+            GameObject obj = Instantiate(hero.prefab, worldPos, arena.BenchArea.CachedTransform.rotation);
+            FishNet.InstanceFinder.ServerManager.Spawn(obj); // NetworkSpawn 
+
+            var actor = obj.GetComponent<ChampionActor>();
+            var sync = obj.GetComponent<ChampionNetworkSync>();
+            if (sync == null)
+            {
+                sync = obj.AddComponent<ChampionNetworkSync>();
+            }
+            
+            if (actor != null && sync != null)
+            {
+                sync.RpcInitialize(ownerId, coord, heroId);
+            }
         }
 
         private void RollShop()
@@ -322,6 +353,12 @@ namespace Dajunctic
             _serverShop = results;
 
             TargetUpdateShop(Owner, results);
+
+            // Host needs a direct call because TargetRpc to self could be buffered
+            if (IsServerInitialized && Owner == LocalConnection)
+            {
+                GameSystemManager.Instance?.Shop?.SyncShopData(results);
+            }
         }
 
         /// <summary>Called by the server (e.g. Gameplay) to roll this player's shop on planning phase start.</summary>
@@ -338,23 +375,6 @@ namespace Dajunctic
             {
                 GameSystemManager.Instance.Shop.SyncShopData(championIds);
             }
-        }
-
-        /// <summary>Tells the owning client to spawn this champion locally on their bench.</summary>
-        [TargetRpc]
-        private void TargetSpawnHeroOnBench(NetworkConnection conn, string heroId)
-        {
-            var allHeroes = GameSystemManager.Instance?.Shop?.ShopSystemData?.allHeroes;
-            if (allHeroes == null) return;
-
-            var hero = allHeroes.FirstOrDefault(h => h.Id == heroId);
-            if (hero == null) return;
-
-            var localPlayer = GameSystemManager.Instance?.Player?.LocalPlayer;
-            if (localPlayer == null) return;
-
-            GameSystemManager.Instance.Bench.AddHeroToBench(localPlayer.Id, hero);
-            Debug.Log($"[Client] Spawned {hero.displayName} on bench for player {localPlayer.Name}.");
         }
 
         private int RollRarity(float[] chances)

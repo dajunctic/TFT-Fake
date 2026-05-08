@@ -1,11 +1,13 @@
+using System;
+
 namespace Dajunctic
 {
     public class TacticianStats
     {
-        public IStat PlayerHealth {get; }
-        public IStat Level {get; }
-        public IStat Experience {get; }
-        public IStat Gold {get; }
+        public IStat PlayerHealth { get; }
+        public IStat Level { get; }
+        public IStat Experience { get; }
+        public IStat Gold { get; }
 
         public TacticianStats()
         {

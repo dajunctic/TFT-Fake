@@ -14,6 +14,11 @@ namespace Dajunctic
         [SerializeField, Child] protected HeadPoint headPoint;
         [SerializeField] protected CombatActorData combatActorData;
         public CombatActorData CombatActorData => combatActorData;
+        
+        public void SetCombatData(CombatActorData data)
+        {
+            combatActorData = data;
+        }
         [SerializeField] private Team team;
         public Team CombatTeam => team;
         public int OwnerID { get; set; } = 0;
@@ -210,13 +215,8 @@ namespace Dajunctic
             }
         }
 
-        public void MoveDirection(Vector3 direction, float moveSpeed, float rotateSpeed, float deltaTime)
-        {
-            if (MoveAgent != null)
-            {
-                MoveAgent.MoveDirection(direction, moveSpeed, rotateSpeed, deltaTime);
-            }
-        }
+
+
 
         public void RotatePosition(Vector3 position, float rotateSpeed, float deltaTime, bool immediately)
         {

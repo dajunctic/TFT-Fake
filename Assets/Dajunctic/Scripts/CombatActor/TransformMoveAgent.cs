@@ -64,16 +64,8 @@ namespace Dajunctic
             RotateDirection(position - Position, rotateSpeed, Time.deltaTime, false);
         }
 
-        public void MoveDirection(
-            Vector3 direction,
-            float moveSpeed,
-            float rotateSpeed,
-            float deltaTime
-        )
-        {
-            Position += deltaTime * moveSpeed * direction;
-            RotateDirection(direction, rotateSpeed, deltaTime, false);
-        }
+
+
 
         public void RotateDirection(
             Vector3 direction,

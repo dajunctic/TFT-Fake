@@ -17,10 +17,10 @@ namespace Dajunctic
         public Vector3 Velocity => _navMeshAgent.velocity;
         public ObjectPoolMetadata<string> ObjectPoolMetadata { get; set; }
 
-        public static NavMeshMoveAgentPool Pool = new ();
+        public static NavMeshMoveAgentPool Pool = new();
         NavMeshAgent _navMeshAgent;
         Vector3 _lastDestination = Vector3.positiveInfinity;
-        
+
         public void Initialize()
         {
             _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -82,25 +82,9 @@ namespace Dajunctic
             _navMeshAgent.MoveAmount(amount);
         }
 
-        public void MoveDirection(Vector3 direction, float moveSpeed, float rotateSpeed, float deltaTime)
+        public void MovePosition(Vector3 position, float moveSpeed, float rotateSpeed, float stoppingDistance = 0.1f)
         {
-           _lastDestination = Vector3.positiveInfinity;
             if (_navMeshAgent.isActiveAndEnabled && _navMeshAgent.isOnNavMesh)
-            {
-                _navMeshAgent.MoveDirection(direction, moveSpeed, rotateSpeed, deltaTime);
-            }
-            else
-            {
-                direction.y = 0;
-                direction.Normalize();
-                _navMeshAgent.transform.position += direction * moveSpeed * deltaTime;
-                RotateDirection(direction, rotateSpeed, Time.deltaTime, false);
-            }
-        }
-
-        public void MovePosition(Vector3 position, float moveSpeed, float rotateSpeed, float stoppingDistance=0.1f)
-        {
-             if (_navMeshAgent.isActiveAndEnabled && _navMeshAgent.isOnNavMesh)
             {
                 if (_lastDestination != position)
                 {
@@ -143,12 +127,12 @@ namespace Dajunctic
                 _navMeshAgent.transform.position = position;
             }
         }
-    
+
 
 
     }
 
-    public class NavMeshMoveAgentPool: BaseObjectPool<string, NavMeshMoveAgent>
+    public class NavMeshMoveAgentPool : BaseObjectPool<string, NavMeshMoveAgent>
     {
         const string key = "key";
 

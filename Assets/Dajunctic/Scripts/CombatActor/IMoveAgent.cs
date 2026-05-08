@@ -17,7 +17,6 @@ namespace Dajunctic
         void SetOffset(float offset);
         void ToggleMoveCollision(bool enable);
         void MoveAmount(Vector3 amount);
-        void MoveDirection(Vector3 direction, float moveSpeed, float rotateSpeed, float deltaTime);
         void MovePosition(Vector3 position, float moveSpeed, float rotateSpeed, float stoppingDistance);
         void RotateDirection(Vector3 direction, float rotateSpeed, float deltaTime, bool immediately);
         void ForceStop();

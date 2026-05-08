@@ -16,6 +16,7 @@ namespace Dajunctic
 
         [Header("References")]
         public HexAreaView FieldArea;
+        public HexAreaView GuestFieldArea;
         public SquareAreaView BenchArea;
         public Transform GuestSpawnPoint;
         public Transform TacticianSpawnPoint;
@@ -51,6 +52,7 @@ namespace Dajunctic
             OwnerName = ownerName;
             
             if (FieldArea != null) FieldArea.Initialize();
+            if (GuestFieldArea != null) GuestFieldArea.Initialize();
             if (BenchArea != null) BenchArea.Initialize();
             SpawnChampionCountUI();
 
@@ -59,8 +61,12 @@ namespace Dajunctic
 
         public void Initialize(int ownerId, string ownerName)
         {
-            // For backward compatibility or local tests
-            SetOwnerServer(ownerId, ownerName);
+            OwnerID = ownerId;
+            OwnerName = ownerName;
+            if (FieldArea != null) FieldArea.Initialize();
+            if (GuestFieldArea != null) GuestFieldArea.Initialize();
+            if (BenchArea != null) BenchArea.Initialize();
+            SpawnChampionCountUI();
         }
 
         private void Start()
@@ -86,11 +92,13 @@ namespace Dajunctic
         private void RegisterToSystems()
         {
             if (GameSystemManager.Instance == null) return;
-            // Prevent duplicate registration if already registered
-            if (GameSystemManager.Instance.Field.GetArena(OwnerID) == this) return;
 
+            // Register vào Field
             GameSystemManager.Instance.Field.RegisterArena(this);
+
+            // Register vào Bench
             GameSystemManager.Instance.Bench.RegisterArena(this, fxGuid);
+
             Debug.Log($"Arena registered for player {OwnerID} on {(IsServerInitialized ? "Server" : "Client")}");
         }
 
@@ -99,6 +107,13 @@ namespace Dajunctic
             if (FieldArea == null || FieldArea.Data == null) return transform.position;
             Vector3 localPos = FieldArea.Data.HexToWorld(Vector3.zero, coord);
             return FieldArea.CachedTransform.TransformPoint(localPos);
+        }
+
+        public Vector3 GetGuestFieldWorldPosition(Vector2Int coord)
+        {
+            if (GuestFieldArea == null || GuestFieldArea.Data == null) return transform.position;
+            Vector3 localPos = GuestFieldArea.Data.HexToWorld(Vector3.zero, coord);
+            return GuestFieldArea.CachedTransform.TransformPoint(localPos);
         }
 
         public Vector3 GetBenchWorldPosition(Vector2Int coord)
@@ -117,6 +132,17 @@ namespace Dajunctic
             coord = FieldArea.Data.WorldToHex(localPos, Vector3.zero);
 
             return FieldArea.Data.TryGetTile(coord, out _);
+        }
+
+        public bool TrySnapToGuestField(Vector3 worldPos, out Vector2Int coord)
+        {
+            coord = new Vector2Int(-1, -1);
+            if (GuestFieldArea == null || GuestFieldArea.Data == null) return false;
+
+            Vector3 localPos = GuestFieldArea.CachedTransform.InverseTransformPoint(worldPos);
+            coord = GuestFieldArea.Data.WorldToHex(localPos, Vector3.zero);
+
+            return GuestFieldArea.Data.TryGetTile(coord, out _);
         }
 
         public bool TrySnapToBench(Vector3 worldPos, out Vector2Int coord)

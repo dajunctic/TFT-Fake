@@ -80,6 +80,7 @@ namespace Dajunctic
         // ── Observer update: continuous MovePosition (mirrors offline Tick) ───
         private void Update()
         {
+            if (_actor == null) _actor = GetComponent<TacticianActor>();
             if (IsOwner || _actor == null || !_hasDestination) return;
             if (_actor.MoveAgent == null || !_actor.MoveAgent.Initialized) return;
 
@@ -87,10 +88,11 @@ namespace Dajunctic
             _actor.MovePosition(_syncedDestination, _actor.Speed, _actor.RotateSpeed, Time.deltaTime);
 
             // Clear destination once actor arrives
-            if (Vector3.Distance(_actor.transform.position, _syncedDestination) < 0.2f)
+            if (Vector3.Distance(_actor.transform.position, _syncedDestination) < 0.15f)
             {
                 _hasDestination = false;
                 _syncedDestination = Vector3.positiveInfinity;
+                _actor.ForceStop();
             }
         }
     }

@@ -15,8 +15,8 @@ namespace Dajunctic
         public override bool CanBeTarget => true;
         private FishNet.Object.NetworkObject _netObj;
         public bool IsLocalPlayer => _netObj != null && _netObj.IsOwner;
-        
-        public new int OwnerID 
+
+        public new int OwnerID
         {
             get => _netObj != null && _netObj.IsSpawned && _netObj.OwnerId != -1 ? _netObj.OwnerId : base.OwnerID;
             set => base.OwnerID = value;
@@ -27,6 +27,11 @@ namespace Dajunctic
         private Transform _cameraTransform;
         private Camera _camera;
         private bool _tacticianInitialized;
+
+        // Joystick network sync
+        private float _lastJoystickSyncTime;
+        private const float JoystickSyncInterval = 0.1f;
+        private bool _wasJoystickActive;
 
         protected virtual void Start()
         {
@@ -48,13 +53,13 @@ namespace Dajunctic
             if (!_tacticianLinked)
             {
                 int resolvedOwnerId = _netObj != null && _netObj.IsSpawned ? _netObj.OwnerId : -1;
-                
+
                 if (resolvedOwnerId == -1 && GameSystemManager.Instance != null && GameSystemManager.Instance.Field != null)
                 {
                     var arenas = GameSystemManager.Instance.Field.GetAllArenas();
                     if (arenas != null)
                     {
-                        foreach(var a in arenas)
+                        foreach (var a in arenas)
                         {
                             Vector3 spawnPos = a.TacticianSpawnPoint != null ? a.TacticianSpawnPoint.position : a.transform.position;
                             if (Vector3.Distance(transform.position, spawnPos) < 2f)
@@ -95,7 +100,7 @@ namespace Dajunctic
             if (_netObj == null) _netObj = GetComponent<FishNet.Object.NetworkObject>();
             if (_networkMovement == null) _networkMovement = GetComponent<TacticianNetworkMovement>();
 
-            if (_tacticianInitialized) 
+            if (_tacticianInitialized)
             {
                 // Đã init rồi → chỉ cần warp lại MoveAgent về đúng vị trí hiện tại
                 // (trường hợp Awake init với vị trí prefab sai)
@@ -182,7 +187,7 @@ namespace Dajunctic
                 if (onNavMesh) targetPosition = navHit.position;
 
                 // Debug toàn bộ trạng thái trước khi move
-                bool agentOnMesh = MoveAgent != null && MoveAgent.Initialized && 
+                bool agentOnMesh = MoveAgent != null && MoveAgent.Initialized &&
                                    (MoveAgent as NavMeshMoveAgent) != null &&
                                    (MoveAgent as NavMeshMoveAgent).GetComponent<UnityEngine.AI.NavMeshAgent>()?.isOnNavMesh == true;
                 Debug.Log($"[OnRightClick] actor={gameObject.name} | IsLocalPlayer={IsLocalPlayer} | " +
@@ -225,7 +230,7 @@ namespace Dajunctic
                 _tickDebugTimer = 0;
                 // Debug.Log($"[Tick ALIVE] {gameObject.name} IsLocalPlayer={IsLocalPlayer} frame={Time.frameCount}");
             }
-            
+
             base.Tick();
 
             if (!IsLocalPlayer) return;
@@ -258,15 +263,15 @@ namespace Dajunctic
             {
                 inputDirection = FloatingJoystick.Instance.InputDirection;
             }
-            else if (VirtualJoystick.Instance != null) 
+            else if (VirtualJoystick.Instance != null)
             {
                 inputDirection = VirtualJoystick.Instance.InputDirection;
             }
-            
+
             if (inputDirection.sqrMagnitude > 0f)
             {
                 Vector3 moveDir = new Vector3(inputDirection.x, 0, inputDirection.y);
-                
+
                 if (_cameraTransform != null)
                 {
                     Vector3 cameraForward = _cameraTransform.forward;
@@ -275,14 +280,34 @@ namespace Dajunctic
                     cameraRight.y = 0;
                     cameraForward.Normalize();
                     cameraRight.Normalize();
-                    
+
                     moveDir = (cameraForward * inputDirection.y + cameraRight * inputDirection.x).normalized;
                 }
 
-                MoveDirection(moveDir, Speed, RotateSpeed, Time.deltaTime);
+                // Project a destination ahead and use MovePosition (same as click-to-move)
+                Vector3 projected = transform.position + moveDir * (Speed * 0.5f);
+                MovePosition(projected, Speed, RotateSpeed, 0.05f);
+
+                // Sync projected destination to observers (throttled)
+                if (IsLocalPlayer && _networkMovement != null && Time.time - _lastJoystickSyncTime >= JoystickSyncInterval)
+                {
+                    _networkMovement.CmdMoveTo(projected);
+                    _lastJoystickSyncTime = Time.time;
+                }
+                _wasJoystickActive = true;
+            }
+            else if (_wasJoystickActive)
+            {
+                // Joystick released → send final position so observer stops at correct spot
+                _wasJoystickActive = false;
+                ForceStop();
+                if (IsLocalPlayer && _networkMovement != null)
+                {
+                    _networkMovement.CmdMoveTo(transform.position);
+                }
             }
         }
 
-      
+
     }
 }

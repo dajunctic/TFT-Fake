@@ -112,10 +112,7 @@ namespace Dajunctic
 
                 // Auto-roll shop for all players at the start of planning phase
                 var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
-                foreach (var sync in playerSyncs)
-                {
-                    sync.ServerRollShop();
-                }
+                StartCoroutine(RollShopsNextFrame(playerSyncs));
             }
 
             if (phase == GameplayPhase.Carousel)
@@ -138,6 +135,15 @@ namespace Dajunctic
 
             OnPhaseChanged?.Invoke(phase);
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
+        }
+
+        private System.Collections.IEnumerator RollShopsNextFrame(PlayerDataSync[] syncs)
+        {
+            yield return null;
+            foreach (var sync in syncs)
+            {
+                sync.ServerRollShop();
+            }
         }
 
         [ObserversRpc(RunLocally = true, BufferLast = true)]

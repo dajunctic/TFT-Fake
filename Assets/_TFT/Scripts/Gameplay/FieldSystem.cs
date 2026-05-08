@@ -10,6 +10,7 @@ namespace Dajunctic
         // Scene ref — bound at runtime by FieldAreaBinder in the gameplay scene
         private List<Arena> _arenas = new List<Arena>();
         private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _heroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
+        private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _guestHeroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
         private GameSystemManager _manager;
 
         public async Task LoadDataAsync()
@@ -31,6 +32,8 @@ namespace Dajunctic
             if (!_arenas.Contains(arena)) _arenas.Add(arena);
             if (!_heroesOnArenas.ContainsKey(arena.OwnerID))
                 _heroesOnArenas[arena.OwnerID] = new Dictionary<Vector2Int, ChampionActor>();
+            if (!_guestHeroesOnArenas.ContainsKey(arena.OwnerID))
+                _guestHeroesOnArenas[arena.OwnerID] = new Dictionary<Vector2Int, ChampionActor>();
         }
 
         public Arena GetArena(int ownerId) => _arenas.Find(a => a.OwnerID == ownerId);
@@ -41,6 +44,8 @@ namespace Dajunctic
         {
             foreach (var dict in _heroesOnArenas.Values) dict.Clear();
             _heroesOnArenas.Clear();
+            foreach (var dict in _guestHeroesOnArenas.Values) dict.Clear();
+            _guestHeroesOnArenas.Clear();
             _arenas.Clear();
             Debug.Log("<color=yellow>FieldSystem shutdown</color>");
         }
@@ -109,11 +114,31 @@ namespace Dajunctic
             }
         }
 
+        public void RegisterGuestHeroToTile(ChampionActor actor, Vector2Int coord, int arenaId)
+        {
+            if (actor == null) return;
+            if (!_guestHeroesOnArenas.TryGetValue(arenaId, out var heroes))
+            {
+                Debug.LogWarning($"FieldSystem: Arena {arenaId} not registered for guest tracking.");
+                return;
+            }
+            heroes[coord] = actor;
+            // Note: Guest units keep their original OwnerID and CurrentFieldCoord (relative to their home board)
+            // They are placed physically on the GuestFieldArea but logically tracked here for the battle.
+        }
+
         public void UnregisterHero(ChampionActor actor)
         {
             foreach (var arenaId in _heroesOnArenas.Keys.ToList())
             {
                 var heroes = _heroesOnArenas[arenaId];
+                var keysToRemove = heroes.Where(kvp => kvp.Value == actor || kvp.Value == null).Select(kvp => kvp.Key).ToList();
+                foreach (var key in keysToRemove) heroes.Remove(key);
+            }
+
+            foreach (var arenaId in _guestHeroesOnArenas.Keys.ToList())
+            {
+                var heroes = _guestHeroesOnArenas[arenaId];
                 var keysToRemove = heroes.Where(kvp => kvp.Value == actor || kvp.Value == null).Select(kvp => kvp.Key).ToList();
                 foreach (var key in keysToRemove) heroes.Remove(key);
             }
