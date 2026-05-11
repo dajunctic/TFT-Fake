@@ -37,17 +37,13 @@ namespace Dajunctic
             var canvas = GetComponent<Canvas>();
             if (canvas != null) canvas.worldCamera = Camera.main;
 
-            // Unsubscribe from previous owner if exists
-            if (_owner != null && _owner != owner)
-            {
-                UnsubscribeFromOwner();
-            }
-
             _owner = owner;            
             UpdateStarLevel(starLevel);
 
             if (_owner != null)
             {
+                // Unsubscribe first just in case to avoid double subscriptions
+                _owner.OnHpChanged -= UpdateHp;
                 _owner.OnHpChanged += UpdateHp;
 
                 UpdateHp(_owner.MaxHp > 0 ? _owner.Hp / _owner.MaxHp : 1f);
@@ -60,6 +56,12 @@ namespace Dajunctic
             this.RegisterListener<ChampionItemsChangedEvent>(OnItemsChanged);
             this.RegisterListener<DespawnHpViewEvent>(OnDespawn);
             this.RegisterListener<UpdateStarLevelEvent>(OnUpdateStarLevel);
+
+            if (_owner != null)
+            {
+                _owner.OnHpChanged -= UpdateHp;
+                _owner.OnHpChanged += UpdateHp;
+            }
         }
 
         public override void StopListenEvents()

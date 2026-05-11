@@ -168,8 +168,8 @@ namespace Dajunctic
             if (actor != null)
             {
                 actor.CurrentFieldCoord = coord;
-                actor.SetStarLevel(starLevel);
                 actor.Initialize();
+                actor.SetStarLevel(starLevel);
                 RegisterHeroToTile(actor, coord, arenaId);
             }
         }

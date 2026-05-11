@@ -117,19 +117,31 @@ namespace Dajunctic
             {
                 _heroesOnArenas[ownerId][coord] = actor;
                 actor.CurrentBenchCoord = coord;
-                actor.SetStarLevel(starLevel);
                 actor.Initialize();
+                actor.SetStarLevel(starLevel);
 
                 CheckForUpgrades(ownerId, heroData, starLevel);
             }
         }
 
-        /// <summary>
-        /// Perform an upgrade when bench is full. The purchased hero is consumed
-        /// without being placed — we only need 2 existing copies on board.
-        /// </summary>
+        public bool ServerDirectUpgrade(int ownerId, ChampionData heroData, int starLevel)
+        {
+            if (starLevel >= 5) return false;
+
+            var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
+
+            if (allMatching.Count >= 2)
+            {
+                ServerMergeHeroes(ownerId, allMatching.Take(2).ToList(), heroData, starLevel + 1);
+                return true;
+            }
+
+            return false;
+        }
+
         private bool TryDirectUpgrade(int ownerId, ChampionData heroData, int starLevel)
         {
+            // [Offline mode only]
             if (starLevel >= 5) return false;
 
             var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
@@ -160,10 +172,11 @@ namespace Dajunctic
             if (_manager.Field != null)
             {
                 heroesOnField = _manager.Field.GetAllHeroes()
-                    .Where(h => h != null && h.CombatActorData != null &&
+                    .Where(h => h != null && h.OwnerID == ownerId && 
+                                h.CombatActorData != null &&
                                 h.CombatActorData.Id == heroData.Id &&
                                 h.StarLevel == starLevel)
-                    .ToList(); // Note: This gets ALL heroes from ALL fields, might need to filter by owner
+                    .ToList(); 
             }
 
             return heroesOnBench.Concat(heroesOnField).ToList();
@@ -350,8 +363,8 @@ namespace Dajunctic
 
             if (actor != null)
             {
-                actor.SetStarLevel(starLevel);
                 actor.Initialize();
+                actor.SetStarLevel(starLevel);
                 RegisterHeroToTile(actor, coord, ownerId);
             }
         }

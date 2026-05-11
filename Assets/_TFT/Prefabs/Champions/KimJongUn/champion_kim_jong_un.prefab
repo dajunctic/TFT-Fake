@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 172210571300876399}
   - component: {fileID: 4852049859831645437}
   - component: {fileID: 8918323053939560271}
+  - component: {fileID: 7755480634573907689}
   m_Layer: 0
   m_Name: champion_kim_jong_un
   m_TagString: Untagged
@@ -169,6 +170,21 @@ MonoBehaviour:
   team: 0
   <StarLevel>k__BackingField: 1
 --- !u!114 &8918323053939560271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7384916206326369437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf5e7f1b2d1518847a62e1a645a73949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChampionNetworkSync
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 2934216498749918023}
+  _networkObjectCache: {fileID: 0}
+--- !u!114 &7755480634573907689
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

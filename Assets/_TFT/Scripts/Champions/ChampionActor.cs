@@ -39,6 +39,16 @@ namespace Dajunctic
 
         #endregion
 
+        protected override void Awake()
+        {
+            // Bypass BaseView.Awake() to prevent the "initialize" flag from firing Initialize() too early.
+            // This ensures network values (CombatActorData, StarLevel) are set before HpView is spawned.
+            if (Application.isPlaying && TickerView.Instance != null)
+            {
+                ticker = TickerView.Instance.ticker;
+            }
+        }
+
         public void SetStarLevel(int level)
         {
             StarLevel = level;

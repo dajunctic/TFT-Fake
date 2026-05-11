@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 4702493526188415639}
   - component: {fileID: 4989696822353567574}
   - component: {fileID: 5561191962919816373}
+  - component: {fileID: 8231736888831609695}
   m_Layer: 3
   m_Name: trump
   m_TagString: Untagged
@@ -201,6 +202,21 @@ MonoBehaviour:
     Scale: {x: 0, y: 0, z: 0}
     IsValid: 0
 --- !u!114 &5561191962919816373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7579838385617486944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf5e7f1b2d1518847a62e1a645a73949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChampionNetworkSync
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 4989696822353567574}
+  _networkObjectCache: {fileID: 0}
+--- !u!114 &8231736888831609695
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

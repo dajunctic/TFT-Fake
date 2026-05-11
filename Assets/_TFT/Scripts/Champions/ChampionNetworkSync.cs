@@ -32,8 +32,8 @@ namespace Dajunctic
                 _actor.SetCombatData(data);
             }
 
-            _actor.SetStarLevel(starLevel);
             _actor.Initialize();
+            _actor.SetStarLevel(starLevel);
             GameSystemManager.Instance?.Bench?.RegisterHeroToTile(_actor, coord, ownerId);
             
             // Re-warp to correctly snap to bench if initializing late

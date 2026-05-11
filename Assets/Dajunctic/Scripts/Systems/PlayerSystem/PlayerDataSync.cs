@@ -312,7 +312,12 @@ namespace Dajunctic
             if (arena == null) { Debug.LogError($"[SpawnChampion] Arena not found for ownerId={ownerId}."); return; }
 
             Vector2Int coord = bench.GetFirstEmptyTileCoord(ownerId);
-            if (coord.x == -1) { Debug.LogWarning("[SpawnChampion] No empty bench tile."); return; }
+            if (coord.x == -1) 
+            { 
+                // Bench is full. We already passed CanAcceptHero check so this MUST be a direct upgrade.
+                bench.ServerDirectUpgrade(ownerId, hero, 1);
+                return; 
+            }
 
             if (arena.BenchArea == null) { Debug.LogError("[SpawnChampion] arena.BenchArea is null."); return; }
 
@@ -343,8 +348,18 @@ namespace Dajunctic
             var actor = obj.GetComponent<ChampionActor>();
             if (actor != null && netSync != null)
             {
+                // ---- SERVER-SIDE SETUP FIRST ----
+                actor.OwnerID = ownerId;
+                actor.CurrentBenchCoord = coord;
+                actor.SetCombatData(hero);
+                actor.Initialize();
+                actor.SetStarLevel(1);
+                GameSystemManager.Instance.Bench.RegisterHeroToTile(actor, coord, ownerId);
+
+                // ---- CLIENT SYNC ----
                 netSync.RpcInitialize(ownerId, coord, heroId, 1);
-                // Trigger merge logic on server after spawning
+                
+                // ---- TRIGGER UPGRADE CHECK ----
                 GameSystemManager.Instance.Bench.ServerCheckForUpgrades(ownerId, hero, 1);
             }
         }

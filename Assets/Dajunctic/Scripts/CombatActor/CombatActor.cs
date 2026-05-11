@@ -10,14 +10,21 @@ namespace Dajunctic
     public class CombatActor : BaseView, ICombatActor
     {
         [SerializeField, Child] protected Animator animator;
-        [SerializeField, Child] protected MidPoint midPoint;
-        [SerializeField, Child] protected HeadPoint headPoint;
+        [SerializeField, Child(Flag.Optional | Flag.IncludeInactive)] protected MidPoint midPoint;
+        [SerializeField, Child(Flag.Optional | Flag.IncludeInactive)] protected HeadPoint headPoint;
         [SerializeField] protected CombatActorData combatActorData;
         public CombatActorData CombatActorData => combatActorData;
         
         public void SetCombatData(CombatActorData data)
         {
             combatActorData = data;
+            if (Initialized && data != null)
+            {
+                Stats = new ChampionStats(combatActorData);
+                InitializeSkills();
+                InitDamageTaker();
+                OnHpChanged?.Invoke(MaxHp > 0 ? Hp / MaxHp : 1f);
+            }
         }
         [SerializeField] private Team team;
         public Team CombatTeam => team;
@@ -35,8 +42,8 @@ namespace Dajunctic
 
         void OnValidate() => this.ValidateRefs();
         public CombatActor CurrentTarget { get; private set; }
-        public Vector3 MidPoint => midPoint.Position;
-        public Vector3 HeadPoint => headPoint.Position;
+        public Vector3 MidPoint => midPoint != null ? midPoint.Position : CachedTransform.position + Vector3.up * 1f;
+        public Vector3 HeadPoint => headPoint != null ? headPoint.Position : CachedTransform.position + Vector3.up * 2f;
         public float CombatRadius => combatActorData.movement.radius;
         public float Speed => combatActorData.movement.moveSpeed;
         public float RotateSpeed => combatActorData.movement.rotateSpeed;

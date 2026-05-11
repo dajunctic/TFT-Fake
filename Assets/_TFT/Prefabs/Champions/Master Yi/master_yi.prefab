@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 7293535280800730919}
   - component: {fileID: 5960957129209588342}
   - component: {fileID: 5373387710257704903}
-  - component: {fileID: 2859199927436729440}
+  - component: {fileID: 5821985224502875645}
   m_Layer: 3
   m_Name: master_yi
   m_TagString: Untagged
@@ -222,7 +222,7 @@ MonoBehaviour:
     Rotation: {x: 0, y: 0, z: 0, w: 0}
     Scale: {x: 0, y: 0, z: 0}
     IsValid: 0
---- !u!114 &2859199927436729440
+--- !u!114 &5821985224502875645
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
