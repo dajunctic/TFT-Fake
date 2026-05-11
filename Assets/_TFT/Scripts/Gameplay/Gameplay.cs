@@ -102,17 +102,21 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Planning)
             {
-                ShowPlanningPopupRpc();
-                
                 // Return everyone home when planning starts
                 if (GameSystemManager.Instance.Travel != null)
                 {
                     GameSystemManager.Instance.Travel.ReturnAllUnits();
                 }
 
-                // Auto-roll shop for all players at the start of planning phase
+                // Roll shops FIRST so CurrentShop is populated before the popup opens.
+                // Previously used a coroutine (yield 1 frame) which caused a race condition:
+                // popup would open with empty slots before shop data arrived.
                 var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
-                StartCoroutine(RollShopsNextFrame(playerSyncs));
+                foreach (var sync in playerSyncs)
+                    sync.ServerRollShop();
+
+                // Show planning popup AFTER shops are rolled
+                ShowPlanningPopupRpc();
             }
 
             if (phase == GameplayPhase.Carousel)
@@ -137,14 +141,9 @@ namespace Dajunctic
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
         }
 
-        private System.Collections.IEnumerator RollShopsNextFrame(PlayerDataSync[] syncs)
-        {
-            yield return null;
-            foreach (var sync in syncs)
-            {
-                sync.ServerRollShop();
-            }
-        }
+        // NOTE: RollShopsNextFrame coroutine removed.
+        // Shops are now rolled synchronously before ShowPlanningPopupRpc() is called
+        // to avoid the race condition where popup opened before shop data was ready.
 
         [ObserversRpc(RunLocally = true, BufferLast = true)]
         private void ShowPlanningPopupRpc()

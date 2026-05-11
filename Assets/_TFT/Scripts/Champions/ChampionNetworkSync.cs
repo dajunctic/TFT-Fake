@@ -16,7 +16,7 @@ namespace Dajunctic
         }
 
         [ObserversRpc(RunLocally = true, BufferLast = true)]
-        public void RpcInitialize(int ownerId, Vector2Int coord, string heroId)
+        public void RpcInitialize(int ownerId, Vector2Int coord, string heroId, int starLevel)
         {
             if (_actor == null) _actor = GetComponent<ChampionActor>();
             
@@ -32,12 +32,20 @@ namespace Dajunctic
                 _actor.SetCombatData(data);
             }
 
+            _actor.SetStarLevel(starLevel);
             _actor.Initialize();
             GameSystemManager.Instance?.Bench?.RegisterHeroToTile(_actor, coord, ownerId);
             
             // Re-warp to correctly snap to bench if initializing late
             Vector3 worldPos = GameSystemManager.Instance.Bench.GetWorldPosition(ownerId, coord);
             _actor.Teleport(worldPos, false);
+        }
+
+        [ObserversRpc(RunLocally = true, BufferLast = true)]
+        public void RpcSetStarLevel(int level)
+        {
+            if (_actor == null) _actor = GetComponent<ChampionActor>();
+            _actor.SetStarLevel(level);
         }
     }
 }

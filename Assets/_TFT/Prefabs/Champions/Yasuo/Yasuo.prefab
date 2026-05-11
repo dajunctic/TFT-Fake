@@ -42,7 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1209304359209933305}
   - component: {fileID: 8559649542396042}
-  - component: {fileID: 7207437951650033161}
   m_Layer: 7
   m_Name: tl_atk_1
   m_TagString: Untagged
@@ -86,22 +85,6 @@ PlayableDirector:
     value: {fileID: 3755751294420581376}
   m_ExposedReferences:
     m_References: []
---- !u!114 &7207437951650033161
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2078696239650095125}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83045db74a1b4324fb819ae73f5d0bc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: tl_yasuo_atk_1
-  director: {fileID: 8559649542396042}
-  combatActor: {fileID: 3926964165616786729}
-  timelineObject: []
 --- !u!1 &3755751294420581376
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,6 +96,8 @@ GameObject:
   - component: {fileID: 5629355049281097088}
   - component: {fileID: 3926964165616786729}
   - component: {fileID: 854780554582856675}
+  - component: {fileID: 6432346406142831569}
+  - component: {fileID: 6341435836139508012}
   m_Layer: 7
   m_Name: Yasuo
   m_TagString: Untagged
@@ -149,7 +134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998ab57fa0d8fc241b85f7dbab874881, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ticker: {fileID: 11400000, guid: 69637e065e9ebe044b05bb43a9a77de2, type: 2}
   initialize: 1
   tick: 2
   animator: {fileID: 2280356384103668192}
@@ -158,8 +142,6 @@ MonoBehaviour:
   combatActorData: {fileID: 11400000, guid: 07098246d960603438c859527eeda62c, type: 2}
   team: 0
   <StarLevel>k__BackingField: 1
-  hpViewPrefab: {fileID: 6893235465245587854, guid: 75d36edeabf12954cbcdedc095c7099d, type: 3}
-  testSkillIds: []
 --- !u!136 &854780554582856675
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -183,6 +165,78 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6432346406142831569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3755751294420581376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b716c41e9b56b4baafaf13a523ba2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: FishNet.Runtime::FishNet.Object.NetworkObject
+  <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
+  <ComponentIndex>k__BackingField: 0
+  <PredictedSpawn>k__BackingField: {fileID: 0}
+  <PredictedOwner>k__BackingField: {fileID: 0}
+  NetworkBehaviours: []
+  InitializedParentNetworkBehaviour: {fileID: 0}
+  InitializedNestedNetworkObjects: []
+  RuntimeParentNetworkBehaviour: {fileID: 0}
+  RuntimeChildNetworkBehaviours: []
+  _isNetworked: 1
+  _isSpawnable: 1
+  _isGlobal: 0
+  _initializeOrder: 0
+  _preventDespawnOnDisconnect: 0
+  _defaultDespawnType: 0
+  _initializedTimestamp: 0
+  _localLevelOfDetailCalculationType: 0
+  _useLevelOfDetail: 0
+  _useRootLevelOfDetail: 1
+  NetworkObserver: {fileID: 0}
+  _enablePrediction: 0
+  _predictionType: 0
+  _localReconcileCorrectionType: 2
+  _graphicalObject: {fileID: 0}
+  _detachGraphicalObject: 0
+  _enableStateForwarding: 1
+  _networkTransform: {fileID: 0}
+  _ownerInterpolation: 1
+  _ownerSmoothedProperties: 255
+  _adaptiveInterpolation: 3
+  _spectatorSmoothedProperties: 255
+  _spectatorInterpolation: 2
+  _enableTeleport: 0
+  _teleportThreshold: 1
+  <PrefabId>k__BackingField: 65535
+  <SpawnableCollectionId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 11243880059923607456
+  SceneId: 0
+  SerializedTransformProperties:
+    Position: {x: 0, y: 0, z: 0}
+    Rotation: {x: 0, y: 0, z: 0, w: 0}
+    Scale: {x: 0, y: 0, z: 0}
+    IsValid: 0
+--- !u!114 &6341435836139508012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3755751294420581376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf5e7f1b2d1518847a62e1a645a73949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChampionNetworkSync
+  _componentIndexCache: 255
+  _addedNetworkObject: {fileID: 6432346406142831569}
+  _networkObjectCache: {fileID: 0}
 --- !u!1 &8937652198380267230
 GameObject:
   m_ObjectHideFlags: 0

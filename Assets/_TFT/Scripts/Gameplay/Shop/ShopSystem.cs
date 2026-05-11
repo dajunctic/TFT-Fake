@@ -46,12 +46,19 @@ namespace Dajunctic
         /// Finds the PlayerDataSync NetworkObject owned by the local client.
         /// We cannot use Connection.FirstObject because that returns the Tactician (spawned first).
         /// Instead, search all spawned PlayerDataSync objects and find the one this client owns.
+        /// NOTE: On host, PlayerDataSync may be spawned without owner, so IsOwner can be false.
+        /// We fall back to matching SyncVar ClientId against our local client ID.
         /// </summary>
         private PlayerDataSync GetLocalPlayerSync()
         {
             if (!FishNet.InstanceFinder.IsClientStarted) return null;
 
+            int localClientId = FishNet.InstanceFinder.ClientManager?.Connection?.ClientId ?? -1;
+            if (localClientId < 0) return null;
+
             var allSyncs = UnityEngine.Object.FindObjectsByType<PlayerDataSync>(UnityEngine.FindObjectsSortMode.None);
+            
+            // First pass: try IsOwner (standard FishNet ownership)
             foreach (var sync in allSyncs)
             {
                 var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
@@ -59,7 +66,14 @@ namespace Dajunctic
                     return sync;
             }
 
-            Debug.LogWarning("[ShopSystem] Could not find local PlayerDataSync (IsOwner). ServerRpc will not be sent.");
+            // Fallback: match by SyncVar ClientId (handles host spawned without owner)
+            foreach (var sync in allSyncs)
+            {
+                if ((int)sync.ClientId.Value == localClientId)
+                    return sync;
+            }
+
+            Debug.LogWarning("[ShopSystem] Could not find local PlayerDataSync (IsOwner or ClientId match). ServerRpc will not be sent.");
             return null;
         }
 

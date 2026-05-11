@@ -34,7 +34,10 @@ namespace Dajunctic
 
         private void OnOwnerIdChanged(int prev, int next, bool asServer)
         {
-            if (next != -1 && !asServer) 
+            // Register on both server and client when ownerId is set.
+            // Previously only ran on !asServer, causing BenchSystem/FieldSystem
+            // to miss arena registration on the host side → KeyNotFoundException in CmdBuyChampion.
+            if (next != -1)
             {
                 RegisterToSystems();
             }

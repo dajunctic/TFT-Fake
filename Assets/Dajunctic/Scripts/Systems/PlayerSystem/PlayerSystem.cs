@@ -79,6 +79,8 @@ namespace Dajunctic
                 SpawnTacticians();
                 _tacticiansSpawned = true;
                 Debug.Log($"[PlayerSystem] Server setup complete. Players: {_players.Count}");
+                
+                OnPlayerListInitialized?.Invoke();
             }
             else
             {
@@ -114,8 +116,6 @@ namespace Dajunctic
                 AssignRandomTactician(pd, pool);
                 _players.Add(pd);
             }
-            
-            OnPlayerListInitialized?.Invoke();
         }
 
         private void AssignRandomTactician(PlayerData pd, List<TacticianData> pool)
@@ -176,17 +176,31 @@ namespace Dajunctic
                 var obj = Instantiate(_playerDataSyncPrefab);
                 var sync = obj.GetComponent<PlayerDataSync>();
 
-                // Give ownership to the correct client
+                // Give ownership to the correct client connection
                 var clients = FishNet.InstanceFinder.ServerManager.Clients;
+                FishNet.Connection.NetworkConnection ownerConn = null;
+
                 if (player.ClientId >= 0 && clients.TryGetValue(player.ClientId, out var clientConn))
                 {
-                    FishNet.InstanceFinder.ServerManager.Spawn(obj, clientConn);
+                    ownerConn = clientConn;
+                }
+                else if (player.ClientId == 0 && FishNet.InstanceFinder.ClientManager?.Connection != null)
+                {
+                    // Host fallback: Clients dict may not be populated yet for clientId 0.
+                    // Use the local client connection directly.
+                    ownerConn = FishNet.InstanceFinder.ClientManager.Connection;
+                    Debug.Log($"[PlayerSystem] Using LocalConnection fallback for host player '{player.Name}'.");
+                }
+
+                if (ownerConn != null)
+                {
+                    FishNet.InstanceFinder.ServerManager.Spawn(obj, ownerConn);
                     Debug.Log($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) with owner.");
                 }
                 else
                 {
                     FishNet.InstanceFinder.ServerManager.Spawn(obj);
-                    Debug.Log($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) without owner.");
+                    Debug.LogWarning($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) WITHOUT owner — ServerRpc won't work!");
                 }
 
                 // Set synced data

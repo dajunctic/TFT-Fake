@@ -302,33 +302,50 @@ namespace Dajunctic
         private void SpawnChampionOnServer(string heroId, int ownerId)
         {
             var allHeroes = GameSystemManager.Instance?.Shop?.ShopSystemData?.allHeroes;
-            if (allHeroes == null) return;
+            if (allHeroes == null) { Debug.LogError("[SpawnChampion] allHeroes is null."); return; }
 
             var hero = allHeroes.FirstOrDefault(h => h.Id == heroId);
-            if (hero == null || hero.prefab == null) return;
+            if (hero == null || hero.prefab == null) { Debug.LogError($"[SpawnChampion] hero '{heroId}' or prefab is null."); return; }
 
             var bench = GameSystemManager.Instance?.Bench;
             var arena = bench?.GetArena(ownerId);
-            if (arena == null) return;
+            if (arena == null) { Debug.LogError($"[SpawnChampion] Arena not found for ownerId={ownerId}."); return; }
 
             Vector2Int coord = bench.GetFirstEmptyTileCoord(ownerId);
-            if (coord.x == -1) return; // Should not happen due to CanAcceptHero check
-            
-            Vector3 worldPos = arena.GetBenchWorldPosition(coord);
+            if (coord.x == -1) { Debug.LogWarning("[SpawnChampion] No empty bench tile."); return; }
 
-            GameObject obj = Instantiate(hero.prefab, worldPos, arena.BenchArea.CachedTransform.rotation);
-            FishNet.InstanceFinder.ServerManager.Spawn(obj); // NetworkSpawn 
+            if (arena.BenchArea == null) { Debug.LogError("[SpawnChampion] arena.BenchArea is null."); return; }
+
+            Vector3 worldPos = arena.GetBenchWorldPosition(coord);
+            Quaternion spawnRot = arena.BenchArea.CachedTransform != null
+                ? arena.BenchArea.CachedTransform.rotation
+                : Quaternion.identity;
+
+            GameObject obj = Instantiate(hero.prefab, worldPos, spawnRot);
+
+            // Ensure the spawned instance has the required FishNet components.
+            // Champion prefabs may not have NetworkObject/ChampionNetworkSync baked in.
+            var nob = obj.GetComponent<FishNet.Object.NetworkObject>();
+            if (nob == null)
+            {
+                Debug.LogWarning($"[SpawnChampion] Prefab '{hero.prefab.name}' missing NetworkObject — adding at runtime.");
+                nob = obj.AddComponent<FishNet.Object.NetworkObject>();
+            }
+
+            var netSync = obj.GetComponent<ChampionNetworkSync>();
+            if (netSync == null)
+                netSync = obj.AddComponent<ChampionNetworkSync>();
+
+            // Use NetworkBehaviour.ServerManager (from base class) — safer than InstanceFinder
+            if (ServerManager == null) { Debug.LogError("[SpawnChampion] ServerManager is null — not on server?"); Destroy(obj); return; }
+            ServerManager.Spawn(obj);
 
             var actor = obj.GetComponent<ChampionActor>();
-            var sync = obj.GetComponent<ChampionNetworkSync>();
-            if (sync == null)
+            if (actor != null && netSync != null)
             {
-                sync = obj.AddComponent<ChampionNetworkSync>();
-            }
-            
-            if (actor != null && sync != null)
-            {
-                sync.RpcInitialize(ownerId, coord, heroId);
+                netSync.RpcInitialize(ownerId, coord, heroId, 1);
+                // Trigger merge logic on server after spawning
+                GameSystemManager.Instance.Bench.ServerCheckForUpgrades(ownerId, hero, 1);
             }
         }
 
@@ -352,12 +369,24 @@ namespace Dajunctic
             // Save server-side shop state so CmdBuyChampion can validate slot contents
             _serverShop = results;
 
-            TargetUpdateShop(Owner, results);
-
-            // Host needs a direct call because TargetRpc to self could be buffered
-            if (IsServerInitialized && Owner == LocalConnection)
+            // Send shop data to the owning client via TargetRpc.
+            // Owner may be null if this PlayerDataSync was spawned without owner (host case).
+            if (Owner != null)
             {
-                GameSystemManager.Instance?.Shop?.SyncShopData(results);
+                TargetUpdateShop(Owner, results);
+            }
+
+            // For the host player: TargetRpc to self is deferred or Owner may be null.
+            // Use the SyncVar ClientId to identify if this PlayerDataSync belongs to the
+            // local client (host), and if so, call SyncShopData directly.
+            if (IsServerInitialized)
+            {
+                int localClientId = FishNet.InstanceFinder.ClientManager?.Connection?.ClientId ?? -1;
+                if (localClientId >= 0 && (int)ClientId.Value == localClientId)
+                {
+                    Debug.Log($"[RollShop] Host match: ClientId.Value={ClientId.Value} == localClientId={localClientId}. Calling SyncShopData directly.");
+                    GameSystemManager.Instance?.Shop?.SyncShopData(results);
+                }
             }
         }
 

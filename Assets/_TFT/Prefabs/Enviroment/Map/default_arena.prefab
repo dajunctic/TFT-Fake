@@ -112,6 +112,9 @@ MonoBehaviour:
   tick: 2
   Data: {fileID: 11400000, guid: 06b66728272b5e8428f5c553b12f5c49, type: 2}
   tilePrefab: {fileID: 7484620664599057966, guid: 2a2034d25fd323446aefb7d601f41045, type: 3}
+  areaType: 1
+  ownFieldColor: {r: 0, g: 0.6, b: 1, a: 1}
+  guestFieldColor: {r: 1, g: 0.25, b: 0.1, a: 1}
 --- !u!114 &2289658252800778157
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,6 +397,9 @@ MonoBehaviour:
   tick: 2
   Data: {fileID: 11400000, guid: 06b66728272b5e8428f5c553b12f5c49, type: 2}
   tilePrefab: {fileID: 7484620664599057966, guid: 2a2034d25fd323446aefb7d601f41045, type: 3}
+  areaType: 2
+  ownFieldColor: {r: 0, g: 0.6, b: 1, a: 1}
+  guestFieldColor: {r: 1, g: 0.25, b: 0.1, a: 1}
 --- !u!114 &5427607648544404229
 MonoBehaviour:
   m_ObjectHideFlags: 0

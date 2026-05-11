@@ -112,10 +112,17 @@ namespace Dajunctic
         {
             if (_owner == null) return;
             
-            // If owner is destroyed or inactive, we should hide/despawn the HP view
-            if (_owner.gameObject == null || !_owner.gameObject.activeInHierarchy)
+            // If owner is destroyed, we should despawn the HP view
+            if (_owner.gameObject == null)
             {
                 ActualDespawn();
+                return;
+            }
+
+            // If owner is inactive (e.g. FishNet disabling it temporarily during spawn),
+            // just skip updating visuals, but DO NOT despawn.
+            if (!_owner.gameObject.activeInHierarchy)
+            {
                 return;
             }
 

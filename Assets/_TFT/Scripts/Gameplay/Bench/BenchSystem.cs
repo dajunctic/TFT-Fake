@@ -73,6 +73,10 @@ namespace Dajunctic
             Arena arena = GetArena(ownerId);
             if (arena == null || arena.BenchArea == null || arena.BenchArea.Data == null) return new Vector2Int(-1, -1);
 
+            // Auto-create entry to avoid KeyNotFoundException if arena was registered late
+            if (!_heroesOnArenas.ContainsKey(ownerId))
+                _heroesOnArenas[ownerId] = new Dictionary<Vector2Int, ChampionActor>();
+
             var sortedTiles = arena.BenchArea.Data.ActiveTiles
                 .OrderBy(t => t.coordinates.x)
                 .ThenBy(t => t.coordinates.y)
@@ -163,6 +167,83 @@ namespace Dajunctic
             }
 
             return heroesOnBench.Concat(heroesOnField).ToList();
+        }
+
+        public void ServerCheckForUpgrades(int ownerId, ChampionData heroData, int starLevel)
+        {
+            if (starLevel >= 5) return;
+
+            var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
+
+            if (allMatching.Count >= 3)
+            {
+                ServerMergeHeroes(ownerId, allMatching.Take(3).ToList(), heroData, starLevel + 1);
+            }
+        }
+
+        private void ServerMergeHeroes(int ownerId, List<ChampionActor> instances, ChampionData heroData, int newStarLevel)
+        {
+            Debug.Log($"[Server] Upgrading {heroData.displayName} to {newStarLevel} stars for player {ownerId}!");
+
+            ChampionActor targetHero = instances.FirstOrDefault(h => h.IsOnField);
+            if (targetHero == null)
+            {
+                targetHero = instances
+                    .OrderBy(h => h.CurrentBenchCoord.x)
+                    .ThenBy(h => h.CurrentBenchCoord.y)
+                    .First();
+            }
+
+            Vector3 spawnPos = targetHero.IsOnField 
+                ? _manager.Field.GetWorldPosition(ownerId, targetHero.CurrentFieldCoord) 
+                : GetWorldPosition(ownerId, targetHero.CurrentBenchCoord);
+
+            foreach (var hero in instances)
+            {
+                if (hero == targetHero) continue;
+
+                UnregisterHero(hero);
+                if (_manager.Field != null) _manager.Field.UnregisterHero(hero);
+
+                if (hero.MoveAgent != null)
+                {
+                    hero.MoveAgent.SetEnable(false);
+                    if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
+                    {
+                        navMeshAgent.Cleanup();
+                    }
+                    hero.MoveAgent = null;
+                }
+                hero.InterruptAction();
+                hero.ForceStop();
+
+                if (FishNet.InstanceFinder.IsServerStarted)
+                {
+                    FishNet.InstanceFinder.ServerManager.Despawn(hero.gameObject);
+                }
+                else
+                {
+                    Destroy(hero.gameObject);
+                }
+            }
+
+            // Sync level up via RPC on the target hero
+            var netSync = targetHero.GetComponent<ChampionNetworkSync>();
+            if (netSync != null)
+            {
+                netSync.RpcSetStarLevel(newStarLevel);
+            }
+            else
+            {
+                targetHero.SetStarLevel(newStarLevel);
+            }
+
+            if (!string.IsNullOrEmpty(_fxGuid))
+            {
+                this.Raise(new SpawnFxEvent { id = _fxGuid, position = spawnPos, duration = 1f });
+            }
+
+            ServerCheckForUpgrades(ownerId, heroData, newStarLevel);
         }
 
         private void CheckForUpgrades(int ownerId, ChampionData heroData, int starLevel)

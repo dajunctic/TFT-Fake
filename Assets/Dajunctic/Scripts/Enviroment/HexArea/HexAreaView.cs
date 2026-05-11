@@ -4,6 +4,17 @@ using UnityEngine;
 
 namespace Dajunctic
 {
+    /// <summary>Distinguishes the purpose of a HexAreaView for colour-coding tiles.</summary>
+    public enum HexAreaType
+    {
+        /// <summary>Bench — square area, normally not coloured differently.</summary>
+        None,
+        /// <summary>The local player's own field rows (front of arena).</summary>
+        OwnField,
+        /// <summary>The opponent's field rows (back of arena).</summary>
+        GuestField,
+    }
+
     public class HexAreaView: BaseView, IDragTarget
     {
         public HexAreaData Data;
@@ -12,7 +23,27 @@ namespace Dajunctic
         private Dictionary<Vector2Int, HexTileView> _tilesMap = new Dictionary<Vector2Int, HexTileView>();
         private HexTileView _lastHighlighted;
 
+        [Header("Area Type")]
+        [Tooltip("Set to OwnField or GuestField to colour-code tiles by spawn area.")]
+        [SerializeField] private HexAreaType areaType = HexAreaType.None;
+
+        [Header("Area Colours")]
+        [ColorUsage(true, true)]
+        [SerializeField] private Color ownFieldColor  = new Color(0.0f, 0.6f, 1.0f, 1f);   // blue-cyan
+        [ColorUsage(true, true)]
+        [SerializeField] private Color guestFieldColor = new Color(1.0f, 0.25f, 0.1f, 1f); // red-orange
+
         private Color NormalColor = Color.cyan;
+
+        private Color GetAreaColor()
+        {
+            return areaType switch
+            {
+                HexAreaType.OwnField   => ownFieldColor,
+                HexAreaType.GuestField => guestFieldColor,
+                _                      => NormalColor,
+            };
+        }
 
         public override void Initialize()
         {
@@ -54,8 +85,12 @@ namespace Dajunctic
                 _spawnedTiles.Add(tileInstance);
                 _tilesMap.Add(hex.coordinates, tileInstance);
                 
-                // If it's a BaseView and needs initialization
+                // Initialize first so _originalEmissionColor is captured
                 tileInstance.Initialize();
+
+                // Then apply area-type colour so tiles are tinted correctly at runtime
+                if (areaType != HexAreaType.None)
+                    tileInstance.SetBaseColor(GetAreaColor());
             }
         }
 
@@ -117,10 +152,11 @@ namespace Dajunctic
         {
             if (Data == null) return;
 
+            Color gizmoColor = GetAreaColor();
             foreach (var hex in Data.ActiveTiles)
             {
                 Vector3 worldPos = Data.HexToWorld(CachedTransform.position, hex.coordinates);
-                DrawHexagon(worldPos, Data.HexSize, NormalColor);
+                DrawHexagon(worldPos, Data.HexSize, gizmoColor);
             }
         }
 
