@@ -155,7 +155,8 @@ namespace Dajunctic
             Color gizmoColor = GetAreaColor();
             foreach (var hex in Data.ActiveTiles)
             {
-                Vector3 worldPos = Data.HexToWorld(CachedTransform.position, hex.coordinates);
+                Vector3 localPos = Data.HexToWorld(Vector3.zero, hex.coordinates);
+                Vector3 worldPos = transform.TransformPoint(localPos);
                 DrawHexagon(worldPos, Data.HexSize, gizmoColor);
             }
         }
@@ -166,9 +167,10 @@ namespace Dajunctic
             Vector3[] corners = new Vector3[6];
             for (int i = 0; i < 6; i++)
             {
-                float angle_deg = 60 * i -30;
+                float angle_deg = 60 * i - 30;
                 float angle_rad = Mathf.PI / 180 * angle_deg;
-                corners[i] = center + new Vector3(Mathf.Cos(angle_rad) * size, 0, Mathf.Sin(angle_rad) * size);
+                Vector3 localCorner = new Vector3(Mathf.Cos(angle_rad) * size, 0, Mathf.Sin(angle_rad) * size);
+                corners[i] = center + transform.TransformDirection(localCorner);
             }
 
             for (int i = 0; i < 6; i++)

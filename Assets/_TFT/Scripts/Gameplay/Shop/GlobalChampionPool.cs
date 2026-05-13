@@ -15,8 +15,8 @@ namespace Dajunctic
             { 1, 29 }, // Tier 1: 29 copies
             { 2, 22 }, // Tier 2: 22 copies
             { 3, 18 }, // Tier 3: 18 copies
-            { 4, 12 }, // Tier 4: 12 copies
-            { 5, 10 }  // Tier 5: 10 copies
+            { 4, 10 }, // Tier 4: 10 copies
+            { 5, 9 }   // Tier 5: 9 copies
         };
 
         // Champion ID -> remaining copies

@@ -2,6 +2,7 @@ using UnityEngine;
 using FishNet.Object;
 using FishNet.Object.Synchronizing;
 using Unity.AI.Navigation;
+using TMPro;
 
 namespace Dajunctic
 {

@@ -33,6 +33,12 @@ namespace Dajunctic
         public static event Action<PlayerData> OnPlayerInfoChanged;
         public static event Action OnPlayerListInitialized;
 
+        public PlayerDataSync GetPlayerSync(int clientId)
+        {
+            var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+            return syncs.FirstOrDefault(s => (int)s.ClientId.Value == clientId);
+        }
+
         public async Task LoadDataAsync()
         {
             if (GameSystemManager.Instance.Config != null && GameSystemManager.Instance.Config.playerSystemData != null)
