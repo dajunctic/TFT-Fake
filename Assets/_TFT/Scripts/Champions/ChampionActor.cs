@@ -324,7 +324,16 @@ namespace Dajunctic
             if (Initialized) return;
             base.Initialize();
 
-            this.Raise(new SpawnHpViewEvent { owner = this, starLevel = StarLevel });
+            var hpView = GetComponentInChildren<HpView>(true);
+            if (hpView != null)
+            {
+                hpView.Initialize(this, StarLevel);
+                hpView.gameObject.SetActive(true);
+            }
+            else
+            {
+                this.Raise(new SpawnHpViewEvent { owner = this, starLevel = StarLevel });
+            }
 
             _capsuleCollider = GetComponent<CapsuleCollider>();
 

@@ -33,6 +33,12 @@ namespace Dajunctic
 
         public virtual void Initialize(CombatActor owner, int starLevel)
         {
+            if (ticker == null && Application.isPlaying && TickerView.Instance != null)
+            {
+                ticker = TickerView.Instance.ticker;
+                SubTick();
+            }
+
             // Reset Canvas worldCamera to prevent Unity UI MissingReferenceException if previous camera was destroyed
             var canvas = GetComponent<Canvas>();
             if (canvas != null) canvas.worldCamera = Camera.main;
@@ -107,7 +113,14 @@ namespace Dajunctic
         {
             UnsubscribeFromOwner();
             _owner = null;
-            Despawn(); // Return to pool using PoolableObject.Despawn()
+            if (ObjectPoolMetadata != null && !string.IsNullOrEmpty(ObjectPoolMetadata.PoolId))
+            {
+                Despawn(); // Return to pool using PoolableObject.Despawn()
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
         }
 
         public override void LateTick()

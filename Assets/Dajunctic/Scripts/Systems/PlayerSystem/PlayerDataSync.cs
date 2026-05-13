@@ -312,7 +312,7 @@ namespace Dajunctic
             if (arena == null) { Debug.LogError($"[SpawnChampion] Arena not found for ownerId={ownerId}."); return; }
 
             Vector2Int coord = bench.GetFirstEmptyTileCoord(ownerId);
-            if (coord.x == -1) 
+            if (coord.y < 0) 
             { 
                 // Bench is full. We already passed CanAcceptHero check so this MUST be a direct upgrade.
                 bench.ServerDirectUpgrade(ownerId, hero, 1);

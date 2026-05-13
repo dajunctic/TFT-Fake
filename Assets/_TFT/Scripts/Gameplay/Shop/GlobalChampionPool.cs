@@ -47,15 +47,20 @@ namespace Dajunctic
             // Cache data now — it's guaranteed loaded at this point
             _data = _manager.Shop?.ShopSystemData;
 
-            if (FishNet.InstanceFinder.IsServerStarted)
+            var nm = FishNet.InstanceFinder.NetworkManager;
+            if (nm != null && nm.IsServerStarted)
             {
                 // Edge case: server already running (e.g. hot-reload in editor)
                 InitializePool();
             }
-            else
+            else if (nm != null && nm.ServerManager != null)
             {
                 // Normal flow: wait for the server to start (user clicks Host)
-                FishNet.InstanceFinder.ServerManager.OnServerConnectionState += OnServerConnectionState;
+                nm.ServerManager.OnServerConnectionState += OnServerConnectionState;
+            }
+            else
+            {
+                Debug.LogWarning("[GlobalChampionPool] FishNet NetworkManager is missing. Cannot subscribe to ServerManager.");
             }
         }
 
@@ -167,8 +172,9 @@ namespace Dajunctic
 
         public void Shutdown()
         {
-            if (FishNet.InstanceFinder.ServerManager != null)
-                FishNet.InstanceFinder.ServerManager.OnServerConnectionState -= OnServerConnectionState;
+            var nm = FishNet.InstanceFinder.NetworkManager;
+            if (nm != null && nm.ServerManager != null)
+                nm.ServerManager.OnServerConnectionState -= OnServerConnectionState;
 
             _pool.Clear();
             _poolInitialized = false;

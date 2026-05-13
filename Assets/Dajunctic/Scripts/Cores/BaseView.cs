@@ -101,6 +101,9 @@ namespace Dajunctic
 
         public virtual void SubTick()
         {
+            if (ticker == null && TickerView.Instance != null) ticker = TickerView.Instance.ticker;
+            if (ticker == null) return;
+
             if (tick.HasFlag(TickType.EarlyTick)) ticker.SubEarlyTick(this);
             if (tick.HasFlag(TickType.Tick)) ticker.SubTick(this);
             if (tick.HasFlag(TickType.LateTick)) ticker.SubLateTick(this);
@@ -109,6 +112,8 @@ namespace Dajunctic
 
         public virtual void UnsubTick()
         {
+            if (ticker == null) return;
+
             if (tick.HasFlag(TickType.EarlyTick)) ticker.UnsubEarlyTick(this);
             if (tick.HasFlag(TickType.Tick)) ticker.UnsubTick(this);
             if (tick.HasFlag(TickType.LateTick)) ticker.UnsubLateTick(this);
