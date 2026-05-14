@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Dajunctic.SkillSystem.Panthera;
-using Dajunctic.SkillSystem.Panthera.Logic;
 using Dajunctic.SkillSystem.Data;
 using UnityEngine;
 using UnityEngine.Localization;

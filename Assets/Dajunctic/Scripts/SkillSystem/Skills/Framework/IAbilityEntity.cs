@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Dajunctic.SkillSystem.Panthera.Logic;
 using Dajunctic.SkillSystem.Data;
 
 namespace Dajunctic.SkillSystem.Logic
 {
-    public interface IAbilityEntity : Dajunctic.SkillSystem.Panthera.Logic.IEntity
+    public interface IAbilityEntity : IEntity
     {
         int Level { get; }
         bool IsMaxed { get; }

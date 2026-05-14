@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Dajunctic.SkillSystem.Panthera;
 using UnityEngine;
 using XNode;
 

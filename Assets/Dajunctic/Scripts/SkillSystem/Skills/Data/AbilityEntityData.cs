@@ -1,6 +1,4 @@
 using System;
-using FMODUnity;
-using Dajunctic.SkillSystem.Panthera;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Data

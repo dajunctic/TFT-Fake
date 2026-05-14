@@ -1,8 +1,4 @@
 using System.Linq;
-using Dajunctic.SkillSystem.Panthera;
-using Dajunctic.SkillSystem.Panthera.Data;
-using Dajunctic.SkillSystem.Panthera.Utils;
-using Dajunctic.SkillSystem.Logic;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using XNode;

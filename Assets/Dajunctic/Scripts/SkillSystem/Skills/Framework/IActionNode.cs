@@ -1,5 +1,3 @@
-using Dajunctic.SkillSystem.Panthera;
-
 namespace Dajunctic.SkillSystem.Logic
 {
     public interface IActionNode : 

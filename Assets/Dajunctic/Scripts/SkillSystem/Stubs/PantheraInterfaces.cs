@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dajunctic.SkillSystem.Panthera {
+namespace Dajunctic.SkillSystem {
     public class ReadOnlyAttribute : PropertyAttribute {}
     public interface ICanTick {}
     public interface ICanSendEvent {}
@@ -14,7 +14,7 @@ namespace Dajunctic.SkillSystem.Panthera {
     public interface ICanSendQuery {}
     public interface ILifecycle {}
     
-    public abstract class BaseEntity : Dajunctic.SkillSystem.Panthera.Logic.IEntity { 
+    public abstract class BaseEntity : Logic.IEntity { 
         public string DataId { get; set; }
         public void Initialize() { InitializeInternal(); }
         public void Cleanup() { CleanupInternal(); }
@@ -23,7 +23,7 @@ namespace Dajunctic.SkillSystem.Panthera {
     }
 }
 
-namespace Dajunctic.SkillSystem.Panthera.Data {
+namespace Dajunctic.SkillSystem.Data {
     public interface IData {}
     public interface IGuidReferenceableAsset<T> {}
     public class BaseScriptableObjectDataAsset<T1, T2> : ScriptableObject {
@@ -33,7 +33,7 @@ namespace Dajunctic.SkillSystem.Panthera.Data {
     public class BaseScriptableObjectDataAssetEditor {}
 }
 
-namespace Dajunctic.SkillSystem.Panthera.Logic {
+namespace Dajunctic.SkillSystem.Logic {
     public interface IEntity {
         void Initialize();
         void Cleanup();

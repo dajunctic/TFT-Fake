@@ -1,6 +1,3 @@
-using FMODUnity;
-using Dajunctic.SkillSystem.Panthera.Data;
-
 namespace Dajunctic.SkillSystem.Data
 {
     public interface IAbilityEntityData<T> : IData

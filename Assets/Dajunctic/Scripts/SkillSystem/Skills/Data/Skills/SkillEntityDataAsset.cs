@@ -1,9 +1,5 @@
 using System.Linq;
 using Sirenix.OdinInspector;
-using Dajunctic.SkillSystem.Panthera;
-using Dajunctic.SkillSystem.Panthera.Data;
-using Dajunctic.SkillSystem.Panthera.Utils;
-using Dajunctic.SkillSystem.Logic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

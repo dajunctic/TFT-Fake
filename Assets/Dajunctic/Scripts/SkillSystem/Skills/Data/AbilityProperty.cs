@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dajunctic.SkillSystem.Panthera;
-using Dajunctic.SkillSystem.Panthera.Utils;
-using Dajunctic.SkillSystem.Logic;
 using UnityEditor;
 using UnityEngine;
 
@@ -125,7 +122,7 @@ namespace Dajunctic.SkillSystem.Data
                 return;
             }
 
-            var types = Dajunctic.SkillSystem.Panthera.Utils.ReflectionUtils.GetAllTypes<IAbilityProperty>().ToList();
+            var types = ReflectionUtils.GetAllTypes<IAbilityProperty>().ToList();
 
             _typeNames.Clear();
             foreach (var type in types)

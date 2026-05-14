@@ -1,5 +1,4 @@
 using System.Collections;
-using Dajunctic.SkillSystem.Panthera;
 using UnityEngine;
 using XNode;
 

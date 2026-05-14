@@ -26,5 +26,31 @@ namespace Dajunctic
         {
             return Mathf.Sqrt(SqrDistance(a, b, ignoreY));
         }
+
+        public static bool IsCircleAndArc2DIntersection(Vector2 p1, float r1, Vector2 p2, float r2, Vector2 dir, float angle)
+        {
+            Debug.Log("Not Implement");
+            return false;
+        }
+        public static bool IsCircleAndRectangle2DIntersection(Vector2 p1, float r1, Vector2 p2, Vector2 dir, float w, float h)
+        {
+            Debug.Log("Not Implement");
+            return false;
+        }
+        public static bool IsCircleAndRectangle2DIntersection(Vector2 p1, float r1, Vector2 p2, Vector2 size, Vector2 dir)
+        {
+            Debug.Log("Not Implement");
+            return false;   
+        }
+        public static Vector3 RandomInCircle(float radius)
+        {
+            Debug.Log("Not Implement");
+            return Vector3.zero;
+        }
+        public static Vector3 RandomInCircle(Vector3 center, float radius)
+        {
+            Debug.Log("Not Implement");
+            return Vector3.zero;
+        }
     }
 }

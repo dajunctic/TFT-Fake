@@ -2,8 +2,6 @@
 // #define VISUALIZE_DEBUG
 #endif
 using System.Collections.Generic;
-using Dajunctic.SkillSystem.Panthera.Utils;
-using Dajunctic.SkillSystem.Constants;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
@@ -367,7 +365,7 @@ namespace Dajunctic.SkillSystem.Logic
                     continue;
                 }
                 if (
-                    Dajunctic.SkillSystem.Panthera.Utils.MathUtils.IsCircleAndArc2DIntersection(
+                    MathUtils.IsCircleAndArc2DIntersection(
                         pos.ToV2(),
                         team.Members[i].CombatRadius,
                         finderPosition.ToV2(),
@@ -436,7 +434,7 @@ namespace Dajunctic.SkillSystem.Logic
                 );
                 DebugUtils.DrawWireSphere(pos.ToV2(), radius, Color.yellow, 1f);
                 if (
-                    Dajunctic.SkillSystem.Panthera.Utils.MathUtils.IsCircleAndRectangle2DIntersection(
+                    MathUtils.IsCircleAndRectangle2DIntersection(
                         pos.ToV2(),
                         radius,
                         center.ToV2(),

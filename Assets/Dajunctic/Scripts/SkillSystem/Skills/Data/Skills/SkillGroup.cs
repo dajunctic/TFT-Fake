@@ -1,5 +1,4 @@
 using System;
-using Dajunctic.SkillSystem.Panthera;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Data

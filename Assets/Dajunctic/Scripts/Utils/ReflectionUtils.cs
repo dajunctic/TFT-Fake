@@ -35,5 +35,8 @@ namespace Dajunctic
             }
             return result;        
         }
+
+        public static List<Type> GetAllTypes(Type baseType) => new List<Type>();
+        public static List<Type> GetAllTypes<T>() => new List<Type>();
     }
 }
