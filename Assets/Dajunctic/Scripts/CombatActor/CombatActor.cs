@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Dajunctic.SkillSystem.Commands;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
@@ -21,7 +20,6 @@ namespace Dajunctic
             if (Initialized && data != null)
             {
                 Stats = new ChampionStats(combatActorData);
-                InitializeSkills();
                 InitDamageTaker();
                 OnHpChanged?.Invoke(MaxHp > 0 ? Hp / MaxHp : 1f);
             }
@@ -50,12 +48,9 @@ namespace Dajunctic
         public float AtkSpd => Stats.AttackSpeed.Value;
         public ChampionStats Stats { get; private set; }
         public event Action<float> OnHpChanged;
-
-        protected Node root = null;
-
+        
         bool _viewLoaded;
 
-        Dictionary<SkillSlot, RuntimeSkill> _skillBook = new Dictionary<SkillSlot, RuntimeSkill>();
         public override void Initialize()
         {
             if (Initialized) return;
@@ -67,10 +62,7 @@ namespace Dajunctic
 
             InitializeMoveAgent();
             Stats = new ChampionStats(combatActorData);
-            InitializeSkills();
             InitDamageTaker();
-
-            SetupTree();
         }
 
         public override void Tick()
@@ -87,11 +79,6 @@ namespace Dajunctic
                 Position = CachedTransform.position;
                 Forward = CachedTransform.forward;
                 InitializeMoveAgent();
-            }
-
-            if (root != null)
-            {
-                root.Evaluate();
             }
 
             float realSpeed = MoveAgentAlive ? MoveAgent.Velocity.magnitude : 0f;
@@ -361,24 +348,7 @@ namespace Dajunctic
 
         #endregion
 
-        #region SkillCommandRunner
-        private SkillCommandRunner _skillCommandRunner;
-        public SkillCommandRunner GetSkillCommandRunner()
-        {
-            if (_skillCommandRunner == null)
-            {
-                _skillCommandRunner = GetComponentInChildren<SkillCommandRunner>();
-                if (_skillCommandRunner == null)
-                {
-                    var go = new GameObject("SkillCommandRunner");
-                    go.transform.SetParent(CachedTransform);
-                    _skillCommandRunner = go.AddComponent<SkillCommandRunner>();
-                    _skillCommandRunner.Actor = this;
-                }
-            }
-            return _skillCommandRunner;
-        }
-        #endregion
+
 
         #region Animation
         public void PlayAnim(string animName, float transitionDuration = 0.1f)
@@ -398,75 +368,16 @@ namespace Dajunctic
             animator.speed = 1f;
         }
 
-        public void SetCasting(bool value, SkillSlot slot)
+        public void SetCasting(bool value)
         {
             IsCasting = value;
-            if (value)
-            {
-                CurrentActiveSlot = slot;
-            }
         }
         public void OnAnimFinished()
         {
             IsAnimFinished = true;
         }
-        #endregion
 
-        #region Skill
-        public SkillSlot CurrentActiveSlot { get; private set; }
-        void InitializeSkills()
-        {
-            _skillBook.Clear();
-            if (combatActorData != null && combatActorData.skills != null)
-            {
-                foreach (var skillData in combatActorData.skills)
-                {
-                    if (skillData != null && !_skillBook.ContainsKey(skillData.slot))
-                    {
-                        _skillBook.Add(skillData.slot, new RuntimeSkill(skillData));
-                    }
-                }
-            }
-        }
-        public RuntimeSkill GetSkill(SkillSlot slot)
-        {
-            return _skillBook.GetValueOrDefault(slot);
-        }
 
-        protected virtual Node CreateCombatBranch()
-        {
-            List<Node> skillNodes = new List<Node>();
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.Ultimate);
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.Skill);
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.BasicAttack);
-
-            var attackRange = Mathf.Max(Stats.AttackRange.Value, GetSkill(SkillSlot.BasicAttack)?.Data.castRange ?? 0);
-            skillNodes.Add(new ChaseTargetNode(this, attackRange));
-
-            return new Sequence(new List<Node>()
-            {
-                new FindTargetNode(this, attackRange),
-
-                new SelectorWithMemory(skillNodes)
-            });
-        }
-
-        protected void AddSkillNodeIfAvailable(List<Node> nodes, SkillSlot slot)
-        {
-            Node node = CreateSkillNode(slot);
-            if (node != null)
-            {
-                nodes.Add(node);
-            }
-        }
-
-        protected Node CreateSkillNode(SkillSlot slot)
-        {
-            var skill = GetSkill(slot);
-            if (skill == null) return null;
-
-            return new BaseSkillNode(this, slot);
-        }
 
 
         public Vector3 GetAnchorPosition(AnchorType anchorType)
@@ -486,7 +397,7 @@ namespace Dajunctic
         {
             StopAllCoroutines();
             ActionSessionId++;
-            SetCasting(false, SkillSlot.BasicAttack);
+            SetCasting(false);
             SetAnimSpeed(1f);
             ResetAnim();
             SetTarget(null);

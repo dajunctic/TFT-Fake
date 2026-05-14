@@ -7,7 +7,6 @@ public class CombatActorData : BaseSO
 {
     public ActorMovement movement;
     public ActorBaseStats stats;
-    public List<SkillData> skills = new();
 }
 
 [Serializable]

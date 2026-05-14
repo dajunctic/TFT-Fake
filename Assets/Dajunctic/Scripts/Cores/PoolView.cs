@@ -1,9 +1,9 @@
-using Dajunctic.SkillSystem.Graph;
+
 using UnityEngine;
 
 namespace Dajunctic
 {
-    public class PoolView : Singleton<PoolView>, ISkillServiceProvider
+    public class PoolView : Singleton<PoolView>
     {
         [SerializeField] private PoolData poolData;
         public bool IsDebug => false;

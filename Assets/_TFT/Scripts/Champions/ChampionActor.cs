@@ -350,57 +350,9 @@ namespace Dajunctic
             }
         }
 
-        protected override void SetupTree()
-        {
-            List<Node> rootNodes = new List<Node>
-            {
-                new Sequence(new List<Node>()
-                {
-                    new IsInPhaseNode(GameplayPhase.Combat),
-                    new ConditionNode(() => IsOnField, CreateCombatBranch())
-                })
-            };
-
-            root = new Selector(rootNodes);
-        }
-
-        protected override Node CreateCombatBranch()
-        {
-            List<Node> skillNodes = new List<Node>();
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.Ultimate);
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.Skill);
-            AddSkillNodeIfAvailable(skillNodes, SkillSlot.BasicAttack);
-
-            List<Node> targetingNodes = new List<Node>
-            {
-                new FindTargetNode(this, Stats.AttackRange.Value)
-            };
-
-            return new Sequence(new List<Node>()
-            {
-                new Selector(targetingNodes),
-                new SelectorWithMemory(skillNodes)
-            });
-        }
-
         public override void ListenEvents()
         {
             base.ListenEvents();
-
-            InputManager.OnTestFirstSkill += OnTestFirstSkill;
-        }
-
-        public void OnTestFirstSkill()
-        {
-            if (CombatActorData != null && CombatActorData.skills.Count > 0)
-            {
-                var firstSkill = CombatActorData.skills[0];
-                if (firstSkill != null && firstSkill.skillTimeline != null)
-                {
-                    var runner = GetSkillCommandRunner();
-                    runner.Run(firstSkill.skillTimeline, null);
-                }
-            }
         }
 
         protected override void OnDestroy()

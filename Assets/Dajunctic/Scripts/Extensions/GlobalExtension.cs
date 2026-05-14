@@ -4,9 +4,9 @@ namespace Dajunctic
 {
     public static class GlobalExtension
     {
-        public static void StartGlobalCoroutine(this object obj, IEnumerator coroutine)
+        public static UnityEngine.Coroutine StartGlobalCoroutine(this object obj, IEnumerator coroutine)
         {
-            IApplication.Instance?.StartCoroutine(coroutine);
+            return IApplication.Instance?.StartCoroutine(coroutine);
         }
     
     }
