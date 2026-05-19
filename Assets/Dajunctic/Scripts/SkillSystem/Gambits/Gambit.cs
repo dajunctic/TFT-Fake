@@ -1,6 +1,8 @@
+using IDamageTaker = Dajunctic.IDamageTaker;
 using System;
 using UnityEngine;
 using Dajunctic.SkillSystem.Logic;
+using Dajunctic;
 
 namespace Dajunctic.SkillSystem.Gambits
 {
@@ -26,7 +28,7 @@ namespace Dajunctic.SkillSystem.Gambits
             };
         }
 
-        public void Initialize(ICombatActor combatActor)
+        public void Initialize(Dajunctic.ICombatActor combatActor)
         {
             condition?.Initialize(combatActor, targetType);
             action?.Initialize(combatActor, condition);
@@ -48,10 +50,10 @@ namespace Dajunctic.SkillSystem.Gambits
     public interface IGambitCondition
     {
         IGambitCondition CreateCopy();
-        void Initialize(ICombatActor combatActor, GambitTargetType targetType);
+        void Initialize(Dajunctic.ICombatActor combatActor, GambitTargetType targetType);
         void Cleanup();
         void Refresh();
-        IDamageTaker Check();
+        Dajunctic.IDamageTaker Check();
     }
 
     public interface IGambitAction
@@ -60,11 +62,11 @@ namespace Dajunctic.SkillSystem.Gambits
         bool IsPlaying { get; }
         bool IsCanNotBeInterrupted { get; }
         IGambitCondition Condition { get; }
-        void Initialize(ICombatActor combatActor, IGambitCondition condition);
+        void Initialize(Dajunctic.ICombatActor combatActor, IGambitCondition condition);
         void Cleanup();
         void Refresh();
         bool CheckCanPlay();
-        void Play(IDamageTaker target);
+        void Play(Dajunctic.IDamageTaker target);
         void Stop();
     }
 

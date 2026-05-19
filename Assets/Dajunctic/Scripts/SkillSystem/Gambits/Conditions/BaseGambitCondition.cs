@@ -1,7 +1,9 @@
+using IDamageTaker = Dajunctic.IDamageTaker;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Dajunctic.SkillSystem.Logic;
+using Dajunctic;
 
 namespace Dajunctic.SkillSystem.Gambits
 {
@@ -32,10 +34,10 @@ namespace Dajunctic.SkillSystem.Gambits
             }
         }
 
-        protected ICombatActor CombatActor { get; private set; }
+        protected Dajunctic.ICombatActor CombatActor { get; private set; }
 
         GambitTargetType _targetType;
-        List<IDamageTaker> _targets = new();
+        List<Dajunctic.IDamageTaker> _targets = new();
 
         public virtual IGambitCondition CreateCopy()
         {
@@ -45,7 +47,7 @@ namespace Dajunctic.SkillSystem.Gambits
             return copy;
         }
 
-        public virtual void Initialize(ICombatActor combatActor, GambitTargetType targetType)
+        public virtual void Initialize(Dajunctic.ICombatActor combatActor, GambitTargetType targetType)
         {
             CombatActor = combatActor;
             _targetType = targetType;
@@ -58,7 +60,7 @@ namespace Dajunctic.SkillSystem.Gambits
 
         public virtual void Refresh() { }
 
-        public IDamageTaker Check()
+        public Dajunctic.IDamageTaker Check()
         {
             if (CombatActor == null)
             {
@@ -74,45 +76,36 @@ namespace Dajunctic.SkillSystem.Gambits
         public virtual bool CheckTargetInRange()
         {
             _targets.Clear();
-            switch (_targetType)
+            var actor = CombatActor as CombatActor;
+            if (actor == null) return false;
+
+            var allActors = UnityEngine.Object.FindObjectsOfType<CombatActor>();
+            foreach (var target in allActors)
             {
-                case GambitTargetType.Enemy:
-                    SkillHelper.FindTargetsInRadius(
-                        CombatActor.AsTeamMember().EnemyTeam,
-                        CombatActor.AsTransform().Position,
-                        1.5f,
-                        Range,
-                        null,
-                        _targets,
-                        5
-                    );
-                    break;
-                case GambitTargetType.Ally:
-                    SkillHelper.FindTargetsInRadius(
-                        CombatActor.AsTeamMember().CombatTeam,
-                        CombatActor.AsTransform().Position,
-                        1.5f,
-                        Range,
-                        null,
-                        _targets,
-                        5
-                    );
-                    break;
-                case GambitTargetType.AllyExcludeSelf:
-                    SkillHelper.FindTargetsInRadius(
-                        CombatActor.AsTeamMember().CombatTeam,
-                        CombatActor.AsTransform().Position,
-                        1.5f,
-                        Range,
-                        null,
-                        _targets,
-                        5
-                    );
-                    _targets.Remove(CombatActor.AsDamageTaker());
-                    break;
-                case GambitTargetType.Self:
-                    _targets.Add(CombatActor.AsDamageTaker());
-                    break;
+                if (target.Hp <= 0 || !target.gameObject.activeInHierarchy) continue;
+
+                float dist = Vector3.Distance(actor.Position, target.Position);
+                if (dist > Range) continue;
+
+                switch (_targetType)
+                {
+                    case GambitTargetType.Enemy:
+                        if (target.CombatTeam != actor.CombatTeam)
+                            _targets.Add(target);
+                        break;
+                    case GambitTargetType.Ally:
+                        if (target.CombatTeam == actor.CombatTeam)
+                            _targets.Add(target);
+                        break;
+                    case GambitTargetType.AllyExcludeSelf:
+                        if (target.CombatTeam == actor.CombatTeam && target != actor)
+                            _targets.Add(target);
+                        break;
+                    case GambitTargetType.Self:
+                        if (target == actor)
+                            _targets.Add(target);
+                        break;
+                }
             }
             if (_targets.Count == 0)
             {
@@ -121,7 +114,7 @@ namespace Dajunctic.SkillSystem.Gambits
             return true;
         }
 
-        protected abstract IDamageTaker CheckInternal(List<IDamageTaker> targets);
+        protected abstract Dajunctic.IDamageTaker CheckInternal(List<Dajunctic.IDamageTaker> targets);
     }
 
     public enum GambitConditionRangeType

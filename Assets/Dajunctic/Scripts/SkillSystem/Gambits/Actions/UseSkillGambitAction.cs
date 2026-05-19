@@ -1,6 +1,8 @@
+using IDamageTaker = Dajunctic.IDamageTaker;
 using System;
 using UnityEngine;
 using Dajunctic.SkillSystem.Logic;
+using Dajunctic;
 using System.Threading.Tasks;
 
 namespace Dajunctic.SkillSystem.Gambits
@@ -9,7 +11,7 @@ namespace Dajunctic.SkillSystem.Gambits
     public class UseSkillGambitAction : BaseGambitAction
     {
         [SerializeField]
-        public AbilityGraph skillGraph;
+        public SkillGraph skillGraph;
 
         public override IGambitAction CreateCopy()
         {
@@ -20,7 +22,8 @@ namespace Dajunctic.SkillSystem.Gambits
 
         protected override bool CheckCanPlayInternal()
         {
-            return skillGraph != null && CombatActor.CanAction;
+            var actor = CombatActor as CombatActor;
+            return skillGraph != null && actor != null && !actor.IsCasting;
         }
 
         protected override void PlayInternal()
@@ -46,16 +49,20 @@ namespace Dajunctic.SkillSystem.Gambits
             if (skillGraph != null)
             {
                 // Clone the graph to prevent shared state issues
-                var instanceGraph = skillGraph.Copy() as AbilityGraph;
-                instanceGraph.Initialize(CombatActor.AsSkillOwner());
+                var instanceGraph = skillGraph.Copy() as SkillGraph;
+                instanceGraph.SetOwner(CombatActor as ISkillOwner);
+                instanceGraph.Initialize();
                 
-                // Set the main target before playing if the graph supports it
-                // We pass the target to Play
-                instanceGraph.Play(Target);
+                bool isFinished = false;
+                instanceGraph.OnExitEvent += () => isFinished = true;
 
-                while (instanceGraph.IsPlaying)
+                // We don't pass the target directly because the graph resolves it via Nodes
+                instanceGraph.Play(null);
+
+                while (!isFinished)
                 {
-                    if (CombatActor == null || !CombatActor.Alive)
+                    var actor = CombatActor as CombatActor;
+                    if (actor == null || actor.Hp <= 0)
                     {
                         break;
                     }

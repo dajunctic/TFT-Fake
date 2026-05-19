@@ -98,7 +98,7 @@ namespace Dajunctic
                 InitializeMoveAgent();
             }
 
-            if (Alive && !IsCasting)
+            if (Hp > 0 && !IsCasting)
             {
                 EvaluateGambits();
             }

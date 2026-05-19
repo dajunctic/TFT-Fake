@@ -1,7 +1,8 @@
+using IDamageTaker = Dajunctic.IDamageTaker;
 using System;
-using System.Collections;
 using UnityEngine;
 using Dajunctic.SkillSystem.Logic;
+using Dajunctic;
 
 namespace Dajunctic.SkillSystem.Gambits
 {
@@ -12,15 +13,15 @@ namespace Dajunctic.SkillSystem.Gambits
         public bool IsCanNotBeInterrupted { get; protected set; }
 
         public IGambitCondition Condition { get; private set; }
-        protected ICombatActor CombatActor { get; private set; }
-        protected IDamageTaker Target { get; private set; }
+        protected Dajunctic.ICombatActor CombatActor { get; private set; }
+        protected Dajunctic.IDamageTaker Target { get; private set; }
 
         public virtual IGambitAction CreateCopy()
         {
             return Activator.CreateInstance(GetType()) as BaseGambitAction;
         }
 
-        public virtual void Initialize(ICombatActor combatActor, IGambitCondition condition)
+        public virtual void Initialize(Dajunctic.ICombatActor combatActor, IGambitCondition condition)
         {
             CombatActor = combatActor;
             Condition = condition;
@@ -43,7 +44,7 @@ namespace Dajunctic.SkillSystem.Gambits
             return CheckCanPlayInternal();
         }
 
-        public void Play(IDamageTaker target)
+        public void Play(Dajunctic.IDamageTaker target)
         {
             Target = target;
             IsPlaying = true;
