@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
+using Dajunctic.SkillSystem.Gambits;
 
 namespace Dajunctic
 {
@@ -48,10 +49,12 @@ namespace Dajunctic
         public float AtkSpd => Stats.AttackSpeed.Value;
         public ChampionStats Stats { get; private set; }
         public event Action<float> OnHpChanged;
-        
+        public event Action<CalculatedDamage> OnDamageTakenEvent;
+        public event Action OnHpChangedEvent;
+
         bool _viewLoaded;
 
-        List<Dajunctic.SkillSystem.Gambits.Gambit> _activeGambits = new();
+        List<Gambit> _activeGambits = new();
 
         public override void Initialize()
         {
@@ -399,6 +402,16 @@ namespace Dajunctic
         public bool IsAnimFinished { get; private set; }
         public bool IsCasting { get; private set; }
         public int ActionSessionId { get; private set; }
+
+        object ICombatActor.Stats => Stats;
+
+        public float HpRatio => throw new NotImplementedException();
+
+        public bool Alive => throw new NotImplementedException();
+
+        public Vector3 MoveDirectionPerFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector3 MovePositionPerFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void ResetAnim()
         {
             IsAnimFinished = false;
@@ -439,6 +452,76 @@ namespace Dajunctic
             ResetAnim();
             SetTarget(null);
             PlayAnim("Locomotion");
+        }
+
+        public void SetStaggerReduction(float v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearTarget()
+        {
+            throw new NotImplementedException();
+        }
+
+        public float GetHit(CalculatedDamage damage)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Heal(IDamageDealer dealer, float amount, bool extra1 = false, bool extra2 = false, bool extra3 = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ForceSetHp(float hp)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IDamageTaker.Die()
+        {
+            Die();
+        }
+
+        public IVariableOwner AsVariableOwner()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IStatusEffectOwner AsStatusEffectOwner()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITransform AsTransform()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Transform GetTransform()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Transform GetTransform(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ToggleMoveAgent(bool v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Teleport(Vector3 v)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Teleport(Vector3 v, bool b)
+        {
+            throw new NotImplementedException();
         }
         #endregion
 

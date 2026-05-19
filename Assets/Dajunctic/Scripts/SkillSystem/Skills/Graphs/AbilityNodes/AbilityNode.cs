@@ -11,20 +11,15 @@ namespace Dajunctic.SkillSystem.Logic
     /// All inNode must be completed to run.
     /// Notify all outNode when completed.
     /// </summary>
-    public abstract class AbilityNode
-        : Node,
-            ICanTick,
-            ICanSendEvent,
-            ICanListenEvent,
-            ICanGetSystem
+    public abstract class AbilityNode: Node
     {
         [SerializeField, Output]
         AbilityNode self;
 
-        [SerializeField, Input(ShowBackingValue.Never)]
+        [SerializeField, Input]
         AbilityNode inNode;
 
-        [SerializeField, Output(ShowBackingValue.Never)]
+        [SerializeField, Output]
         AbilityNode outNode;
 
         protected IAbilityOwner Owner;

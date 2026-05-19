@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -120,9 +120,18 @@ namespace XNodeEditor {
             GridSettingsGUI(lastKey, settings);
             SystemSettingsGUI(lastKey, settings);
             TypeColorsGUI(lastKey, settings);
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button(new GUIContent("Clear Type Cache", "Remove all cached type colors"), GUILayout.Width(120))) {
+                settings.typeColors.Clear();
+                typeColors.Clear();
+                SavePrefs(lastKey, settings);
+                NodeEditorWindow.RepaintAll();
+            }
             if (GUILayout.Button(new GUIContent("Set Default", "Reset all values to default"), GUILayout.Width(120))) {
                 ResetPrefs();
             }
+            EditorGUILayout.EndHorizontal();
         }
 
         private static void GridSettingsGUI(string key, Settings settings) {

@@ -14,5 +14,7 @@ namespace Dajunctic
             Order = order ?? (int)type;
             Source = source;
         }
+
+        public StatModifier CreateCopy() => this;
     }
 }

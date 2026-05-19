@@ -6,8 +6,8 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class TargetSelfNode : AbilityNode
     {
-        [SerializeField, Output(ShowBackingValue.Never)] protected List<IDamageTaker> targets;
-        [SerializeField, Output(ShowBackingValue.Never)] protected IDamageTaker mainTarget;   
+        [SerializeReference, Output] protected List<IDamageTaker> targets;
+        [SerializeReference, Output] protected IDamageTaker mainTarget;   
 
         protected List<IDamageTaker> _cachedTargets = new List<IDamageTaker>();
         protected IDamageTaker _cachedMainTarget;

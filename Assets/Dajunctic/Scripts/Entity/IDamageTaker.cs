@@ -15,6 +15,22 @@ namespace Dajunctic
         public void InitDamageTaker();
         public void TakeDamage(CombineDamage combineDamage);
         event Action<float> OnHpChanged;
+
+        
+        Vector3 Position { get; }
+        float CombatRadius { get; }
+        float HpRatio { get; }
+        bool Alive { get; }
+        Vector3 Forward { get; }
+        event Action<CalculatedDamage> OnDamageTakenEvent;
+        event Action OnHpChangedEvent;
+        float GetHit(CalculatedDamage damage);
+        void Heal(IDamageDealer dealer, float amount, bool extra1 = false, bool extra2 = false, bool extra3 = false);
+        void ForceSetHp(float hp);
+        void Die();
+        IVariableOwner AsVariableOwner();
+        IStatusEffectOwner AsStatusEffectOwner();
+        ITransform AsTransform();
     }
 
     [Serializable]

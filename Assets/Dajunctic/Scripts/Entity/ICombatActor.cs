@@ -8,11 +8,11 @@ namespace Dajunctic
     {
         public string DataId {get;}
 
-        public float CombatRadius {get; }
         public float RotateSpeed {get;}
         public float Speed {get;}
-
-
+        void SetStaggerReduction(float v);
+        void ClearTarget();
+        object Stats { get; }
 
 
     }

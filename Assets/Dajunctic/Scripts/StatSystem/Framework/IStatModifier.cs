@@ -6,5 +6,6 @@ namespace Dajunctic
         StatModType Type {get; }
         int Order {get; }
         IStatSource Source {get; }
+        
     }
 }

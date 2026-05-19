@@ -28,30 +28,6 @@ namespace Dajunctic.SkillSystem.Data
                 Debug.LogError($"Cannot find graph for {name}", this);
             }
         }
-
-        
-
-        [Button, ContextMenu("Auto Set Localized String")]
-        public void AutoSetLocalizedString()
-        {
-            data.StaticData.SetLocalizeString(name);
-            data.LevelData.SetLocalizeString(name);
-            EditorUtility.SetDirty(this);
-        }
-
-        [Button, ContextMenu("Auto Set Smart String")]
-        public void AutoSetSmartString()
-        {
-            data.LevelData.SetSmartString();
-            EditorUtility.SetDirty(this);
-        }
-
-        [Button, ContextMenu("Auto Fix Captain Passive Desc")]
-        public void AutoFixCaptainPassiveDesc()
-        {
-            data.LevelData.FixCaptainPassiveDesc();
-            EditorUtility.SetDirty(this);
-        }
 #endif
     }
 

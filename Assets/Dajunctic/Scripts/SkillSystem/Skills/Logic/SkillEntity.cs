@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Dajunctic.SkillSystem.Data;
 using UnityEngine;
-using UnityEngine.Localization;
 
 namespace Dajunctic.SkillSystem.Logic
 {
@@ -183,11 +182,6 @@ namespace Dajunctic.SkillSystem.Logic
         public AbilityDescription[] GetAllDescription()
         {
             return LevelData.GetAllDescription();
-        }
-
-        public LocalizedString GetName()
-        {
-            return Data.StaticData.localizedName;
         }
 
         public int GetMaxLevel()

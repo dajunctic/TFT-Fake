@@ -40,6 +40,7 @@ Boot Scene
 | `TraitSystem` | `TraitSystemData` | Active trait calculation, tier bonuses, UI |
 | `EmotionSystem` | `EmotionSystemData` | Radial Pi-Menu emotes, synced via network |
 | `RoundSystem` | `RoundSystemData` | Round progression (Carousel → PvP → PvE) |
+| `SkillSystem` | *(runtime)* | Node-based (xNode) Gambit skill system, CombatActor integration |
 | `PlayerSystem` | *(runtime)* | Player data, LocalPlayer reference, callbacks |
 | `GlobalChampionPool` | *(runtime)* | Shared champion pool (server-authoritative) |
 | `AugmentSystem` | *(runtime)* | Augment selection and application |
@@ -132,6 +133,7 @@ Round N
 | AI Navigation | 2.0.10 | NavMesh (Tactician movement) |
 | Input System | 1.18.0 | Joystick + keyboard input |
 | DOTween | (imported) | UI animations |
+| xNode | latest (git) | Node-based visual scripting for skills |
 | Unity Services Vivox | 16.10.0 | Voice / Chat |
 | Unity Multiplayer Play Mode | 2.0.2 | Multi-editor testing |
 
@@ -171,6 +173,7 @@ Boot Scene
 | `TraitSystem` | `TraitSystemData` | Tính trait kích hoạt, tăng chỉ số, UI |
 | `EmotionSystem` | `EmotionSystemData` | Biểu cảm radial menu, sync qua mạng |
 | `RoundSystem` | `RoundSystemData` | Tiến trình vòng (Carousel → PvP → PvE) |
+| `SkillSystem` | *(runtime)* | Hệ thống kỹ năng Node-based (xNode) dùng Gambit, tích hợp CombatActor |
 | `PlayerSystem` | *(runtime)* | Dữ liệu người chơi, LocalPlayer, callback |
 | `GlobalChampionPool` | *(runtime)* | Pool tướng chung, server quản lý |
 | `AugmentSystem` | *(runtime)* | Chọn và áp dụng Augment |

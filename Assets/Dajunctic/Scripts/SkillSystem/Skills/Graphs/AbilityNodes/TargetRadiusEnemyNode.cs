@@ -8,8 +8,8 @@ namespace Dajunctic.SkillSystem.Logic
     {
 
         [SerializeField] protected float radius;
-        [SerializeField, Output(ShowBackingValue.Never)] protected List<IDamageTaker> targets;
-        [SerializeField, Output(ShowBackingValue.Never)] protected IDamageTaker mainTarget;   
+        [SerializeReference, Output] protected List<IDamageTaker> targets;
+        [SerializeReference, Output] protected IDamageTaker mainTarget;   
 
         protected List<IDamageTaker> _cachedTargets;
         protected IDamageTaker _cachedMainTarget;

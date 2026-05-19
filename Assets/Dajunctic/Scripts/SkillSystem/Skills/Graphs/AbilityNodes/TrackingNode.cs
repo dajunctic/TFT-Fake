@@ -6,7 +6,7 @@ namespace Dajunctic.SkillSystem.Logic
     public class TrackingNode : AbilityNode
     {
 
-        [SerializeField, Input(ShowBackingValue.Never)] public IDamageTaker mainTarget;
+        [SerializeReference, Input] public IDamageTaker mainTarget;
 
         protected override void PlayInternal()
         {

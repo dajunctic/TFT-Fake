@@ -3,15 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem {
-    public class ReadOnlyAttribute : PropertyAttribute {}
-    public interface ICanTick {}
-    public interface ICanSendEvent {}
-    public interface ICanListenEvent {}
-    public interface ICanGetSystem {}
-    public interface ICanGetIdDb {}
-    public interface ICanGetData {}
-    public interface ICanSendCommand {}
-    public interface ICanSendQuery {}
     public interface ILifecycle {}
     
     public abstract class BaseEntity : Logic.IEntity { 
@@ -30,7 +21,6 @@ namespace Dajunctic.SkillSystem.Data {
         public T1 data;
         public T2 Data;
     }
-    public class BaseScriptableObjectDataAssetEditor {}
 }
 
 namespace Dajunctic.SkillSystem.Logic {

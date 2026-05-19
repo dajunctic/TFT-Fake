@@ -1,9 +1,6 @@
-using IDamageTaker = Dajunctic.IDamageTaker;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Dajunctic.SkillSystem.Logic;
-using Dajunctic;
 
 namespace Dajunctic.SkillSystem.Gambits
 {
@@ -34,10 +31,10 @@ namespace Dajunctic.SkillSystem.Gambits
             }
         }
 
-        protected Dajunctic.ICombatActor CombatActor { get; private set; }
+        protected ICombatActor CombatActor { get; private set; }
 
         GambitTargetType _targetType;
-        List<Dajunctic.IDamageTaker> _targets = new();
+        List<IDamageTaker> _targets = new();
 
         public virtual IGambitCondition CreateCopy()
         {
@@ -47,7 +44,7 @@ namespace Dajunctic.SkillSystem.Gambits
             return copy;
         }
 
-        public virtual void Initialize(Dajunctic.ICombatActor combatActor, GambitTargetType targetType)
+        public virtual void Initialize(ICombatActor combatActor, GambitTargetType targetType)
         {
             CombatActor = combatActor;
             _targetType = targetType;
@@ -60,7 +57,7 @@ namespace Dajunctic.SkillSystem.Gambits
 
         public virtual void Refresh() { }
 
-        public Dajunctic.IDamageTaker Check()
+        public IDamageTaker Check()
         {
             if (CombatActor == null)
             {
@@ -79,7 +76,7 @@ namespace Dajunctic.SkillSystem.Gambits
             var actor = CombatActor as CombatActor;
             if (actor == null) return false;
 
-            var allActors = UnityEngine.Object.FindObjectsOfType<CombatActor>();
+            var allActors = UnityEngine.Object.FindObjectsByType<CombatActor>(FindObjectsSortMode.None);
             foreach (var target in allActors)
             {
                 if (target.Hp <= 0 || !target.gameObject.activeInHierarchy) continue;
@@ -114,7 +111,7 @@ namespace Dajunctic.SkillSystem.Gambits
             return true;
         }
 
-        protected abstract Dajunctic.IDamageTaker CheckInternal(List<Dajunctic.IDamageTaker> targets);
+        protected abstract IDamageTaker CheckInternal(List<IDamageTaker> targets);
     }
 
     public enum GambitConditionRangeType

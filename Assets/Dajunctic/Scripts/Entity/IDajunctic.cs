@@ -2,16 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Dajunctic.SkillSystem {
+namespace Dajunctic {
     public interface IStatusEffectOwner {
         List<object> StatusEffects { get; }
-    }
-    public interface ICombatActor {
-        float Hp { get; }
-        void SetStaggerReduction(float v);
-        Vector3 Position { get; }
-        void ClearTarget();
-        object Stats { get; }
     }
     public interface IAreaActor {
         Vector3 GetAreaCenter();
@@ -25,72 +18,14 @@ namespace Dajunctic.SkillSystem {
     public interface IHexGrid {
         object GetAllMoveableHexes();
     }
-    public interface IMovable {
-        Vector3 MoveDirectionPerFrame { get; set; }
-        Vector3 MovePositionPerFrame { get; set; }
-        Vector3 Position { get; }
-        void ForceStop();
-        void ToggleMoveAgent(bool v);
-        void Teleport(Vector3 v);
-        void Teleport(Vector3 v, bool b);
-    }
-
-    public interface IDamageTaker {
-        bool CanBeTarget { get; }
-        Vector3 Position { get; }
-        float CombatRadius { get; }
-        float HpRatio { get; }
-        bool Alive { get; }
-        float MaxHp { get; }
-        float Hp { get; }
-        Vector3 MidPoint { get; }
-        Vector3 Forward { get; }
-        event Action<CalculatedDamage> OnDamageTakenEvent;
-        event Action OnHpChangedEvent;
-        float GetHit(CalculatedDamage damage);
-        void Heal(IDamageDealer dealer, float amount, bool extra1 = false, bool extra2 = false, bool extra3 = false);
-        void ForceSetHp(float hp);
-        void Die();
-        IVariableOwner AsVariableOwner();
-        IStatusEffectOwner AsStatusEffectOwner();
-        ITransform AsTransform();
-    }
-    public interface IDamageDealer {}
-    public interface IAbilityOwner {
-        int Skin { get; }
-        IDamageTaker AsDamageTaker();
-        ICombatStatOwner AsCombatStatOwner();
-        IAreaActor AsAreaActor();
-        ICombatActor AsCombatActor();
-        DamageSource GetDamageSource();
-        IDamageDealer AsDamageDealer();
-        ITeamMember AsTeamMember();
-        ITransform AsTransform();
-        IHexMovable AsHexMovable();
-        IMovable AsMovable();
-        ISummoner AsSummoner();
-        ISkillOwner AsSkillOwner();
-        IPassiveOwner AsPassiveOwner();
-        IVariableOwner AsVariableOwner();
-        IStatusEffectOwner AsStatusEffectOwner();
-        object AsAnimationPlayer();
-        float GetHitBoxRadius();
-        float GetPushBoxRadius();
-        bool Alive { get; }
-    }
     
     public class SkillGroup {
-        public List<Dajunctic.SkillSystem.Logic.ISkillEntity> Skills;
+        public List<SkillSystem.Logic.ISkillEntity> Skills;
     }
 
-    public interface ISkillOwner : IAbilityOwner {
-        SkillGroup UltimateGroup { get; }
-        Dajunctic.SkillSystem.Logic.ISkillEntity GetSkill(object val);
-    }
-    public interface IPassiveOwner : IAbilityOwner {}
     public interface IActionNodeSystem { 
-        void Despawn(Dajunctic.SkillSystem.Logic.IActionNode node);
-        Dajunctic.SkillSystem.Logic.IActionNode[] CreateActionNodes(object graph, object nodes = null);
+        void Despawn(SkillSystem.Logic.IActionNode node);
+        SkillSystem.Logic.IActionNode[] CreateActionNodes(object graph, object nodes = null);
     }
     public interface IVariableOwner {
         object GetVariable(string name);
@@ -105,13 +40,9 @@ namespace Dajunctic.SkillSystem {
         float Haste { get; }
     }
     
-    public enum DamageType { Physical, Magical, True }
     public enum ShieldType { Normal, Physical, Magical }
-    public class StatModifier {
-        public StatModifier CreateCopy() => this;
-    }
+
     
-    public interface IDummyId {}
     public interface ICombatActorEntity {
         bool IsCombat { get; }
     }
@@ -119,15 +50,7 @@ namespace Dajunctic.SkillSystem {
         bool IsInitialized { get; }
         List<IDamageTaker> Members { get; }
     }
-    public interface ITransform {
-        Vector3 Position { get; }
-        Vector3 Forward { get; }
-        Vector3 TransformPoint(Vector3 p);
-        Vector3 TransformDirection(Vector3 d);
-        Transform GetTransform();
-        Transform GetTransform(object obj);
-    }
-    
+
     public class CalculatedDamage {
         public CalculatedDamage(IDamageDealer source, IDamageTaker target, float baseDmg, float ratio, DamageType type, object extra1 = null, object extra2 = null, object extra3 = null, object extra4 = null) {}
         public CalculatedDamage(params object[] args) {}
@@ -238,14 +161,7 @@ namespace Dajunctic.SkillSystem {
         public static void DrawWireBox(Vector2 p, Quaternion rot, Vector3 size, Color c, float d) {}
         public static void DrawWireSphere(Vector2 p, float r, Color c, float d) {}
     }
-    public class LocalizationToolWindow {
-        public static UnityEngine.Localization.LocalizedString CreateLocalizedStringKeyValue(string k, string v) => null;
-    }
-    public static class AssetUtils {
-        public static void SetDirty(UnityEngine.Object o) {}
-        public static void SaveAssets() {}
-        public static List<T> FindAssetAtFolder<T>(string[] folders) where T : UnityEngine.Object => new List<T>();
-    }
+ 
 }
 
 namespace Dajunctic.SkillSystem.Logic {}

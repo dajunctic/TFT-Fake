@@ -315,8 +315,6 @@ namespace Dajunctic
             }
         }
 
-        public Transform GetTransform() => CachedTransform;
-
         public override string DataId => name;
 
         public override void Initialize()

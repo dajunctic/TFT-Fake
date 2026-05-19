@@ -37,6 +37,9 @@ namespace Dajunctic
             return AssetDatabase.GetAssetPath(asset).Replace($"/{asset.name}.asset", "");
         }
 
+        public static void SetDirty(Object o) {}
+        public static void SaveAssets() {}
+
 #endif
     }
 }
