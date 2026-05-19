@@ -9,8 +9,8 @@ namespace Dajunctic.SkillSystem.Logic
     {
         [SerializeField, Input] bool condition;
         [SerializeField] bool random;
-        [SerializeReference, Output] private AbilityNode trueBranch;
-        [SerializeReference, Output] private AbilityNode falseBranch;
+        [SerializeField, Output(ShowBackingValue.Never)] private AbilityNode trueBranch;
+        [SerializeField, Output(ShowBackingValue.Never)] private AbilityNode falseBranch;
 
         private List<AbilityNode> _trueNodes;
         private List<AbilityNode> _falseNodes;

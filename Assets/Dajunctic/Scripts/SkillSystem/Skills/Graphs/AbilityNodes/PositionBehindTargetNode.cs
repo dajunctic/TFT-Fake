@@ -6,7 +6,7 @@ namespace Dajunctic.SkillSystem.Logic
     public class PositionBehindTargetNode : AbilityNode
     {
         [SerializeField] private float distanceBehind = 1f;
-        [SerializeReference, Input] private IDamageTaker target;
+        [SerializeField, Input(ShowBackingValue.Never)] private IDamageTaker target;
 
         [Output] public Vector3 outPosition;
         [Output] public Vector3 outDirection;

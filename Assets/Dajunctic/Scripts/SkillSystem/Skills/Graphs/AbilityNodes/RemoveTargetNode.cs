@@ -6,9 +6,9 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class RemoveTargetNode : AbilityNode
     {
-        [SerializeReference, Input] List<IDamageTaker> inTargets;
-        [SerializeReference, Input] List<IDamageTaker> removeTargets;
-        [SerializeReference, Output] public List<IDamageTaker> outTargets;
+        [SerializeField, Input(ShowBackingValue.Never)] List<IDamageTaker> inTargets;
+        [SerializeField, Input(ShowBackingValue.Never)] List<IDamageTaker> removeTargets;
+        [SerializeField, Output(ShowBackingValue.Never)] public List<IDamageTaker> outTargets;
 
         public override object GetValue(NodePort port)
         {

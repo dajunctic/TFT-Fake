@@ -7,9 +7,9 @@ namespace Dajunctic.SkillSystem.Logic
     {
         [SerializeField, Input] float duration;
         [SerializeField] float interval = -1;
-        [SerializeReference, Input] IActionNode beginAction;
-        [SerializeReference, Input] IActionNode intervalAction;
-        [SerializeReference, Input] IActionNode endAction;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode beginAction;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode intervalAction;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode endAction;
 
         protected override void PlayInternal(object source)
         {

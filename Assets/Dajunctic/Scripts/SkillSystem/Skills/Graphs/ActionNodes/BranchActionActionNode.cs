@@ -4,8 +4,8 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public abstract class BranchActionActionNode : ActionNode
     {
-        [SerializeReference, Input] IActionNode trueAction;
-        [SerializeReference, Input] IActionNode falseAction;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode trueAction;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode falseAction;
 
         public abstract bool IsTrue { get; }
         

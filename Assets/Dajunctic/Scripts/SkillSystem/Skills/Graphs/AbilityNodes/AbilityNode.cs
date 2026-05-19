@@ -18,13 +18,13 @@ namespace Dajunctic.SkillSystem.Logic
             ICanListenEvent,
             ICanGetSystem
     {
-        [SerializeReference, Output]
+        [SerializeField, Output]
         AbilityNode self;
 
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         AbilityNode inNode;
 
-        [SerializeReference, Output]
+        [SerializeField, Output(ShowBackingValue.Never)]
         AbilityNode outNode;
 
         protected IAbilityOwner Owner;

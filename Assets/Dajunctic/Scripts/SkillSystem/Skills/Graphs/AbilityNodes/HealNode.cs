@@ -7,7 +7,7 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class HealNode : AbilityNode
     {
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         List<IDamageTaker> targets;
 
         [SerializeField, Input]
@@ -19,7 +19,7 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeField]
         bool triggerHealEvent = true;
 
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         IActionNode healAction;
 
         IDamageTaker _currentDamageTaker;

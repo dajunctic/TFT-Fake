@@ -5,7 +5,7 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class PositionTargetNode : AbilityNode
     {
-        [SerializeReference, Input] private IDamageTaker target;
+        [SerializeField, Input(ShowBackingValue.Never)] private IDamageTaker target;
         [SerializeField] bool cached = true;
         [SerializeField] Vector3 offset = Vector3.zero;
         [Output] public Vector3 outPosition;

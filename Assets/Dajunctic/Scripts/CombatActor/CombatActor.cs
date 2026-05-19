@@ -51,6 +51,8 @@ namespace Dajunctic
         
         bool _viewLoaded;
 
+        List<Dajunctic.SkillSystem.Gambits.Gambit> _activeGambits = new();
+
         public override void Initialize()
         {
             if (Initialized) return;
@@ -63,6 +65,21 @@ namespace Dajunctic
             InitializeMoveAgent();
             Stats = new ChampionStats(combatActorData);
             InitDamageTaker();
+            InitGambits();
+        }
+
+        void InitGambits()
+        {
+            _activeGambits.Clear();
+            if (combatActorData != null && combatActorData.gambits != null)
+            {
+                foreach (var g in combatActorData.gambits)
+                {
+                    var instance = g.CreateCopy();
+                    instance.Initialize(this);
+                    _activeGambits.Add(instance);
+                }
+            }
         }
 
         public override void Tick()
@@ -81,6 +98,11 @@ namespace Dajunctic
                 InitializeMoveAgent();
             }
 
+            if (Alive && !IsCasting)
+            {
+                EvaluateGambits();
+            }
+
             float realSpeed = MoveAgentAlive ? MoveAgent.Velocity.magnitude : 0f;
             float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
 
@@ -88,6 +110,21 @@ namespace Dajunctic
 
             SyncTransform();
             SyncEntity();
+        }
+
+        void EvaluateGambits()
+        {
+            foreach (var gambit in _activeGambits)
+            {
+                var target = gambit.condition?.Check();
+                if (target != null && gambit.action != null && gambit.action.CheckCanPlay())
+                {
+                    SetTarget(target as CombatActor);
+                    SetCasting(true);
+                    gambit.action.Play(target);
+                    break;
+                }
+            }
         }
 
         public override void Cleanup()

@@ -7,6 +7,9 @@ public class CombatActorData : BaseSO
 {
     public ActorMovement movement;
     public ActorBaseStats stats;
+
+    [Header("AI Gambits (Priority: Top to Bottom)")]
+    public List<Dajunctic.SkillSystem.Gambits.Gambit> gambits = new List<Dajunctic.SkillSystem.Gambits.Gambit>();
 }
 
 [Serializable]

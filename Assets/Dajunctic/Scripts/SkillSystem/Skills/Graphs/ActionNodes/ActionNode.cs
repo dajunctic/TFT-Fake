@@ -13,7 +13,7 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeField]
         int priority = 0;
 
-        [SerializeReference, Output]
+        [SerializeField, Output(ShowBackingValue.Never)]
         IActionNode self;
 
         public IAbilityOwner Owner { get; private set; }

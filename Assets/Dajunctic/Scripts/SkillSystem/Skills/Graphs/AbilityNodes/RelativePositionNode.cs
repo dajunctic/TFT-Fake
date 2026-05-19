@@ -7,7 +7,7 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class RelativePositionNode : AbilityNode
     {
-        [SerializeReference, Input] IDamageTaker inTarget;
+        [SerializeField, Input(ShowBackingValue.Never)] IDamageTaker inTarget;
         [SerializeField, Input] Vector3 inDirection;
         [SerializeField, Input] float inDistance;
         [SerializeField] Vector3 offsetRaycast;

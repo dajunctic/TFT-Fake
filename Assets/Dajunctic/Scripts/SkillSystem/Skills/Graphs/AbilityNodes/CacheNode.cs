@@ -5,9 +5,9 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class CacheNode : AbilityNode
     {
-        [SerializeReference, Input] IDamageTaker inTarget;
-        [SerializeReference, Input] Vector3 inPosition;
-        [SerializeReference, Output] IDamageTaker outTarget;
+        [SerializeField, Input(ShowBackingValue.Never)] IDamageTaker inTarget;
+        [SerializeField, Input(ShowBackingValue.Never)] Vector3 inPosition;
+        [SerializeField, Output(ShowBackingValue.Never)] IDamageTaker outTarget;
         [SerializeField, Output] Vector3 outPosition;
 
 

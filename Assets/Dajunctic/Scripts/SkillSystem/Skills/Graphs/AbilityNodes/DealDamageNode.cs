@@ -8,7 +8,7 @@ namespace Dajunctic.SkillSystem.Logic
     public class DealDamageNode
         : AbilityNode
     {
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         List<IDamageTaker> targets;
 
         [SerializeField, Input]
@@ -20,7 +20,7 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeField, Input]
         DamageConfig damageConfig;
 
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         IActionNode hitAction;
 
         DamageSource _damageSource;

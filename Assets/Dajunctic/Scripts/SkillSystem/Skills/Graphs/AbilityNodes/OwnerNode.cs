@@ -5,7 +5,7 @@ namespace Dajunctic.SkillSystem.Logic
 {
     public class OwnerNode : AbilityNode
     {
-        [SerializeReference, Output] ICombatActorEntity owner;
+        [SerializeField, Output(ShowBackingValue.Never)] ICombatActorEntity owner;
 
         public override object GetValue(NodePort port)
         {

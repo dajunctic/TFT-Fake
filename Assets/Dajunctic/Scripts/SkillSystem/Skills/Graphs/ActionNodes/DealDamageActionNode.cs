@@ -9,8 +9,8 @@ namespace Dajunctic.SkillSystem.Logic
     {
         [SerializeField, Input] long commonAttackId = -1;
         [SerializeField, Input] DamageConfig damageConfig;
-        [SerializeReference, Input] List<IDamageTaker> targets;
-        [SerializeReference, Input] IActionNode hitAction;
+        [SerializeField, Input(ShowBackingValue.Never)] List<IDamageTaker> targets;
+        [SerializeField, Input(ShowBackingValue.Never)] IActionNode hitAction;
 
         HashSet<IDamageTaker> _damageTakers;
         DamageSource _damageSource;

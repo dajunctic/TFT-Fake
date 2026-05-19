@@ -16,10 +16,10 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeField]
         bool triggerHealEvent = true;
 
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         List<IDamageTaker> targets;
 
-        [SerializeReference, Input]
+        [SerializeField, Input(ShowBackingValue.Never)]
         IActionNode hitAction;
 
         IDamageTaker _currentDamageTaker;
