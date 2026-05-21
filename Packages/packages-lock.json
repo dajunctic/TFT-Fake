@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.alelievr.node-graph-processor": {
+      "version": "https://github.com/alelievr/NodeGraphProcessor.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d6e8e5e6995b90742ff09730240859415f07f4ee"
+    },
     "com.firstgeargames.fishnet": {
       "version": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
       "depth": 0,

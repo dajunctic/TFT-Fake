@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.alelievr.node-graph-processor": "https://github.com/alelievr/NodeGraphProcessor.git#upm",
     "com.firstgeargames.fishnet": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.addressables": "2.9.0",
