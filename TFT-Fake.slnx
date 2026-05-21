@@ -5,7 +5,6 @@
   <Project Path="DTT.RuntimeUtilities.Runtime.csproj" />
   <Project Path="AllIn13DShaderDemoScriptsAssembly.csproj" />
   <Project Path="ShaderCrew.TheToonShader.Core.Runtime.csproj" />
-  <Project Path="XNodeEditor.csproj" />
   <Project Path="DTT.AreaOfEffectRegions.Runtime.csproj" />
   <Project Path="DTT.EditorUtilities.Editor.csproj" />
   <Project Path="DTT.AreaOfEffectRegions.Editor.csproj" />
@@ -13,7 +12,6 @@
   <Project Path="MCPForUnity.Runtime.csproj" />
   <Project Path="AllIn13DShaderAssemebly.csproj" />
   <Project Path="Assembly-CSharp-firstpass.csproj" />
-  <Project Path="XNode.csproj" />
   <Project Path="Sirenix.OdinInspector.Modules.Unity.Addressables.csproj" />
   <Project Path="ShaderCrew.TheToonShader.3D.Runtime.csproj" />
   <Project Path="CFXREditor.csproj" />
