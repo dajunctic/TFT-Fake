@@ -32,8 +32,17 @@ MonoBehaviour:
     critDamage: 1.4
     maxMana: 100
     startingMana: 0
-  skills:
-  - {fileID: 11400000, guid: f0c3b2949c7c2eb42a7106e72f8b8b89, type: 2}
+  gambits:
+  - targetType: 0
+    condition:
+      rid: 2806570989226033435
+    action:
+      rid: 2806570989226033436
+  - targetType: 0
+    condition:
+      rid: 2806570989226033433
+    action:
+      rid: 2806570989226033434
   displayName: Master Yi
   shopIcon: {fileID: 21300000, guid: 4c78455ec3d4a624abfac3c0a53ef722, type: 3}
   rarity: 1
@@ -46,3 +55,24 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ac44f11cfd51fd1469006d9c1586992f, type: 2}
   - {fileID: 11400000, guid: 885f782b018d9674ea93dc29489fab4c, type: 2}
   - {fileID: 11400000, guid: 9b33dd32fad15214d9d76b75215b3156, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 2806570989226033433
+      type: {class: NearestGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 2
+        customRange: 1
+    - rid: 2806570989226033434
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 11400000, guid: 1c3a6a8e89c1bb0499ef72f9ee4aca11, type: 2}
+    - rid: 2806570989226033435
+      type: {class: FullManaGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 0
+        customRange: 4
+    - rid: 2806570989226033436
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 0}

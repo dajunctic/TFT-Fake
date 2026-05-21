@@ -1,3 +1,4 @@
+using GraphProcessor;
 using System.Collections.Generic;
 using System.Linq;
 using Dajunctic.SkillSystem.Data;
@@ -5,13 +6,12 @@ using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Heal")]
     public class HealNode : AbilityNode
     {
-        [SerializeField, Input(ShowBackingValue.Never)]
-        List<IDamageTaker> targets;
+        [GraphProcessor.Input(name = "targets")] public List<IDamageTaker> targets;
 
-        [SerializeField, Input]
-        HealConfig heal;
+        [GraphProcessor.Input(name = "heal")] public HealConfig heal;
 
         [SerializeField]
         bool healOnFull = true;
@@ -19,8 +19,7 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeField]
         bool triggerHealEvent = true;
 
-        [SerializeField, Input(ShowBackingValue.Never)]
-        IActionNode healAction;
+        [GraphProcessor.Input(name = "healAction")] public IActionNode healAction;
 
         IDamageTaker _currentDamageTaker;
 

@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Branch")]
     public class BranchNode : AbilityNode
     {
-        [SerializeField, Input] bool condition;
+        [GraphProcessor.Input(name = "condition")] public bool condition;
         [SerializeField] bool random;
-        [SerializeField, Output(ShowBackingValue.Never)] private AbilityNode trueBranch;
-        [SerializeField, Output(ShowBackingValue.Never)] private AbilityNode falseBranch;
+        [GraphProcessor.Output] private AbilityNode trueBranch;
+        [GraphProcessor.Output] private AbilityNode falseBranch;
 
         private List<AbilityNode> _trueNodes;
         private List<AbilityNode> _falseNodes;
@@ -18,8 +19,11 @@ namespace Dajunctic.SkillSystem.Logic
         protected override void InitializeInternal()
         {
             base.InitializeInternal();
-            _trueNodes = GetOutputPort(nameof(trueBranch)).GetConnections().Select(port => port.node).OfType<AbilityNode>().ToList();
-            _falseNodes = GetOutputPort(nameof(falseBranch)).GetConnections().Select(port => port.node).OfType<AbilityNode>().ToList();
+            var truePort = outputPorts.FirstOrDefault(p => p.fieldName == nameof(trueBranch));
+            _trueNodes = truePort?.GetEdges().Select(e => e.inputNode as AbilityNode).Where(n => n != null).ToList() ?? new List<AbilityNode>();
+            
+            var falsePort = outputPorts.FirstOrDefault(p => p.fieldName == nameof(falseBranch));
+            _falseNodes = falsePort?.GetEdges().Select(e => e.inputNode as AbilityNode).Where(n => n != null).ToList() ?? new List<AbilityNode>();
         }
 
         protected override void CleanupInternal()

@@ -1,3 +1,4 @@
+using GraphProcessor;
 using System.Collections.Generic;
 using System.Linq;
 using Dajunctic.SkillSystem.Data;
@@ -5,23 +6,19 @@ using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/DealDamage")]
     public class DealDamageNode
         : AbilityNode
     {
-        [SerializeField, Input(ShowBackingValue.Never)]
-        List<IDamageTaker> targets;
+        [GraphProcessor.Input(name = "targets")] public List<IDamageTaker> targets;
 
-        [SerializeField, Input]
+        [GraphProcessor.Input]
         long commonAttackId = -1;
-
-        [SerializeField, Input]
         int damageCount = 1;
 
-        [SerializeField, Input]
-        DamageConfig damageConfig;
+        public DamageConfig damageConfig;
 
-        [SerializeField, Input(ShowBackingValue.Never)]
-        IActionNode hitAction;
+        [GraphProcessor.Input(name = "hitAction")] public IActionNode hitAction;
 
         DamageSource _damageSource;
         IDamageTaker _currentDamageTaker;

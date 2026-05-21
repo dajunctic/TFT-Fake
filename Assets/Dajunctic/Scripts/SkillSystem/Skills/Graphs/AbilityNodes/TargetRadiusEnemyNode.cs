@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/TargetRadiusEnemy")]
     public class TargetRadiusEnemyNode : AbilityNode
     {
 
@@ -13,26 +14,6 @@ namespace Dajunctic.SkillSystem.Logic
 
         protected List<IDamageTaker> _cachedTargets;
         protected IDamageTaker _cachedMainTarget;
-
-        public override object GetValue(NodePort port)
-        {
-            if (Owner == null) return null;
-            
-            GetMainTarget();
-
-            if (port.fieldName == nameof(targets))
-            {
-                return _cachedTargets;
-            }
-
-            if (port.fieldName == nameof(mainTarget))
-            {
-                return _cachedMainTarget;
-            }
-
-            return base.GetValue(port);
-
-        }
 
         protected IDamageTaker GetMainTarget()
         {

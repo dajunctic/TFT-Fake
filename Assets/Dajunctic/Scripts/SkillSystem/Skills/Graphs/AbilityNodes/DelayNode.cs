@@ -1,12 +1,14 @@
+using GraphProcessor;
 using System.Collections;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Delay")]
     public class DelayNode : AbilityNode
     {
-        [SerializeField, Input] float delay;
-        [SerializeField, Input] float atkSpd = 1f;
+        [GraphProcessor.Input(name = "delay")] public float delay;
+        [GraphProcessor.Input] float atkSpd = 1f;
 
         protected override void PlayInternal()
         {

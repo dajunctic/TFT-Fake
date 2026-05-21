@@ -1,38 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/TargetRandomEnemy")]
     public class TargetRandomEnemyNode : AbilityNode
     {
         [SerializeField] protected float radius = 10f;
         [SerializeField] protected int count = 1;
         
-        [SerializeField, Output(ShowBackingValue.Never)] protected List<IDamageTaker> targets;
-        [SerializeField, Output(ShowBackingValue.Never)] protected IDamageTaker mainTarget;   
+        [GraphProcessor.Output] protected List<IDamageTaker> targets;
+        [GraphProcessor.Output] protected IDamageTaker mainTarget;   
 
         protected List<IDamageTaker> _cachedTargets = new List<IDamageTaker>();
         protected IDamageTaker _cachedMainTarget;
-
-        public override object GetValue(NodePort port)
-        {
-            if (Owner == null) return null;
-            
-            GetMainTarget();
-
-            if (port.fieldName == nameof(targets))
-            {
-                return _cachedTargets;
-            }
-
-            if (port.fieldName == nameof(mainTarget))
-            {
-                return _cachedMainTarget;
-            }
-
-            return base.GetValue(port);
-        }
 
         protected IDamageTaker GetMainTarget()
         {

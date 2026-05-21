@@ -43,30 +43,56 @@ namespace Dajunctic.SkillSystem.Gambits
         {
             IsCanNotBeInterrupted = true;
             
-            // In a real game, you would yield return IEMoveToTarget(range) here.
-            // For now, we simulate reaching the target and casting.
-
-            if (skillGraph != null)
+            var actor = CombatActor as CombatActor;
+            if (actor != null && Target != null)
             {
-                // Clone the graph to prevent shared state issues
-                var instanceGraph = skillGraph.Copy() as SkillGraph;
-                instanceGraph.SetOwner(CombatActor as ISkillOwner);
-                instanceGraph.Initialize();
-                
-                bool isFinished = false;
-                instanceGraph.OnExitEvent += () => isFinished = true;
-
-                // We don't pass the target directly because the graph resolves it via Nodes
-                instanceGraph.Play(null);
-
-                while (!isFinished)
+                float attackRange = actor.CombatActorData != null ? actor.CombatActorData.stats.attackRange : 1.5f;
+                float targetRadius = 0.25f;
+                if (Target is CombatActor targetActor && targetActor.CombatActorData != null)
                 {
-                    var actor = CombatActor as CombatActor;
-                    if (actor == null || actor.Hp <= 0)
+                    targetRadius = targetActor.CombatActorData.movement.radius;
+                }
+                float ownerRadius = actor.CombatActorData != null ? actor.CombatActorData.movement.radius : 0.25f;
+                
+                float stopDistance = attackRange + ownerRadius + targetRadius;
+
+                // 1. Chase Phase: Move to target until in range
+                while (Target != null && Target.Alive && actor.Hp > 0)
+                {
+                    var targetPos = Target.AsTransform().Position;
+                    float dist = Vector3.Distance(actor.Position, targetPos);
+                    
+                    if (dist <= stopDistance)
                     {
                         break;
                     }
+
+                    actor.MovePosition(targetPos, actor.Speed, actor.RotateSpeed, stopDistance);
                     await Task.Yield();
+                }
+
+                actor.ForceStop();
+
+                // 2. Cast Phase: Only play if target is still valid and alive
+                if (Target != null && Target.Alive && actor.Hp > 0 && skillGraph != null)
+                {
+                    var instanceGraph = ScriptableObject.Instantiate(skillGraph) as SkillGraph;
+                    instanceGraph.SetOwner(CombatActor as ISkillOwner);
+                    instanceGraph.Initialize();
+                    
+                    bool isFinished = false;
+                    instanceGraph.OnExitEvent += () => isFinished = true;
+
+                    instanceGraph.Play(null);
+
+                    while (!isFinished)
+                    {
+                        if (actor == null || actor.Hp <= 0)
+                        {
+                            break;
+                        }
+                        await Task.Yield();
+                    }
                 }
             }
 

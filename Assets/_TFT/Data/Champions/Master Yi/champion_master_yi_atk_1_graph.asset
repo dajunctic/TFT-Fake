@@ -1,415 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-9092204931230909960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09ac8a12032e4498a0cd3a0d4cd51c99, type: 3}
-  m_Name: Entry
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.EntryNode
-  graph: {fileID: 11400000}
-  position: {x: -408, y: -408}
-  ports:
-    keys:
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: self
-      _node: {fileID: -9092204931230909960}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: -9092204931230909960}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: -9092204931230909960}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: inNode
-        node: {fileID: -5953991306653508083}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
---- !u!114 &-6205962197883216362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3aa9076ebed54a979357f963a9c23028, type: 3}
-  m_Name: Deal Damage
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.DealDamageNode
-  graph: {fileID: 11400000}
-  position: {x: 216, y: -456}
-  ports:
-    keys:
-    - targets
-    - commonAttackId
-    - damageCount
-    - damageConfig
-    - hitAction
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: targets
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: System.Collections.Generic.List`1[[Dajunctic.IDamageTaker,
-        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: commonAttackId
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: System.Int64, mscorlib, Version=4.0.0.0, Culture=neutral,
-        PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: damageCount
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
-        PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: damageConfig
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: Dajunctic.SkillSystem.Data.DamageConfig, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: hitAction
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.IActionNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: self
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: outNode
-        node: {fileID: -5953991306653508083}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: -6205962197883216362}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: inNode
-        node: {fileID: -2052343750072450375}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
-  commonAttackId: -1
-  damageCount: 1
-  damageConfig:
-    damageType: 0
-    damageScale: 0
-    canNotReflect: 0
-    damage: 1
-    trueDamage: 0
-    extraDamages: []
-    critical:
-      criticalChanceBonus: 0
-      criticalDamageBonus: 0
-    stun:
-      duration: 0
-    freeze:
-      duration: 0
-      damageScale: 0
-      totalDamage: 0
-    airBorne:
-      duration: 0
-      unlimited: 0
-      heightStep: 0
-    burn:
-      duration: 0
-      damageScale: 0
-      totalDamage: 0
-    poison:
-      duration: 0
-      damageScale: 0
-      totalDamage: 0
-    bleed:
-      duration: 0
-      damageScale: 0
-      totalDamage: 0
-    confuse:
-      duration: 0
-    silence:
-      duration: 0
-    taunt:
-      duration: 0
-    fear:
-      duration: 0
-    disarm:
-      duration: 0
-    metaData: 
---- !u!114 &-5953991306653508083
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96306f8d51c95be4ca292043cfdc9339, type: 3}
-  m_Name: Tracking
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.TrackingNode
-  graph: {fileID: 11400000}
-  position: {x: -72, y: -296}
-  ports:
-    keys:
-    - mainTarget
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: mainTarget
-      _node: {fileID: -5953991306653508083}
-      _typeQualifiedName: Dajunctic.IDamageTaker, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: self
-      _node: {fileID: -5953991306653508083}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: -5953991306653508083}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: outNode
-        node: {fileID: -9092204931230909960}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: -5953991306653508083}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: inNode
-        node: {fileID: -6205962197883216362}
-        reroutePoints: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
-  mainTarget:
-    rid: -2
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
---- !u!114 &-2541951310021812857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 239e4b9a0f874ab40b3292f0d3f24274, type: 3}
-  m_Name: Target Self
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.TargetSelfNode
-  graph: {fileID: 11400000}
-  position: {x: -72, y: -600}
-  ports:
-    keys:
-    - targets
-    - mainTarget
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: targets
-      _node: {fileID: -2541951310021812857}
-      _typeQualifiedName: System.Collections.Generic.List`1[[Dajunctic.IDamageTaker,
-        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: mainTarget
-      _node: {fileID: -2541951310021812857}
-      _typeQualifiedName: Dajunctic.IDamageTaker, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: self
-      _node: {fileID: -2541951310021812857}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: -2541951310021812857}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: -2541951310021812857}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
-  targets: []
-  mainTarget:
-    rid: -2
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
---- !u!114 &-2052343750072450375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e4e0b2efc484909a8edda60e5d0872a, type: 3}
-  m_Name: Exit
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.ExitNode
-  graph: {fileID: 11400000}
-  position: {x: 216, y: -280}
-  ports:
-    keys:
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: self
-      _node: {fileID: -2052343750072450375}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: -2052343750072450375}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections:
-      - fieldName: outNode
-        node: {fileID: -6205962197883216362}
-        reroutePoints: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: -2052343750072450375}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,90 +12,246 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff0cfd69bf7b4b469c3c19234f70524d, type: 3}
   m_Name: champion_master_yi_atk_1_graph
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.SkillGraph
+  serializedNodes: []
   nodes:
-  - {fileID: -9092204931230909960}
-  - {fileID: -2052343750072450375}
-  - {fileID: 6110445011047901047}
-  - {fileID: -5953991306653508083}
-  - {fileID: -6205962197883216362}
-  - {fileID: -2541951310021812857}
---- !u!114 &6110445011047901047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aefaf9a6bdadf24e88bc919ae3f3ea3, type: 3}
-  m_Name: Target Nearest Enemy
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.TargetNearestEnemyNode
-  graph: {fileID: 11400000}
-  position: {x: -408, y: -600}
-  ports:
-    keys:
-    - targets
-    - mainTarget
-    - self
-    - inNode
-    - outNode
-    values:
-    - _fieldName: targets
-      _node: {fileID: 6110445011047901047}
-      _typeQualifiedName: System.Collections.Generic.List`1[[Dajunctic.IDamageTaker,
-        Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]],
-        mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: mainTarget
-      _node: {fileID: 6110445011047901047}
-      _typeQualifiedName: Dajunctic.IDamageTaker, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: self
-      _node: {fileID: 6110445011047901047}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
+  - rid: 2806570943738545100
+  - rid: 2806570943738545101
+  - rid: 2806570989226033284
+  - rid: 2806570989226033432
+  - rid: 2806570989226033438
+  - rid: 2806570989226033485
+  edges:
+  - GUID: 7dfb98c9-4c5c-45ee-b5ec-72388df8cc04
+    owner: {fileID: 11400000}
+    inputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: c2c54fd0-cf1e-4630-9205-f47a41ad3e54
+    owner: {fileID: 11400000}
+    inputNodeGUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 5ef3c0b9-7155-4553-8a0b-d3fe14ac6d5f
+    owner: {fileID: 11400000}
+    inputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    outputNodeGUID: fca72292-ada4-4d2f-a5cb-9c83a5ec2b91
+    inputFieldName: mainTarget
+    outputFieldName: mainTarget
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: d929c53d-fdcb-48ef-abe8-d510cc1a2431
+    owner: {fileID: 11400000}
+    inputNodeGUID: 17de2d70-eb26-4a5c-a13d-9534011590c3
+    outputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 3d5b9432-afce-4804-b510-6694715784bd
+    owner: {fileID: 11400000}
+    inputNodeGUID: 17de2d70-eb26-4a5c-a13d-9534011590c3
+    outputNodeGUID: fca72292-ada4-4d2f-a5cb-9c83a5ec2b91
+    inputFieldName: targets
+    outputFieldName: targets
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: a10df1f1-b508-4e43-82c8-53791099c535
+    owner: {fileID: 11400000}
+    inputNodeGUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+    outputNodeGUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 593c9099-93d0-4d21-8a61-5f6ef8846fb6
+    owner: {fileID: 11400000}
+    inputNodeGUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+    outputNodeGUID: 17de2d70-eb26-4a5c-a13d-9534011590c3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  groups: []
+  stackNodes: []
+  pinnedElements:
+  - position:
+      serializedVersion: 2
+      x: 232
+      y: 51
+      width: 130
+      height: 163
+    opened: 0
+    editorType:
+      serializedType: GraphProcessor.ProcessorView, com.alelievr.NodeGraphProcessor.Editor,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: inNode
-      _node: {fileID: 6110445011047901047}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
+  - position:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 150
+      height: 200
+    opened: 0
+    editorType:
+      serializedType: GraphProcessor.ExposedParameterView, com.alelievr.NodeGraphProcessor.Editor,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 0
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-    - _fieldName: outNode
-      _node: {fileID: 6110445011047901047}
-      _typeQualifiedName: Dajunctic.SkillSystem.Logic.AbilityNode, Assembly-CSharp,
-        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      connections: []
-      _direction: 1
-      _connectionType: 0
-      _typeConstraint: 0
-      _dynamic: 0
-  self: {fileID: 0}
-  inNode: {fileID: 0}
-  outNode: {fileID: 0}
-  radius: 0
-  targets: []
-  mainTarget:
-    rid: -2
+  exposedParameters: []
+  serializedParameterList: []
+  stickyNotes: []
+  nodeInspectorReference: {fileID: 0}
+  position: {x: 345, y: 323, z: 0}
+  scale: {x: 1, y: 1, z: 1}
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 2806570943738545100
+      type: {class: TrackingNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+        computeOrder: 2
+        position:
+          serializedVersion: 2
+          x: 129.73914
+          y: -66.43477
+          width: 163.00003
+          height: 137.00003
+        expanded: 1
+        debug: 0
+        nodeLock: 0
+        mainTarget:
+          rid: -2
+        duration: 0.3
+        rotateSpeed: 10
+    - rid: 2806570943738545101
+      type: {class: EntryNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+        computeOrder: 1
+        position:
+          serializedVersion: 2
+          x: -194.6087
+          y: 5.9130445
+          width: 102.99999
+          height: 99.00003
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+    - rid: 2806570989226033284
+      type: {class: ExitNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+        computeOrder: 5
+        position:
+          serializedVersion: 2
+          x: 694.20013
+          y: -74.55001
+          width: 102.99994
+          height: 98.99999
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+    - rid: 2806570989226033432
+      type: {class: TargetNearestEnemyNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: fca72292-ada4-4d2f-a5cb-9c83a5ec2b91
+        computeOrder: 0
+        position:
+          serializedVersion: 2
+          x: -280.95657
+          y: -185.95653
+          width: 193.00002
+          height: 166
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        radius: 1
+        targets: []
+        mainTarget:
+          rid: -2
+    - rid: 2806570989226033438
+      type: {class: PlayAnimationNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+        computeOrder: 3
+        position:
+          serializedVersion: 2
+          x: 132.6087
+          y: 130.13043
+          width: 177
+          height: 154.99997
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        animName: atk1_1
+        transitionDuration: 0.1
+        waitTillFinished: 1
+    - rid: 2806570989226033485
+      type: {class: DealDamageNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 17de2d70-eb26-4a5c-a13d-9534011590c3
+        computeOrder: 4
+        position:
+          serializedVersion: 2
+          x: 389
+          y: -190
+          width: 181
+          height: 166
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        damageConfig:
+          damageType: 1
+          damageScale: 0
+          canNotReflect: 0
+          damage: 1
+          trueDamage: 0
+          extraDamages: []
+          critical:
+            criticalChanceBonus: 0
+            criticalDamageBonus: 0
+          stun:
+            duration: 0
+          freeze:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          airBorne:
+            duration: 0
+            unlimited: 0
+            heightStep: 0
+          burn:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          poison:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          bleed:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          confuse:
+            duration: 0
+          silence:
+            duration: 0
+          taunt:
+            duration: 0
+          fear:
+            duration: 0
+          disarm:
+            duration: 0
+          metaData: 

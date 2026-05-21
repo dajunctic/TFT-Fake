@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
@@ -11,16 +11,17 @@ namespace Dajunctic.SkillSystem.Logic
     /// All inNode must be completed to run.
     /// Notify all outNode when completed.
     /// </summary>
-    public abstract class AbilityNode: Node
+    [System.Serializable]
+    public abstract class AbilityNode: BaseNode
     {
-        [SerializeField, Output]
-        AbilityNode self;
+        [GraphProcessor.Output(name = "Self")]
+        public AbilityNode self;
 
-        [SerializeField, Input]
-        AbilityNode inNode;
+        [GraphProcessor.Input(name = "In", allowMultiple = true)]
+        public AbilityNode inNode;
 
-        [SerializeField, Output]
-        AbilityNode outNode;
+        [GraphProcessor.Output(name = "Out")]
+        public AbilityNode outNode;
 
         protected IAbilityOwner Owner;
         protected int Skin;
@@ -34,17 +35,16 @@ namespace Dajunctic.SkillSystem.Logic
         Coroutine _coroutine;
         bool _isPlaying;
 
+        public override string name => GetType().Name;
+
 #if UNITY_EDITOR
         protected virtual void OnValidate() { }
 #endif
 
-        public override object GetValue(NodePort port)
+        protected override void Enable()
         {
-            if (port.fieldName == nameof(self))
-            {
-                return this;
-            }
-            return null;
+            base.Enable();
+            self = this;
         }
 
         public virtual void SetOwner(IAbilityOwner owner)
@@ -61,17 +61,47 @@ namespace Dajunctic.SkillSystem.Logic
         public void Initialize()
         {
             ActionNodeSystem = this.GetSystem<IActionNodeSystem>();
-            _inNodes = GetInputPort(nameof(inNode))
-                .GetConnections()
-                .Select(port => port.node)
-                .OfType<AbilityNode>()
-                .ToList();
-            _outNodes = GetOutputPort(nameof(outNode))
-                .GetConnections()
-                .Select(port => port.node)
-                .OfType<AbilityNode>()
-                .ToList();
+            var inPort = inputPorts.FirstOrDefault(p => p.fieldName == nameof(inNode));
+            _inNodes = inPort?.GetEdges().Select(e => e.outputNode as AbilityNode).Where(n => n != null).ToList() ?? new List<AbilityNode>();
+
+            var outPort = outputPorts.FirstOrDefault(p => p.fieldName == nameof(outNode));
+            _outNodes = outPort?.GetEdges().Select(e => e.inputNode as AbilityNode).Where(n => n != null).ToList() ?? new List<AbilityNode>();
             InitializeInternal();
+        }
+
+        protected T GetInputValue<T>(string fieldName, T fallback = default)
+        {
+            var inPort = inputPorts.FirstOrDefault(p => p.fieldName == fieldName);
+            var edge = inPort?.GetEdges().FirstOrDefault();
+            if (edge != null && edge.outputPort != null)
+            {
+                var outputNode = edge.outputNode;
+                var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (outputField != null)
+                {
+                    return (T)outputField.GetValue(outputNode);
+                }
+            }
+            return fallback;
+        }
+
+        protected T[] GetInputValues<T>(string fieldName, params T[] fallbacks)
+        {
+            var inPort = inputPorts.FirstOrDefault(p => p.fieldName == fieldName);
+            var edges = inPort?.GetEdges();
+            if (edges != null && edges.Count > 0)
+            {
+                return edges.Select(edge => {
+                    var outputNode = edge.outputNode;
+                    var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (outputField != null)
+                    {
+                        return (T)outputField.GetValue(outputNode);
+                    }
+                    return default(T);
+                }).ToArray();
+            }
+            return fallbacks;
         }
 
         protected virtual void InitializeInternal() { }

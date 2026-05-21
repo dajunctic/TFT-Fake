@@ -1,40 +1,23 @@
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Cache")]
     public class CacheNode : AbilityNode
     {
-        [SerializeField, Input(ShowBackingValue.Never)] IDamageTaker inTarget;
-        [SerializeField, Input(ShowBackingValue.Never)] Vector3 inPosition;
-        [SerializeField, Output(ShowBackingValue.Never)] IDamageTaker outTarget;
-        [SerializeField, Output] Vector3 outPosition;
 
-
-        IDamageTaker _cachedTarget;
-        Vector3 _cachedPosition;
+        [GraphProcessor.Input(name = "inTarget")] public IDamageTaker inTarget;
+        [GraphProcessor.Input(name = "inPosition")] public Vector3 inPosition;
+        [GraphProcessor.Output(name = "outTarget")] public IDamageTaker outTarget;
+        [GraphProcessor.Output(name = "outPosition")] public Vector3 outPosition;
 
         protected override void PlayInternal()
         {
             base.PlayInternal();
-            _cachedTarget = GetInputValue(nameof(inTarget), inTarget);
-            _cachedPosition = GetInputValue(nameof(inPosition), inPosition);
+            outTarget = GetInputValue(nameof(inTarget), inTarget);
+            outPosition = GetInputValue(nameof(inPosition), inPosition);
             Completed();
-        }
-
-        override public object GetValue(NodePort port)
-        {
-            if (port.fieldName == nameof(outTarget))
-            {
-                return _cachedTarget;
-            }
-
-            if (port.fieldName == nameof(outPosition))
-            {
-                return _cachedPosition;
-            }
-            
-            return null;
         }
     }
 }

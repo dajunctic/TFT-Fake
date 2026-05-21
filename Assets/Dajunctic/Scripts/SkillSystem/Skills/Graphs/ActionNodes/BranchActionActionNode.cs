@@ -1,11 +1,13 @@
+using GraphProcessor;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable]
     public abstract class BranchActionActionNode : ActionNode
     {
-        [SerializeField, Input(ShowBackingValue.Never)] IActionNode trueAction;
-        [SerializeField, Input(ShowBackingValue.Never)] IActionNode falseAction;
+        [GraphProcessor.Input(name = "trueAction")] public IActionNode trueAction;
+        [GraphProcessor.Input(name = "falseAction")] public IActionNode falseAction;
 
         public abstract bool IsTrue { get; }
         

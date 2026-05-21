@@ -63,8 +63,43 @@ namespace Dajunctic {
         public DamageAttribute Attributes;
     }
     public class DamageCombined {
-        public DamageCombined(params object[] args) {}
-        public static implicit operator CalculatedDamage(DamageCombined d) => null;
+        public object[] Args;
+        public DamageCombined(params object[] args) {
+            Args = args;
+        }
+        public static implicit operator CalculatedDamage(DamageCombined d) {
+            if (d == null) return null;
+            var calc = new CalculatedDamage();
+            if (d.Args != null && d.Args.Length >= 3)
+            {
+                var source = d.Args[1] as DamageSource;
+                var config = d.Args[2] is SkillSystem.Data.DamageConfig ? (SkillSystem.Data.DamageConfig)d.Args[2] : default;
+                calc.DamageDealer = source?.damageDealer;
+                calc.DamageType = config.damageType;
+                
+                // Calculate raw damage
+                float rawDmg = config.damage;
+                if (config.damageScale == SkillSystem.Data.DamageScale.Raw)
+                {
+                    calc.FloatNormalDamage = rawDmg;
+                }
+                else if (config.damageScale == SkillSystem.Data.DamageScale.DamageSourceAtk && source != null)
+                {
+                    calc.FloatNormalDamage = source.atk * rawDmg;
+                }
+                else
+                {
+                    calc.FloatNormalDamage = rawDmg;
+                }
+                
+                if (config.trueDamage)
+                {
+                    calc.FloatTrueDamage = calc.FloatNormalDamage;
+                    calc.FloatNormalDamage = 0;
+                }
+            }
+            return calc;
+        }
     }
     public class DamageSource {
         public float atk;
@@ -145,7 +180,7 @@ namespace Dajunctic {
     public static class Extensions {
         public static Vector2 ToV2(this Vector3 v) => new Vector2(v.x, v.z);
         public static (Rect, Rect) HFixedSplit(this Rect r, float w) => (r, r);
-        public static object FirstOrDefault(this XNode.NodeGraph graph, Func<object, bool> predicate) => null;
+        public static object FirstOrDefault(this GraphProcessor.BaseGraph graph, Func<object, bool> predicate) => null;
         public static float EnergyRegen(this List<object> obj) => 0f;
         public static float Regen(this List<object> obj) => 0f;
         public static bool Invincible(this List<object> obj) => false;
@@ -171,7 +206,7 @@ namespace Dajunctic.SkillSystem.Data {
         public void SetLocalizeString(string s) {}
     }
     public class LevelData {
-        public XNode.NodeGraph Graph { get; set; }
+        public GraphProcessor.BaseGraph Graph { get; set; }
         public void SetGraph(object graph) {}
         public void SetProperties(object props) {}
         public void SetLocalizeString(string s) {}

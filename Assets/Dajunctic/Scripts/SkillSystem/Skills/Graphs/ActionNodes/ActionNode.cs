@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
+using System.Linq;
 
 namespace Dajunctic.SkillSystem.Logic
 {
@@ -8,12 +9,13 @@ namespace Dajunctic.SkillSystem.Logic
     /// A node type that instantiated every time it is triggered
     /// Life cycle: Create copy => Trigger => Despawn
     /// </summary>
-    public abstract class ActionNode : Node, IActionNode
+    [System.Serializable]
+    public abstract class ActionNode : BaseNode, IActionNode
     {
         [SerializeField]
         int priority = 0;
 
-        [SerializeField, Output(ShowBackingValue.Never)]
+        [GraphProcessor.Output(name = "Self")]
         IActionNode self;
 
         public IAbilityOwner Owner { get; private set; }
@@ -27,19 +29,17 @@ namespace Dajunctic.SkillSystem.Logic
 
         Coroutine _coroutine;
 
-        public override object GetValue(NodePort port)
-        {
-            if (port.fieldName == nameof(self))
-            {
-                return this;
-            }
+        public override string name => "Action Node";
 
-            return null;
+        protected override void Enable()
+        {
+            base.Enable();
+            self = this;
         }
 
         public IActionNode CreateCopy()
         {
-            var copy = Instantiate(this);
+            var copy = (ActionNode)this.MemberwiseClone();
             copy.Owner = Owner;
             copy.graph = graph;
             copy.Skin = Owner.Skin;
@@ -61,6 +61,41 @@ namespace Dajunctic.SkillSystem.Logic
             ActionNodeSystem = this.GetSystem<IActionNodeSystem>();
 
             InitializeInternal();
+        }
+
+        protected T GetInputValue<T>(string fieldName, T fallback = default)
+        {
+            var inPort = inputPorts.FirstOrDefault(p => p.fieldName == fieldName);
+            var edge = inPort?.GetEdges().FirstOrDefault();
+            if (edge != null && edge.outputPort != null)
+            {
+                var outputNode = edge.outputNode;
+                var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (outputField != null)
+                {
+                    return (T)outputField.GetValue(outputNode);
+                }
+            }
+            return fallback;
+        }
+
+        protected T[] GetInputValues<T>(string fieldName, params T[] fallbacks)
+        {
+            var inPort = inputPorts.FirstOrDefault(p => p.fieldName == fieldName);
+            var edges = inPort?.GetEdges();
+            if (edges != null && edges.Count > 0)
+            {
+                return edges.Select(edge => {
+                    var outputNode = edge.outputNode;
+                    var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    if (outputField != null)
+                    {
+                        return (T)outputField.GetValue(outputNode);
+                    }
+                    return default(T);
+                }).ToArray();
+            }
+            return fallbacks;
         }
 
         protected virtual void InitializeInternal() { }

@@ -1,15 +1,17 @@
+using GraphProcessor;
 using System.Collections;
 using UnityEngine;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Action/TimerAction")]
     public class TimerActionNode : ActionNode
     {
-        [SerializeField, Input] float duration;
+        [GraphProcessor.Input(name = "duration")] public float duration;
         [SerializeField] float interval = -1;
-        [SerializeReference, Input] IActionNode beginAction;
-        [SerializeReference, Input] IActionNode intervalAction;
-        [SerializeReference, Input] IActionNode endAction;
+        [SerializeReference, GraphProcessor.Input(name = "beginAction")] IActionNode beginAction;
+        [SerializeReference, GraphProcessor.Input(name = "intervalAction")] IActionNode intervalAction;
+        [SerializeReference, GraphProcessor.Input(name = "endAction")] IActionNode endAction;
 
         protected override void PlayInternal(object source)
         {

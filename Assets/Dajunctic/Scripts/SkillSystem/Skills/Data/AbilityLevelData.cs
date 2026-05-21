@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -17,26 +17,26 @@ namespace Dajunctic.SkillSystem.Data
         AbilityDescription[] description;
 
         [SerializeField]
-        NodeGraph graph;
+        BaseGraph graph;
 
         [SerializeField]
-        NodeGraph[] otherGraphs;
+        BaseGraph[] otherGraphs;
 
         [SerializeField]
         AbilityProperty[] properties;
 
-        public NodeGraph Graph => graph;
-        public NodeGraph[] OtherGraphs => otherGraphs;
+        public BaseGraph Graph => graph;
+        public BaseGraph[] OtherGraphs => otherGraphs;
 
         public virtual T CreateCopy<T>()
             where T : AbilityLevelData, new()
         {
             var copy = new T();
-            copy.graph = graph?.Copy();
+            copy.graph = graph != null ? ScriptableObject.Instantiate(graph) as BaseGraph : null;
             copy.otherGraphs =
                 otherGraphs != null
-                    ? otherGraphs.Select(g => g.Copy()).ToArray()
-                    : Array.Empty<NodeGraph>();
+                    ? otherGraphs.Select(g => ScriptableObject.Instantiate(g) as BaseGraph).ToArray()
+                    : Array.Empty<BaseGraph>();
             copy.properties =
                 properties != null
                     ? properties.Select(p => p.CreateCopy()).ToArray()
@@ -79,7 +79,7 @@ namespace Dajunctic.SkillSystem.Data
             return results;
         }
 
-        public void SetGraph(NodeGraph nodeGraph)
+        public void SetGraph(BaseGraph nodeGraph)
         {
             graph = nodeGraph;
         }

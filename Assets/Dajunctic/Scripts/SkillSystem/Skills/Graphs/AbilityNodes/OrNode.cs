@@ -1,5 +1,7 @@
+using GraphProcessor;
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Or")]
     public class OrNode : AbilityNode
     {
         bool _passed;

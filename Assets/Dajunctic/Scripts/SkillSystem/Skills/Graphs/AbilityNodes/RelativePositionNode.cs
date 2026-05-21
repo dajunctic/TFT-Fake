@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/RelativePosition")]
     public class RelativePositionNode : AbilityNode
     {
-        [SerializeField, Input(ShowBackingValue.Never)] IDamageTaker inTarget;
-        [SerializeField, Input] Vector3 inDirection;
-        [SerializeField, Input] float inDistance;
+        [GraphProcessor.Input(name = "inTarget")] public IDamageTaker inTarget;
+        [GraphProcessor.Input(name = "inDirection")] public Vector3 inDirection;
+        [GraphProcessor.Input(name = "inDistance")] public float inDistance;
         [SerializeField] Vector3 offsetRaycast;
         [SerializeField] bool isLocal;
-        [SerializeField, Output] Vector3 outPosition;
-        [SerializeField, Output] float outDistance;
+        [GraphProcessor.Output(name = "outPosition")] public Vector3 outPosition;
+        [GraphProcessor.Output(name = "outDistance")] public float outDistance;
 
         Vector3 _curPosition;
         float _curDistance;
@@ -48,22 +49,6 @@ namespace Dajunctic.SkillSystem.Logic
 
             _curDistance = Vector3.Distance(target.Position, _curPosition);
             Completed();
-        }
-
-        public override object GetValue(NodePort port)
-        {
-            if (Owner == null) return null;
-
-            if (port.fieldName == nameof(outPosition))
-            {
-                return _curPosition;
-            }
-            else if (port.fieldName == nameof(outDistance))
-            {
-                return _curDistance;
-            }
-
-            return null;
         }
     }
 }

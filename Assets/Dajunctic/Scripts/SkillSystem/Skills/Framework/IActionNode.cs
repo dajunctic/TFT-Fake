@@ -1,11 +1,8 @@
+using Dajunctic;
+
 namespace Dajunctic.SkillSystem.Logic
 {
-    public interface IActionNode : 
-        ICanGetSystem,
-        ICanTick,
-        ICanSendEvent,
-        ICanListenEvent,
-        ILifecycle
+    public interface IActionNode
     {
         long InstanceId { get; set; }
         int Priority { get; }

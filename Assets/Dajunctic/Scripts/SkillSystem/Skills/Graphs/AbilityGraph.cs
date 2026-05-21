@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
 using Dajunctic.SkillSystem.Data;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
     public class AbilityGraph<TAbilityEntity, TAbilityEntityData, TAbilityLevelData, TOwner>
-        : NodeGraph
+        : BaseGraph
         where TAbilityEntity : IAbilityEntity<TAbilityEntityData, TAbilityLevelData, TOwner>
         where TAbilityEntityData : IAbilityEntityData<TAbilityLevelData>
         where TAbilityLevelData : AbilityLevelData
@@ -113,7 +113,7 @@ namespace Dajunctic.SkillSystem.Logic
 
         void ListenExitEvent()
         {
-            if (_exit)
+            if (_exit != null)
             {
                 _exit.OnExitEvent += OnExit;
             }
@@ -121,7 +121,7 @@ namespace Dajunctic.SkillSystem.Logic
 
         void StopListenExitEvent()
         {
-            if (_exit)
+            if (_exit != null)
             {
                 _exit.OnExitEvent -= OnExit;
             }

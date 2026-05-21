@@ -405,12 +405,12 @@ namespace Dajunctic
 
         object ICombatActor.Stats => Stats;
 
-        public float HpRatio => throw new NotImplementedException();
+        public float HpRatio => MaxHp > 0f ? _hp / MaxHp : 0f;
 
-        public bool Alive => throw new NotImplementedException();
+        public bool Alive => _hp > 0f;
 
-        public Vector3 MoveDirectionPerFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Vector3 MovePositionPerFrame { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector3 MoveDirectionPerFrame { get; set; }
+        public Vector3 MovePositionPerFrame { get; set; }
 
         public void ResetAnim()
         {
@@ -466,17 +466,44 @@ namespace Dajunctic
 
         public float GetHit(CalculatedDamage damage)
         {
-            throw new NotImplementedException();
+            if (damage == null) return 0f;
+
+            float baseDmg = damage.FloatTrueDamage > 0f ? damage.FloatTrueDamage : damage.FloatNormalDamage;
+            DamageType type = damage.FloatTrueDamage > 0f ? DamageType.TrueDamage : damage.DamageType;
+
+            CombineDamage combineDamage = new CombineDamage(type, baseDmg);
+
+            // Compute mitigated damage
+            float finalDamage = baseDmg;
+            switch (type)
+            {
+                case DamageType.PhysicalDamage:
+                    finalDamage = baseDmg * (100f / (100f + Stats.Armor.Value));
+                    break;
+
+                case DamageType.MagicalDamage:
+                    finalDamage = baseDmg * (100f / (100f + Stats.MagicResist.Value));
+                    break;
+
+                case DamageType.TrueDamage:
+                    finalDamage = baseDmg;
+                    break;
+            }
+
+            TakeDamage(combineDamage);
+            return finalDamage;
         }
 
         public void Heal(IDamageDealer dealer, float amount, bool extra1 = false, bool extra2 = false, bool extra3 = false)
         {
-            throw new NotImplementedException();
+            _hp = Mathf.Clamp(_hp + amount, 0f, MaxHp);
+            OnHpChanged?.Invoke(MaxHp > 0f ? _hp / MaxHp : 1f);
         }
 
         public void ForceSetHp(float hp)
         {
-            throw new NotImplementedException();
+            _hp = Mathf.Clamp(hp, 0f, MaxHp);
+            OnHpChanged?.Invoke(MaxHp > 0f ? _hp / MaxHp : 0f);
         }
 
         void IDamageTaker.Die()
@@ -486,42 +513,42 @@ namespace Dajunctic
 
         public IVariableOwner AsVariableOwner()
         {
-            throw new NotImplementedException();
+            return this as IVariableOwner;
         }
 
         public IStatusEffectOwner AsStatusEffectOwner()
         {
-            throw new NotImplementedException();
+            return this as IStatusEffectOwner;
         }
 
         public ITransform AsTransform()
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         public Transform GetTransform()
         {
-            throw new NotImplementedException();
+            return CachedTransform;
         }
 
         public Transform GetTransform(object obj)
         {
-            throw new NotImplementedException();
+            return CachedTransform;
         }
 
         public void ToggleMoveAgent(bool v)
         {
-            throw new NotImplementedException();
+            if (MoveAgent != null) MoveAgent.SetEnable(v);
         }
 
         public void Teleport(Vector3 v)
         {
-            throw new NotImplementedException();
+            Teleport(v, false, false);
         }
 
         public void Teleport(Vector3 v, bool b)
         {
-            throw new NotImplementedException();
+            Teleport(v, b, false);
         }
         #endregion
 

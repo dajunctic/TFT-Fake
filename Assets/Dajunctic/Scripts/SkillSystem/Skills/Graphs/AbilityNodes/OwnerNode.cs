@@ -1,19 +1,11 @@
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
+    [System.Serializable, NodeMenuItem("Ability/Owner")]
     public class OwnerNode : AbilityNode
     {
-        [SerializeField, Output(ShowBackingValue.Never)] ICombatActorEntity owner;
-
-        public override object GetValue(NodePort port)
-        {
-            if (port.fieldName == nameof(owner))
-            {
-                return Owner;
-            }
-            return owner;
-        }
+        [GraphProcessor.Output(name = "owner")] public ICombatActorEntity owner;
     }
 }

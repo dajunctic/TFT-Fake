@@ -1,7 +1,7 @@
 using System.Linq;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using XNode;
+using GraphProcessor;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -20,7 +20,7 @@ namespace Dajunctic.SkillSystem.Data
         public void AutoSet()
         {
             var graph = AssetUtils
-                .FindAssetAtFolder<NodeGraph>(new[] { "Assets" })
+                .FindAssetAtFolder<BaseGraph>(new[] { "Assets" })
                 .FirstOrDefault(g => g.name == name + "_graph");
             Data.LevelData.SetGraph(graph);
             if (graph == null)
