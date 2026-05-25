@@ -40,6 +40,14 @@ namespace Dajunctic
 
         public IReadOnlyList<Arena> GetAllArenas() => _arenas;
 
+        /// <summary>Lấy tất cả champion đang đứng trên field của arena chỉ định.</summary>
+        public IEnumerable<ChampionActor> GetHeroesOnField(int ownerId)
+        {
+            if (_heroesOnArenas.TryGetValue(ownerId, out var heroes))
+                return heroes.Values;
+            return System.Linq.Enumerable.Empty<ChampionActor>();
+        }
+
         public void Shutdown()
         {
             foreach (var dict in _heroesOnArenas.Values) dict.Clear();

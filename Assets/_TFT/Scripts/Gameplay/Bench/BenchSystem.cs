@@ -169,7 +169,11 @@ namespace Dajunctic
                 .ToList();
 
             var heroesOnField = new List<ChampionActor>();
-            if (_manager.Field != null)
+
+            // Không scan field khi đang trong combat — tránh merge tướng đang chiến đấu
+            bool isCombat = Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat;
+
+            if (!isCombat && _manager.Field != null)
             {
                 heroesOnField = _manager.Field.GetAllHeroes()
                     .Where(h => h != null && h.OwnerID == ownerId && 

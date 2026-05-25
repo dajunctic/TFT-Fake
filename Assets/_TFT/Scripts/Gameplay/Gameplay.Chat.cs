@@ -21,11 +21,25 @@ namespace Dajunctic
         private void OnEnable()
         {
             this.RegisterListener<RequestSendMessageEvent>(OnChatRequested);
+            this.RegisterListener<AllEnemiesDeadEvent>(OnAllEnemiesDead);
         }
 
         private void OnDisable()
         {
             this.RemoveListener<RequestSendMessageEvent>(OnChatRequested);
+            this.RemoveListener<AllEnemiesDeadEvent>(OnAllEnemiesDead);
+        }
+
+        private void OnAllEnemiesDead(AllEnemiesDeadEvent evt)
+        {
+            if (!IsServerInitialized) return;
+            if (_currentPhase.Value != GameplayPhase.Combat) return;
+            var roundData = RoundSys?.CurrentRoundData;
+            if (roundData != null && roundData.endWhenEnemiesDead)
+            {
+                Debug.Log("[Gameplay] All enemies dead — ending combat early.");
+                _timer.Value = 0;
+            }
         }
 
         // ── Step 1: local client catches the event ────────────────────────────

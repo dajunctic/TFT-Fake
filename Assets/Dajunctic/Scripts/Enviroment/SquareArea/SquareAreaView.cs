@@ -19,6 +19,9 @@ namespace Dajunctic
             base.Initialize();
             SpawnTiles();
             SetTilesVisible(false);
+
+            // Đăng ký vào DragManager để tiles hiện ra khi drag
+            DragManager.Register(this);
         }
 
         [ContextMenu("Spawn Tiles")]
@@ -143,6 +146,10 @@ namespace Dajunctic
             Gizmos.DrawLine(topRight, bottomRight);
             Gizmos.DrawLine(bottomRight, bottomLeft);
             Gizmos.DrawLine(bottomLeft, topLeft);
+        }
+        private void OnDestroy()
+        {
+            DragManager.Unregister(this);
         }
     }
 }

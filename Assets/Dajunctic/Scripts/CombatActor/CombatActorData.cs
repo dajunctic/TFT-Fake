@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class CombatActorData : BaseSO
 {
+    [Header("Prefab")]
+    public GameObject prefab;
+
     public ActorMovement movement;
     public ActorBaseStats stats;
 

@@ -29,8 +29,19 @@ namespace Dajunctic
         public Team CombatTeam => team;
         public int OwnerID { get; set; } = 0;
 
-        public virtual Vector3 Position { get; private set; }
-        public virtual Vector3 Forward { get; private set; }
+        /// <summary>Set team runtime — dùng khi spawn PvE enemy để đảm bảo team đúng.</summary>
+        public void SetTeam(Team newTeam) => team = newTeam;
+
+        /// <summary>Team của kẻ địch — BT dùng để tìm target. Set bởi PveWaveSpawner (PvE) hoặc TravelSystem (PvP).</summary>
+        public ICombatTeam EnemyTeam { get; private set; }
+
+        public void SetEnemyTeam(ICombatTeam enemyTeam)
+        {
+            EnemyTeam = enemyTeam;
+        }
+
+        public virtual Vector3 Position { get; protected set; }
+        public virtual Vector3 Forward { get; protected set; }
 
         public bool IsViewLoaded => _viewLoaded;
         public virtual string DataId => string.Empty;

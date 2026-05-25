@@ -22,6 +22,9 @@ namespace Dajunctic
         private RoundSystem _roundSystem;
         private RoundSystem RoundSys => _roundSystem ?? (_roundSystem = GameSystemManager.Instance.Round);
 
+        private PveWaveSpawner _pveSpawner;
+        private PveWaveSpawner PveSpawner => _pveSpawner != null ? _pveSpawner : (_pveSpawner = GetComponent<PveWaveSpawner>() ?? gameObject.AddComponent<PveWaveSpawner>());
+
         private readonly SyncVar<GameplayPhase> _currentPhase = new SyncVar<GameplayPhase>();
         private readonly SyncVar<float> _timer = new SyncVar<float>();
         private readonly SyncVar<float> _phaseDuration = new SyncVar<float>();
@@ -41,6 +44,7 @@ namespace Dajunctic
         {
             // StartPhase(GameplayPhase.Planning);
         }
+
 
         public override void OnStartServer()
         {
@@ -129,11 +133,26 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Combat)
             {
-                // Start matchmaking and travel when combat starts
-                if (GameSystemManager.Instance.Travel != null)
+                var roundData = RoundSys?.CurrentRoundData;
+                bool isPvE = roundData != null &&
+                             (roundData.roundType == RoundType.PvE_Minion ||
+                              roundData.roundType == RoundType.PvE_Boss);
+
+                if (isPvE)
                 {
-                    GameSystemManager.Instance.Travel.GenerateMatchmaking();
-                    GameSystemManager.Instance.Travel.ExecuteTravelCards();
+                    // PvE: spawn enemy wave, không ghép cặp PvP
+                    PveSpawner.SpawnWaveForAllArenas(roundData);
+                    Debug.Log($"[Gameplay] PvE Combat started — round {RoundSys.GetRoundDisplayString()}");
+                }
+                else
+                {
+                    // PvP: matchmaking + travel như cũ
+                    PveSpawner.ClearAllEnemies();
+                    if (GameSystemManager.Instance.Travel != null)
+                    {
+                        GameSystemManager.Instance.Travel.GenerateMatchmaking();
+                        GameSystemManager.Instance.Travel.ExecuteTravelCards();
+                    }
                 }
             }
 
@@ -194,6 +213,52 @@ namespace Dajunctic
 
         private void HandleCombatResultServer()
         {
+            var roundData = RoundSys?.CurrentRoundData;
+            bool isPvE = roundData != null &&
+                         (roundData.roundType == RoundType.PvE_Minion ||
+                          roundData.roundType == RoundType.PvE_Boss);
+
+            if (isPvE)
+            {
+                HandlePvECombatResult(roundData);
+            }
+            else
+            {
+                HandlePvPCombatResult();
+            }
+
+            // Dọn quái sau khi tính kết quả
+            PveSpawner.ClearAllEnemies();
+        }
+
+        /// <summary>
+        /// PvE: nếu hết giờ mà quái còn sống → trừ máu player dựa theo số quái còn lại.
+        /// </summary>
+        private void HandlePvECombatResult(RoundData roundData)
+        {
+            int surviving = PveSpawner.GetTotalAliveEnemies();
+            if (surviving <= 0)
+            {
+                Debug.Log("[Gameplay] PvE: All enemies killed — players take no damage.");
+                return;
+            }
+
+            var playerSystem = GameSystemManager.Instance.Player;
+            if (playerSystem == null) return;
+
+            int stageDamage = (RoundSys != null) ? RoundSys.StageNumber + 1 : 2;
+            int totalDamage = stageDamage + surviving;
+
+            // Trừ máu tất cả player vì đây là PvE chung
+            foreach (var player in playerSystem.Players)
+            {
+                playerSystem.ApplyDamage(player.Id, totalDamage);
+                Debug.Log($"[Gameplay] PvE: Player {player.Id} takes {totalDamage} damage ({surviving} enemies survived).");
+            }
+        }
+
+        private void HandlePvPCombatResult()
+        {
             var playerSystem = GameSystemManager.Instance.Player;
             var travelSystem = GameSystemManager.Instance.Travel;
             var fieldSystem = GameSystemManager.Instance.Field;
@@ -204,8 +269,7 @@ namespace Dajunctic
 
             foreach (var pair in combatPairs)
             {
-                // Each pair represents a combat on pair.HomeId arena
-                var allUnitsOnArena = fieldSystem.GetAllHeroes().Where(u => 
+                var allUnitsOnArena = fieldSystem.GetAllHeroes().Where(u =>
                     fieldSystem.GetHeroAtTile(pair.HomeId, u.CurrentFieldCoord) == u).ToList();
 
                 var homeUnits = allUnitsOnArena.Where(u => u.OwnerID == pair.HomeId).ToList();
@@ -213,19 +277,15 @@ namespace Dajunctic
 
                 if (homeUnits.Count == 0 && guestUnits.Count > 0)
                 {
-                    // Home lost
                     int damage = stageDamage + guestUnits.Count;
-                    playerSystem.ApplyDamage(pair.HomeId, damage); 
-                    // if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(false);
-                    Debug.Log($"[Gameplay] Player {pair.HomeId} lost combat on home arena. Taking {damage} damage.");
+                    playerSystem.ApplyDamage(pair.HomeId, damage);
+                    Debug.Log($"[Gameplay] Player {pair.HomeId} lost PvP. Taking {damage} damage.");
                 }
                 else if (guestUnits.Count == 0 && homeUnits.Count > 0)
                 {
-                    // Guest lost (Home won)
                     int damage = stageDamage + homeUnits.Count;
                     playerSystem.ApplyDamage(pair.GuestId, damage);
-                    // if (pair.HomeId == 0) GameSystemManager.Instance.Economy?.RegisterResult(true);
-                    Debug.Log($"[Gameplay] Player {pair.GuestId} lost combat as guest. Taking {damage} damage.");
+                    Debug.Log($"[Gameplay] Player {pair.GuestId} lost PvP as guest. Taking {damage} damage.");
                 }
             }
         }

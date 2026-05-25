@@ -12,6 +12,7 @@ namespace Dajunctic
         [Header("UI References")]
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private Image progressImage;
+        [SerializeField] private TMP_Text roundText;   // Hiển thị "1-1", "1-2"...
 
         [Header("Shop References")]
         [SerializeField] private SpriteLists cardRarities;
@@ -66,6 +67,7 @@ namespace Dajunctic
             this.RegisterListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RegisterListener<ShopLockChangedEvent>(OnShopLockChanged);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            this.RegisterListener<RoundAdvancedEvent>(OnRoundAdvanced);
             if (playerListUI != null) playerListUI.OnPlayerClicked += OnPlayerClicked;
             PlayerSystem.OnPlayerListInitialized += UpdatePlayerList;
         }
@@ -106,6 +108,7 @@ namespace Dajunctic
             this.RemoveListener<HeroDragEndedEvent>(OnHeroDragEnded);
             this.RemoveListener<ShopLockChangedEvent>(OnShopLockChanged);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
+            this.RemoveListener<RoundAdvancedEvent>(OnRoundAdvanced);
             if (playerListUI != null) playerListUI.OnPlayerClicked -= OnPlayerClicked;
             PlayerSystem.OnPlayerListInitialized -= UpdatePlayerList;
 
@@ -127,6 +130,7 @@ namespace Dajunctic
             Instance = this;
             base.BeforeShow(data);
             UpdateUI();
+            UpdateRoundText(); // Set round text ngay khi popup mở
             // NOTE: Do NOT call UpdateShop() here. Shop data has not yet arrived from server.
             // UpdateShop() will be called automatically when ShopRefreshedEvent fires (after TargetUpdateShop RPC).
             // We only reset the slots to their empty state here.
@@ -195,11 +199,27 @@ namespace Dajunctic
         private void OnShopRefreshed(ShopRefreshedEvent evt) => UpdateShop();
         private void OnShopLockChanged(ShopLockChangedEvent evt) => UpdateShopLockUI(evt.IsLocked);
 
+        private void OnRoundAdvanced(RoundAdvancedEvent evt)
+        {
+            UpdateRoundText();
+        }
+
         private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
         {
             if (evt.Phase == GameplayPhase.Planning)
             {
                 if (playerListUI != null) playerListUI.SortAndAnimate();
+            }
+        }
+
+        /// <summary>Cập nhật text hiển thị round hiện tại (e.g. "1-1").</summary>
+        private void UpdateRoundText()
+        {
+            if (roundText == null) return;
+            var roundSystem = GameSystemManager.Instance?.Round;
+            if (roundSystem != null)
+            {
+                roundText.text = roundSystem.GetRoundDisplayString();
             }
         }
 

@@ -13,7 +13,6 @@ namespace Dajunctic
 
         [Header("Meta Data")]
         public int rarity = 1; // 1 to 5 cost
-        public GameObject prefab;
 
         [Header("Traits")]
         public List<TraitData> traits = new();

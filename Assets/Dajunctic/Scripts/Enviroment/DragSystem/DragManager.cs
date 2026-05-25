@@ -12,22 +12,42 @@ namespace Dajunctic
         private IDraggable currentDragged;
         private Camera mainCamera;
         private List<IDragTarget> allTargets = new List<IDragTarget>();
-        private Vector3 _dragOffset; // To fix the perspective issue you mentioned
+        private Vector3 _dragOffset;
+
+        public static DragManager Instance { get; private set; }
 
         public static event System.Action<IDraggable> OnGlobalDragStart;
         public static event System.Action<IDraggable> OnGlobalDragEnd;
 
         private void Awake()
         {
-            // Find all potential snap targets in the scene
+            Instance = this;
+
+            // Fallback: scan targets already in scene at startup
             var targets = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
             foreach (var target in targets)
             {
                 if (target is IDragTarget dragTarget)
-                {
                     allTargets.Add(dragTarget);
-                }
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance == this) Instance = null;
+        }
+
+        /// <summary>Arena areas gọi Register khi Initialize() để đảm bảo luôn có trong list.</summary>
+        public static void Register(IDragTarget target)
+        {
+            if (Instance != null && !Instance.allTargets.Contains(target))
+                Instance.allTargets.Add(target);
+        }
+
+        /// <summary>Gọi khi area bị destroy.</summary>
+        public static void Unregister(IDragTarget target)
+        {
+            Instance?.allTargets.Remove(target);
         }
 
         private void Update()
@@ -52,6 +72,10 @@ namespace Dajunctic
 
         private void TryStartDrag()
         {
+            // Không cho phép kéo thả tướng trong pha combat
+            if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat)
+                return;
+
             if (mainCamera == null) mainCamera = Camera.main;
             if (mainCamera == null) return;
 
