@@ -97,6 +97,10 @@ namespace Dajunctic.SkillSystem.Gambits
             }
 
             TriggerComplete();
+
+            // Reset IsCasting trên actor để CombatActor.Tick() có thể gọi EvaluateGambits lần sau
+            if (CombatActor is CombatActor combatActor)
+                combatActor.SetCasting(false);
         }
     }
 }

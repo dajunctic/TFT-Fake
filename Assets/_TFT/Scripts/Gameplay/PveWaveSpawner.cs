@@ -16,6 +16,10 @@ namespace Dajunctic
         private readonly Dictionary<int, List<DummyActor>> _activeEnemies =
             new Dictionary<int, List<DummyActor>>();
 
+        // Track the active enemy team per arena so late-deployed champions can be assigned
+        private readonly Dictionary<int, SimpleTeam> _enemyTeamPerArena =
+            new Dictionary<int, SimpleTeam>();
+
         private bool _waveActive;
 
         private void Awake()
@@ -92,7 +96,17 @@ namespace Dajunctic
                 }
             }
             _activeEnemies.Clear();
+            _enemyTeamPerArena.Clear();
             Debug.Log("[PveWaveSpawner] All enemies cleared.");
+        }
+
+        /// <summary>
+        /// Trả về EnemyTeam hiện tại của arena. Champion kéo vào sân giữa combat gọi API này.
+        /// </summary>
+        public ICombatTeam GetEnemyTeamForArena(int arenaOwnerId)
+        {
+            _enemyTeamPerArena.TryGetValue(arenaOwnerId, out var team);
+            return team;
         }
 
         /// <summary>Tổng số quái còn sống trên tất cả arena.</summary>
@@ -133,7 +147,7 @@ namespace Dajunctic
 
                 if (entry.actorData == null || entry.actorData.prefab == null)
                 {
-                    Debug.LogWarning($"[PveWaveSpawner] Wave entry missing actorData or actorData.prefab — skipping.");
+                    Debug.LogWarning("[PveWaveSpawner] Wave entry missing actorData or actorData.prefab — skipping.");
                     continue;
                 }
 
@@ -188,6 +202,9 @@ namespace Dajunctic
             var enemyTeam = new SimpleTeam();
             foreach (var dummy in enemyList)
                 enemyTeam.Add(dummy);
+
+            // Cache team so late-deployed champions (dragged during combat) can also receive it
+            _enemyTeamPerArena[arena.OwnerID] = enemyTeam;
 
             var fieldSystem = GameSystemManager.Instance?.Field;
             if (fieldSystem != null)

@@ -170,6 +170,18 @@ namespace Dajunctic
 
             GameSystemManager.Instance.Field.RegisterHeroToTile(this, newFieldCoord, arenaId);
             FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, newFieldCoord), arenaId);
+
+            // Nếu đang trong pha Combat PvE, gán EnemyTeam ngay để BT tìm được target
+            if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat
+                && PveWaveSpawner.Instance != null)
+            {
+                var enemyTeam = PveWaveSpawner.Instance.GetEnemyTeamForArena(arenaId);
+                if (enemyTeam != null)
+                {
+                    SetEnemyTeam(enemyTeam);
+                    Debug.Log($"<color=lime>[ChampionActor] {name} deployed mid-combat → EnemyTeam set ({enemyTeam.Members.Count} enemies)</color>");
+                }
+            }
         }
 
         private void ClearPreviousPlacement()

@@ -27,6 +27,7 @@ namespace Dajunctic
         [Tooltip("Set to OwnField or GuestField to colour-code tiles by spawn area.")]
         [SerializeField] private HexAreaType areaType = HexAreaType.None;
 
+
         [Header("Area Colours")]
         [ColorUsage(true, true)]
         [SerializeField] private Color ownFieldColor  = new Color(0.0f, 0.6f, 1.0f, 1f);   // blue-cyan
@@ -99,6 +100,8 @@ namespace Dajunctic
 
         public void OnDragStart()
         {
+            // GuestField không được highlight khi kéo thả tướng — chỉ FieldArea của người chơi mới highlight
+            if (areaType == HexAreaType.GuestField) return;
             SetTilesVisible(true);
         }
 

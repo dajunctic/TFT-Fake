@@ -84,17 +84,25 @@ namespace Dajunctic
 
         void InitGambits()
         {
-            _activeGambits.Clear();
-            if (combatActorData != null && combatActorData.gambits != null)
+            if (combatActorData == null || combatActorData.gambits == null || combatActorData.gambits.Count == 0)
             {
-                foreach (var g in combatActorData.gambits)
-                {
-                    var instance = g.CreateCopy();
-                    instance.Initialize(this);
-                    _activeGambits.Add(instance);
-                }
+                // Không có gambits trong data — giữ nguyên list hiện tại (nếu đã được init từ prefab)
+                if (_activeGambits.Count == 0)
+                    Debug.LogWarning($"[Gambit] {name}: combatActorData has no gambits configured!");
+                return;
             }
+
+            _activeGambits.Clear();
+            foreach (var g in combatActorData.gambits)
+            {
+                if (g == null) continue;
+                var instance = g.CreateCopy();
+                instance.Initialize(this);
+                _activeGambits.Add(instance);
+            }
+            Debug.Log($"<color=cyan>[Gambit] {name}: InitGambits OK — {_activeGambits.Count} gambits loaded.</color>");
         }
+
 
         public override void Tick()
         {
@@ -128,18 +136,41 @@ namespace Dajunctic
 
         void EvaluateGambits()
         {
+            if (_activeGambits.Count == 0)
+            {
+                Debug.LogWarning($"[Gambit] {name}: _activeGambits is EMPTY — check CombatActorData.gambits in Inspector.");
+                return;
+            }
+
             foreach (var gambit in _activeGambits)
             {
                 var target = gambit.condition?.Check();
-                if (target != null && gambit.action != null && gambit.action.CheckCanPlay())
+
+                if (target == null)
                 {
-                    SetTarget(target as CombatActor);
-                    SetCasting(true);
-                    gambit.action.Play(target);
-                    break;
+                    Debug.Log($"[Gambit] {name}: condition.Check() returned null — no targets in range or wrong team.");
+                    continue;
                 }
+
+                if (gambit.action == null)
+                {
+                    Debug.LogWarning($"[Gambit] {name}: action is NULL — assign UseSkillGambitAction in CombatActorData.");
+                    continue;
+                }
+
+                if (!gambit.action.CheckCanPlay())
+                {
+                    Debug.Log($"[Gambit] {name}: CheckCanPlay() = false — IsCasting={IsCasting}, skillGraph={(gambit.action is Dajunctic.SkillSystem.Gambits.UseSkillGambitAction ua ? (ua.skillGraph != null ? "OK" : "NULL") : "?")}");
+                    continue;
+                }
+
+                SetTarget(target as CombatActor);
+                SetCasting(true);
+                gambit.action.Play(target);
+                break;
             }
         }
+
 
         public override void Cleanup()
         {
