@@ -57,13 +57,18 @@ namespace Dajunctic
             _actor.OwnerID = ownerId;
             _actor.CurrentBenchCoord = coord;
 
-            // Find data
+            // Chỉ override combatActorData khi tìm thấy trong ShopSystemData
+            // Nếu không tìm được, giữ nguyên data đã serialize trong prefab (kể cả gambits)
             var data = GameSystemManager.Instance?.Shop?.ShopSystemData?
                        .allHeroes.FirstOrDefault(h => h.Id == heroId);
                        
             if (data != null)
             {
                 _actor.SetCombatData(data);
+            }
+            else
+            {
+                Debug.LogWarning($"[ChampionNetworkSync] RpcInitialize: heroId='{heroId}' not found in ShopSystemData — keeping prefab combatActorData.");
             }
 
             _actor.Initialize();
