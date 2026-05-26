@@ -73,17 +73,36 @@ namespace Dajunctic {
             if (d.Args != null && d.Args.Length >= 3)
             {
                 var source = d.Args[1] as DamageSource;
-                var config = d.Args[2] is SkillSystem.Data.DamageConfig ? (SkillSystem.Data.DamageConfig)d.Args[2] : default;
+                var configObj = d.Args[2];
                 calc.DamageDealer = source?.damageDealer;
-                calc.DamageType = config.damageType;
-                
+
+                float rawDmg = 0f;
+                string scaleStr = "Raw";
+                bool isTrueDmg = false;
+                DamageType dmgType = DamageType.PhysicalDamage;
+
+                if (configObj != null)
+                {
+                    var typeObj = configObj.GetType();
+                    var damageField = typeObj.GetField("damage", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var damageScaleField = typeObj.GetField("damageScale", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var trueDamageField = typeObj.GetField("trueDamage", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    var damageTypeField = typeObj.GetField("damageType", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                    if (damageField != null) rawDmg = Convert.ToSingle(damageField.GetValue(configObj));
+                    if (damageScaleField != null) scaleStr = damageScaleField.GetValue(configObj).ToString();
+                    if (trueDamageField != null) isTrueDmg = Convert.ToBoolean(trueDamageField.GetValue(configObj));
+                    if (damageTypeField != null) dmgType = (DamageType)damageTypeField.GetValue(configObj);
+                }
+
+                calc.DamageType = dmgType;
+
                 // Calculate raw damage
-                float rawDmg = config.damage;
-                if (config.damageScale == SkillSystem.Data.DamageScale.Raw)
+                if (scaleStr == "Raw")
                 {
                     calc.FloatNormalDamage = rawDmg;
                 }
-                else if (config.damageScale == SkillSystem.Data.DamageScale.DamageSourceAtk && source != null)
+                else if (scaleStr == "DamageSourceAtk" && source != null)
                 {
                     calc.FloatNormalDamage = source.atk * rawDmg;
                 }
@@ -91,8 +110,8 @@ namespace Dajunctic {
                 {
                     calc.FloatNormalDamage = rawDmg;
                 }
-                
-                if (config.trueDamage)
+
+                if (isTrueDmg)
                 {
                     calc.FloatTrueDamage = calc.FloatNormalDamage;
                     calc.FloatNormalDamage = 0;
@@ -110,7 +129,18 @@ namespace Dajunctic {
         public IDamageDealer damageDealer;
         public object debuffFocus;
         
-        public DamageSource(IDamageDealer d) {}
+        public DamageSource(IDamageDealer d) {
+            if (d != null) {
+                atk = d.GetTotalAtk();
+                damageDealer = d;
+                if (d is CombatActor actor) {
+                    armor = actor.Stats?.Armor?.Value ?? 0f;
+                    magicResist = actor.Stats?.MagicResist?.Value ?? 0f;
+                    maxHp = actor.MaxHp;
+                    currentHp = actor.Hp;
+                }
+            }
+        }
         public DamageSource() {}
     }
     public class BuffSingle {}

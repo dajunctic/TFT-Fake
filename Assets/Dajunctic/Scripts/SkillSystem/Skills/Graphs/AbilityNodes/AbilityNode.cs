@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using GraphProcessor;
 
@@ -50,7 +51,7 @@ namespace Dajunctic.SkillSystem.Logic
         public virtual void SetOwner(IAbilityOwner owner)
         {
             Owner = owner;
-            Skin = owner.Skin;
+            if (owner != null) Skin = owner.Skin;
         }
 
         public void SetAbility(IAbilityEntity ability)
@@ -69,6 +70,25 @@ namespace Dajunctic.SkillSystem.Logic
             InitializeInternal();
         }
 
+        private static void EvaluateIfTargetingNode(object node)
+        {
+            if (node == null) return;
+            var getMethod = node.GetType().GetMethod("GetMainTarget", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            if (getMethod != null)
+            {
+                var mainT = getMethod.Invoke(node, null);
+                
+                var mainTargetField = node.GetType().GetField("mainTarget", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                mainTargetField?.SetValue(node, mainT);
+                
+                var cachedTargetsField = node.GetType().GetField("_cachedTargets", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                var cachedTargetsVal = cachedTargetsField?.GetValue(node);
+                
+                var targetsField = node.GetType().GetField("targets", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                targetsField?.SetValue(node, cachedTargetsVal);
+            }
+        }
+
         protected T GetInputValue<T>(string fieldName, T fallback = default)
         {
             var inPort = inputPorts.FirstOrDefault(p => p.fieldName == fieldName);
@@ -76,7 +96,8 @@ namespace Dajunctic.SkillSystem.Logic
             if (edge != null && edge.outputPort != null)
             {
                 var outputNode = edge.outputNode;
-                var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                EvaluateIfTargetingNode(outputNode);
+                var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if (outputField != null)
                 {
                     return (T)outputField.GetValue(outputNode);
@@ -93,7 +114,8 @@ namespace Dajunctic.SkillSystem.Logic
             {
                 return edges.Select(edge => {
                     var outputNode = edge.outputNode;
-                    var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                    EvaluateIfTargetingNode(outputNode);
+                    var outputField = outputNode.GetType().GetField(edge.outputPort.fieldName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (outputField != null)
                     {
                         return (T)outputField.GetValue(outputNode);

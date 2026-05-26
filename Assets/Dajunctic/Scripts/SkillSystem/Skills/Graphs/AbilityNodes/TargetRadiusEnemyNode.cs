@@ -12,7 +12,7 @@ namespace Dajunctic.SkillSystem.Logic
         [SerializeReference, Output] protected List<IDamageTaker> targets;
         [SerializeReference, Output] protected IDamageTaker mainTarget;   
 
-        protected List<IDamageTaker> _cachedTargets;
+        protected List<IDamageTaker> _cachedTargets = new List<IDamageTaker>();
         protected IDamageTaker _cachedMainTarget;
 
         protected IDamageTaker GetMainTarget()

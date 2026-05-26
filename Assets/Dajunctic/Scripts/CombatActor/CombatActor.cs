@@ -7,7 +7,7 @@ using Dajunctic.SkillSystem.Gambits;
 
 namespace Dajunctic
 {
-    public class CombatActor : BaseView, ICombatActor
+    public class CombatActor : BaseView, ICombatActor, ISkillOwner, ITeamMember
     {
         [SerializeField, Child] protected Animator animator;
         [SerializeField, Child(Flag.Optional | Flag.IncludeInactive)] protected MidPoint midPoint;
@@ -66,6 +66,7 @@ namespace Dajunctic
         bool _viewLoaded;
 
         List<Gambit> _activeGambits = new();
+        private Vector3 _lastPosition;
 
         public override void Initialize()
         {
@@ -74,6 +75,7 @@ namespace Dajunctic
             _viewLoaded = true;
 
             Position = CachedTransform.position;
+            _lastPosition = Position;
             Forward = CachedTransform.forward;
 
             InitializeMoveAgent();
@@ -86,9 +88,6 @@ namespace Dajunctic
         {
             if (combatActorData == null || combatActorData.gambits == null || combatActorData.gambits.Count == 0)
             {
-                // Không có gambits trong data — giữ nguyên list hiện tại (nếu đã được init từ prefab)
-                if (_activeGambits.Count == 0)
-                    Debug.LogWarning($"[Gambit] {name}: combatActorData has no gambits configured!");
                 return;
             }
 
@@ -100,7 +99,6 @@ namespace Dajunctic
                 instance.Initialize(this);
                 _activeGambits.Add(instance);
             }
-            Debug.Log($"<color=cyan>[Gambit] {name}: InitGambits OK — {_activeGambits.Count} gambits loaded.</color>");
         }
 
 
@@ -125,12 +123,27 @@ namespace Dajunctic
                 EvaluateGambits();
             }
 
-            float realSpeed = MoveAgentAlive ? MoveAgent.Velocity.magnitude : 0f;
-            float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
+            // 1. Đồng bộ hóa vị trí từ MoveAgent trước
+            SyncTransform();
 
+            // 2. Tính toán tốc độ thực tế dựa vào sự thay đổi vị trí
+            float realSpeed = 0f;
+            if (Time.deltaTime > 0f)
+            {
+                realSpeed = (Position - _lastPosition).magnitude / Time.deltaTime;
+            }
+            _lastPosition = Position;
+
+            // Sử dụng tốc độ NavMeshAgent báo về làm fallback nếu lớn hơn
+            if (MoveAgentAlive && MoveAgent.Velocity.magnitude > realSpeed)
+            {
+                realSpeed = MoveAgent.Velocity.magnitude;
+            }
+
+            float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
             animator.SetFloat("Speed", normalizedSpeed);
 
-            SyncTransform();
+            // 3. Đồng bộ hóa transform của Unity
             SyncEntity();
         }
 
@@ -138,7 +151,6 @@ namespace Dajunctic
         {
             if (_activeGambits.Count == 0)
             {
-                Debug.LogWarning($"[Gambit] {name}: _activeGambits is EMPTY — check CombatActorData.gambits in Inspector.");
                 return;
             }
 
@@ -148,19 +160,16 @@ namespace Dajunctic
 
                 if (target == null)
                 {
-                    Debug.Log($"[Gambit] {name}: condition.Check() returned null — no targets in range or wrong team.");
                     continue;
                 }
 
                 if (gambit.action == null)
                 {
-                    Debug.LogWarning($"[Gambit] {name}: action is NULL — assign UseSkillGambitAction in CombatActorData.");
                     continue;
                 }
 
                 if (!gambit.action.CheckCanPlay())
                 {
-                    Debug.Log($"[Gambit] {name}: CheckCanPlay() = false — IsCasting={IsCasting}, skillGraph={(gambit.action is Dajunctic.SkillSystem.Gambits.UseSkillGambitAction ua ? (ua.skillGraph != null ? "OK" : "NULL") : "?")}");
                     continue;
                 }
 
@@ -310,6 +319,8 @@ namespace Dajunctic
                 }
 
                 MoveAgent.Warp(position);
+                Position = position;
+                _lastPosition = position;
             }
 
             if (fx)
@@ -379,12 +390,12 @@ namespace Dajunctic
         private float _energy;
 
         public float Hp => _hp;
-        public virtual float MaxHp => Stats.Health.Value;
+        public virtual float MaxHp => Stats?.Health?.Value > 0 ? Stats.Health.Value : (combatActorData != null ? combatActorData.stats.maxHp : 500f);
         public float Energy => _energy;
-        public float MaxEnergy => Stats.MaxMana.Value;
+        public float MaxEnergy => Stats?.MaxMana?.Value > 0 ? Stats.MaxMana.Value : (combatActorData != null ? combatActorData.stats.maxMana : 100f);
 
-        public float GetTotalAtk() => Stats?.AttackDamage.Value ?? 0;
-        public float GetTotalAtkSpd() => Stats.AttackSpeed.Value;
+        public float GetTotalAtk() => Stats?.AttackDamage?.Value > 0 ? Stats.AttackDamage.Value : (combatActorData != null ? combatActorData.stats.attackDamage : 50f);
+        public float GetTotalAtkSpd() => Stats?.AttackSpeed?.Value > 0 ? Stats.AttackSpeed.Value : (combatActorData != null ? combatActorData.stats.attackSpeed : 0.65f);
 
         public void InitDamageTaker()
         {
@@ -567,6 +578,26 @@ namespace Dajunctic
         {
             return this;
         }
+
+        // ─── ISkillOwner & IAbilityOwner Implementation ──────────────────
+        public SkillGroup UltimateGroup => null;
+        public Dajunctic.SkillSystem.Logic.ISkillEntity GetSkill(object val) => null;
+        public int Skin => 0;
+        public IDamageTaker AsDamageTaker() => this;
+        public ICombatStatOwner AsCombatStatOwner() => null;
+        public IAreaActor AsAreaActor() => null;
+        public ICombatActor AsCombatActor() => this;
+        public DamageSource GetDamageSource() => new DamageSource(this);
+        public IDamageDealer AsDamageDealer() => this;
+        public ITeamMember AsTeamMember() => this;
+        public IHexMovable AsHexMovable() => null;
+        public IMovable AsMovable() => this;
+        public ISummoner AsSummoner() => null;
+        public ISkillOwner AsSkillOwner() => this;
+        public IPassiveOwner AsPassiveOwner() => null;
+        public object AsAnimationPlayer() => this;
+        public float GetHitBoxRadius() => combatActorData != null ? combatActorData.movement.radius : 0.25f;
+        public float GetPushBoxRadius() => combatActorData != null ? combatActorData.movement.radius : 0.25f;
 
         public Transform GetTransform()
         {

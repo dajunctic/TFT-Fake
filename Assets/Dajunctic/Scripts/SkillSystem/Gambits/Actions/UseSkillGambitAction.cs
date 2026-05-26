@@ -77,8 +77,10 @@ namespace Dajunctic.SkillSystem.Gambits
                 if (Target != null && Target.Alive && actor.Hp > 0 && skillGraph != null)
                 {
                     var instanceGraph = ScriptableObject.Instantiate(skillGraph) as SkillGraph;
-                    instanceGraph.SetOwner(CombatActor as ISkillOwner);
+                    // Initialize() phải chạy trước SetOwner() để populate _nodes/_actionNodes array
                     instanceGraph.Initialize();
+                    instanceGraph.SetOwner(CombatActor as ISkillOwner);
+
                     
                     bool isFinished = false;
                     instanceGraph.OnExitEvent += () => isFinished = true;

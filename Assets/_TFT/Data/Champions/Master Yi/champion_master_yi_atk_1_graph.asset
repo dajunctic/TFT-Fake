@@ -104,7 +104,7 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: 345, y: 323, z: 0}
+  position: {x: 337, y: 335, z: 0}
   scale: {x: 1, y: 1, z: 1}
   references:
     version: 2
@@ -194,7 +194,7 @@ MonoBehaviour:
         expanded: 0
         debug: 0
         nodeLock: 0
-        animName: atk1_1
+        animName: atk_1
         transitionDuration: 0.1
         waitTillFinished: 1
     - rid: 2806570989226033485

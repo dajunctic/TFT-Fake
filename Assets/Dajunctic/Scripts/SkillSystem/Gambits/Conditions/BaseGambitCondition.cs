@@ -79,7 +79,7 @@ namespace Dajunctic.SkillSystem.Gambits
             var allActors = UnityEngine.Object.FindObjectsByType<CombatActor>(FindObjectsSortMode.None);
             foreach (var target in allActors)
             {
-                if (target.Hp <= 0 || !target.gameObject.activeInHierarchy) continue;
+                if (target.Hp <= 0 || !target.gameObject.activeInHierarchy || !target.CanBeTarget) continue;
 
                 float dist = Vector3.Distance(actor.Position, target.Position);
                 if (dist > Range) continue;

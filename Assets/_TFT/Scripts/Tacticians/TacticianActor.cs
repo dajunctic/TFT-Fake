@@ -12,7 +12,7 @@ namespace Dajunctic
         public bool IsBoss { get; private set; } = false;
 
         public override string DataId => name;
-        public override bool CanBeTarget => true;
+        public override bool CanBeTarget => false;
         private FishNet.Object.NetworkObject _netObj;
         public bool IsLocalPlayer => _netObj != null && _netObj.IsOwner;
 
@@ -122,6 +122,11 @@ namespace Dajunctic
                 RewarpMoveAgent();
             }
 
+            // Tắt CapsuleCollider để linh thú không đẩy tướng khi di chuyển
+            // NavMeshAgent vẫn xử lý movement bình thường; click raycast dùng layer khác
+            var col = GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+
             if (Camera.main != null)
             {
                 _cameraTransform = Camera.main.transform;
@@ -137,7 +142,6 @@ namespace Dajunctic
             if (MoveAgent != null && MoveAgent.Initialized)
             {
                 MoveAgent.Warp(transform.position);
-                Debug.Log($"[TacticianActor] RewarpMoveAgent → {transform.position} for {gameObject.name}");
             }
         }
 
@@ -186,16 +190,6 @@ namespace Dajunctic
                 bool onNavMesh = UnityEngine.AI.NavMesh.SamplePosition(targetPosition, out UnityEngine.AI.NavMeshHit navHit, 5f, UnityEngine.AI.NavMesh.AllAreas);
                 if (onNavMesh) targetPosition = navHit.position;
 
-                // Debug toàn bộ trạng thái trước khi move
-                bool agentOnMesh = MoveAgent != null && MoveAgent.Initialized &&
-                                   (MoveAgent as NavMeshMoveAgent) != null &&
-                                   (MoveAgent as NavMeshMoveAgent).GetComponent<UnityEngine.AI.NavMeshAgent>()?.isOnNavMesh == true;
-                Debug.Log($"[OnRightClick] actor={gameObject.name} | IsLocalPlayer={IsLocalPlayer} | " +
-                          $"MoveAgent={MoveAgent != null} | MoveAgent.Init={MoveAgent?.Initialized} | " +
-                          $"agentOnNavMesh={agentOnMesh} | rayHit={hitInfo.point} | " +
-                          $"navMeshSample={onNavMesh} | target={targetPosition} | " +
-                          $"actor.pos={transform.position}");
-
                 // Đảm bảo NavMeshAgent ở đúng vị trí actor trước khi move
                 RewarpMoveAgent();
 
@@ -204,10 +198,6 @@ namespace Dajunctic
                 {
                     _networkMovement.CmdMoveTo(targetPosition);
                 }
-            }
-            else
-            {
-                Debug.LogWarning($"[OnRightClick] Physics.Raycast MISSED! No collider hit. actor={gameObject.name}");
             }
         }
 
