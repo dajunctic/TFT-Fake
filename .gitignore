@@ -100,3 +100,9 @@ InitTestScene*.unity*
 
 
 *.vscode
+
+# Paid Unity Asset Store plugins — NOT redistributable (Unity Asset Store Terms)
+/[Aa]ssets/Plugins/AllIn13DShader/
+/[Aa]ssets/Plugins/AllIn13DShader.meta
+/[Aa]ssets/Plugins/AllIn1SpriteShader/
+/[Aa]ssets/Plugins/AllIn1SpriteShader.meta
