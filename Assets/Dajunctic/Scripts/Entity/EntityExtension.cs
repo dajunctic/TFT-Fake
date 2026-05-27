@@ -42,9 +42,9 @@ namespace Dajunctic
             return entity as IMovable;
         }
 
-        public static ITeamMemeber AsTeamMember(this IEntity entity)
+        public static ITeamMember AsTeamMember(this IEntity entity)
         {
-            return entity as ITeamMemeber;
+            return entity as ITeamMember;
         }
     }
 }

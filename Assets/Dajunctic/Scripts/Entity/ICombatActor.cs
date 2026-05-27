@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    public interface ICombatActor: IDamageTaker, ITransform, IAnimatorPlayer, IDamageDealer, IGameObject, IMovable, ITeamMemeber
+    public interface ICombatActor: IDamageTaker, ITransform, IAnimatorPlayer, IDamageDealer, IGameObject, IMovable, ITeamMember
     {
         public string DataId {get;}
 
