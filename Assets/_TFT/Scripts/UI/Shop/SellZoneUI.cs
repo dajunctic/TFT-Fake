@@ -60,8 +60,6 @@ namespace Dajunctic
                 int gold = _currentDraggedHero.GetSellValue();
                 sellPriceText.text = $"+{gold}<sprite=0>";
             }
-            
-            Debug.Log("<color=orange>Mouse entered Sell Zone while dragging hero</color>");
         }
 
         public void OnPointerExit(PointerEventData eventData)

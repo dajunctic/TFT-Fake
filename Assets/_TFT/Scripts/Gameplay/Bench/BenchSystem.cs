@@ -17,13 +17,11 @@ namespace Dajunctic
         {
             
             await Task.CompletedTask;
-            Debug.Log("<color=cyan>BenchSystem data loaded (no-op)</color>");
         }
 
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            Debug.Log("<color=cyan>BenchSystem initialized</color>");
         }
 
         public void RegisterArena(Arena arena, string fxGuid)
@@ -41,7 +39,6 @@ namespace Dajunctic
             foreach (var dict in _heroesOnArenas.Values) dict.Clear();
             _heroesOnArenas.Clear();
             _arenas.Clear();
-            Debug.Log("<color=yellow>BenchSystem shutdown</color>");
         }
 
         public bool HasEmptySlot(int ownerId)

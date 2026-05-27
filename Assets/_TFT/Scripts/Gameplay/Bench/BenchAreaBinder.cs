@@ -20,7 +20,6 @@ namespace Dajunctic
             if (arena != null)
             {
                 GameSystemManager.Instance.Bench.RegisterArena(arena, fxGuid);
-                Debug.Log("<color=cyan>BenchAreaBinder: Bound bench area to BenchSystem via Arena</color>");
             }
             else
             {

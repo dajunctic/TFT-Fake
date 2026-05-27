@@ -26,7 +26,6 @@ namespace Dajunctic
         {
             var handle = Addressables.LoadAssetAsync<ShopSystemData>(GameSystemManager.Instance.Config.shopSystemData);
             _data = await handle.Task;
-            Debug.Log("<color=cyan>ShopSystem data loaded</color>");
         }
 
         public void Initialize(GameSystemManager manager)
@@ -38,8 +37,6 @@ namespace Dajunctic
             this.RegisterListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             this.RegisterListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
-
-            Debug.Log("<color=cyan>ShopSystem initialized</color>");
         }
 
         private PlayerDataSync GetLocalPlayerSync()
@@ -102,7 +99,6 @@ namespace Dajunctic
             this.RemoveListener<RequestBuyHeroEvent>(OnRequestBuyHero);
             this.RemoveListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
             this.RemoveListener<RequestToggleShopLockEvent>(OnRequestToggleShopLock);
-            Debug.Log("<color=yellow>ShopSystem shutdown</color>");
         }
 
         private void OnDestroy()
@@ -136,7 +132,6 @@ namespace Dajunctic
             if (_isShopLocked == locked) return;
             _isShopLocked = locked;
             this.Raise(new ShopLockChangedEvent { IsLocked = _isShopLocked });
-            Debug.Log($"<color=cyan>ShopSystem: Shop {(_isShopLocked ? "LOCKED" : "UNLOCKED")}</color>");
         }
 
         public void SyncShopData(string[] championIds)
@@ -171,8 +166,7 @@ namespace Dajunctic
                 }
             }
 
-            Debug.Log($"<color=cyan>[ShopSystem] SyncShopData: resolved {resolved}/5 champions " +
-                      $"(allHeroes={_data.allHeroes.Count}).</color>");
+
 
             OnShopRefreshed?.Invoke();
             this.Raise(new ShopRefreshedEvent());

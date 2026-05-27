@@ -40,26 +40,18 @@ namespace Dajunctic
         public override void OnStartServer()
         {
             base.OnStartServer();
-            Debug.Log($"[ArenaManager] OnStartServer called! IsServerOnly: {IsServerOnlyInitialized}, arenaPrefab: {arenaPrefab}");
 
             SpawnArenas();
 
             if (LobbyNetworkManager.Instance == null || LobbyNetworkManager.Instance.Players.Count == 0)
             {
-                Debug.Log($"[ArenaManager] Fallback mode active. LobbyNetworkManager is null or Players.Count is 0.");
-                
                 if (!IsServerOnlyInitialized && arenaPrefab != null && _fallbackSpawnIndex < spawnPoints.Length)
                 {
-                    Debug.Log($"[ArenaManager] Spawning fallback arena for Host.");
                     SpawnSingleArena(spawnPoints[_fallbackSpawnIndex], 0, "Player Host");
                     _fallbackSpawnIndex++;
                 }
 
                 ServerManager.OnRemoteConnectionState += ServerOnRemoteConnectionState;
-            }
-            else 
-            {
-                Debug.Log($"[ArenaManager] Fallback mode skipped. LobbyNetworkManager exists with Players.Count = {LobbyNetworkManager.Instance.Players.Count}");
             }
         }
 
@@ -84,7 +76,6 @@ namespace Dajunctic
 
             if (LobbyNetworkManager.Instance != null && LobbyNetworkManager.Instance.Players.Count > 0)
             {
-                Debug.Log($"[ArenaManager] SpawnArenas from Lobby. Player count: {LobbyNetworkManager.Instance.Players.Count}");
                 foreach (var p in LobbyNetworkManager.Instance.Players)
                 {
                     if (spawnIndex >= spawnPoints.Length) break;
@@ -114,14 +105,12 @@ namespace Dajunctic
 
         private void SpawnSingleArena(Vector3 pos, int clientId, string playerName)
         {
-            Debug.Log($"[ArenaManager] Instantiate arena at {pos} for {playerName} (ClientId: {clientId})");
             GameObject arenaObj = Instantiate(arenaPrefab, pos, Quaternion.identity);
             ServerManager.Spawn(arenaObj);
 
             Arena arena = arenaObj.GetComponent<Arena>();
             if (arena != null)
             {
-                Debug.Log($"[ArenaManager] SetOwnerServer for arena {arenaObj.name}");
                 arena.SetOwnerServer(clientId, playerName);
             }
             else 

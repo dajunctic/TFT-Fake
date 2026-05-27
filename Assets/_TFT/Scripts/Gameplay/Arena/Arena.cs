@@ -98,8 +98,6 @@ namespace Dajunctic
             GameSystemManager.Instance.Field.RegisterArena(this);
 
             GameSystemManager.Instance.Bench.RegisterArena(this, fxGuid);
-
-            Debug.Log($"Arena registered for player {OwnerID} on {(IsServerInitialized ? "Server" : "Client")}");
         }
 
         public Vector3 GetFieldWorldPosition(Vector2Int coord)

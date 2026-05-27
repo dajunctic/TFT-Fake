@@ -25,7 +25,6 @@ namespace Dajunctic
 
         public void Initialize(IReadOnlyList<PlayerData> players)
         {
-            Debug.Log($"[PlayerListUI] Initialize called with {players.Count} players. playerUIs count: {playerUIs.Count}");
             for (int i = 0; i < playerUIs.Count; i++)
             {
                 if (i < players.Count)
@@ -73,12 +72,10 @@ namespace Dajunctic
 
         private void OnPlayerInfoChanged(PlayerData player)
         {
-            Debug.Log($"[PlayerListUI] Received HP change for {player.Name} (ID:{player.Id}). New HP: {player.HP}");
             foreach (var ui in playerUIs)
             {
                 if (ui.Data != null && ui.Data.Id == player.Id)
                 {
-                    Debug.Log($"[PlayerListUI] Updating UI for {player.Name}");
                     ui.Initialize(player);
                     break;
                 }

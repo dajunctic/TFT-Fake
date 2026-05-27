@@ -17,13 +17,11 @@ namespace Dajunctic
         {
             
             await Task.CompletedTask;
-            Debug.Log("<color=cyan>FieldSystem data loaded (no-op)</color>");
         }
 
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            Debug.Log("<color=cyan>FieldSystem initialized</color>");
         }
 
         public void RegisterArena(Arena arena)
@@ -53,7 +51,6 @@ namespace Dajunctic
             foreach (var dict in _guestHeroesOnArenas.Values) dict.Clear();
             _guestHeroesOnArenas.Clear();
             _arenas.Clear();
-            Debug.Log("<color=yellow>FieldSystem shutdown</color>");
         }
 
         public int GetUnitCount(int ownerId) 

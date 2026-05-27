@@ -30,14 +30,12 @@ namespace Dajunctic
                         _traitDatabase.Add(trait.TraidID, trait);
                     }
                 }
-                Debug.Log($"<color=cyan>TraitSystem: Loaded {_traitDatabase.Count} traits.</color>");
             }
         }
 
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            Debug.Log("<color=cyan>TraitSystem initialized</color>");
         }
 
         public void Shutdown()

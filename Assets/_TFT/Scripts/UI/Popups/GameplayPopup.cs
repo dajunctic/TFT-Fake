@@ -218,10 +218,6 @@ namespace Dajunctic
             }
 
             var shop = ShopSystem.CurrentShop;
-            
-            int nonNull = 0;
-            for (int k = 0; k < shop.Length; k++) if (shop[k] != null) nonNull++;
-            Debug.Log($"[GameplayPopup] UpdateShop called. NonNull slots={nonNull}/5");
 
             int shown = 0;
             for (int i = 0; i < slots.Count; i++)
@@ -250,7 +246,7 @@ namespace Dajunctic
                 }
             }
 
-            Debug.Log($"<color=cyan>[GameplayPopup] UpdateShop: {shown}/{slots.Count} slots filled.</color>");
+
             
         }
 

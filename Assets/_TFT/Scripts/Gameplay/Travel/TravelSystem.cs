@@ -18,7 +18,6 @@ namespace Dajunctic
             {
                 var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<TravelSystemData>(GameSystemManager.Instance.Config.travelSystemData);
                 _data = await handle.Task;
-                Debug.Log("<color=cyan>TravelSystem data loaded via Addressables</color>");
             }
         }
 
@@ -26,7 +25,6 @@ namespace Dajunctic
         {
             _manager = manager;
             this.RegisterListener<GameplayPhaseChangedEvent>(OnPhaseChanged);
-            Debug.Log("<color=cyan>TravelSystem initialized</color>");
         }
 
         public void Shutdown()

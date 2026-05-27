@@ -45,7 +45,6 @@ namespace Dajunctic
             {
                 var handle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<PlayerSystemData>(GameSystemManager.Instance.Config.playerSystemData);
                 _data = await handle.Task;
-                Debug.Log("<color=cyan>PlayerSystem data loaded via Addressables</color>");
             }
         }
 
@@ -58,8 +57,6 @@ namespace Dajunctic
                 FishNet.InstanceFinder.SceneManager.OnLoadEnd -= OnSceneLoadEnd;
                 FishNet.InstanceFinder.SceneManager.OnLoadEnd += OnSceneLoadEnd;
             }
-
-            Debug.Log("<color=cyan>PlayerSystem initialized.</color>");
         }
 
         private bool _sceneSetupDone = false;
@@ -82,14 +79,8 @@ namespace Dajunctic
                 SpawnPlayerDataSyncs();
                 SpawnTacticians();
                 _tacticiansSpawned = true;
-                Debug.Log($"[PlayerSystem] Server setup complete. Players: {_players.Count}");
                 
                 OnPlayerListInitialized?.Invoke();
-            }
-            else
-            {
-                
-                Debug.Log("[PlayerSystem] Client detected. Will populate players from PlayerDataSync network objects.");
             }
         }
 
@@ -160,7 +151,6 @@ namespace Dajunctic
                         if (nob != null && nob.GetComponent<PlayerDataSync>() != null)
                         {
                             _playerDataSyncPrefab = nob.gameObject;
-                            Debug.Log($"[PlayerSystem] Found PlayerDataSync prefab from FishNet registry: {nob.name}");
                             break;
                         }
                     }
@@ -189,13 +179,11 @@ namespace Dajunctic
                 {
 
                     ownerConn = FishNet.InstanceFinder.ClientManager.Connection;
-                    Debug.Log($"[PlayerSystem] Using LocalConnection fallback for host player '{player.Name}'.");
                 }
 
                 if (ownerConn != null)
                 {
                     FishNet.InstanceFinder.ServerManager.Spawn(obj, ownerConn);
-                    Debug.Log($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) with owner.");
                 }
                 else
                 {
@@ -224,8 +212,7 @@ namespace Dajunctic
                 if (dataToSpawn == null) dataToSpawn = DefaultTacticianData;
                 if (dataToSpawn == null || dataToSpawn.prefab == null) continue;
 
-                Vector3 spawnPos = arena.TacticianSpawnPoint != null ? arena.TacticianSpawnPoint.position : arena.transform.position;
-                Debug.Log($"[PlayerSystem] Target Arena for {player.Name} is at {arena.transform.position}. Spawn pos: {spawnPos}");
+                 Vector3 spawnPos = arena.TacticianSpawnPoint != null ? arena.TacticianSpawnPoint.position : arena.transform.position;
                 GameObject tacticianObj = Instantiate(dataToSpawn.prefab, spawnPos, arena.transform.rotation);
                 TacticianActor actor = tacticianObj.GetComponent<TacticianActor>();
                 
@@ -238,7 +225,6 @@ namespace Dajunctic
                         var clients = FishNet.InstanceFinder.ServerManager.Clients;
                         if (player.ClientId >= 0 && clients.TryGetValue(player.ClientId, out var clientConn))
                         {
-                            Debug.Log($"[PlayerSystem] Spawning tactician for player {player.Name} (ID:{player.Id}, ClientId:{player.ClientId}) at {spawnPos} with connection {clientConn.ClientId}");
                             FishNet.InstanceFinder.ServerManager.Spawn(tacticianObj, clientConn);
                         }
                         else
@@ -279,7 +265,6 @@ namespace Dajunctic
                     pd.ClientId = syncClientId;
                     _players.Add(pd);
                     anyAdded = true;
-                    Debug.Log($"[PlayerSystem] Client: Added player {pd.Name} (ClientId:{pd.ClientId}) from PlayerDataSync.");
                 }
 
                 if (anyAdded && _players.Count > 0)
@@ -289,7 +274,6 @@ namespace Dajunctic
                     LinkTacticiansToPlayers();
                     
                     OnPlayerListInitialized?.Invoke();
-                    Debug.Log($"[PlayerSystem] Client player list initialized with {_players.Count} players.");
                 }
             }
 
@@ -338,7 +322,6 @@ namespace Dajunctic
                     actor.OwnerID = ownerId;
                     actor.Initialize(); 
                     actor.RewarpMoveAgent(); 
-                    Debug.Log($"[PlayerSystem] Linked tactician {actor.name} to player {player.Name} (ClientId:{ownerId})");
                 }
             }
         }

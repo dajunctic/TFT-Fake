@@ -43,13 +43,10 @@ namespace Dajunctic
         {
             var handle = Addressables.LoadAssetAsync<SettingsData>(GameSystemManager.Instance.Config.settingsData);
             _settingsData = await handle.Task;
-            Debug.Log("<color=cyan>SettingsSystem data loaded</color>");
         }
 
         public void Initialize(GameSystemManager manager)
         {
-            Debug.Log("<color=cyan>SettingsSystem initialized</color>");
-
             LoadSettings();
             ApplyAllSettings();
         }
@@ -57,7 +54,6 @@ namespace Dajunctic
         public void Shutdown()
         {
             SaveSettings();
-            Debug.Log("<color=yellow>SettingsSystem shutdown</color>");
         }
 
         #region Mouse Cursor
@@ -164,16 +160,12 @@ namespace Dajunctic
             _qualityLevel = Mathf.Clamp(level, 0, QualitySettings.names.Length - 1);
             QualitySettings.SetQualityLevel(_qualityLevel, true);
             SaveSettings();
-
-            Debug.Log($"Quality set to: {QualitySettings.names[_qualityLevel]}");
         }
 
         public void SetResolution(int width, int height, bool fullscreen)
         {
             Screen.SetResolution(width, height, fullscreen);
             SaveSettings();
-
-            Debug.Log($"Resolution set to: {width}x{height} Fullscreen: {fullscreen}");
         }
 
         public void SetVSync(bool enabled)
@@ -304,8 +296,6 @@ namespace Dajunctic
 
             ApplyAllSettings();
             SaveSettings();
-
-            Debug.Log("Settings reset to defaults");
         }
 
         #endregion

@@ -26,7 +26,6 @@ namespace Dajunctic
             {
                 var handle = Addressables.LoadAssetAsync<RoundSystemData>(GameSystemManager.Instance.Config.roundSystemData);
                 _data = await handle.Task;
-                Debug.Log("<color=cyan>RoundSystem data loaded via Addressables</color>");
             }
         }
 
@@ -34,7 +33,6 @@ namespace Dajunctic
         {
             _manager = manager;
             ResetToStart();
-            Debug.Log("<color=cyan>RoundSystem initialized</color>");
         }
 
         public void ResetToStart()
@@ -55,7 +53,6 @@ namespace Dajunctic
             }
             
             this.Raise(new RoundScheduleChangedEvent());
-            Debug.Log($"<color=cyan>RoundSystem: Round {stageNumber}-{roundNumber} overriden to {newData.displayName}</color>");
         }
 
         public void AdvanceRound()
@@ -91,8 +88,6 @@ namespace Dajunctic
                 RoundNumber = RoundNumber, 
                 RoundData = CurrentRoundData 
             });
-            
-            Debug.Log($"<color=cyan>Round advanced to: {GetRoundDisplayString()}</color>");
         }
 
         private void UpdateCurrentData()
@@ -139,7 +134,6 @@ namespace Dajunctic
 
         public void Shutdown()
         {
-            Debug.Log("<color=yellow>RoundSystem shutdown</color>");
         }
     }
 
