@@ -7,6 +7,16 @@
       "dependencies": {},
       "hash": "d6e8e5e6995b90742ff09730240859415f07f4ee"
     },
+    "com.besty.unity-skills": {
+      "version": "https://github.com/Besty0728/Unity-Skills.git?path=/SkillsForUnity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.0.2",
+        "com.unity.timeline": "1.7.7"
+      },
+      "hash": "482f08c826831011c533878daeb7f0e0ca653538"
+    },
     "com.firstgeargames.fishnet": {
       "version": "https://github.com/FirstGearGames/FishNet.git?path=Assets/FishNet",
       "depth": 0,
