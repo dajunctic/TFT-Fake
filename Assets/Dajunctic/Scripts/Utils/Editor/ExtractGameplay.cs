@@ -50,7 +50,6 @@ public class ExtractGameplay
             System.IO.Directory.CreateDirectory("Assets/_TFT/Prefabs/Systems");
         }
 
-        // Tách ArenaManager ra
         var amComp = gameplayInstance.GetComponent<Dajunctic.ArenaManager>();
         GameObject amPrefab = null;
         if (amComp != null)
@@ -74,7 +73,6 @@ public class ExtractGameplay
         prefab = PrefabUtility.SaveAsPrefabAsset(gameplayInstance, gpPath);
         GameObject.DestroyImmediate(gameplayInstance);
 
-        // Tao spawner moi
         var existingSpawner = Object.FindFirstObjectByType<Dajunctic.HomeSceneSpawner>();
         if (existingSpawner != null) {
             GameObject.DestroyImmediate(existingSpawner.gameObject);

@@ -13,8 +13,7 @@ namespace KBCore.Refs
     public class InterfaceRefPropertyDrawer : PropertyDrawer
     {
         private const string IMPLEMENTER_PROP = "_implementer";
-        
-// unity 2022.2 makes UIToolkit the default for inspectors
+
 #if UNITY_2022_2_OR_NEWER
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {

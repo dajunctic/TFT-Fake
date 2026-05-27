@@ -9,7 +9,6 @@ namespace Dajunctic
         public string displayName;
         public string animalType;
         public Sprite icon;
-        public GameObject prefab;
         
         [Header("Special Attributes")]
         public int tier = 1; 

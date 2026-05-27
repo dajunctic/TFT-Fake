@@ -4,28 +4,28 @@ using TMPro;
 
 namespace Dajunctic
 {
-    // Class gọn nhẹ chỉ có HP Bar và Level Text cho Player
+    
     public class PlayerHpView : BaseView
     {
         [Header("References")]
-        [SerializeField] private Image progressBar; // Thanh máu Player (Image type Filled)
-        [SerializeField] private TMP_Text levelText;  // Hiển thị Level
+        [SerializeField] private Image progressBar; 
+        [SerializeField] private TMP_Text levelText;  
         [SerializeField] private Vector3 offset = new Vector3(0, 2.2f, 0);
 
         [Header("Colors")]
-        public Color localPlayerColor = new Color(0.2f, 0.8f, 0.2f); // Green
-        public Color enemyPlayerColor = new Color(0.8f, 0.2f, 0.2f); // Red
+        public Color localPlayerColor = new Color(0.2f, 0.8f, 0.2f); 
+        public Color enemyPlayerColor = new Color(0.8f, 0.2f, 0.2f); 
         [Tooltip("If filled, each OwnerID gets a distinct color from this list.")]
         public Color[] customColorsPerPlayer = new Color[]
         {
-            new Color(0.12f, 0.82f, 0.28f), // 0: Player (TFT Green)
-            new Color(0.85f, 0.15f, 0.22f), // 1: Bot 1 (TFT Red)
-            new Color(0.15f, 0.55f, 0.95f), // 2: Bot 2 (Blue)
-            new Color(0.95f, 0.75f, 0.15f), // 3: Bot 3 (Gold)
-            new Color(0.65f, 0.25f, 0.85f), // 4: Bot 4 (Purple)
-            new Color(0.95f, 0.45f, 0.15f), // 5: Bot 5 (Orange)
-            new Color(0.15f, 0.85f, 0.85f), // 6: Bot 6 (Cyan)
-            new Color(0.95f, 0.35f, 0.65f)  // 7: Bot 7 (Pink)
+            new Color(0.12f, 0.82f, 0.28f), 
+            new Color(0.85f, 0.15f, 0.22f), 
+            new Color(0.15f, 0.55f, 0.95f), 
+            new Color(0.95f, 0.75f, 0.15f), 
+            new Color(0.65f, 0.25f, 0.85f), 
+            new Color(0.95f, 0.45f, 0.15f), 
+            new Color(0.15f, 0.85f, 0.85f), 
+            new Color(0.95f, 0.35f, 0.65f)  
         };
 
         private CombatActor _owner;
@@ -36,7 +36,7 @@ namespace Dajunctic
 
         public void Initialize(CombatActor owner, int level)
         {
-            // Reset Canvas worldCamera to prevent Unity UI MissingReferenceException if previous camera was destroyed
+            
             var canvas = GetComponent<Canvas>();
             if (canvas != null) canvas.worldCamera = Camera.main;
 
@@ -69,14 +69,14 @@ namespace Dajunctic
                 {
                     Color[] fallbackPalette = new Color[]
                     {
-                        new Color(0.12f, 0.82f, 0.28f), // 0: Player (TFT Green)
-                        new Color(0.85f, 0.15f, 0.22f), // 1: Bot 1 (TFT Red)
-                        new Color(0.15f, 0.55f, 0.95f), // 2: Bot 2 (Blue)
-                        new Color(0.95f, 0.75f, 0.15f), // 3: Bot 3 (Gold)
-                        new Color(0.65f, 0.25f, 0.85f), // 4: Bot 4 (Purple)
-                        new Color(0.95f, 0.45f, 0.15f), // 5: Bot 5 (Orange)
-                        new Color(0.15f, 0.85f, 0.85f), // 6: Bot 6 (Cyan)
-                        new Color(0.95f, 0.35f, 0.65f)  // 7: Bot 7 (Pink)
+                        new Color(0.12f, 0.82f, 0.28f), 
+                        new Color(0.85f, 0.15f, 0.22f), 
+                        new Color(0.15f, 0.55f, 0.95f), 
+                        new Color(0.95f, 0.75f, 0.15f), 
+                        new Color(0.65f, 0.25f, 0.85f), 
+                        new Color(0.95f, 0.45f, 0.15f), 
+                        new Color(0.15f, 0.85f, 0.85f), 
+                        new Color(0.95f, 0.35f, 0.65f)  
                     };
                     progressBar.color = fallbackPalette[_currentOwnerId % fallbackPalette.Length];
                 }
@@ -97,8 +97,6 @@ namespace Dajunctic
 
             _cachedTransform.position = _owner.HeadPoint + offset;
 
-            // Re-fetch camera each frame if not available (camera may not be ready at init time,
-            // or the local player camera is different from Camera.main on the observer)
             if (_mainCamera == null) _mainCamera = Camera.main;
             if (_mainCamera != null)
             {

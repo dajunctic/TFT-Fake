@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 namespace Dajunctic
 {
@@ -55,20 +56,19 @@ namespace Dajunctic
 
         private void InitializeUI()
         {
-            // Quality levels
+            
             if (qualityDropdown != null)
             {
                 qualityDropdown.ClearOptions();
-                qualityDropdown.AddOptions(new System.Collections.Generic.List<string>(QualitySettings.names));
+                qualityDropdown.AddOptions(new List<string>(QualitySettings.names));
             }
 
-            // Resolutions
             if (resolutionDropdown != null)
             {
                 _resolutions = Screen.resolutions;
                 resolutionDropdown.ClearOptions();
                 
-                var options = new System.Collections.Generic.List<string>();
+                var options = new List<string>();
                 int currentResolutionIndex = 0;
                 
                 for (int i = 0; i < _resolutions.Length; i++)
@@ -92,7 +92,6 @@ namespace Dajunctic
         {
             if (_settingsSystem == null) return;
 
-            // Audio
             if (masterVolumeSlider != null)
             {
                 masterVolumeSlider.value = _settingsSystem.MasterVolume;
@@ -111,7 +110,6 @@ namespace Dajunctic
                 UpdateVolumeText(sfxVolumeText, _settingsSystem.SFXVolume);
             }
 
-            // Graphics
             if (qualityDropdown != null)
                 qualityDropdown.value = _settingsSystem.QualityLevel;
             
@@ -121,7 +119,6 @@ namespace Dajunctic
             if (vSyncToggle != null)
                 vSyncToggle.isOn = _settingsSystem.VSync;
 
-            // Gameplay
             if (cameraShakeToggle != null)
                 cameraShakeToggle.isOn = _settingsSystem.CameraShake;
             
@@ -131,7 +128,7 @@ namespace Dajunctic
 
         private void RegisterListeners()
         {
-            // Audio sliders
+            
             if (masterVolumeSlider != null)
                 masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeChanged);
             
@@ -141,7 +138,6 @@ namespace Dajunctic
             if (sfxVolumeSlider != null)
                 sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
 
-            // Graphics
             if (qualityDropdown != null)
                 qualityDropdown.onValueChanged.AddListener(OnQualityChanged);
             
@@ -154,14 +150,12 @@ namespace Dajunctic
             if (vSyncToggle != null)
                 vSyncToggle.onValueChanged.AddListener(OnVSyncChanged);
 
-            // Gameplay
             if (cameraShakeToggle != null)
                 cameraShakeToggle.onValueChanged.AddListener(OnCameraShakeChanged);
             
             if (damageNumbersToggle != null)
                 damageNumbersToggle.onValueChanged.AddListener(OnDamageNumbersChanged);
 
-            // Buttons
             if (applyButton != null)
                 applyButton.onClick.AddListener(OnApplyClicked);
             
@@ -267,7 +261,7 @@ namespace Dajunctic
 
         private void UnregisterListeners()
         {
-            // Unregister listeners
+            
             if (masterVolumeSlider != null)
                 masterVolumeSlider.onValueChanged.RemoveListener(OnMasterVolumeChanged);
             

@@ -17,7 +17,6 @@ namespace Dajunctic
         const string FadingScene = "FadingScene";
         const string LobbyScene = "LobbyScene";
 
-
         static void ChangeScene(string name)
         {
             EditorSceneManager.SaveOpenScenes();
@@ -106,18 +105,6 @@ namespace Dajunctic
             ChangeScene(LobbyScene);
         }
 
-        // [MenuItem("Scenes/Fading Scene", false, 22)]
-        // static void OpenFadingScene()
-        // {
-        //     ChangeScene(FadingScene);
-        // }
-
-        // [MenuItem("Scenes/Fading Scene", true, 22)]
-        // static bool CanOpenFadingScene()
-        // {
-        //     return CanChangeScene(FadingScene);
-        // }
-
         [MenuItem("Scenes/Play", false, 44)]
         public static void Play()
         {
@@ -137,4 +124,3 @@ namespace Dajunctic
     }
 }
 #endif
-

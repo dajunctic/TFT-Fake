@@ -16,4 +16,3 @@ namespace Dajunctic.SkillSystem.Logic
         public float GetRange() { return 0f; }
     }
 }
-

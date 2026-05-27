@@ -77,8 +77,5 @@ namespace Dajunctic.SkillSystem.Logic
                 .Play(this);
         }
 
-        
     }
 }
-
-

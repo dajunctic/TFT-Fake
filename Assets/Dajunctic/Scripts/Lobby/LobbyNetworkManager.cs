@@ -8,21 +8,15 @@ using System.Collections.Generic;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// NetworkBehaviour trung tâm cho lobby:
-    /// - Kiểm duyệt kết nối (approval check / max players)
-    /// - Quản lý danh sách player (SyncList tự đồng bộ tới mọi client)
-    /// </summary>
+
     public class LobbyNetworkManager : NetworkBehaviour
     {
         public static LobbyNetworkManager Instance { get; private set; }
 
-        /// <summary>Fired trên cả Server và Client ngay khi NetworkObject spawn xong.</summary>
         public static event System.Action OnManagerSpawned;
 
         [SerializeField] private int maxPlayers = 8;
 
-        // SyncList tự động sync Server → tất cả Client
         public readonly SyncList<LobbyPlayerData> Players = new SyncList<LobbyPlayerData>();
         
         public static List<LobbyPlayerData> CachedPlayers = new List<LobbyPlayerData>();
@@ -46,7 +40,7 @@ namespace Dajunctic
         public override void OnStartNetwork()
         {
             base.OnStartNetwork();
-            // Thông báo cho LobbyPopup (và bất kỳ ai) biết Instance đã sẵn sàng
+            
             OnManagerSpawned?.Invoke();
         }
 
@@ -63,8 +57,6 @@ namespace Dajunctic
                 ServerManager.OnRemoteConnectionState -= ServerOnRemoteConnectionState;
         }
 
-        // ── Approval Check (từ LobbyMonitor) ────────────────────────────────────
-
         private void ServerOnRemoteConnectionState(NetworkConnection conn, RemoteConnectionStateArgs args)
         {
             if (args.ConnectionState == RemoteConnectionState.Started)
@@ -79,7 +71,7 @@ namespace Dajunctic
                 else
                 {
                     Debug.Log($"LobbyNetworkManager: Approved ({currentCount}/{maxPlayers}).");
-                    // Tên tạm — client sẽ gửi tên thật qua RegisterSelf ServerRpc
+                    
                     AddOrUpdatePlayer(conn.ClientId, $"Player {conn.ClientId}", conn.ClientId == ServerManager.Clients.First().Value.ClientId);
                 }
             }
@@ -88,8 +80,6 @@ namespace Dajunctic
                 ServerOnClientDisconnected(conn.ClientId);
             }
         }
-
-        // ── Player List Management ───────────────────────────────────────────────
 
         private void ServerOnClientDisconnected(int clientId)
         {
@@ -105,7 +95,7 @@ namespace Dajunctic
         [ServerRpc(RequireOwnership = false)]
         public void RegisterSelfServerRpc(string playerName, NetworkConnection caller = null)
         {
-            // Update player name when they explicitly register. Maintain their host status.
+            
             bool isHost = false;
             for (int i = 0; i < Players.Count; i++)
             {
@@ -120,7 +110,7 @@ namespace Dajunctic
 
         private void AddOrUpdatePlayer(int clientId, string playerName, bool isHost)
         {
-            // Nếu đã có thì cập nhật
+            
             for (int i = 0; i < Players.Count; i++)
             {
                 if (Players[i].ClientId != clientId) continue;
@@ -131,7 +121,6 @@ namespace Dajunctic
                 return;
             }
 
-            // Chưa có thì thêm mới
             Players.Add(new LobbyPlayerData
             {
                 ClientId    = clientId,
@@ -163,11 +152,6 @@ namespace Dajunctic
             RegisterSelf(pName);
         }
 
-        // ── Public API ───────────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Gửi RPC lên Server để đăng ký tên thật.
-        /// </summary>
         public void RegisterSelf(string playerName)
         {
             if (IsClientInitialized)

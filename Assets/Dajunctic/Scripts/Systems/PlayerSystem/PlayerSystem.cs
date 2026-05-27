@@ -66,11 +66,9 @@ namespace Dajunctic
 
         private void OnSceneLoadEnd(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
         {
-            // Wait for HomeScene to be the loaded scene
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "HomeScene") return;
             
-            // On Host, OnLoadEnd fires TWICE (once AsServer, once as Client).
-            // We must only run setup once to avoid clearing _players and double-spawning.
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "HomeScene") return;
+
             if (_sceneSetupDone) return;
             _sceneSetupDone = true;
             
@@ -79,7 +77,7 @@ namespace Dajunctic
 
             if (FishNet.InstanceFinder.IsServerStarted)
             {
-                // Server/Host: setup from lobby data, spawn PlayerDataSync + Tacticians
+                
                 SetupPlayersFromLobby();
                 SpawnPlayerDataSyncs();
                 SpawnTacticians();
@@ -90,7 +88,7 @@ namespace Dajunctic
             }
             else
             {
-                // Client: Update() will populate _players from PlayerDataSync network objects.
+                
                 Debug.Log("[PlayerSystem] Client detected. Will populate players from PlayerDataSync network objects.");
             }
         }
@@ -99,7 +97,6 @@ namespace Dajunctic
         {
             _players.Clear();
 
-            // Server always has LobbyNetworkManager.Instance alive at this point
             var lobbyPlayers = LobbyNetworkManager.Instance != null 
                 ? LobbyNetworkManager.Instance.Players.ToList() 
                 : LobbyNetworkManager.CachedPlayers;
@@ -114,7 +111,6 @@ namespace Dajunctic
                     pool.Add(_data.defaultTacticianData);
             }
 
-            // Create real players
             foreach (var p in lobbyPlayers)
             {
                 var pd = new PlayerData(p.ClientId, p.PlayerName, Team.Player, 100);
@@ -130,11 +126,11 @@ namespace Dajunctic
             {
                 int idx = UnityEngine.Random.Range(0, pool.Count);
                 pd.AssignedTacticianData = pool[idx];
-                pool.RemoveAt(idx); // Remove to ensure uniqueness
+                pool.RemoveAt(idx); 
             }
             else
             {
-                // Fallback if pool is empty (more players than tacticians)
+                
                 if (_data != null && _data.availableTacticians != null && _data.availableTacticians.Length > 0)
                     pd.AssignedTacticianData = _data.availableTacticians[UnityEngine.Random.Range(0, _data.availableTacticians.Length)];
                 else if (_data != null)
@@ -146,7 +142,7 @@ namespace Dajunctic
         
         private void SpawnPlayerDataSyncs()
         {
-            // Find the PlayerDataSync prefab from FishNet's registered prefabs
+            
             if (_playerDataSyncPrefab == null)
             {
                 if (_data != null && _data.playerDataSyncPrefab != null)
@@ -155,7 +151,7 @@ namespace Dajunctic
                 }
                 else
                 {
-                    // Search FishNet's spawnable prefabs for the PlayerDataSync prefab
+                    
                     var spawnablePrefabs = FishNet.InstanceFinder.NetworkManager.SpawnablePrefabs;
                     int count = spawnablePrefabs.GetObjectCount();
                     for (int i = 0; i < count; i++)
@@ -182,7 +178,6 @@ namespace Dajunctic
                 var obj = Instantiate(_playerDataSyncPrefab);
                 var sync = obj.GetComponent<PlayerDataSync>();
 
-                // Give ownership to the correct client connection
                 var clients = FishNet.InstanceFinder.ServerManager.Clients;
                 FishNet.Connection.NetworkConnection ownerConn = null;
 
@@ -192,8 +187,7 @@ namespace Dajunctic
                 }
                 else if (player.ClientId == 0 && FishNet.InstanceFinder.ClientManager?.Connection != null)
                 {
-                    // Host fallback: Clients dict may not be populated yet for clientId 0.
-                    // Use the local client connection directly.
+
                     ownerConn = FishNet.InstanceFinder.ClientManager.Connection;
                     Debug.Log($"[PlayerSystem] Using LocalConnection fallback for host player '{player.Name}'.");
                 }
@@ -209,7 +203,6 @@ namespace Dajunctic
                     Debug.LogWarning($"[PlayerSystem] Spawned PlayerDataSync for {player.Name} (ClientId:{player.ClientId}) WITHOUT owner — ServerRpc won't work!");
                 }
 
-                // Set synced data
                 if (sync != null)
                 {
                     sync.SetPlayerInfo((ulong)player.ClientId, player.Name);
@@ -256,12 +249,9 @@ namespace Dajunctic
                     }
 
                     actor.Initialize();
-                    // RewarpMoveAgent: đảm bảo NavMeshAgent warp về đúng vị trí spawn
-                    // (fix trường hợp Initialize chạy trong Awake với vị trí prefab sai)
+
                     actor.RewarpMoveAgent();
-                    // Không gọi StopListenEvents/ListenEvents ở đây.
-                    // Trên host: IsOwner đúng ngay, Update() sẽ đăng ký.
-                    // Trên client: NetworkObject chưa đồng bộ IsOwner kịp, Update() sẽ chờ.
+
                     player.Tactician = actor;
                 }
             }
@@ -269,7 +259,7 @@ namespace Dajunctic
 
         private void Update()
         {
-            // Client: discover players from spawned PlayerDataSync network objects
+            
             if (FishNet.InstanceFinder.IsClientStarted)
             {
                 var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
@@ -295,8 +285,7 @@ namespace Dajunctic
                 if (anyAdded && _players.Count > 0)
                 {
                     _hasSetupFromSync = true;
-                    
-                    // Link existing TacticianActors to their players (one-time on new player discovery)
+
                     LinkTacticiansToPlayers();
                     
                     OnPlayerListInitialized?.Invoke();
@@ -304,7 +293,6 @@ namespace Dajunctic
                 }
             }
 
-            // Client: continuously sync HP from PlayerDataSync
             if (FishNet.InstanceFinder.IsClientStarted && _hasSetupFromSync)
             {
                 var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
@@ -324,12 +312,9 @@ namespace Dajunctic
                         }
                     }
                 }
-                // NOTE: Do NOT call LinkTacticiansToPlayers() here every frame.
-                // It calls Initialize() + RewarpMoveAgent() which interrupts NavMesh pathfinding → jitter.
-                // Linking is done once when players are discovered above.
+
             }
 
-            // Server: retry tactician spawn ONCE if initial spawn missed some
             if (FishNet.InstanceFinder.IsServerStarted && !_tacticiansSpawned && _players.Count > 0)
             {
                 SpawnTacticians();
@@ -351,8 +336,8 @@ namespace Dajunctic
                 {
                     player.Tactician = actor;
                     actor.OwnerID = ownerId;
-                    actor.Initialize(); // Ensure client side initializes properly
-                    actor.RewarpMoveAgent(); // Fix NavMesh vị trí sau khi đã spawn đúng chỗ
+                    actor.Initialize(); 
+                    actor.RewarpMoveAgent(); 
                     Debug.Log($"[PlayerSystem] Linked tactician {actor.name} to player {player.Name} (ClientId:{ownerId})");
                 }
             }
@@ -360,14 +345,13 @@ namespace Dajunctic
 
         public void ApplyDamage(int playerId, int damage)
         {
-            if (!FishNet.InstanceFinder.IsServerStarted) return; // Only server can apply damage
+            if (!FishNet.InstanceFinder.IsServerStarted) return; 
 
             var target = _players.Find(p => p.Id == playerId);
             if (target != null)
             {
                 target.HP = Mathf.Max(0, target.HP - damage);
-                
-                // Cập nhật lại vào PlayerDataSync để đồng bộ với Client
+
                 var syncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
                 foreach(var sync in syncs)
                 {
@@ -388,19 +372,16 @@ namespace Dajunctic
             }
         }
 
-        // Backward compatibility for Team based damage (if still used)
         public void ApplyDamage(Team team, int damage)
         {
             var targets = _players.Where(p => p.Team == team).ToList();
             foreach (var target in targets)
             {
-                // In actual TFT, only the specific loser is damaged, but if we pass Team, 
-                // we'll just damage the first one for now or all (this method is flawed for multi-opponent teams)
+
                 ApplyDamage(target.Id, damage);
                 break; 
             }
         }
-
 
         public void SetStreak(Team team, int winStreak, int lossStreak)
         {

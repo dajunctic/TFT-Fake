@@ -3,18 +3,12 @@ using UnityEngine;
 
 namespace KBCore.Refs
 {
-    /// <summary>
-    /// Allows for serializing Interface types with [SceneRef] attributes.
-    /// </summary>
-    /// <typeparam name="T">Component type to find and serialize.</typeparam>
+
     [Serializable]
     public class InterfaceRef<T> : ISerializableRef<T>
         where T : class
     {
 
-        /// <summary>
-        /// The serialized interface value.
-        /// </summary>
         public T Value
         {
             get

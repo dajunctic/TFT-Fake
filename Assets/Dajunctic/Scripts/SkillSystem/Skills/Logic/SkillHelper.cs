@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-// #define VISUALIZE_DEBUG
+
 #endif
 using System.Collections.Generic;
 using UnityEngine;
@@ -550,5 +550,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-
-

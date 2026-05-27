@@ -16,7 +16,7 @@ namespace Dajunctic
             }
             else
             {
-                // In case server initializes later (rare, but good practice)
+                
                 InstanceFinder.ServerManager.OnServerConnectionState += ServerManager_OnServerConnectionState;
             }
         }
@@ -48,8 +48,7 @@ namespace Dajunctic
                         Debug.Log($"[HomeSceneSpawner] Spawned {prefab.name} dynamically!");
                     }
                 }
-                
-                // Remove self so we don't spawn again
+
                 Destroy(gameObject);
             }
         }

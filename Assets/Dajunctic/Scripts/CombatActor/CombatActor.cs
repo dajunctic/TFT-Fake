@@ -4,6 +4,7 @@ using KBCore.Refs;
 using UnityEngine;
 using UnityEngine.AI;
 using Dajunctic.SkillSystem.Gambits;
+using Dajunctic.SkillSystem.Logic;
 
 namespace Dajunctic
 {
@@ -29,10 +30,8 @@ namespace Dajunctic
         public Team CombatTeam => team;
         public int OwnerID { get; set; } = 0;
 
-        /// <summary>Set team runtime — dùng khi spawn PvE enemy để đảm bảo team đúng.</summary>
         public void SetTeam(Team newTeam) => team = newTeam;
 
-        /// <summary>Team của kẻ địch — BT dùng để tìm target. Set bởi PveWaveSpawner (PvE) hoặc TravelSystem (PvP).</summary>
         public ICombatTeam EnemyTeam { get; private set; }
 
         public void SetEnemyTeam(ICombatTeam enemyTeam)
@@ -101,18 +100,14 @@ namespace Dajunctic
             }
         }
 
-
         public override void Tick()
         {
             base.Tick();
 
-            // Clear stale MoveAgent reference if the pooled GameObject was destroyed (e.g. scene reload)
-            // or if NavMeshAgent couldn't place itself on NavMesh (e.g. client spawned at wrong position)
             if (MoveAgent != null && !MoveAgent.Initialized)
             {
                 MoveAgent = null;
-                // Re-initialize immediately at the CURRENT transform position
-                // (fixes client-side: prefab spawned at default pos, NavMesh failed, now actor is at real pos)
+
                 Position = CachedTransform.position;
                 Forward = CachedTransform.forward;
                 InitializeMoveAgent();
@@ -123,10 +118,8 @@ namespace Dajunctic
                 EvaluateGambits();
             }
 
-            // 1. Đồng bộ hóa vị trí từ MoveAgent trước
             SyncTransform();
 
-            // 2. Tính toán tốc độ thực tế dựa vào sự thay đổi vị trí
             float realSpeed = 0f;
             if (Time.deltaTime > 0f)
             {
@@ -134,7 +127,6 @@ namespace Dajunctic
             }
             _lastPosition = Position;
 
-            // Sử dụng tốc độ NavMeshAgent báo về làm fallback nếu lớn hơn
             if (MoveAgentAlive && MoveAgent.Velocity.magnitude > realSpeed)
             {
                 realSpeed = MoveAgent.Velocity.magnitude;
@@ -143,7 +135,6 @@ namespace Dajunctic
             float normalizedSpeed = Mathf.Clamp01(realSpeed / Speed);
             animator.SetFloat("Speed", normalizedSpeed);
 
-            // 3. Đồng bộ hóa transform của Unity
             SyncEntity();
         }
 
@@ -179,7 +170,6 @@ namespace Dajunctic
                 break;
             }
         }
-
 
         public override void Cleanup()
         {
@@ -224,7 +214,6 @@ namespace Dajunctic
         public bool IsMoving => MoveAgentAlive && MoveAgent.IsMoving;
         public Vector3 Velocity => MoveAgentAlive ? MoveAgent.Velocity : Vector3.zero;
 
-        // Safe guard: checks MoveAgent is not null AND its underlying GameObject wasn't destroyed
         bool MoveAgentAlive => MoveAgent != null && MoveAgent.Initialized;
         protected virtual ActorMovementType ActorMovementType => combatActorData.movement.movementType;
         public virtual MovementPriority AvoidancePriority
@@ -299,9 +288,6 @@ namespace Dajunctic
                 MoveAgent.MovePosition(position, moveSpeed, rotateSpeed, stoppingDistance);
             }
         }
-
-
-
 
         public void RotatePosition(Vector3 position, float rotateSpeed, float deltaTime, bool immediately)
         {
@@ -424,7 +410,6 @@ namespace Dajunctic
 
             Debug.Log(DataId + $" take {finalDamage} damage");
 
-
             _hp = Mathf.Clamp(_hp - finalDamage, 0f, MaxHp);
             OnHpChanged?.Invoke(_hp / MaxHp);
 
@@ -440,8 +425,6 @@ namespace Dajunctic
         }
 
         #endregion
-
-
 
         #region Animation
         public void PlayAnim(string animName, float transitionDuration = 0.1f)
@@ -479,9 +462,6 @@ namespace Dajunctic
         {
             IsAnimFinished = true;
         }
-
-
-
 
         public Vector3 GetAnchorPosition(AnchorType anchorType)
         {
@@ -526,7 +506,6 @@ namespace Dajunctic
 
             CombineDamage combineDamage = new CombineDamage(type, baseDmg);
 
-            // Compute mitigated damage
             float finalDamage = baseDmg;
             switch (type)
             {
@@ -579,9 +558,8 @@ namespace Dajunctic
             return this;
         }
 
-        // ─── ISkillOwner & IAbilityOwner Implementation ──────────────────
         public SkillGroup UltimateGroup => null;
-        public Dajunctic.SkillSystem.Logic.ISkillEntity GetSkill(object val) => null;
+        public ISkillEntity GetSkill(object val) => null;
         public int Skin => 0;
         public IDamageTaker AsDamageTaker() => this;
         public ICombatStatOwner AsCombatStatOwner() => null;
@@ -626,7 +604,6 @@ namespace Dajunctic
         #endregion
 
     }
-
 
     [Serializable]
     public enum ActorMovementType

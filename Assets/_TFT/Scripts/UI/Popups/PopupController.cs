@@ -98,12 +98,12 @@ namespace Dajunctic
 
         public BasePopup ShowPopup(Type type, PopupShowMode showMode = PopupShowMode.DoNothing, object data = null)
         {
-            // Kiểm tra xem popup loại này đã đang hiển thị chưa
+            
             foreach (var active in activePopups)
             {
                 if (active != null && active.GetType() == type)
                 {
-                    // Nếu đã có rồi, có thể cập nhật data hoặc chỉ đơn giản là trả về
+                    
                     active.BeforeShow(data);
                     active.AfterShow();
                     return active;
@@ -122,7 +122,6 @@ namespace Dajunctic
                 return null;
             }
 
-            // Handle ShowMode
             switch (showMode)
             {
                 case PopupShowMode.DismissCurrent:
@@ -142,7 +141,7 @@ namespace Dajunctic
                     break;
                 case PopupShowMode.DoNothing:
                 default:
-                    // Just add on top
+                    
                     break;
             }
 
@@ -176,7 +175,6 @@ namespace Dajunctic
             
             Destroy(popup.gameObject);
 
-            // If we paused the previous one, reactivate it
             if (activePopups.Count > 0)
             {
                 var top = activePopups.Peek();

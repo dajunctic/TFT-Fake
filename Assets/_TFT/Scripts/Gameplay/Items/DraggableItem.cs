@@ -27,7 +27,7 @@ namespace Dajunctic
             if (iconImage != null && data != null)
             {
                 iconImage.sprite = data.icon;
-                // Ensure image is visible in case the prefab has it transparent
+                
                 iconImage.color = Color.white; 
             }
         }
@@ -36,16 +36,14 @@ namespace Dajunctic
         {
             _originalPosition = transform.position;
             _originalParent = transform.parent;
-            
-            // Move to the root of the canvas so it renders on top of everything and doesn't get clipped
+
             var canvas = GetComponentInParent<Canvas>();
             if (canvas != null)
             {
                 transform.SetParent(canvas.transform, true);
                 transform.SetAsLastSibling();
             }
-            
-            // Disable raycast block so the mouse raycast can go through it and hit the 3D world or heroes
+
             if (iconImage != null)
             {
                 iconImage.raycastTarget = false;
@@ -64,7 +62,6 @@ namespace Dajunctic
                 iconImage.raycastTarget = true;
             }
 
-            // Check if dropped on a hero
             if (_mainCamera == null) _mainCamera = Camera.main;
             if (_mainCamera != null)
             {
@@ -74,13 +71,13 @@ namespace Dajunctic
                     ChampionActor hero = hit.collider.GetComponentInParent<ChampionActor>();
                     if (hero != null)
                     {
-                        // Try to give item
+                        
                         var itemSystem = GameSystemManager.Instance.Items;
                         if (itemSystem != null)
                         {
                             if (itemSystem.TryGiveItemToHero(this, hero))
                             {
-                                // Item was given and the ItemSystem will destroy this GameObject.
+                                
                                 return;
                             }
                         }
@@ -88,7 +85,6 @@ namespace Dajunctic
                 }
             }
 
-            // If not dropped on hero, return to bench
             ResetPosition();
         }
 

@@ -52,4 +52,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-

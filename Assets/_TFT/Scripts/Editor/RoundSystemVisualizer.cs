@@ -35,10 +35,8 @@ namespace Dajunctic.Editor
         {
             EditorGUILayout.BeginHorizontal();
 
-            // Left Panel: Stage List
             DrawStageList();
 
-            // Right Panel: Round Timeline
             DrawRoundTimeline();
 
             EditorGUILayout.EndHorizontal();
@@ -110,9 +108,8 @@ namespace Dajunctic.Editor
             
             EditorGUILayout.Space(10);
 
-            // GRID LAYOUT / WRAPPING
-            float containerWidth = position.width - 220; // Subtract stage list width + padding
-            int cardsPerRow = Mathf.Max(1, Mathf.FloorToInt(containerWidth / 130)); // Card width 120 + 10 margin
+            float containerWidth = position.width - 220; 
+            int cardsPerRow = Mathf.Max(1, Mathf.FloorToInt(containerWidth / 130)); 
             
             _roundScrollPos = EditorGUILayout.BeginScrollView(_roundScrollPos);
             
@@ -152,8 +149,7 @@ namespace Dajunctic.Editor
         private void DrawRoundCard(RoundData round, int index)
         {
             EditorGUILayout.BeginVertical(GUI.skin.window, GUILayout.Width(120), GUILayout.Height(180));
-            
-            // Delete button at top right
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField(round.displayName, EditorStyles.miniBoldLabel);
             if (GUILayout.Button("x", GUILayout.Width(18)))
@@ -169,7 +165,6 @@ namespace Dajunctic.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            // Icon Placeholder or Real Icon
             Rect rect = GUILayoutUtility.GetRect(100, 50);
             if (round.icon != null)
             {
@@ -237,7 +232,7 @@ namespace Dajunctic.Editor
 
             string path = AssetDatabase.GetAssetPath(_selectedStage);
             string folder = System.IO.Path.GetDirectoryName(path);
-            if (folder.EndsWith("Stages")) folder = folder.Substring(0, folder.Length - 7); // Go up to root rounds folder
+            if (folder.EndsWith("Stages")) folder = folder.Substring(0, folder.Length - 7); 
 
             string roundsFolder = $"{folder}/Rounds";
             if (!System.IO.Directory.Exists(roundsFolder)) System.IO.Directory.CreateDirectory(roundsFolder);

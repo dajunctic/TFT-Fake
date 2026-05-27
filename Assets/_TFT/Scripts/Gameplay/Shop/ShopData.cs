@@ -19,14 +19,14 @@ namespace Dajunctic
         public class LevelProbability
         {
             public int level;
-            public float[] rarityChances = new float[5]; // Tier 1 to 5
+            public float[] rarityChances = new float[5]; 
         }
 
         public float[] GetChancesForLevel(int level)
         {
             var prob = probabilities.Find(p => p.level == level);
             if (prob != null) return prob.rarityChances;
-            return new float[] { 1, 0, 0, 0, 0 }; // Default to all tier 1
+            return new float[] { 1, 0, 0, 0, 0 }; 
         }
     }
 }

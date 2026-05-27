@@ -11,12 +11,10 @@ namespace Dajunctic
         public Vector3 HeadPoint {get;}
         public bool CanBeTarget {get; }
 
-
         public void InitDamageTaker();
         public void TakeDamage(CombineDamage combineDamage);
         event Action<float> OnHpChanged;
 
-        
         Vector3 Position { get; }
         float CombatRadius { get; }
         float HpRatio { get; }

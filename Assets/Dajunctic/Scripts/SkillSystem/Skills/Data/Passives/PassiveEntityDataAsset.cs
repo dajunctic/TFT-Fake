@@ -6,7 +6,6 @@ using GraphProcessor;
 using UnityEditor;
 #endif
 
-
 namespace Dajunctic.SkillSystem.Data
 {
     [CreateAssetMenu(menuName = "Dajunctic.SkillSystem/Ability/Passive")]
@@ -31,8 +30,4 @@ namespace Dajunctic.SkillSystem.Data
 #endif
     }
 
-
 }
-
-
-

@@ -54,9 +54,7 @@ namespace Dajunctic
             if (activePlayers.Count < 2) return;
 
             var shuffled = activePlayers.OrderBy(x => Random.value).ToList();
-            
-            // For 8 players, we'll have 4 pairs. 
-            // In each pair, one is Home (0) and one is Guest (1).
+
             for (int i = 0; i < shuffled.Count; i += 2)
             {
                 if (i + 1 < shuffled.Count)
@@ -65,7 +63,7 @@ namespace Dajunctic
                 }
                 else
                 {
-                    // Odd number of players: last one fights a ghost of a random player
+                    
                     int randomEnemyId = shuffled[Random.Range(0, shuffled.Count - 1)].Id;
                     _combatPairs.Add(new CombatPair { HomeId = shuffled[i].Id, GuestId = randomEnemyId, IsGhost = true });
                 }
@@ -81,41 +79,36 @@ namespace Dajunctic
                 Arena guestArena = _manager.Field.GetArena(pair.GuestId);
                 if (homeArena == null) continue;
 
-                // Spawn portals once per pair travel
                 if (guestArena != null) SpawnPortal(guestArena.transform.position);
                 Vector3 guestSpawnPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
                 SpawnPortal(guestSpawnPos);
 
-                // Units belonging to Guest travel to Home Arena
                 var guestUnits = _manager.Field.GetAllHeroes().Where(u => u.OwnerID == pair.GuestId).ToList();
                 
                 foreach (var unit in guestUnits)
                 {
-                    // Save original state
+                    
                     _travelingUnits[unit] = (pair.GuestId, unit.CachedTransform.position, unit.CurrentFieldCoord, true);
                     
                     int idx = guestUnits.IndexOf(unit);
-                    
-                    // First try to place them on the actual GuestFieldArea tile that corresponds to their Home position
+
                     Vector3 spawnPos;
                     if (homeArena.GuestFieldArea != null)
                     {
-                        // Reflect the coordinates if needed, but for now just use the same coordinates on the GuestField
+                        
                         spawnPos = homeArena.GetGuestFieldWorldPosition(unit.CurrentFieldCoord);
                     }
                     else
                     {
-                        // Fallback to spawn point + offset
+                        
                         spawnPos = guestSpawnPos + Vector3.right * (idx % 4 * 1.2f) + Vector3.forward * (idx / 4 * 1.2f);
                     }
 
                     unit.Teleport(spawnPos, true);
 
-                    // Register to Home Arena's guest field for combat detection
                     _manager.Field.RegisterGuestHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
                 }
 
-                // Also teleport the Guest's Tactician
                 var guestData = _manager.Player.Players.FirstOrDefault(p => p.Id == pair.GuestId);
                 if (guestData != null && guestData.Tactician != null)
                 {

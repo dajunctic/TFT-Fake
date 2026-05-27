@@ -45,7 +45,7 @@ public class ItemRecipeEditorWindow : EditorWindow
                 components.Add(item);
             }
         }
-        // Sort components by name or some other criteria if needed
+        
         components.Sort((a, b) => string.Compare(a.itemName, b.itemName));
     }
 
@@ -77,28 +77,22 @@ public class ItemRecipeEditorWindow : EditorWindow
 
         scrollPosition = EditorGUILayout.BeginScrollView(scrollPosition);
 
-        // Header Row
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.Width(60), GUILayout.Height(60)); // Top-left corner
+        EditorGUILayout.LabelField("", GUILayout.Width(60), GUILayout.Height(60)); 
         foreach (var comp in components)
         {
             DrawItemIcon(comp, 60);
         }
         EditorGUILayout.EndHorizontal();
 
-        // Rows
         for (int i = 0; i < components.Count; i++)
         {
             EditorGUILayout.BeginHorizontal();
-            // Row Header
+            
             DrawItemIcon(components[i], 60);
 
             for (int j = 0; j < components.Count; j++)
             {
-                // Only draw upper triangle including diagonal to avoid duplicates, or draw full matrix?
-                // Full matrix is easier to visualize.
-                // But recipes are symmetric (A+B = B+A).
-                // Let's draw full matrix but sync them.
 
                 ItemData result = GetResult(components[i], components[j]);
                 ItemData newResult = DrawItemSlot(result, 60);
@@ -140,11 +134,9 @@ public class ItemRecipeEditorWindow : EditorWindow
     private ItemData DrawItemSlot(ItemData item, float size)
     {
         Rect rect = EditorGUILayout.GetControlRect(GUILayout.Width(size), GUILayout.Height(size));
-        
-        // Draw background
+
         GUI.Box(rect, "");
 
-        // Draw Icon
         if (item != null)
         {
             Texture2D icon = null;
@@ -158,8 +150,7 @@ public class ItemRecipeEditorWindow : EditorWindow
             {
                 GUI.Label(rect, item.itemName, EditorStyles.miniLabel);
             }
-            
-            // Tooltip
+
             EditorGUI.LabelField(rect, new GUIContent("", item.itemName));
         }
         else
@@ -167,7 +158,6 @@ public class ItemRecipeEditorWindow : EditorWindow
             GUI.Label(rect, "-", EditorStyles.centeredGreyMiniLabel);
         }
 
-        // Handle Input
         int controlID = GUIUtility.GetControlID(FocusType.Passive);
         Event evt = Event.current;
 
@@ -176,12 +166,12 @@ public class ItemRecipeEditorWindow : EditorWindow
             case EventType.MouseDown:
                 if (rect.Contains(evt.mousePosition))
                 {
-                    if (evt.button == 0) // Left click
+                    if (evt.button == 0) 
                     {
                         EditorGUIUtility.ShowObjectPicker<ItemData>(item, false, "", controlID);
                         evt.Use();
                     }
-                    else if (evt.button == 1) // Right click
+                    else if (evt.button == 1) 
                     {
                         item = null;
                         GUI.changed = true;
@@ -240,7 +230,7 @@ public class ItemRecipeEditorWindow : EditorWindow
 
     private void UpdateRecipe(ItemData a, ItemData b, ItemData result)
     {
-        // Remove existing recipe if any
+        
         database.recipes.RemoveAll(r => (r.componentA == a && r.componentB == b) || (r.componentA == b && r.componentB == a));
 
         if (result != null)

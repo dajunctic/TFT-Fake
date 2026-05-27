@@ -30,8 +30,7 @@ namespace Dajunctic
         public void SetHighlight(bool highlight)
         {
             if (meshRenderer == null) return;
-            
-            // Toggle between highlight settings and original material settings
+
             meshRenderer.material.SetColor(EmissionColorKey, highlight ? highlightColor : _originalEmissionColor);
             meshRenderer.material.SetFloat(EmissionGlowKey, highlight ? highlightGlow : _originalGlow);
         }

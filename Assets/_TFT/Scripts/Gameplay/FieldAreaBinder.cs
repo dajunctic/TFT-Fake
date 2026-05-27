@@ -2,10 +2,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// Place this MonoBehaviour on a GameObject in the gameplay scene.
-    /// It binds the scene's HexAreaView to the FieldSystem at Awake.
-    /// </summary>
+
     public class FieldAreaBinder : MonoBehaviour
     {
         [SerializeField] private HexAreaView fieldArea;

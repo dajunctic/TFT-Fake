@@ -14,6 +14,5 @@ namespace Dajunctic
         void ClearTarget();
         object Stats { get; }
 
-
     }
 }

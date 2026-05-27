@@ -5,11 +5,7 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// Local message store and broadcaster.
-    /// Does NOT listen to RequestSendMessageEvent — that is handled by ChatNetworkBridge
-    /// which routes the message through the server so all clients receive it.
-    /// </summary>
+
     public class ChatSystem : MonoBehaviour, IGameSystem
     {
         private List<ChatMessage> _messageHistory = new List<ChatMessage>();
@@ -18,7 +14,7 @@ namespace Dajunctic
 
         public void Initialize(GameSystemManager manager)
         {
-            // Welcome message visible to everyone once the chat is open
+            
             AddSystemMessage("Chào mừng đến với TFT Fake! Nhấn Enter để chat.");
         }
 
@@ -27,10 +23,6 @@ namespace Dajunctic
             _messageHistory.Clear();
         }
 
-        /// <summary>
-        /// Called by ChatNetworkBridge.RpcReceiveMessage (on ALL clients) to display a message.
-        /// Also used for system messages.
-        /// </summary>
         public void SendMessage(string sender, string content, ChatMessageType type = ChatMessageType.Global)
         {
             if (string.IsNullOrWhiteSpace(content)) return;
@@ -45,11 +37,9 @@ namespace Dajunctic
 
             _messageHistory.Add(message);
 
-            // Keep history bounded
             if (_messageHistory.Count > 100)
                 _messageHistory.RemoveAt(0);
 
-            // ChatUI listens to this event
             this.Raise(new ChatMessageEvent { Message = message });
         }
 

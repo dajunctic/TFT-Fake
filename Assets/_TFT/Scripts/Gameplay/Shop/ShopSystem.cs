@@ -42,13 +42,6 @@ namespace Dajunctic
             Debug.Log("<color=cyan>ShopSystem initialized</color>");
         }
 
-        /// <summary>
-        /// Finds the PlayerDataSync NetworkObject owned by the local client.
-        /// We cannot use Connection.FirstObject because that returns the Tactician (spawned first).
-        /// Instead, search all spawned PlayerDataSync objects and find the one this client owns.
-        /// NOTE: On host, PlayerDataSync may be spawned without owner, so IsOwner can be false.
-        /// We fall back to matching SyncVar ClientId against our local client ID.
-        /// </summary>
         private PlayerDataSync GetLocalPlayerSync()
         {
             if (!FishNet.InstanceFinder.IsClientStarted) return null;
@@ -57,8 +50,7 @@ namespace Dajunctic
             if (localClientId < 0) return null;
 
             var allSyncs = UnityEngine.Object.FindObjectsByType<PlayerDataSync>(UnityEngine.FindObjectsSortMode.None);
-            
-            // First pass: try IsOwner (standard FishNet ownership)
+
             foreach (var sync in allSyncs)
             {
                 var nob = sync.GetComponent<FishNet.Object.NetworkObject>();
@@ -66,7 +58,6 @@ namespace Dajunctic
                     return sync;
             }
 
-            // Fallback: match by SyncVar ClientId (handles host spawned without owner)
             foreach (var sync in allSyncs)
             {
                 if ((int)sync.ClientId.Value == localClientId)
@@ -123,8 +114,7 @@ namespace Dajunctic
         {
             if (evt.Phase == GameplayPhase.Planning)
             {
-                // Server handles auto-rolling via Gameplay.StartPhaseServer → PlayerDataSync.ServerRollShop
-                // Client just needs to unlock the shop for the next round
+
                 if (_isShopLocked)
                     SetShopLock(false);
             }
@@ -133,12 +123,7 @@ namespace Dajunctic
         public void Reroll()
         {
             if (_data == null) return;
-            // if (_manager.Economy.SpendGold(_data.shopData.rerollCost))
-            // {
-            //     RefreshShop();
-            //     // Auto-unlock on manual reroll (TFT behavior)
-            //     if (_isShopLocked) SetShopLock(false);
-            // }
+
         }
 
         private void OnRequestToggleShopLock(RequestToggleShopLockEvent evt)
@@ -154,7 +139,6 @@ namespace Dajunctic
             Debug.Log($"<color=cyan>ShopSystem: Shop {(_isShopLocked ? "LOCKED" : "UNLOCKED")}</color>");
         }
 
-        // Called by PlayerDataSync when Server sends TargetUpdateShop
         public void SyncShopData(string[] championIds)
         {
             if (_data == null)
@@ -196,28 +180,17 @@ namespace Dajunctic
 
         public void RefreshShop()
         {
-            // if (_data == null) return;
-            // // int level = _manager.Economy.Level;
-            // float[] chances = _data.shopData.GetChancesForLevel(level);
 
-            // for (int i = 0; i < 5; i++)
-            // {
-            //     int rarity = RollRarity(chances);
-            //     _currentShop[i] = GetRandomHeroOfRarity(rarity);
-            // }
-
-            // OnShopRefreshed?.Invoke();
-            // this.Raise(new ShopRefreshedEvent());
         }
 
         private int RollRarity(float[] chances)
         {
-            float roll = Random.value; // 0.0 to 1.0
+            float roll = Random.value; 
             float cumulative = 0;
             for (int i = 0; i < chances.Length; i++)
             {
                 cumulative += chances[i];
-                if (roll <= cumulative) return i + 1; // Rarity is 1-indexed
+                if (roll <= cumulative) return i + 1; 
             }
             return 1;
         }
@@ -237,30 +210,13 @@ namespace Dajunctic
             ChampionData hero = _currentShop[slotIndex];
             if (hero == null) return;
 
-            // Check if bench can accept this hero (has space or would trigger upgrade)
-            int localPlayerId = 0; // Local player defaults to 0
+            int localPlayerId = 0; 
             if (!_manager.Bench.CanAcceptHero(localPlayerId, hero))
             {
                 Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Bench is full and no upgrade possible!");
                 return;
             }
 
-            // if (_manager.Economy.SpendGold(hero.rarity))
-            // {
-            //     // Add hero to bench
-            //     _manager.Bench.AddHeroToBench(localPlayerId, hero);
-
-            //     Debug.Log($"[ShopSystem] Purchased {hero.displayName} for {hero.rarity} gold.");
-            //     _currentShop[slotIndex] = null;
-
-            //     this.Raise(new HeroBoughtEvent { Hero = hero });
-            //     this.Raise(new ShopRefreshedEvent());
-            //     OnShopRefreshed?.Invoke();
-            // }
-            // else
-            // {
-            //     Debug.LogWarning($"[ShopSystem] Cannot buy {hero.displayName}: Not enough gold ({_manager.Economy.Gold}/{hero.rarity})");
-            // }
         }
     }
 

@@ -36,7 +36,6 @@ public class RecipeImporter : EditorWindow
 
         Dictionary<int, ItemData> itemMap = new Dictionary<int, ItemData>();
 
-        // First pass: Map IDs to ItemData
         foreach (var itemJson in items)
         {
             string fileName = Path.GetFileNameWithoutExtension(itemJson.imageUrl);
@@ -61,7 +60,6 @@ public class RecipeImporter : EditorWindow
             }
         }
 
-        // Second pass: Build recipes
         foreach (var itemJson in items)
         {
             if (itemJson.fromItemIngameIds != null && itemJson.fromItemIngameIds.Count == 2)
@@ -108,13 +106,9 @@ public class RecipeImporter : EditorWindow
             else if (trimmed.StartsWith("\"imageUrl\":"))
             {
                 currentItem.imageUrl = Regex.Match(trimmed, "\"(.*?)\"").Groups[1].Value;
-                // Remove trailing comma if matched
+                
                 if (currentItem.imageUrl.EndsWith(",")) currentItem.imageUrl = currentItem.imageUrl.TrimEnd(',');
-                // Actually regex matches inside quotes, so comma is outside.
-                // But wait, the regex matches "imageUrl": "..."
-                // The group 1 is inside quotes.
-                // Wait, the regex `\"(.*?)\"` matches the key "imageUrl" first!
-                // I need to match the value.
+
                 Match match = Regex.Match(trimmed, "\"imageUrl\":\\s*\"(.*?)\"");
                 if (match.Success)
                 {
@@ -126,8 +120,7 @@ public class RecipeImporter : EditorWindow
                 currentItem.fromItemIngameIds = new List<int>();
                 if (trimmed.Contains("]"))
                 {
-                    // Inline array or empty
-                    // Check for numbers
+
                     MatchCollection matches = Regex.Matches(trimmed, @"\d+");
                     foreach (Match m in matches)
                     {
@@ -160,7 +153,7 @@ public class RecipeImporter : EditorWindow
                 currentItem = new ItemJson();
             }
         }
-        // Add last item if any
+        
         if (currentItem.id != 0)
         {
             items.Add(currentItem);

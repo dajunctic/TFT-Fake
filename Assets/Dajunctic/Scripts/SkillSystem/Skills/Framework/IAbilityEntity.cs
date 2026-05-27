@@ -39,5 +39,3 @@ namespace Dajunctic.SkillSystem.Logic
         TAbilityLevelData LevelData { get; }
     }
 }
-
-

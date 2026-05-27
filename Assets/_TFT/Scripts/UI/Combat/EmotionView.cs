@@ -22,7 +22,6 @@ namespace Dajunctic
             icon.sprite = emoteSprite;
             transform.localScale = Vector3.zero;
 
-
             transform.DOScale(1.2f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
             {
                 DOVirtual.DelayedCall(1.5f, () =>

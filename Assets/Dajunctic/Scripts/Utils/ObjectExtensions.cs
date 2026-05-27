@@ -6,7 +6,6 @@ using Object = UnityEngine.Object;
 using UnityEditor;
 #endif
 
-
 namespace Dajunctic.Utils
 {
     public static class ObjectExtension

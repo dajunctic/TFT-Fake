@@ -39,7 +39,6 @@ namespace Dajunctic
                 SubTick();
             }
 
-            // Reset Canvas worldCamera to prevent Unity UI MissingReferenceException if previous camera was destroyed
             var canvas = GetComponent<Canvas>();
             if (canvas != null) canvas.worldCamera = Camera.main;
 
@@ -48,7 +47,7 @@ namespace Dajunctic
 
             if (_owner != null)
             {
-                // Unsubscribe first just in case to avoid double subscriptions
+                
                 _owner.OnHpChanged -= UpdateHp;
                 _owner.OnHpChanged += UpdateHp;
 
@@ -75,8 +74,7 @@ namespace Dajunctic
             this.RemoveListener<UpdateStarLevelEvent>(OnUpdateStarLevel);
             this.RemoveListener<ChampionItemsChangedEvent>(OnItemsChanged);
             this.RemoveListener<DespawnHpViewEvent>(OnDespawn);
-            
-            // Safety: also unsubscribe from owner when disabled/stopped
+
             UnsubscribeFromOwner();
         }
 
@@ -115,7 +113,7 @@ namespace Dajunctic
             _owner = null;
             if (ObjectPoolMetadata != null && !string.IsNullOrEmpty(ObjectPoolMetadata.PoolId))
             {
-                Despawn(); // Return to pool using PoolableObject.Despawn()
+                Despawn(); 
             }
             else
             {
@@ -126,16 +124,13 @@ namespace Dajunctic
         public override void LateTick()
         {
             if (_owner == null) return;
-            
-            // If owner is destroyed, we should despawn the HP view
+
             if (_owner.gameObject == null)
             {
                 ActualDespawn();
                 return;
             }
 
-            // If owner is inactive (e.g. FishNet disabling it temporarily during spawn),
-            // just skip updating visuals, but DO NOT despawn.
             if (!_owner.gameObject.activeInHierarchy)
             {
                 return;

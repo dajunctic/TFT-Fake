@@ -1,8 +1,6 @@
 namespace Dajunctic
 {
-    /// <summary>
-    /// Dữ liệu player trong lobby
-    /// </summary>
+
     public struct LobbyPlayerData : System.IEquatable<LobbyPlayerData>
     {
         public int ClientId;

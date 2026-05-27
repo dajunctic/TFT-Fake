@@ -9,11 +9,11 @@ namespace Dajunctic
     {
         [Header("UI References")]
         [SerializeField] private TextMeshProUGUI _championCountText;
-        [SerializeField] private CanvasGroup _canvasGroup; // Optional: Can use this or simply enable/disable the object
+        [SerializeField] private CanvasGroup _canvasGroup; 
         [SerializeField] private Image _iconImage;
 
         [Header("Colors")]
-        [SerializeField] private Color _normalColor = new Color(0.06f, 1f, 0.91f); // Neon Cyan
+        [SerializeField] private Color _normalColor = new Color(0.06f, 1f, 0.91f); 
         [SerializeField] private Color _overLimitColor = Color.red;
 
         private Arena _parentArena;
@@ -23,7 +23,7 @@ namespace Dajunctic
         {
             if (_championCountText == null)
             {
-                // Try to find if not assigned
+                
                 var texts = GetComponentsInChildren<TextMeshProUGUI>();
                 _championCountText = texts.FirstOrDefault(t => t.name.Contains("num_champion_txt"));
             }
@@ -66,14 +66,12 @@ namespace Dajunctic
         {
             if (GameSystemManager.Instance == null || Gameplay.Instance == null || _parentArena == null) return;
 
-            // Only update logic in Planning phase
             if (Gameplay.Instance.CurrentPhase != GameplayPhase.Planning)
             {
                 if (_canvasGroup.alpha > 0) HideUI();
                 return;
             }
 
-            // Get current and max counts
             int ownerId = _parentArena.OwnerID;
             int currentUnits = GameSystemManager.Instance.Field != null ? GameSystemManager.Instance.Field.GetUnitCount(ownerId) : 0;
             var sync = GameSystemManager.Instance.Player?.GetPlayerSync(ownerId);
@@ -110,7 +108,7 @@ namespace Dajunctic
 
         private void HandleGlobalDragStart(IDraggable draggable)
         {
-            // Optional: you can check if draggable belongs to this owner, but TFT shows it regardless
+            
             _isDraggingAnyUnit = true;
         }
 

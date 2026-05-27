@@ -7,4 +7,3 @@ namespace Dajunctic.SkillSystem.Logic
         bool IsUnlocked { get; }
     }
 }
-

@@ -31,7 +31,7 @@ namespace Dajunctic
         private void PerformAILogic()
         {
             Debug.Log("<color=red>AISystem: AI is performing logic (buying, leveling)...</color>");
-            // For each AI player, perform some random actions
+            
         }
 
         public void Shutdown()

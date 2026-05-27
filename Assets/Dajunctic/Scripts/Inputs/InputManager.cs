@@ -17,7 +17,6 @@ public class InputManager: Singleton<InputManager>
     [SerializeField] private InputActionReference buyXpAction;
     [SerializeField] private InputActionReference rerollAction;
 
-    
     public static event Action OnTestFirstSkill;
     public static event Action OnTestSecondSkill;
     public static event Action OnTestThirdSkill;
@@ -27,12 +26,11 @@ public class InputManager: Singleton<InputManager>
 
     private Camera _camera;
 
-    // Helper to check if user is typing
     private bool IsInputBlocked()
     {
         if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
         {
-            // Kiểm tra xem object đang chọn có UI Input hay không
+            
             var input = EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>();
             if (input != null && input.isFocused) return true;
 
@@ -52,7 +50,6 @@ public class InputManager: Singleton<InputManager>
         thirdSkillAction.action.performed += OnKeydownTestThirdSkill;
         fourthSkillAction.action.performed += OnKeydownTestFourthSkill;
 
-
         emotionAction.action.started += OnEmotionStarted;
         emotionAction.action.canceled += OnEmotionCanceled;
 
@@ -66,17 +63,16 @@ public class InputManager: Singleton<InputManager>
     private void OnBuyXP(InputAction.CallbackContext context)
     {
         if (IsInputBlocked()) return;
-        // Debug.LogError("Buy XP Clicked");
+        
         this.Raise(new RequestBuyXPEvent());
     }
 
     private void OnReroll(InputAction.CallbackContext context)
     {
         if (IsInputBlocked()) return;
-        // Debug.LogError("Reroll Clicked");
+        
         this.Raise(new RequestRerollEvent());
     }
-
 
     private void OnEmotionStarted(InputAction.CallbackContext context)
     {
@@ -92,7 +88,7 @@ public class InputManager: Singleton<InputManager>
 
     private void OnEmotionCanceled(InputAction.CallbackContext context)
     {
-        // Cancel can always trigger to ensure UI closes
+        
         this.Raise(new ShowEmotionUIEvent
         {
             Enable = false
@@ -101,7 +97,7 @@ public class InputManager: Singleton<InputManager>
 
     private void OnRightClick(InputAction.CallbackContext context)
     {
-        // Mobile common cases might not want to block right click, but for PC shortcuts we usually do
+        
         if (IsInputBlocked()) return;
         Vector2 mousePosition = pointAction.action.ReadValue<Vector2>();
 

@@ -27,4 +27,3 @@ namespace Dajunctic.SkillSystem.Logic
         Ultimate
     }
 }
-

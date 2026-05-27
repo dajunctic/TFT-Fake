@@ -66,7 +66,6 @@ namespace Dajunctic
             var tactician = target.GetComponent<TacticianActor>();
             if (tactician == null) return false;
 
-            // Flip camera when viewing another player's arena (like TFT)
             return tactician.OwnerID != localPlayer.Id;
         }
 

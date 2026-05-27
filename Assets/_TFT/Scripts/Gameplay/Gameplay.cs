@@ -1,4 +1,3 @@
-
 using System;
 using UnityEngine;
 using System.Linq;
@@ -42,15 +41,13 @@ namespace Dajunctic
 
         public void Initialize()
         {
-            // StartPhase(GameplayPhase.Planning);
+            
         }
-
 
         public override void OnStartServer()
         {
             base.OnStartServer();
-            // Chờ PlayerSystem spawn xong PlayerDataSync trước khi bắt đầu phase đầu tiên.
-            // Nếu list đã có sẵn (edge case) thì gọi luôn.
+
             if (GameSystemManager.Instance?.Player?.Players.Count > 0)
             {
                 StartPhaseServer(GameplayPhase.Planning);
@@ -69,7 +66,7 @@ namespace Dajunctic
 
         void Update()
         {
-            if (!IsServerInitialized) return; // Only the server should control the phase timing
+            if (!IsServerInitialized) return; 
 
             if (_timer.Value > 0)
             {
@@ -106,20 +103,16 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Planning)
             {
-                // Return everyone home when planning starts
+                
                 if (GameSystemManager.Instance.Travel != null)
                 {
                     GameSystemManager.Instance.Travel.ReturnAllUnits();
                 }
 
-                // Roll shops FIRST so CurrentShop is populated before the popup opens.
-                // Previously used a coroutine (yield 1 frame) which caused a race condition:
-                // popup would open with empty slots before shop data arrived.
                 var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
                 foreach (var sync in playerSyncs)
                     sync.ServerRollShop();
 
-                // Show planning popup AFTER shops are rolled
                 ShowPlanningPopupRpc();
             }
 
@@ -140,13 +133,13 @@ namespace Dajunctic
 
                 if (isPvE)
                 {
-                    // PvE: spawn enemy wave, không ghép cặp PvP
+                    
                     PveSpawner.SpawnWaveForAllArenas(roundData);
                     Debug.Log($"[Gameplay] PvE Combat started — round {RoundSys.GetRoundDisplayString()}");
                 }
                 else
                 {
-                    // PvP: matchmaking + travel như cũ
+                    
                     PveSpawner.ClearAllEnemies();
                     if (GameSystemManager.Instance.Travel != null)
                     {
@@ -160,10 +153,6 @@ namespace Dajunctic
             this.Raise(new GameplayPhaseChangedEvent { Phase = phase });
         }
 
-        // NOTE: RollShopsNextFrame coroutine removed.
-        // Shops are now rolled synchronously before ShowPlanningPopupRpc() is called
-        // to avoid the race condition where popup opened before shop data was ready.
-
         [ObserversRpc(RunLocally = true, BufferLast = true)]
         private void ShowPlanningPopupRpc()
         {
@@ -174,7 +163,7 @@ namespace Dajunctic
         {
             if (_currentPhase.Value == GameplayPhase.Carousel)
             {
-                // Carousel ends, go to Planning or next round
+                
                 AdvanceToNextRound();
                 return;
             }
@@ -227,13 +216,9 @@ namespace Dajunctic
                 HandlePvPCombatResult();
             }
 
-            // Dọn quái sau khi tính kết quả
             PveSpawner.ClearAllEnemies();
         }
 
-        /// <summary>
-        /// PvE: nếu hết giờ mà quái còn sống → trừ máu player dựa theo số quái còn lại.
-        /// </summary>
         private void HandlePvECombatResult(RoundData roundData)
         {
             int surviving = PveSpawner.GetTotalAliveEnemies();
@@ -249,7 +234,6 @@ namespace Dajunctic
             int stageDamage = (RoundSys != null) ? RoundSys.StageNumber + 1 : 2;
             int totalDamage = stageDamage + surviving;
 
-            // Trừ máu tất cả player vì đây là PvE chung
             foreach (var player in playerSystem.Players)
             {
                 playerSystem.ApplyDamage(player.Id, totalDamage);

@@ -9,6 +9,5 @@ namespace Dajunctic
         string SpecialEffectDescription {get; }
         public TraitTierType VisualTier {get;}
 
-    
     }
 }

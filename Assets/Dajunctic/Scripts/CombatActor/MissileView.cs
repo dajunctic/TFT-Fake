@@ -24,7 +24,6 @@ namespace Dajunctic
         private Vector3 targetPos;
         public event Action<IDamageTaker> OnHitEvent;
 
-
         public void InitData(MissileData missileData)
         {
             launcher = missileData.launcher;
@@ -64,7 +63,7 @@ namespace Dajunctic
             else
             {
 #if UNITY_EDITOR
-                // We'll hook this in PreviewSkillServiceProvider
+                
                 _editorCoroutine = coroutine;
 #endif
             }

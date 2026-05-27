@@ -32,8 +32,7 @@ namespace Dajunctic
                 {
                     playerUIs[i].gameObject.SetActive(true);
                     playerUIs[i].Initialize(players[i]);
-                    
-                    // Add click listener
+
                     int index = i;
                     var btn = playerUIs[i].ClickButton;
                     if (btn != null)
@@ -90,12 +89,10 @@ namespace Dajunctic
         {
             if (playerUIs == null || playerUIs.Count <= 1) return;
 
-            // 1. Sort the internal list
             playerUIs = playerUIs.OrderByDescending(ui => ui.Data != null ? ui.Data.HP : -1)
                                  .ThenBy(ui => ui.Data != null ? ui.Data.Id : 0)
                                  .ToList();
 
-            // 2. Set sibling index
             for (int i = 0; i < playerUIs.Count; i++)
             {
                 playerUIs[i].transform.SetSiblingIndex(i);

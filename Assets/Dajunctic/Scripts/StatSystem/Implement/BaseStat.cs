@@ -84,6 +84,5 @@ namespace Dajunctic
             return (float)Math.Round(finalValue, 4);
         }
 
-
     }
 }

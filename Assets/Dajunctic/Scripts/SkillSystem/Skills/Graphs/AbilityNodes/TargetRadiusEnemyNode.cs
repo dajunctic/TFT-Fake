@@ -24,7 +24,6 @@ namespace Dajunctic.SkillSystem.Logic
 
         protected void FindTargetInRadius()
         {
-            // If Need Refresh Target List
 
             SkillHelper.FindTargetsInRadius(Owner.AsTeamMember().EnemyTeam, Owner.AsTransform().Position, 1.5f, radius, null, _cachedTargets, 5);
         }

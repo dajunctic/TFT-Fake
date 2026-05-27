@@ -4,19 +4,14 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// Quản lý spawn và tracking quái PvE trên tất cả arena.
-    /// Gắn cùng GameObject với Gameplay (cùng scene prefab).
-    /// </summary>
+
     public class PveWaveSpawner : MonoBehaviour
     {
         public static PveWaveSpawner Instance { get; private set; }
 
-        // Track enemies per arena: arenaOwnerId → list of spawned DummyActors
         private readonly Dictionary<int, List<DummyActor>> _activeEnemies =
             new Dictionary<int, List<DummyActor>>();
 
-        // Track the active enemy team per arena so late-deployed champions can be assigned
         private readonly Dictionary<int, SimpleTeam> _enemyTeamPerArena =
             new Dictionary<int, SimpleTeam>();
 
@@ -38,12 +33,6 @@ namespace Dajunctic
             this.RemoveListener<EnemyDiedEvent>(OnEnemyDied);
         }
 
-        // ─── Public API ───────────────────────────────────────────────────────
-
-        /// <summary>
-        /// Spawn wave cho tất cả arena dựa trên RoundData.
-        /// Gọi từ Gameplay.cs khi phase Combat + roundType là PvE.
-        /// </summary>
         public void SpawnWaveForAllArenas(RoundData roundData)
         {
             Debug.Log($"[PveWaveSpawner] SpawnWaveForAllArenas called. roundData={roundData?.name}");
@@ -81,9 +70,6 @@ namespace Dajunctic
             Debug.Log($"<color=lime>[PveWaveSpawner] Wave spawned on {arenas.Count} arenas.</color>");
         }
 
-        /// <summary>
-        /// Xóa tất cả quái đang active (gọi khi round kết thúc).
-        /// </summary>
         public void ClearAllEnemies()
         {
             _waveActive = false;
@@ -100,16 +86,12 @@ namespace Dajunctic
             Debug.Log("[PveWaveSpawner] All enemies cleared.");
         }
 
-        /// <summary>
-        /// Trả về EnemyTeam hiện tại của arena. Champion kéo vào sân giữa combat gọi API này.
-        /// </summary>
         public ICombatTeam GetEnemyTeamForArena(int arenaOwnerId)
         {
             _enemyTeamPerArena.TryGetValue(arenaOwnerId, out var team);
             return team;
         }
 
-        /// <summary>Tổng số quái còn sống trên tất cả arena.</summary>
         public int GetTotalAliveEnemies()
         {
             int count = 0;
@@ -117,8 +99,6 @@ namespace Dajunctic
                 count += list.Count(e => e != null && e.Alive && e.gameObject.activeInHierarchy);
             return count;
         }
-
-        // ─── Spawn Logic ──────────────────────────────────────────────────────
 
         private void SpawnWaveOnArena(RoundData roundData, Arena arena)
         {
@@ -130,7 +110,6 @@ namespace Dajunctic
                 return;
             }
 
-            // Lấy danh sách tất cả tile coords của GuestFieldArea, sort theo pattern
             var availableCoords = GetCoordsForPattern(
                 arena.GuestFieldArea.Data,
                 roundData.spawnPattern
@@ -165,7 +144,6 @@ namespace Dajunctic
                     GameObject go = Instantiate(entry.actorData.prefab, worldPos, arena.GuestFieldArea.CachedTransform.rotation);
                     go.name = $"Enemy_{entry.actorData.name}_{i}";
 
-                    // Network spawn nếu có NetworkObject (để client cũng thấy)
                     var nob = go.GetComponent<FishNet.Object.NetworkObject>();
                     if (nob != null)
                     {
@@ -181,12 +159,11 @@ namespace Dajunctic
                         continue;
                     }
 
-                    // Setup: máu có giới hạn, dùng data từ SO
                     dummy.SetInfiniteHp(false);
                     dummy.SetCombatData(entry.actorData);
-                    // Đặt team Opponent để Gambit condition của champion nhận ra là kẻ địch
+                    
                     dummy.SetTeam(Team.Opponent);
-                    dummy.OwnerID = arena.OwnerID; // gắn vào arena tương ứng
+                    dummy.OwnerID = arena.OwnerID; 
                     dummy.Initialize();
 
                     enemyList.Add(dummy);
@@ -198,12 +175,10 @@ namespace Dajunctic
                 _activeEnemies[arena.OwnerID] = new List<DummyActor>();
             _activeEnemies[arena.OwnerID].AddRange(enemyList);
 
-            // Build SimpleTeam từ enemy list và gán cho champions → BT tìm được target
             var enemyTeam = new SimpleTeam();
             foreach (var dummy in enemyList)
                 enemyTeam.Add(dummy);
 
-            // Cache team so late-deployed champions (dragged during combat) can also receive it
             _enemyTeamPerArena[arena.OwnerID] = enemyTeam;
 
             var fieldSystem = GameSystemManager.Instance?.Field;
@@ -219,8 +194,6 @@ namespace Dajunctic
             Debug.Log($"<color=lime>[PveWaveSpawner] Arena {arena.OwnerID}: spawned {enemyList.Count} enemies.</color>");
         }
 
-        // ─── Coord Sorting by Pattern ─────────────────────────────────────────
-
         private List<Vector2Int> GetCoordsForPattern(HexAreaData hexData, SpawnPattern pattern)
         {
             var all = hexData.ActiveTiles.Select(t => t.coordinates).ToList();
@@ -228,17 +201,16 @@ namespace Dajunctic
             switch (pattern)
             {
                 case SpawnPattern.FrontRow:
-                    // Sort by Y descending (hàng cao nhất = xa nhất = "front" với guest)
-                    // rồi trong cùng Y, sort X tăng dần
+
                     return all.OrderByDescending(c => c.y).ThenBy(c => c.x).ToList();
 
                 case SpawnPattern.Scattered:
-                    // Shuffle ngẫu nhiên
+                    
                     var shuffled = all.OrderBy(_ => Random.value).ToList();
                     return shuffled;
 
                 case SpawnPattern.MiddleColumn:
-                    // Lấy X median rồi sort theo Y
+                    
                     if (all.Count == 0) return all;
                     var xs = all.Select(c => c.x).OrderBy(x => x).ToList();
                     int midX = xs[xs.Count / 2];
@@ -248,8 +220,6 @@ namespace Dajunctic
                     return all;
             }
         }
-
-        // ─── Event Handler ────────────────────────────────────────────────────
 
         private void OnEnemyDied(EnemyDiedEvent evt)
         {
@@ -267,8 +237,5 @@ namespace Dajunctic
         }
     }
 
-    // ─── Events ──────────────────────────────────────────────────────────────────
-
-    /// <summary>Fire khi toàn bộ quái trong wave PvE bị tiêu diệt.</summary>
     public struct AllEnemiesDeadEvent : IEvent { }
 }

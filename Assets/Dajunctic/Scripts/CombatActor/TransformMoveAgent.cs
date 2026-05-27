@@ -64,9 +64,6 @@ namespace Dajunctic
             RotateDirection(position - Position, rotateSpeed, Time.deltaTime, false);
         }
 
-
-
-
         public void RotateDirection(
             Vector3 direction,
             float rotateSpeed,

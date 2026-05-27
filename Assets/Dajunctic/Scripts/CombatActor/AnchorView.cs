@@ -9,8 +9,4 @@ namespace Dajunctic
         public Vector3 Position => CachedTransform.position;
     }
 
-
-
-  
-
 }

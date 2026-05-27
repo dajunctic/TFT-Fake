@@ -6,10 +6,7 @@ using System.Linq;
 
 namespace Dajunctic.SkillSystem.Logic
 {
-    /// <summary>
-    /// A node type that instantiated every time it is triggered
-    /// Life cycle: Create copy => Trigger => Despawn
-    /// </summary>
+
     [System.Serializable]
     public abstract class ActionNode : BaseNode, IActionNode
     {
@@ -198,4 +195,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-

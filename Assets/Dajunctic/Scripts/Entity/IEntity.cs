@@ -1,4 +1,3 @@
-
 namespace Dajunctic {
     public interface IEntity: IAssetId
     {

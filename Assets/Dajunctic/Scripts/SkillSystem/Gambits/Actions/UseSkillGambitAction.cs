@@ -56,7 +56,6 @@ namespace Dajunctic.SkillSystem.Gambits
                 
                 float stopDistance = attackRange + ownerRadius + targetRadius;
 
-                // 1. Chase Phase: Move to target until in range
                 while (Target != null && Target.Alive && actor.Hp > 0)
                 {
                     var targetPos = Target.AsTransform().Position;
@@ -73,15 +72,13 @@ namespace Dajunctic.SkillSystem.Gambits
 
                 actor.ForceStop();
 
-                // 2. Cast Phase: Only play if target is still valid and alive
                 if (Target != null && Target.Alive && actor.Hp > 0 && skillGraph != null)
                 {
                     var instanceGraph = ScriptableObject.Instantiate(skillGraph) as SkillGraph;
-                    // Initialize() phải chạy trước SetOwner() để populate _nodes/_actionNodes array
+                    
                     instanceGraph.Initialize();
                     instanceGraph.SetOwner(CombatActor as ISkillOwner);
 
-                    
                     bool isFinished = false;
                     instanceGraph.OnExitEvent += () => isFinished = true;
 
@@ -100,7 +97,6 @@ namespace Dajunctic.SkillSystem.Gambits
 
             TriggerComplete();
 
-            // Reset IsCasting trên actor để CombatActor.Tick() có thể gọi EvaluateGambits lần sau
             if (CombatActor is CombatActor combatActor)
                 combatActor.SetCasting(false);
         }

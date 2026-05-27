@@ -20,7 +20,6 @@ namespace Dajunctic
             SpawnTiles();
             SetTilesVisible(false);
 
-            // Đăng ký vào DragManager để tiles hiện ra khi drag
             DragManager.Register(this);
         }
 
@@ -38,7 +37,6 @@ namespace Dajunctic
             _spawnedTiles.Clear();
             _tilesMap.Clear();
 
-            // Clear potential stray children if editor-only
             if (!Application.isPlaying)
             {
                 var children = new List<GameObject>();
@@ -89,15 +87,13 @@ namespace Dajunctic
                 _lastHighlighted = null;
             }
 
-            // Convert world position to local position of this area
             Vector3 localPos = CachedTransform.InverseTransformPoint(worldPos);
-            
-            // Calculate coordinates using local position (offset is effectively zero now)
+
             Vector2Int squareCoords = Data.WorldToSquare(localPos, Vector3.zero);
             
             if (Data.TryGetTile(squareCoords, out _))
             {
-                // Get local snapped position and convert back to world
+                
                 Vector3 localSnapped = Data.SquareToWorld(Vector3.zero, squareCoords);
                 snappedPos = CachedTransform.TransformPoint(localSnapped);
 

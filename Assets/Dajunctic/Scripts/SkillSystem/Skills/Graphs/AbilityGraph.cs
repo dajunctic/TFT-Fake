@@ -128,4 +128,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-

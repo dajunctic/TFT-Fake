@@ -10,11 +10,7 @@ using UnityEditor.UIElements;
 
 namespace KBCore.Refs
 {
-    /// <summary>
-    /// Custom property drawer for the reference attributes, making them read-only.
-    /// 
-    /// Note: Does not apply to the Anywhere attribute as that needs to remain editable. 
-    /// </summary>
+
     [CustomPropertyDrawer(typeof(SelfAttribute))]
     [CustomPropertyDrawer(typeof(ChildAttribute))]
     [CustomPropertyDrawer(typeof(ParentAttribute))]
@@ -30,7 +26,6 @@ namespace KBCore.Refs
         private SceneRefAttribute _sceneRefAttribute => (SceneRefAttribute) attribute;
         private bool _editable => this._sceneRefAttribute.HasFlags(Flag.Editable);
 
-// unity 2022.2 makes UIToolkit the default for inspectors
 #if UNITY_2022_2_OR_NEWER
         private const string SCENE_REF_CLASS = "kbcore-refs-sceneref";
 
@@ -68,17 +63,16 @@ namespace KBCore.Refs
             this._propertyField.UnregisterCallback<AttachToPanelEvent>(this.OnAttach);
             this._inspectorElement = this._propertyField.GetFirstAncestorOfType<InspectorElement>();
             if (this._inspectorElement == null)
-                // not in an inspector, invalid
+                
                 return;
 
-            // subscribe to SerializedPropertyChangeEvent so we can update when the property changes
             this._inspectorElement.RegisterCallback<SerializedPropertyChangeEvent>(this.OnSerializedPropertyChangeEvent);
             this._propertyField.RegisterCallback<DetachFromPanelEvent>(this.OnDetach);
         }
 
         private void OnDetach(DetachFromPanelEvent detachFromPanelEvent)
         {
-            // unregister from all callbacks
+            
             this._propertyField.UnregisterCallback<DetachFromPanelEvent>(this.OnDetach);
             this._inspectorElement.UnregisterCallback<SerializedPropertyChangeEvent>(this.OnSerializedPropertyChangeEvent);
             this._serializedProperty = null;
@@ -125,7 +119,6 @@ namespace KBCore.Refs
         {
             this._isInitialized = true;
 
-            // the type won't change, so we only need to initialize these values once
             this._elementType = this.fieldInfo.FieldType;
             if (typeof(ISerializableRef).IsAssignableFrom(this._elementType))
             {
@@ -143,7 +136,6 @@ namespace KBCore.Refs
                 this._typeName = this._typeName.Replace("`1", $"<{this.fieldInfo.FieldType.GenericTypeArguments[0].Name}>");
         }
 
-        /// <summary>Is this field Satisfied with a value or optional</summary>
         private bool IsSatisfied(SerializedProperty property)
         {
             if (!this._canValidateType || this._sceneRefAttribute.HasFlags(Flag.Optional))

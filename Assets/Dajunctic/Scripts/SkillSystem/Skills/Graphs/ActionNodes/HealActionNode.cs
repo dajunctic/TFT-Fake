@@ -101,9 +101,5 @@ namespace Dajunctic.SkillSystem.Logic
             Data GetData();
         }
 
-        
     }
 }
-
-
-

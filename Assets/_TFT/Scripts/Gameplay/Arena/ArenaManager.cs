@@ -43,12 +43,11 @@ namespace Dajunctic
             Debug.Log($"[ArenaManager] OnStartServer called! IsServerOnly: {IsServerOnlyInitialized}, arenaPrefab: {arenaPrefab}");
 
             SpawnArenas();
-            
-            // Lắng nghe sự kiện connect để hỗ trợ test thẳng ở HomeScene
+
             if (LobbyNetworkManager.Instance == null || LobbyNetworkManager.Instance.Players.Count == 0)
             {
                 Debug.Log($"[ArenaManager] Fallback mode active. LobbyNetworkManager is null or Players.Count is 0.");
-                // Host không kích hoạt RemoteConnectionState, nên ta tạo sẵn 1 sân cho Host nếu nó không phải là Server-Only
+                
                 if (!IsServerOnlyInitialized && arenaPrefab != null && _fallbackSpawnIndex < spawnPoints.Length)
                 {
                     Debug.Log($"[ArenaManager] Spawning fallback arena for Host.");
@@ -82,8 +81,7 @@ namespace Dajunctic
             if (ServerManager == null) return;
 
             int spawnIndex = 0;
-            
-            // 1. Spawn cho người chơi thật từ Lobby
+
             if (LobbyNetworkManager.Instance != null && LobbyNetworkManager.Instance.Players.Count > 0)
             {
                 Debug.Log($"[ArenaManager] SpawnArenas from Lobby. Player count: {LobbyNetworkManager.Instance.Players.Count}");

@@ -23,7 +23,6 @@ namespace Dajunctic
                 Destroy(container.GetChild(i).gameObject);
             }
 
-            // Adjust icon count
             while (_icons.Count < stageData.rounds.Count)
             {
                 var icon = Instantiate(iconPrefab, container);

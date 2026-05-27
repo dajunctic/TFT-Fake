@@ -33,7 +33,6 @@ namespace Dajunctic.Editor
             RoundSystemData systemData = CreateInstance<RoundSystemData>();
             AssetDatabase.CreateAsset(systemData, $"{rootPath}/RoundSystemData.asset");
 
-            // --- STAGE 1 (PvE) ---
             StageData stage1 = CreateStage(1);
             stage1.rounds.Add(CreateRound("1-1", RoundType.Carousel, 0, 0, "Initial Carousel"));
             stage1.rounds.Add(CreateRound("1-2", RoundType.PvE_Minion, 30, 30, "Minions"));
@@ -41,7 +40,6 @@ namespace Dajunctic.Editor
             stage1.rounds.Add(CreateRound("1-4", RoundType.PvE_Minion, 30, 30, "Minions"));
             systemData.stages.Add(stage1);
 
-            // --- STAGE 2 (PvP/Carousel/PvE) ---
             StageData stage2 = CreateStage(2);
             stage2.rounds.Add(CreateRound("2-1", RoundType.PvP, 45, 30, "PvP (Augment)", true));
             stage2.rounds.Add(CreateRound("2-2", RoundType.PvP, 30, 30));
@@ -52,7 +50,6 @@ namespace Dajunctic.Editor
             stage2.rounds.Add(CreateRound("2-7", RoundType.PvE_Boss, 30, 30, "Krugs"));
             systemData.stages.Add(stage2);
 
-            // --- STAGE 3 ---
             StageData stage3 = CreateStage(3);
             stage3.rounds.Add(CreateRound("3-1", RoundType.PvP, 30, 30));
             stage3.rounds.Add(CreateRound("3-2", RoundType.PvP, 45, 30, "PvP (Augment)", true));
@@ -63,7 +60,6 @@ namespace Dajunctic.Editor
             stage3.rounds.Add(CreateRound("3-7", RoundType.PvE_Boss, 30, 30, "Wolves"));
             systemData.stages.Add(stage3);
 
-            // --- STAGE 4 ---
             StageData stage4 = CreateStage(4);
             stage4.rounds.Add(CreateRound("4-1", RoundType.PvP, 30, 30));
             stage4.rounds.Add(CreateRound("4-2", RoundType.PvP, 45, 30, "PvP (Augment)", true));
@@ -74,7 +70,6 @@ namespace Dajunctic.Editor
             stage4.rounds.Add(CreateRound("4-7", RoundType.PvE_Boss, 30, 30, "Raptors"));
             systemData.stages.Add(stage4);
 
-            // --- STAGE 5 ---
             StageData stage5 = CreateStage(5);
             stage5.rounds.Add(CreateRound("5-1", RoundType.PvP, 30, 30));
             stage5.rounds.Add(CreateRound("5-2", RoundType.PvP, 30, 30));
@@ -85,7 +80,6 @@ namespace Dajunctic.Editor
             stage5.rounds.Add(CreateRound("5-7", RoundType.PvE_Boss, 30, 30, "Dragon"));
             systemData.stages.Add(stage5);
 
-            // --- STAGE 6 ---
             StageData stage6 = CreateStage(6);
             stage6.rounds.Add(CreateRound("6-1", RoundType.PvP, 30, 30));
             stage6.rounds.Add(CreateRound("6-2", RoundType.PvP, 30, 30));
@@ -96,7 +90,6 @@ namespace Dajunctic.Editor
             stage6.rounds.Add(CreateRound("6-7", RoundType.PvE_Boss, 30, 30, "Elder Dragon"));
             systemData.stages.Add(stage6);
 
-            // --- STAGE 7 ---
             StageData stage7 = CreateStage(7);
             stage7.rounds.Add(CreateRound("7-1", RoundType.PvP, 30, 30));
             stage7.rounds.Add(CreateRound("7-2", RoundType.PvP, 30, 30));
@@ -107,7 +100,6 @@ namespace Dajunctic.Editor
             stage7.rounds.Add(CreateRound("7-7", RoundType.PvE_Boss, 30, 30, "Rift Herald"));
             systemData.stages.Add(stage7);
 
-            // --- STAGE 8 ---
             StageData stage8 = CreateStage(8);
             stage8.rounds.Add(CreateRound("8-1", RoundType.PvP, 30, 30));
             stage8.rounds.Add(CreateRound("8-2", RoundType.PvP, 30, 30));

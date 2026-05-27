@@ -16,11 +16,9 @@ namespace Dajunctic.Editor
         private string _searchQuery = "";
         private Vector2 _scrollPos;
 
-        // Sorting
         private int _sortIndex = -1;
         private bool _sortAscending = true;
 
-        // Styles
         private GUIStyle _headerStyle;
         private GUIStyle _cellStyle;
         private GUIStyle _zebraStyle;
@@ -45,7 +43,7 @@ namespace Dajunctic.Editor
                 fontSize = 13,
                 fontStyle = FontStyle.Bold,
                 fixedHeight = 30,
-                normal = { textColor = new Color(0.4f, 1f, 1f) }, // Cyan neon
+                normal = { textColor = new Color(0.4f, 1f, 1f) }, 
                 hover = { textColor = Color.white }
             };
 
@@ -161,7 +159,6 @@ namespace Dajunctic.Editor
         {
             _scrollPos = EditorGUILayout.BeginScrollView(_scrollPos);
 
-            // Table Header
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             for (int i = 0; i < _headers.Length; i++)
             {
@@ -178,7 +175,6 @@ namespace Dajunctic.Editor
             }
             EditorGUILayout.EndHorizontal();
 
-            // Table Data
             var filteredData = GetFilteredData();
             for (int i = 0; i < filteredData.Count; i++)
             {
@@ -190,11 +186,11 @@ namespace Dajunctic.Editor
 
                 foreach (var cell in filteredData[i])
                 {
-                    // Tint tier cells
+                    
                     Color originalColor = GUI.contentColor;
-                    if (cell == "5") GUI.contentColor = new Color(1f, 0.8f, 0f); // Gold
-                    else if (cell == "4") GUI.contentColor = new Color(1f, 0.4f, 1f); // Purple
-                    else if (cell == "3") GUI.contentColor = new Color(0.4f, 0.7f, 1f); // Blue
+                    if (cell == "5") GUI.contentColor = new Color(1f, 0.8f, 0f); 
+                    else if (cell == "4") GUI.contentColor = new Color(1f, 0.4f, 1f); 
+                    else if (cell == "3") GUI.contentColor = new Color(0.4f, 0.7f, 1f); 
 
                     EditorGUILayout.LabelField(cell, _cellStyle, GUILayout.MinWidth(120));
                     GUI.contentColor = originalColor;
@@ -227,7 +223,6 @@ namespace Dajunctic.Editor
 
             if (string.IsNullOrEmpty(_rawContent)) return;
 
-            // Simple regex for CSV parsing (handles quotes and commas)
             string pattern = @",(?=(?:[^""]*""[^""]*"")*[^""]*$)";
             string[] lines = _rawContent.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
 

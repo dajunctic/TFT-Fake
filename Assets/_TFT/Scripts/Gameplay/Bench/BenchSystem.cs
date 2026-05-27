@@ -7,7 +7,7 @@ namespace Dajunctic
 {
     public class BenchSystem : MonoBehaviour, IGameSystem
     {
-        // Scene refs — bound at runtime by BenchAreaBinder in the gameplay scene
+        
         private List<Arena> _arenas = new List<Arena>();
         private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _heroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
         private GameSystemManager _manager;
@@ -15,7 +15,7 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            // BenchSystem has no Addressable data — scene refs are bound via BenchAreaBinder
+            
             await Task.CompletedTask;
             Debug.Log("<color=cyan>BenchSystem data loaded (no-op)</color>");
         }
@@ -26,7 +26,6 @@ namespace Dajunctic
             Debug.Log("<color=cyan>BenchSystem initialized</color>");
         }
 
-        /// <summary>Called by Arena when it's initialized or by a binder.</summary>
         public void RegisterArena(Arena arena, string fxGuid)
         {
             if (!_arenas.Contains(arena)) _arenas.Add(arena);
@@ -50,18 +49,12 @@ namespace Dajunctic
             return GetFirstEmptyTileCoord(ownerId).y >= 0;
         }
 
-        /// <summary>
-        /// Check if we can accept a hero: either bench has space, or buying would trigger an upgrade.
-        /// </summary>
         public bool CanAcceptHero(int ownerId, ChampionData heroData, int starLevel = 1)
         {
             if (HasEmptySlot(ownerId)) return true;
             return WouldTriggerUpgrade(ownerId, heroData, starLevel);
         }
 
-        /// <summary>
-        /// Check if adding one more hero of this type/star would trigger a 3-to-1 merge.
-        /// </summary>
         private bool WouldTriggerUpgrade(int ownerId, ChampionData heroData, int starLevel)
         {
             if (starLevel >= 5) return false;
@@ -73,7 +66,6 @@ namespace Dajunctic
             Arena arena = GetArena(ownerId);
             if (arena == null || arena.BenchArea == null || arena.BenchArea.Data == null) return new Vector2Int(-1, -1);
 
-            // Auto-create entry to avoid KeyNotFoundException if arena was registered late
             if (!_heroesOnArenas.ContainsKey(ownerId))
                 _heroesOnArenas[ownerId] = new Dictionary<Vector2Int, ChampionActor>();
 
@@ -141,7 +133,7 @@ namespace Dajunctic
 
         private bool TryDirectUpgrade(int ownerId, ChampionData heroData, int starLevel)
         {
-            // [Offline mode only]
+            
             if (starLevel >= 5) return false;
 
             var allMatching = GetMatchingHeroes(ownerId, heroData, starLevel);
@@ -155,9 +147,6 @@ namespace Dajunctic
             return false;
         }
 
-        /// <summary>
-        /// Find all heroes matching the given HeroData and star level across bench and field.
-        /// </summary>
         private List<ChampionActor> GetMatchingHeroes(int ownerId, ChampionData heroData, int starLevel)
         {
             if (heroData == null) return new List<ChampionActor>();
@@ -170,7 +159,6 @@ namespace Dajunctic
 
             var heroesOnField = new List<ChampionActor>();
 
-            // Không scan field khi đang trong combat — tránh merge tướng đang chiến đấu
             bool isCombat = Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat;
 
             if (!isCombat && _manager.Field != null)
@@ -244,7 +232,6 @@ namespace Dajunctic
                 }
             }
 
-            // Sync level up via RPC on the target hero
             var netSync = targetHero.GetComponent<ChampionNetworkSync>();
             if (netSync != null)
             {

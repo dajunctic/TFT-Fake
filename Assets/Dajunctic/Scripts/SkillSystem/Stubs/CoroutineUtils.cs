@@ -1,5 +1,7 @@
 using System.Collections;
 using UnityEngine;
+using Dajunctic.SkillSystem.Logic;
+using System.Collections.Generic;
 
 namespace Dajunctic.SkillSystem {
     public static class CoroutineExtensions {
@@ -26,34 +28,34 @@ namespace Dajunctic.SkillSystem {
 
     public class MockActionNodeSystem : IActionNodeSystem
     {
-        public void Despawn(Dajunctic.SkillSystem.Logic.IActionNode node)
+        public void Despawn(IActionNode node)
         {
-            if (node is Dajunctic.SkillSystem.Logic.ActionNode actionNode)
+            if (node is ActionNode actionNode)
             {
                 actionNode.Cleanup();
             }
         }
 
-        public Dajunctic.SkillSystem.Logic.IActionNode[] CreateActionNodes(object graph, object nodes = null)
+        public IActionNode[] CreateActionNodes(object graph, object nodes = null)
         {
-            if (graph is Dajunctic.SkillSystem.Logic.IActionNode singleNode)
+            if (graph is IActionNode singleNode)
             {
                 var copy = singleNode.CreateCopy();
-                if (copy is Dajunctic.SkillSystem.Logic.ActionNode actionNode)
+                if (copy is ActionNode actionNode)
                 {
                     actionNode.Initialize();
                 }
-                return new Dajunctic.SkillSystem.Logic.IActionNode[] { copy };
+                return new IActionNode[] { copy };
             }
-            if (graph is Dajunctic.SkillSystem.Logic.IActionNode[] arr)
+            if (graph is IActionNode[] arr)
             {
-                var results = new System.Collections.Generic.List<Dajunctic.SkillSystem.Logic.IActionNode>();
+                var results = new List<IActionNode>();
                 foreach (var n in arr)
                 {
                     if (n != null)
                     {
                         var copy = n.CreateCopy();
-                        if (copy is Dajunctic.SkillSystem.Logic.ActionNode actionNode)
+                        if (copy is ActionNode actionNode)
                         {
                             actionNode.Initialize();
                         }
@@ -64,13 +66,13 @@ namespace Dajunctic.SkillSystem {
             }
             if (graph is System.Collections.IEnumerable enumerable)
             {
-                var results = new System.Collections.Generic.List<Dajunctic.SkillSystem.Logic.IActionNode>();
+                var results = new List<IActionNode>();
                 foreach (var item in enumerable)
                 {
-                    if (item is Dajunctic.SkillSystem.Logic.IActionNode n)
+                    if (item is IActionNode n)
                     {
                         var copy = n.CreateCopy();
-                        if (copy is Dajunctic.SkillSystem.Logic.ActionNode actionNode)
+                        if (copy is ActionNode actionNode)
                         {
                             actionNode.Initialize();
                         }
@@ -79,7 +81,7 @@ namespace Dajunctic.SkillSystem {
                 }
                 return results.ToArray();
             }
-            return new Dajunctic.SkillSystem.Logic.IActionNode[0];
+            return new IActionNode[0];
         }
     }
 

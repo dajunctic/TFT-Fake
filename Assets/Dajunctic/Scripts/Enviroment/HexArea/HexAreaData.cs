@@ -14,7 +14,7 @@ namespace Dajunctic
         public List<HexTile> ActiveTiles => activeTiles;
         public float HexSize = 1f;
         public float Spacing = 0f;
-        public float InnerRadius => HexSize * 0.866025404f; // sqrt(3)/2
+        public float InnerRadius => HexSize * 0.866025404f; 
         public bool TryGetTile(Vector2Int coor, out HexTile tile)
         {
             tile = activeTiles.FirstOrDefault(h => h.coordinates == coor);

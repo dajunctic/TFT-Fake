@@ -41,10 +41,7 @@ namespace Dajunctic.SkillSystem.Logic
             {
                 yield return new WaitForSeconds(inDuration);
             }
-            
-            // inAction = GetInputValues(nameof(endAction), endAction);
-            // ActionNodeSystem.CreateActionNodes(inAction).Play(this);
-            
+
             TriggerDespawn();
         }
 

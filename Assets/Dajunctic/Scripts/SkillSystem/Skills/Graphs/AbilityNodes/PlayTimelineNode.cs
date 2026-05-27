@@ -27,10 +27,9 @@ namespace Dajunctic.SkillSystem.Logic
 
             if (netSync != null && netSync.IsServerStarted)
             {
-                // Online Server: Route timeline playing to all clients via ObserversRpc
+                
                 netSync.RpcPlayTimeline(inTimelineAsset != null ? inTimelineAsset.name : string.Empty);
 
-                // Setup local director on Server just to have the asset reference for duration calculation
                 if (director != null && inTimelineAsset != null)
                 {
                     director.playableAsset = inTimelineAsset;
@@ -47,7 +46,7 @@ namespace Dajunctic.SkillSystem.Logic
             }
             else
             {
-                // Offline/Local: Play timeline directly
+                
                 if (director != null)
                 {
                     if (inTimelineAsset != null)
@@ -89,12 +88,12 @@ namespace Dajunctic.SkillSystem.Logic
             {
                 if (isServer && director.playableAsset != null)
                 {
-                    // Server: Wait by timeline asset duration
+                    
                     yield return new WaitForSeconds((float)director.playableAsset.duration);
                 }
                 else
                 {
-                    // Client / Offline: Wait for director state to stop playing
+                    
                     while (director.state == PlayState.Playing)
                     {
                         yield return null;

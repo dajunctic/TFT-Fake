@@ -145,5 +145,3 @@ namespace Dajunctic.SkillSystem.Data
     }
 #endif
 }
-
-

@@ -1,7 +1,6 @@
-
 namespace Dajunctic
 {
-    // Requests (Commands) from UI/Gameplay -> Systems
+    
     public struct RequestRerollEvent : IEvent { }
     public struct RequestBuyXPEvent : IEvent { }
     public struct RequestBuyHeroEvent : IEvent { public int SlotIndex; }

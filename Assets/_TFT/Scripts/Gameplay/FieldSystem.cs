@@ -7,7 +7,7 @@ namespace Dajunctic
 {
     public class FieldSystem : MonoBehaviour, IGameSystem
     {
-        // Scene ref — bound at runtime by FieldAreaBinder in the gameplay scene
+        
         private List<Arena> _arenas = new List<Arena>();
         private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _heroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
         private Dictionary<int, Dictionary<Vector2Int, ChampionActor>> _guestHeroesOnArenas = new Dictionary<int, Dictionary<Vector2Int, ChampionActor>>();
@@ -15,7 +15,7 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            // FieldSystem has no Addressable data — scene ref bound via FieldAreaBinder
+            
             await Task.CompletedTask;
             Debug.Log("<color=cyan>FieldSystem data loaded (no-op)</color>");
         }
@@ -26,7 +26,6 @@ namespace Dajunctic
             Debug.Log("<color=cyan>FieldSystem initialized</color>");
         }
 
-        /// <summary>Called by Arena when it's initialized or by a binder.</summary>
         public void RegisterArena(Arena arena)
         {
             if (!_arenas.Contains(arena)) _arenas.Add(arena);
@@ -40,7 +39,6 @@ namespace Dajunctic
 
         public IReadOnlyList<Arena> GetAllArenas() => _arenas;
 
-        /// <summary>Lấy tất cả champion đang đứng trên field của arena chỉ định.</summary>
         public IEnumerable<ChampionActor> GetHeroesOnField(int ownerId)
         {
             if (_heroesOnArenas.TryGetValue(ownerId, out var heroes))
@@ -109,7 +107,6 @@ namespace Dajunctic
             heroes[coord] = actor;
             actor.CurrentFieldCoord = coord;
             actor.CurrentBenchCoord = new Vector2Int(-1, -1);
-            // actor.OwnerID = arenaId; // In case we need to track owner on actor
 
             _manager.Traits?.RefreshTraits();
         }
@@ -131,8 +128,7 @@ namespace Dajunctic
                 return;
             }
             heroes[coord] = actor;
-            // Note: Guest units keep their original OwnerID and CurrentFieldCoord (relative to their home board)
-            // They are placed physically on the GuestFieldArea but logically tracked here for the battle.
+
         }
 
         public void UnregisterHero(ChampionActor actor)

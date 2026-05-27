@@ -26,7 +26,7 @@ namespace Dajunctic.SkillSystem.Logic
 
             if (netSync != null && netSync.IsServerStarted)
             {
-                // Online Server: Route animation playing to all clients via ObserversRpc
+                
                 netSync.RpcPlayAnimation(inAnimName, inTransitionDuration);
                 
                 if (inWaitTillFinished)
@@ -40,7 +40,7 @@ namespace Dajunctic.SkillSystem.Logic
             }
             else
             {
-                // Offline/Local: Play animation directly
+                
                 var animatorPlayer = (Owner as IAnimatorPlayer) ?? (Owner.AsCombatActor() as IAnimatorPlayer);
                 if (animatorPlayer != null)
                 {
@@ -72,17 +72,17 @@ namespace Dajunctic.SkillSystem.Logic
 
             if (isServer)
             {
-                // Server: Wait by clip length to avoid getting stuck if Animator controller is stripped or not updating
+                
                 var animator = actor != null ? actor.GetComponentInChildren<Animator>() : null;
                 float clipLength = GetClipLength(animator, _playingAnimName);
-                if (clipLength <= 0f) clipLength = 1f; // fallback
+                if (clipLength <= 0f) clipLength = 1f; 
 
                 float speed = animator != null && animator.speed > 0f ? animator.speed : 1f;
                 yield return new WaitForSeconds(clipLength / speed);
             }
             else
             {
-                // Client / Offline: Wait for animatorPlayer to raise finished event/state
+                
                 var animatorPlayer = (Owner as IAnimatorPlayer) ?? (Owner.AsCombatActor() as IAnimatorPlayer);
                 if (animatorPlayer != null)
                 {

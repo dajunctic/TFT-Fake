@@ -18,7 +18,6 @@ namespace Dajunctic
         public Sprite icon;
         public AugmentTier tier;
 
-        // Effect parameters
         public int goldGrant;
         public int xpGrant;
         public float healthBonus;

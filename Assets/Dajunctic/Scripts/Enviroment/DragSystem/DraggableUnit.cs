@@ -13,7 +13,7 @@ namespace Dajunctic
         private Vector3 _originalScale;
         private bool _isDragging = false;
         private float _currentHeight = 0f;
-        private Vector3 _moveVelocity; // Required for SmoothDamp
+        private Vector3 _moveVelocity; 
 
         private void Awake()
         {
@@ -25,14 +25,13 @@ namespace Dajunctic
             _isDragging = true;
             _originalPosition = transform.position;
             _targetPosition = _originalPosition;
-            
-            // Visual feedback: Scale up slightly
+
             transform.localScale = _originalScale * scaleMultiplier;
         }
 
         public void OnDragUpdate(Vector3 worldPos)
         {
-            // The DragManager passes either the mouse-on-ground or the hex-snapped position
+            
             _targetPosition = worldPos;
         }
 
@@ -40,28 +39,25 @@ namespace Dajunctic
         {
             _isDragging = false;
             _targetPosition = finalPos;
-            
-            // Revert visual changes
+
             transform.localScale = _originalScale;
         }
 
         private void Update()
         {
-            // Calculate height offset: smooth transition for pickup/drop
+            
             float targetHeight = _isDragging ? pickUpHeight : 0f;
             _currentHeight = Mathf.Lerp(_currentHeight, targetHeight, Time.deltaTime * 10f);
 
-            // Smoothly move towards target position
             Vector3 targetPosWithHeight = _targetPosition + Vector3.up * _currentHeight;
             
             if (_isDragging)
             {
-                // Instant follow for that "sticky" mouse feel
+                
                 Vector3 lastPos = transform.position;
                 transform.position = targetPosWithHeight;
-                _moveVelocity = Vector3.zero; // Reset velocity
-                
-                // Tilt the unit towards movement direction (optional, but keep it for flavor)
+                _moveVelocity = Vector3.zero; 
+
                 Vector3 moveDir = (transform.position - lastPos);
                 if (moveDir.sqrMagnitude > 0.0001f)
                 {
@@ -71,7 +67,7 @@ namespace Dajunctic
             }
             else
             {
-                // When dropped, snap/slide to final position and reset rotation
+                
                 transform.position = Vector3.MoveTowards(transform.position, targetPosWithHeight, Time.deltaTime * 20f);
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime * 10f);
             }

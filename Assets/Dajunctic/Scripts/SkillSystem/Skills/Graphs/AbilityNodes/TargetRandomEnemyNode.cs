@@ -42,10 +42,9 @@ namespace Dajunctic.SkillSystem.Logic
                 radius, 
                 null, 
                 allEnemies, 
-                50 // grab up to 50
+                50 
             );
-            
-            // Randomly select 'count' enemies
+
             for (int i = 0; i < count && allEnemies.Count > 0; i++)
             {
                 int rnd = Random.Range(0, allEnemies.Count);

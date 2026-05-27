@@ -12,7 +12,6 @@ namespace Dajunctic
         [SerializeField] private GameObject loseStreakLight;
         [SerializeField] private TMP_Text streakCountText;
 
-
         private int loseStreakLimit = -3;
         private int winStreakLimit = 3;
 

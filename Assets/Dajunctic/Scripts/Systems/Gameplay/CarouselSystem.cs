@@ -52,11 +52,9 @@ namespace Dajunctic
 
         private void SetupCarousel()
         {
-            // Clear old units
+            
             CleanupCarousel();
 
-            // Just for demonstration, pick random champions and items
-            // In a real game, this would come from a Pool or RoundData
             var allChampionData = _manager.Shop.AllHeroes ?? new List<ChampionData>();
             
             var allItemData = _manager.Items.DebugTestItems != null ? 
@@ -64,7 +62,7 @@ namespace Dajunctic
 
             if (allChampionData.Count() == 0) return;
 
-            int unitCount = 9; // Typical TFT carousel count
+            int unitCount = 9; 
             float angleStep = 360f / unitCount;
 
             for (int i = 0; i < unitCount; i++)
@@ -90,7 +88,6 @@ namespace Dajunctic
             var players = _manager.Player.Players;
             _sortedPlayers = players.OrderBy(p => p.HP).ToList();
 
-            // Clear old barriers
             foreach (var b in _barriers) if (b != null) Destroy(b.gameObject);
             _barriers.Clear();
 
@@ -100,12 +97,10 @@ namespace Dajunctic
                 PlayerData p = _sortedPlayers[i];
                 if (p.Tactician == null) continue;
 
-                // Teleport tactician using automated pos
                 var playerSpawn = _arena.GetPlayerSpawn(i, playerCount);
                 p.Tactician.Teleport(playerSpawn.pos, true);
                 p.Tactician.CachedTransform.rotation = playerSpawn.rot;
 
-                // Spawn barrier using automated pos
                 if (_arena.barrierPrefab != null)
                 {
                     var barrierSpawn = _arena.GetBarrierSpawn(i, playerCount);
@@ -124,10 +119,8 @@ namespace Dajunctic
         {
             if (!_isActive || _arena == null) return;
 
-            // Rotate carousel
             _arena.center.Rotate(Vector3.up, _arena.rotationSpeed * Time.deltaTime);
 
-            // Handle player release
             if (_releaseGroupIndex * 2 < _sortedPlayers.Count)
             {
                 _releaseTimer -= Time.deltaTime;
@@ -158,21 +151,17 @@ namespace Dajunctic
 
             Debug.Log($"<color=green>Player {player.Name} picked {unit.Champion.ChampionId} with {unit.Item?.itemName}</color>");
 
-            // Give to player's bench
             if (_manager.Bench.HasEmptySlot(player.Id))
             {
-                // Remove from carousel rotation
+                
                 unit.transform.SetParent(null);
                 _unitsInCarousel.Remove(unit);
-                
-                // Add to bench
+
                 _manager.Bench.AddHeroToBench(player.Id, unit.Champion.CombatActorData as ChampionData);
-                
-                // Give item
+
                 if (unit.Item != null)
                 {
-                    // For local player, add to item bench. For NPCs, we'll just ignore for now or 
-                    // in future attach to the hero on bench.
+
                     if (player.Team == Team.Player)
                     {
                         _manager.Items.AddItemToBench(unit.Item);
@@ -182,7 +171,6 @@ namespace Dajunctic
                 Destroy(unit.gameObject);
             }
 
-            // Teleport player back
             Arena playerArena = _manager.Field.GetArena(player.Id);
             if (playerArena != null)
             {

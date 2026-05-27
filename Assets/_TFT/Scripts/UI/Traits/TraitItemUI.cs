@@ -46,7 +46,7 @@ namespace Dajunctic
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            // Do nothing on hover as per request "khi mình bấm vào thì mới hiện"
+            
         }
 
         public void OnPointerClick(PointerEventData eventData)

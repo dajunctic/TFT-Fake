@@ -12,7 +12,6 @@ namespace Dajunctic
         private int _currentRoundIndex = 0;
         private GameSystemManager _manager;
 
-        // Runtime overrides for Encounters/Kì ngộ
         private Dictionary<(int stage, int round), RoundData> _overrides = new Dictionary<(int stage, int round), RoundData>();
 
         public RoundData CurrentRoundData { get; private set; }
@@ -46,12 +45,10 @@ namespace Dajunctic
             UpdateCurrentData();
         }
 
-        /// <summary>Override a specific round's data at runtime (e.g. for Encounters/Kì ngộ).</summary>
         public void OverrideRoundData(int stageNumber, int roundNumber, RoundData newData)
         {
             _overrides[(stageNumber, roundNumber)] = newData;
-            
-            // If we just overrode the CURRENT round, update it immediately
+
             if (StageNumber == stageNumber && RoundNumber == roundNumber)
             {
                 UpdateCurrentData();
@@ -68,7 +65,7 @@ namespace Dajunctic
             _currentRoundIndex++;
             if (_currentRoundIndex >= CurrentStageData.rounds.Count)
             {
-                // Next Stage
+                
                 _currentRoundIndex = 0;
                 _currentStageIndex++;
 
@@ -106,7 +103,7 @@ namespace Dajunctic
             
             if (CurrentStageData.rounds.Count > 0)
             {
-                // Check if there is a runtime override
+                
                 if (_overrides.TryGetValue((StageNumber, RoundNumber), out var overridenData))
                 {
                     CurrentRoundData = overridenData;
@@ -118,7 +115,6 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>Returns the current round data for a specific index, considering overrides.</summary>
         public RoundData GetRoundData(int stageIndex, int roundIndex)
         {
             if (_data == null || stageIndex >= _data.stages.Count) return null;

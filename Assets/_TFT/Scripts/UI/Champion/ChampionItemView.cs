@@ -6,7 +6,7 @@ namespace Dajunctic
 {
     public class ChampionItemView : MonoBehaviour
     {
-        [SerializeField] private Image[] itemIcons; // Array of 3 images
+        [SerializeField] private Image[] itemIcons; 
         private ChampionActor _hero;
 
         public void Initialize(ChampionActor hero)

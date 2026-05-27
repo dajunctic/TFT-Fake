@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Dajunctic;
 using UnityEngine;
+using Dajunctic.SkillSystem.Gambits;
 
 public class CombatActorData : BaseSO
 {
@@ -12,7 +13,7 @@ public class CombatActorData : BaseSO
     public ActorBaseStats stats;
 
     [Header("AI Gambits (Priority: Top to Bottom)")]
-    public List<Dajunctic.SkillSystem.Gambits.Gambit> gambits = new List<Dajunctic.SkillSystem.Gambits.Gambit>();
+    public List<Gambit> gambits = new List<Gambit>();
 }
 
 [Serializable]

@@ -11,7 +11,7 @@ namespace Dajunctic.SkillSystem.Gambits
         public GambitConditionRangeType rangeType;
 
         [SerializeField]
-        public float customRange = 10f; // Simplified for TFT-Fake
+        public float customRange = 10f; 
 
         public float Range
         {
@@ -20,7 +20,7 @@ namespace Dajunctic.SkillSystem.Gambits
                 switch (rangeType)
                 {
                     case GambitConditionRangeType.Engage:
-                        return CombatActor != null ? 5f : 0f; // Arbitrary engage radius
+                        return CombatActor != null ? 5f : 0f; 
                     case GambitConditionRangeType.Global:
                         return 100f;
                     case GambitConditionRangeType.Custom:

@@ -8,18 +8,16 @@ namespace Dajunctic
     {
         private GameSystemManager _manager;
         private ShopSystemData _data;
-        
-        // Dictionary mapping rarity -> max copies per champion of that rarity
+
         private readonly Dictionary<int, int> RarityPoolSizes = new Dictionary<int, int>
         {
-            { 1, 29 }, // Tier 1: 29 copies
-            { 2, 22 }, // Tier 2: 22 copies
-            { 3, 18 }, // Tier 3: 18 copies
-            { 4, 10 }, // Tier 4: 10 copies
-            { 5, 9 }   // Tier 5: 9 copies
+            { 1, 29 }, 
+            { 2, 22 }, 
+            { 3, 18 }, 
+            { 4, 10 }, 
+            { 5, 9 }   
         };
 
-        // Champion ID -> remaining copies
         private Dictionary<string, int> _pool = new Dictionary<string, int>();
         private bool _poolInitialized;
 
@@ -31,31 +29,23 @@ namespace Dajunctic
         public void Initialize(GameSystemManager manager)
         {
             _manager = manager;
-            // NOTE: Do NOT call InitializePool() here.
-            // ShopSystem.LoadDataAsync() hasn't run yet at this point so
-            // Shop.ShopSystemData is still null → pool would be empty.
-            // InitializeAfterDataLoad() is called by GameSystemManager after all data is loaded.
+
         }
 
-        /// <summary>
-        /// Called by GameSystemManager immediately after all LoadDataAsync() calls complete.
-        /// Server may not have started yet at this point, so we subscribe to the server
-        /// started event and initialize the pool when the server is ready.
-        /// </summary>
         public void InitializeAfterDataLoad()
         {
-            // Cache data now — it's guaranteed loaded at this point
+            
             _data = _manager.Shop?.ShopSystemData;
 
             var nm = FishNet.InstanceFinder.NetworkManager;
             if (nm != null && nm.IsServerStarted)
             {
-                // Edge case: server already running (e.g. hot-reload in editor)
+                
                 InitializePool();
             }
             else if (nm != null && nm.ServerManager != null)
             {
-                // Normal flow: wait for the server to start (user clicks Host)
+                
                 nm.ServerManager.OnServerConnectionState += OnServerConnectionState;
             }
             else
@@ -118,13 +108,9 @@ namespace Dajunctic
             Debug.Log($"<color=green>[GlobalChampionPool] Pool initialized with {added} champions.</color>");
         }
 
-        /// <summary>
-        /// Server-side: Draws a champion of a specific rarity from the global pool.
-        /// Returns null if no champions of that rarity are left.
-        /// </summary>
         public ChampionData DrawChampion(int rarity)
         {
-            // Lazy-init fallback: if server started but pool wasn't initialized yet
+            
             if (!_poolInitialized && FishNet.InstanceFinder.IsServerStarted)
             {
                 Debug.LogWarning("[GlobalChampionPool] Pool not initialized at DrawChampion — running lazy init.");
@@ -139,7 +125,6 @@ namespace Dajunctic
 
             if (_data == null || _data.allHeroes == null) return null;
 
-            // Get all heroes of this rarity that still have copies left in the pool
             var eligible = _data.allHeroes
                 .Where(h => h != null && h.rarity == rarity && _pool.GetValueOrDefault(h.Id, 0) > 0)
                 .ToList();
@@ -150,18 +135,13 @@ namespace Dajunctic
                 return null;
             }
 
-            // Pick a random eligible hero
             var pickedHero = eligible[Random.Range(0, eligible.Count)];
-            
-            // Remove 1 copy from the pool
+
             _pool[pickedHero.Id]--;
 
             return pickedHero;
         }
 
-        /// <summary>
-        /// Server-side: Returns a champion back to the global pool (when sold or player dies).
-        /// </summary>
         public void ReturnChampion(string championId)
         {
             if (_pool.ContainsKey(championId))

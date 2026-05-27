@@ -18,7 +18,7 @@ namespace Dajunctic
 
         public bool TryAddItem(ItemData newItem, ItemRecipeDatabase recipes)
         {
-            // 1. Check if we can combine with an existing component
+            
             if (recipes != null)
             {
                 for (int i = 0; i < _items.Count; i++)
@@ -37,7 +37,6 @@ namespace Dajunctic
                 }
             }
 
-            // 2. If not combining, check if we have space
             if (_items.Count < MAX_ITEMS)
             {
                 _items.Add(newItem);
@@ -50,10 +49,9 @@ namespace Dajunctic
 
         private void OnItemsChanged()
         {
-            // Apply stats to hero
+            
             ApplyItemStats();
 
-            // Raise event for UI update on the hero
             if (_champion != null)
             {
                 _champion.Raise(new ChampionItemsChangedEvent { Hero = _champion, Items = _items });
@@ -64,7 +62,6 @@ namespace Dajunctic
         {
             if (_champion == null || _champion.Stats == null) return;
 
-            // 1. Clear existing item modifiers from this source
             _champion.Stats.Health.RemoveAllModifiersFromSource(this);
             _champion.Stats.AttackDamage.RemoveAllModifiersFromSource(this);
             _champion.Stats.AttackSpeed.RemoveAllModifiersFromSource(this);
@@ -75,7 +72,6 @@ namespace Dajunctic
             _champion.Stats.CriticalStrikeChance.RemoveAllModifiersFromSource(this);
             _champion.Stats.CriticalStrikeDamage.RemoveAllModifiersFromSource(this);
 
-            // 2. Sum up totals
             float hp = 0, atk = 0, aspd = 0, armor = 0, mr = 0, ap = 0, mana = 0, critC = 0, critD = 0;
 
             foreach (var item in _items)
@@ -91,7 +87,6 @@ namespace Dajunctic
                 critD += item.bonusCritDamage;
             }
 
-            // 3. Apply new modifiers
             AddModIfNonZero(_champion.Stats.Health, hp, StatModType.Flat);
             AddModIfNonZero(_champion.Stats.AttackDamage, atk, StatModType.Flat);
             AddModIfNonZero(_champion.Stats.AttackSpeed, aspd, StatModType.Flat);

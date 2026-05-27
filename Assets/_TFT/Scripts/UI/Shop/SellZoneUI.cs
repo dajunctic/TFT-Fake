@@ -4,17 +4,14 @@ using TMPro;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// This component should be attached to the UI panel that represents the Shop area.
-    /// It detects when a hero is being dragged over it and shows the sell UI.
-    /// </summary>
+
     public class SellZoneUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public static bool IsPointerOverSellZone { get; private set; }
 
         [Header("Settings")]
-        [SerializeField] private GameObject sellVisual; // The panel that says "SELL"
-        [SerializeField] private TMP_Text sellPriceText; // Text to show refund amount
+        [SerializeField] private GameObject sellVisual; 
+        [SerializeField] private TMP_Text sellPriceText; 
 
         private ChampionActor _currentDraggedHero;
 
@@ -31,8 +28,7 @@ namespace Dajunctic
         {
             this.RemoveListener<HeroDragStartedEvent>(OnDragStarted);
             this.RemoveListener<HeroDragEndedEvent>(OnDragEnded);
-            
-            // Clean up static state if this object is destroyed
+
             IsPointerOverSellZone = false;
         }
 
@@ -74,8 +70,7 @@ namespace Dajunctic
             
             if (sellVisual != null)
                 sellVisual.SetActive(false);
-            
-            // Debug.Log("<color=orange>Mouse left Sell Zone</color>");
+
         }
     }
 }

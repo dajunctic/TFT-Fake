@@ -29,7 +29,6 @@ namespace Dajunctic
         public float bonusCritChance;
         public float bonusCritDamage;
 
-        // For components, we might want to know if it can be combined
         public bool isCombinable => type == ItemType.Component;
     }
 }

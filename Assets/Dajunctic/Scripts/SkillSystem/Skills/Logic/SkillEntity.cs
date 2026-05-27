@@ -296,7 +296,6 @@ namespace Dajunctic.SkillSystem.Logic
             IsPlaying = true;
             PlayCount++;
 
-            // ResetCooldown();
             PlayInternal(target);
         }
 
@@ -321,7 +320,6 @@ namespace Dajunctic.SkillSystem.Logic
                 return;
             IsPlaying = false;
 
-            // ResetCooldown();
             StopGraph();
         }
 
@@ -352,4 +350,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-

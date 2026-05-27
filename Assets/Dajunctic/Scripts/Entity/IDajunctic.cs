@@ -42,7 +42,6 @@ namespace Dajunctic {
     
     public enum ShieldType { Normal, Physical, Magical }
 
-    
     public interface ICombatActorEntity {
         bool IsCombat { get; }
     }
@@ -97,7 +96,6 @@ namespace Dajunctic {
 
                 calc.DamageType = dmgType;
 
-                // Calculate raw damage
                 if (scaleStr == "Raw")
                 {
                     calc.FloatNormalDamage = rawDmg;
@@ -186,8 +184,7 @@ namespace Dajunctic {
         public static int Range(int min, int max) => min;
         public static float value => 0f;
     }
-    
-    // Events
+
     public class BeforeTakeCalculatedDamageEvent {
         public CalculatedDamage Data;
     }

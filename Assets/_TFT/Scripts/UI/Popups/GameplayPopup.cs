@@ -12,13 +12,13 @@ namespace Dajunctic
         [Header("UI References")]
         [SerializeField] private TMP_Text timerText;
         [SerializeField] private Image progressImage;
-        [SerializeField] private TMP_Text roundText;   // Hiển thị "1-1", "1-2"...
+        [SerializeField] private TMP_Text roundText;   
 
         [Header("Shop References")]
         [SerializeField] private SpriteLists cardRarities;
         [SerializeField] private List<ShopSlotView> slots;
-        [SerializeField] private GameObject cardListContent; // Container for the 5 slots
-        [SerializeField] private List<TMP_Text> rollRatesTexts; // Optional: To display roll rates for each rarity
+        [SerializeField] private GameObject cardListContent; 
+        [SerializeField] private List<TMP_Text> rollRatesTexts; 
 
         [Header("Economy References")]
         [SerializeField] private TMP_Text goldText;
@@ -54,7 +54,6 @@ namespace Dajunctic
 
         public static GameplayPopup Instance { get; private set; }
 
-        // Cached Systems
         private ShopSystem _shopSystem;
 
         private ShopSystem ShopSystem => _shopSystem ?? (_shopSystem = this.GetSystem<ShopSystem>());
@@ -72,10 +71,6 @@ namespace Dajunctic
             PlayerSystem.OnPlayerListInitialized += UpdatePlayerList;
         }
 
-
-
-
-
         public override void AfterShow()
         {
             base.AfterShow();
@@ -83,9 +78,6 @@ namespace Dajunctic
             var itemSystem = this.GetSystem<ItemSystem>();
             if (itemSystem != null) itemSystem.RefreshAllVisuals();
 
-            // Pull current shop state now that the popup is active and ListenEvents() has run.
-            // This covers the case where TargetUpdateShop fired while popup was still disabled
-            // (which happens on host because ObserversRpc RunLocally=true fires synchronously).
             UpdateShop();
             UpdateStreak();
         }
@@ -122,18 +114,13 @@ namespace Dajunctic
             }
         }
 
-
-
-
         public override void BeforeShow(object data = null)
         {
             Instance = this;
             base.BeforeShow(data);
             UpdateUI();
-            UpdateRoundText(); // Set round text ngay khi popup mở
-            // NOTE: Do NOT call UpdateShop() here. Shop data has not yet arrived from server.
-            // UpdateShop() will be called automatically when ShopRefreshedEvent fires (after TargetUpdateShop RPC).
-            // We only reset the slots to their empty state here.
+            UpdateRoundText(); 
+
             ResetShopSlots();
             UpdateEconomy();
             UpdatePlayerList();
@@ -142,10 +129,6 @@ namespace Dajunctic
 
         private PlayerDataSync _localPlayerSync;
 
-        /// <summary>
-        /// Finds the PlayerDataSync owned by the local client.
-        /// Must search all objects because Connection.FirstObject is the Tactician, not PlayerDataSync.
-        /// </summary>
         private PlayerDataSync FindLocalPlayerSync()
         {
             if (!FishNet.InstanceFinder.IsClientStarted) return null;
@@ -174,7 +157,7 @@ namespace Dajunctic
                     _localPlayerSync.OnExpChanged += OnExpChanged;
                     _localPlayerSync.OnWinStreakChanged += OnStreakChanged;
                     _localPlayerSync.OnLoseStreakChanged += OnStreakChanged;
-                    UpdateEconomy(); // Force update once found
+                    UpdateEconomy(); 
                     UpdateStreak();
                 }
             }
@@ -185,14 +168,11 @@ namespace Dajunctic
             var gameplay = Gameplay.Instance;
             float timer = Mathf.Max(0, gameplay.Timer);
 
-            // Format time
             timerText.text = Mathf.CeilToInt(timer).ToString();
 
-            // Fill amount
             float fill = timer / gameplay.PhaseDuration;
             progressImage.fillAmount = fill;
 
-            // Phase name Vietnamese
             progressImage.color = gameplay.CurrentPhase == GameplayPhase.Planning ? Color.cyan : Color.red;
         }
 
@@ -212,7 +192,6 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>Cập nhật text hiển thị round hiện tại (e.g. "1-1").</summary>
         private void UpdateRoundText()
         {
             if (roundText == null) return;
@@ -222,8 +201,6 @@ namespace Dajunctic
                 roundText.text = roundSystem.GetRoundDisplayString();
             }
         }
-
-
 
         private void UpdateShop()
         {
@@ -241,7 +218,7 @@ namespace Dajunctic
             }
 
             var shop = ShopSystem.CurrentShop;
-            // Debug: log state when UpdateShop is called
+            
             int nonNull = 0;
             for (int k = 0; k < shop.Length; k++) if (shop[k] != null) nonNull++;
             Debug.Log($"[GameplayPopup] UpdateShop called. NonNull slots={nonNull}/5");
@@ -260,7 +237,7 @@ namespace Dajunctic
                     Sprite rarityBg = null;
                     if (cardRarities != null)
                     {
-                        // rarity is 1-5, index is 0-4
+                        
                         rarityBg = cardRarities.GetIndex(shop[i].rarity - 1);
                     }
                     slots[i].Setup(i, shop[i], rarityBg);
@@ -274,10 +251,9 @@ namespace Dajunctic
             }
 
             Debug.Log($"<color=cyan>[GameplayPopup] UpdateShop: {shown}/{slots.Count} slots filled.</color>");
-            // UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(EconomySystem.Level));
+            
         }
 
-        /// <summary>Reset all shop slots to empty/hidden state (called before shop data arrives).</summary>
         private void ResetShopSlots()
         {
             foreach (var slot in slots)
@@ -300,13 +276,13 @@ namespace Dajunctic
             levelText.text = "Lvl. " + value;
             if (ShopSystem != null) UpdateRollRates(ShopSystem.ShopData.GetChancesForLevel(value));
         }
-        private void OnExpChanged(int value) => UpdateEconomy(); // Refresh xp progress
+        private void OnExpChanged(int value) => UpdateEconomy(); 
         private void OnStreakChanged(int value) => UpdateStreak();
 
         private void UpdateStreak()
         {
             if (streakUI == null || _localPlayerSync == null) return;
-            // Positive = win streak, Negative = lose streak (net streak value)
+            
             int netStreak = _localPlayerSync.WinStreak.Value - _localPlayerSync.LoseStreak.Value;
             streakUI.UpdateStreak(netStreak);
         }
@@ -321,7 +297,7 @@ namespace Dajunctic
             int currentXp = _localPlayerSync.Exp.Value;
             int requiredXp = _localPlayerSync.GetXPRequired();
             
-            if (requiredXp == 0) // Max Level
+            if (requiredXp == 0) 
             {
                 xpText.text = "MAX";
                 if (xpProgress != null) xpProgress.fillAmount = 1;
@@ -376,13 +352,11 @@ namespace Dajunctic
             });
         }
 
-        /// <summary>Drag this to the LockShop button's OnClick in Inspector.</summary>
         public void OnClickLockShop()
         {
             this.Raise(new RequestToggleShopLockEvent());
         }
 
-        /// <summary>Drag this to the UnlockShop button's OnClick in Inspector.</summary>
         public void OnClickUnlockShop()
         {
             this.Raise(new RequestToggleShopLockEvent());
@@ -390,13 +364,10 @@ namespace Dajunctic
 
         private void UpdateShopLockUI(bool isLocked)
         {
-            // lockShop = icon khóa đóng (shop đang locked) → hiện khi locked
-            // unlockShop = icon khóa mở (shop đang unlocked) → hiện khi unlocked (mặc định)
+
             if (lockShop != null) lockShop.SetActive(isLocked);
             if (unlockShop != null) unlockShop.SetActive(!isLocked);
         }
-
-
 
         public override void Tick()
         {
@@ -463,7 +434,7 @@ namespace Dajunctic
                                     : targetArena.GuestSpawnPoint;
 
                                 Vector3 spawnPos = spawnTransform != null ? spawnTransform.position : targetArena.transform.position;
-                                localTactician.Teleport(spawnPos, false, true); // Don't use NavMesh
+                                localTactician.Teleport(spawnPos, false, true); 
                             }
                         }
                     }

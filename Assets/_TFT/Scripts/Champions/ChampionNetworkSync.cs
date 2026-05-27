@@ -57,8 +57,6 @@ namespace Dajunctic
             _actor.OwnerID = ownerId;
             _actor.CurrentBenchCoord = coord;
 
-            // Chỉ override combatActorData khi tìm thấy trong ShopSystemData
-            // Nếu không tìm được, giữ nguyên data đã serialize trong prefab (kể cả gambits)
             var data = GameSystemManager.Instance?.Shop?.ShopSystemData?
                        .allHeroes.FirstOrDefault(h => h.Id == heroId);
                        
@@ -74,8 +72,7 @@ namespace Dajunctic
             _actor.Initialize();
             _actor.SetStarLevel(starLevel);
             GameSystemManager.Instance?.Bench?.RegisterHeroToTile(_actor, coord, ownerId);
-            
-            // Re-warp to correctly snap to bench if initializing late
+
             Vector3 worldPos = GameSystemManager.Instance.Bench.GetWorldPosition(ownerId, coord);
             _actor.Teleport(worldPos, false);
         }

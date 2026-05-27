@@ -21,9 +21,6 @@ namespace KBCore.Refs
 
 #if UNITY_EDITOR
 
-        /// <summary>
-        /// Validate all references for every script and every game object in the scene.
-        /// </summary>
         [MenuItem("Tools/KBCore/Validate All Refs")]
         public static bool ValidateAllRefs()
         {
@@ -77,19 +74,11 @@ namespace KBCore.Refs
             return validationSuccess;
         }
 
-        /// <summary>
-        /// Validate a single components references, attempting to assign missing references
-        /// and logging errors as necessary.
-        /// </summary>
         [MenuItem("CONTEXT/Component/Validate Refs")]
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used as menu item action")]
         private static void ValidateRefs(MenuCommand menuCommand)
             => Validate(menuCommand.context as Component);
 
-        /// <summary>
-        /// Clean and validate a single components references. Useful in instances where (for example) Unity has
-        /// incorrectly serialized a scene reference within a prefab.
-        /// </summary>
         [MenuItem("CONTEXT/Component/Clean and Validate Refs")]
         [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Used as menu item action")]
         private static void CleanValidateRefs(MenuCommand menuCommand)
@@ -97,17 +86,9 @@ namespace KBCore.Refs
 
 #endif
 
-        /// <summary>
-        /// Validate a single components references, attempting to assign missing references
-        /// and logging errors as necessary.
-        /// </summary>
         public static void ValidateRefs(this Component c, bool updateAtRuntime = false)
             => Validate(c, updateAtRuntime);
 
-        /// <summary>
-        /// Validate a single components references, attempting to assign missing references
-        /// and logging errors as necessary.
-        /// </summary>
         public static void Validate(Component c, bool updateAtRuntime = false)
         {
             try
@@ -125,10 +106,6 @@ namespace KBCore.Refs
             }
         }
 
-        /// <summary>
-        /// Clean and validate a single components references. Useful in instances where (for example) Unity has
-        /// incorrectly serialized a scene reference within a prefab.
-        /// </summary>
         public static void CleanValidate(Component c, bool updateAtRuntime = false)
         {
             try
@@ -235,7 +212,7 @@ namespace KBCore.Refs
                 bool isFilledArray = isCollection && (existingValue as IEnumerable).CountEnumerable() > 0;
                 if (isFilledArray || existingValue is Object)
                 {
-                    // If the field is editable and the value has already been set, keep it.
+                    
                     return existingValue;
                 }
             }
@@ -261,7 +238,6 @@ namespace KBCore.Refs
 
             object value = null;
 
-            //INFO: when minimal unity version will be sufficiently high, explicit casts to object will not be necessary.
             switch (attr.Loc)
             {
                 case RefLoc.Anywhere:
@@ -312,7 +288,7 @@ namespace KBCore.Refs
                 Array componentArray = (Array)value;
                 if (filter != null)
                 {
-                    // TODO: probably a better way to do this without allocating a list
+                    
                     IList<object> list = new List<object>();
                     foreach (object o in componentArray)
                     {

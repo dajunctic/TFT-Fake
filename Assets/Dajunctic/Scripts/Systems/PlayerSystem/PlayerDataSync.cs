@@ -25,7 +25,6 @@ namespace Dajunctic
 
         public readonly SyncVar<int> PassiveIncome = new SyncVar<int>(5);
 
-        /// <summary>Server-only: tracks the champion IDs in this player's current shop.</summary>
         private string[] _serverShop = new string[5];
 
         public event Action<int> OnHealthChanged;
@@ -77,7 +76,7 @@ namespace Dajunctic
                 return;
             }
             Heath.Value += amount;
-            // OnHealthChanged?.Invoke(Heath.Value); // Removed because SyncVar OnChange will handle it on both server and client
+            
         }
 
         public void ChangeGold(int amount)
@@ -88,7 +87,7 @@ namespace Dajunctic
                 return;
             }
             Gold.Value += amount;
-            // OnGoldChanged?.Invoke(Gold.Value);
+            
         }
 
         public void ChangeLevel(int amount)
@@ -99,7 +98,7 @@ namespace Dajunctic
                 return;
             }
             Level.Value += amount;
-            // OnLevelChanged?.Invoke(Level.Value);
+            
         }
 
         public void ChangeExp(int amount)
@@ -110,7 +109,6 @@ namespace Dajunctic
                 return;
             }
             Exp.Value += amount;
-            // OnExpChanged?.Invoke(Exp.Value);
 
             CheckLevelUp();
         }
@@ -128,7 +126,6 @@ namespace Dajunctic
             {
                 Exp.Value -= required;
                 Level.Value++;
-                // OnLevelChanged?.Invoke(Level.Value);
 
                 if (Level.Value >= MAX_LEVEL)
                 {
@@ -219,14 +216,11 @@ namespace Dajunctic
             PassiveIncome.Value = 5;
         }
 
-        // --- SHOP & CHAMPION POOL SYNC ---
-
         [ServerRpc]
         public void CmdRequestReroll()
         {
             if (GameSystemManager.Instance == null || GameSystemManager.Instance.Shop == null) return;
-            
-            // Assume reroll costs 2 gold
+
             if (Gold.Value >= 2)
             {
                 ChangeGold(-2);
@@ -237,7 +231,7 @@ namespace Dajunctic
         [ServerRpc]
         public void CmdBuyXP()
         {
-            // TFT standard: 4 gold = 4 XP
+            
             const int xpCost   = 4;
             const int xpAmount = 4;
 
@@ -264,7 +258,7 @@ namespace Dajunctic
             if (slotIndex < 0 || slotIndex >= 5) return;
 
             string heroId = _serverShop[slotIndex];
-            if (string.IsNullOrEmpty(heroId)) return; // Slot is empty
+            if (string.IsNullOrEmpty(heroId)) return; 
 
             var allHeroes = GameSystemManager.Instance?.Shop?.ShopSystemData?.allHeroes;
             if (allHeroes == null) return;
@@ -272,14 +266,12 @@ namespace Dajunctic
             var hero = allHeroes.FirstOrDefault(h => h.Id == heroId);
             if (hero == null) return;
 
-            // Gold check
             if (Gold.Value < hero.rarity)
             {
                 Debug.LogWarning($"[Server] {PlayerName.Value} cannot afford {hero.displayName} (need {hero.rarity}, has {Gold.Value})");
                 return;
             }
 
-            // Bench space check (ownerId == ClientId in this system)
             int ownerId = (int)ClientId.Value;
             var bench = GameSystemManager.Instance?.Bench;
             if (bench == null || !bench.CanAcceptHero(ownerId, hero))
@@ -288,14 +280,11 @@ namespace Dajunctic
                 return;
             }
 
-            // Deduct gold and clear slot
             ChangeGold(-hero.rarity);
             _serverShop[slotIndex] = "";
 
-            // Tell everyone to spawn the champion via NetworkSpawn
             SpawnChampionOnServer(heroId, ownerId);
 
-            // Update shop display so the slot shows as empty
             TargetUpdateShop(Owner, _serverShop);
         }
 
@@ -314,7 +303,7 @@ namespace Dajunctic
             Vector2Int coord = bench.GetFirstEmptyTileCoord(ownerId);
             if (coord.y < 0) 
             { 
-                // Bench is full. We already passed CanAcceptHero check so this MUST be a direct upgrade.
+                
                 bench.ServerDirectUpgrade(ownerId, hero, 1);
                 return; 
             }
@@ -328,8 +317,6 @@ namespace Dajunctic
 
             GameObject obj = Instantiate(hero.prefab, worldPos, spawnRot);
 
-            // Ensure the spawned instance has the required FishNet components.
-            // Champion prefabs may not have NetworkObject/ChampionNetworkSync baked in.
             var nob = obj.GetComponent<FishNet.Object.NetworkObject>();
             if (nob == null)
             {
@@ -341,14 +328,13 @@ namespace Dajunctic
             if (netSync == null)
                 netSync = obj.AddComponent<ChampionNetworkSync>();
 
-            // Use NetworkBehaviour.ServerManager (from base class) — safer than InstanceFinder
             if (ServerManager == null) { Debug.LogError("[SpawnChampion] ServerManager is null — not on server?"); Destroy(obj); return; }
             ServerManager.Spawn(obj);
 
             var actor = obj.GetComponent<ChampionActor>();
             if (actor != null && netSync != null)
             {
-                // ---- SERVER-SIDE SETUP FIRST ----
+                
                 actor.OwnerID = ownerId;
                 actor.CurrentBenchCoord = coord;
                 actor.SetCombatData(hero);
@@ -356,10 +342,8 @@ namespace Dajunctic
                 actor.SetStarLevel(1);
                 GameSystemManager.Instance.Bench.RegisterHeroToTile(actor, coord, ownerId);
 
-                // ---- CLIENT SYNC ----
                 netSync.RpcInitialize(ownerId, coord, heroId, 1);
-                
-                // ---- TRIGGER UPGRADE CHECK ----
+
                 GameSystemManager.Instance.Bench.ServerCheckForUpgrades(ownerId, hero, 1);
             }
         }
@@ -381,19 +365,13 @@ namespace Dajunctic
                 results[i] = hero != null ? hero.Id : "";
             }
 
-            // Save server-side shop state so CmdBuyChampion can validate slot contents
             _serverShop = results;
 
-            // Send shop data to the owning client via TargetRpc.
-            // Owner may be null if this PlayerDataSync was spawned without owner (host case).
             if (Owner != null)
             {
                 TargetUpdateShop(Owner, results);
             }
 
-            // For the host player: TargetRpc to self is deferred or Owner may be null.
-            // Use the SyncVar ClientId to identify if this PlayerDataSync belongs to the
-            // local client (host), and if so, call SyncShopData directly.
             if (IsServerInitialized)
             {
                 int localClientId = FishNet.InstanceFinder.ClientManager?.Connection?.ClientId ?? -1;
@@ -405,7 +383,6 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>Called by the server (e.g. Gameplay) to roll this player's shop on planning phase start.</summary>
         public void ServerRollShop()
         {
             if (!IsServerInitialized) return;

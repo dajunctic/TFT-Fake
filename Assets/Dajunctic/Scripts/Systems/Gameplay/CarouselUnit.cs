@@ -19,8 +19,7 @@ namespace Dajunctic
             _champion = champion;
             _item = item;
             _isPicked = false;
-            
-            // Ensure champion has a collider and is trigger
+
             var col = _champion.GetComponent<CapsuleCollider>();
             if (col != null)
             {

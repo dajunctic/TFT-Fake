@@ -19,7 +19,7 @@ namespace Dajunctic
 
         public bool IsUnitEligible(IChampionUnit unit, List<IChampionUnit> allUnits)
         {
-            // Standard TFT logic: if the unit has this trait, it's eligible for the bonus
+            
             return unit.Traits.Any(t => t.TraidID == TraidID);
         }
     }
@@ -33,7 +33,7 @@ namespace Dajunctic
         public TraitTierType visualTier;
 
         public int RequiredCount => requiredCount;
-        public List<IStatModifier> StatModifiers => statModifiers.Select(m => m.ToModifier(null)).ToList(); // Source will be set by system
+        public List<IStatModifier> StatModifiers => statModifiers.Select(m => m.ToModifier(null)).ToList(); 
         public string SpecialEffectDescription => specialEffectDescription;
         public TraitTierType VisualTier => visualTier;
     }

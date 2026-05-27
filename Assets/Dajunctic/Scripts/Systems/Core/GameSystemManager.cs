@@ -14,7 +14,6 @@ namespace Dajunctic
         [Header("Config (single SO — all data refs inside)")]
         [SerializeField] private GameSystemManagerData config;
 
-        // Public accessors (same API as before)
         public SettingsSystem Settings { get; private set; }
         public BenchSystem Bench { get; private set; }
         public FieldSystem Field { get; private set; }
@@ -31,7 +30,6 @@ namespace Dajunctic
         public ChatSystem Chat { get; private set; }
         public TravelSystem Travel { get; private set; }
 
-        /// <summary>True once all system data has been loaded and systems are initialized.</summary>
         public bool AllSystemsReady { get; private set; }
 
         private readonly List<IGameSystem> _systems = new List<IGameSystem>();
@@ -57,8 +55,6 @@ namespace Dajunctic
             AllSystemsReady = true;
             Debug.Log("<color=green>GameSystemManager: All systems ready!</color>");
         }
-
-        // ─── Phase 1: Create system instances ────────────────────────────────────
 
         private void CreateSystems()
         {
@@ -92,13 +88,10 @@ namespace Dajunctic
             return system;
         }
 
-        // ─── Phase 2: Load data async via Addressables ───────────────────────────
-
         private async Task LoadAllDataAsync()
         {
             Debug.Log("<color=cyan>GameSystemManager: Loading system data...</color>");
 
-            // Load sequentially so each system has its data before the next starts
             await Settings.LoadDataAsync();
             await Bench.LoadDataAsync();
             await Field.LoadDataAsync();
@@ -118,8 +111,6 @@ namespace Dajunctic
             Debug.Log("<color=cyan>GameSystemManager: All data loaded.</color>");
         }
 
-        // ─── Phase 3: Initialize (cross-system wiring) ───────────────────────────
-
         private void InitializeSystems()
         {
             Debug.Log("<color=cyan>GameSystemManager: Initializing systems...</color>");
@@ -127,14 +118,10 @@ namespace Dajunctic
             foreach (var system in _systems)
                 system.Initialize(this);
 
-            // Initialize champion pool AFTER all systems have _manager set
-            // and Shop data is confirmed loaded.
             GlobalChampionPool.InitializeAfterDataLoad();
 
             Debug.Log("<color=cyan>GameSystemManager: All systems initialized.</color>");
         }
-
-        // ─── Shutdown ────────────────────────────────────────────────────────────
 
         private void OnDestroy()
         {
@@ -142,16 +129,12 @@ namespace Dajunctic
 
             Debug.Log("<color=yellow>GameSystemManager: Shutting down...</color>");
 
-            // Shutdown in reverse order
             for (int i = _systems.Count - 1; i >= 0; i--)
                 _systems[i].Shutdown();
 
             Instance = null;
         }
 
-        // ─── Generic accessor ─────────────────────────────────────────────────────
-
-        /// <summary>Get a system by type.</summary>
         public T GetSystem<T>() where T : class, IGameSystem
         {
             foreach (var s in _systems)
@@ -160,8 +143,6 @@ namespace Dajunctic
             Debug.LogError($"System of type {typeof(T).Name} not found!");
             return null;
         }
-
-        // ─── Internal: expose config for systems ──────────────────────────────────
 
         internal GameSystemManagerData Config => config;
     }

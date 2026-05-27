@@ -29,7 +29,6 @@ namespace Dajunctic
         [BoxGroup("Timing")]
         public float combatDuration = 30f;
 
-        // ─── PvE Wave Config ────────────────────────────────────────────────────
         [BoxGroup("PvE Wave"), ShowIf("IsPvE")]
         [InfoBox("Quái sẽ auto-spawn vào GuestFieldArea của từng arena theo SpawnPattern.")]
         public SpawnPattern spawnPattern = SpawnPattern.FrontRow;
@@ -38,10 +37,6 @@ namespace Dajunctic
         [ListDrawerSettings(ShowIndexLabels = true, DraggableItems = true)]
         public List<EnemyWaveEntry> enemyWave = new List<EnemyWaveEntry>();
 
-        /// <summary>
-        /// Nếu true, combat kết thúc sớm khi toàn bộ quái trong wave bị tiêu diệt.
-        /// Nếu false, combat chờ hết combatDuration rồi mới kết thúc.
-        /// </summary>
         [BoxGroup("PvE Wave"), ShowIf("IsPvE")]
         [InfoBox("Khi hết giờ mà quái chưa chết: player bị trừ máu (= damage của quái còn lại).")]
         public bool endWhenEnemiesDead = false;
@@ -49,11 +44,6 @@ namespace Dajunctic
         private bool IsPvE() => roundType == RoundType.PvE_Minion || roundType == RoundType.PvE_Boss;
     }
 
-    // ─── Enemy Wave Entry ────────────────────────────────────────────────────────
-    /// <summary>
-    /// Một loại quái trong wave PvE. Không cần SO riêng — inline trong RoundData.
-    /// CombatActorData chứa maxHp, armor, atk... — dùng DummyActor làm quái OK.
-    /// </summary>
     [Serializable]
     public class EnemyWaveEntry
     {
@@ -65,14 +55,13 @@ namespace Dajunctic
         public int count = 1;
     }
 
-    // ─── Spawn Pattern ───────────────────────────────────────────────────────────
     public enum SpawnPattern
     {
-        /// <summary>Lấp đầy hàng trên cùng của GuestFieldArea từ trái sang phải.</summary>
+        
         FrontRow,
-        /// <summary>Trải đều ngẫu nhiên trên toàn GuestFieldArea.</summary>
+        
         Scattered,
-        /// <summary>Lấp đầy cột giữa.</summary>
+        
         MiddleColumn,
     }
 }

@@ -7,7 +7,6 @@ namespace Dajunctic
     {
         public Dictionary<ulong, PlayerDataSync> AllPlayers = new();
 
-
         public void ApplyDamageToPlayer(ulong clientId, int damage)
         {
             if (AllPlayers.TryGetValue(clientId, out var playerData))

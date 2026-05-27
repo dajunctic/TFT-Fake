@@ -23,7 +23,6 @@ namespace Dajunctic
         {
             Instance = this;
 
-            // Fallback: scan targets already in scene at startup
             var targets = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
             foreach (var target in targets)
             {
@@ -37,14 +36,12 @@ namespace Dajunctic
             if (Instance == this) Instance = null;
         }
 
-        /// <summary>Arena areas gọi Register khi Initialize() để đảm bảo luôn có trong list.</summary>
         public static void Register(IDragTarget target)
         {
             if (Instance != null && !Instance.allTargets.Contains(target))
                 Instance.allTargets.Add(target);
         }
 
-        /// <summary>Gọi khi area bị destroy.</summary>
         public static void Unregister(IDragTarget target)
         {
             Instance?.allTargets.Remove(target);
@@ -72,7 +69,7 @@ namespace Dajunctic
 
         private void TryStartDrag()
         {
-            // Không cho phép kéo thả tướng trong pha combat
+            
             if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat)
                 return;
 
@@ -82,12 +79,11 @@ namespace Dajunctic
             Ray ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 100f, draggableLayer))
             {
-                // Try to get IDraggable from the object or its parents
+                
                 var draggable = hit.collider.GetComponentInParent<IDraggable>();
                 if (draggable != null)
                 {
-                    // Calculate the offset once when we start dragging
-                    // We check where the mouse is on the ground to find the relative offset to the unit's pivot
+
                     if (Physics.Raycast(ray, out RaycastHit groundHit, 100f, groundLayer))
                     {
                         _dragOffset = draggable.GetTransform().position - groundHit.point;

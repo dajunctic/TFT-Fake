@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Dajunctic
 {
-    /// <summary>Distinguishes the purpose of a HexAreaView for colour-coding tiles.</summary>
+    
     public enum HexAreaType
     {
-        /// <summary>Bench — square area, normally not coloured differently.</summary>
+        
         None,
-        /// <summary>The local player's own field rows (front of arena).</summary>
+        
         OwnField,
-        /// <summary>The opponent's field rows (back of arena).</summary>
+        
         GuestField,
     }
 
@@ -27,12 +27,11 @@ namespace Dajunctic
         [Tooltip("Set to OwnField or GuestField to colour-code tiles by spawn area.")]
         [SerializeField] private HexAreaType areaType = HexAreaType.None;
 
-
         [Header("Area Colours")]
         [ColorUsage(true, true)]
-        [SerializeField] private Color ownFieldColor  = new Color(0.0f, 0.6f, 1.0f, 1f);   // blue-cyan
+        [SerializeField] private Color ownFieldColor  = new Color(0.0f, 0.6f, 1.0f, 1f);   
         [ColorUsage(true, true)]
-        [SerializeField] private Color guestFieldColor = new Color(1.0f, 0.25f, 0.1f, 1f); // red-orange
+        [SerializeField] private Color guestFieldColor = new Color(1.0f, 0.25f, 0.1f, 1f); 
 
         private Color NormalColor = Color.cyan;
 
@@ -52,7 +51,6 @@ namespace Dajunctic
             SpawnTiles();
             SetTilesVisible(false);
 
-            // Đăng ký vào DragManager để tiles hiện ra khi drag (dù arena spawn sau DragManager.Awake)
             DragManager.Register(this);
         }
 
@@ -70,7 +68,6 @@ namespace Dajunctic
             _spawnedTiles.Clear();
             _tilesMap.Clear();
 
-            // Clear potential stray children if editor-only
             if (!Application.isPlaying)
             {
                 var children = new List<GameObject>();
@@ -88,11 +85,9 @@ namespace Dajunctic
                 tileInstance.name = $"HexTile_{hex.coordinates.x}_{hex.coordinates.y}";
                 _spawnedTiles.Add(tileInstance);
                 _tilesMap.Add(hex.coordinates, tileInstance);
-                
-                // Initialize first so _originalEmissionColor is captured
+
                 tileInstance.Initialize();
 
-                // Then apply area-type colour so tiles are tinted correctly at runtime
                 if (areaType != HexAreaType.None)
                     tileInstance.SetBaseColor(GetAreaColor());
             }
@@ -100,7 +95,7 @@ namespace Dajunctic
 
         public void OnDragStart()
         {
-            // GuestField không được highlight khi kéo thả tướng — chỉ FieldArea của người chơi mới highlight
+            
             if (areaType == HexAreaType.GuestField) return;
             SetTilesVisible(true);
         }
@@ -128,7 +123,6 @@ namespace Dajunctic
                 _lastHighlighted = null;
             }
 
-            // Use local coordinates to handle rotation and scale
             Vector3 localPos = CachedTransform.InverseTransformPoint(worldPos);
             Vector2Int hexCoords = Data.WorldToHex(localPos, Vector3.zero);
 

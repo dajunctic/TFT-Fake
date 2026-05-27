@@ -13,7 +13,6 @@ namespace Dajunctic.SkillSystem.Editor
         {
             var graphWindow = CreateWindow<SkillGraphWindow>();
 
-            // When the graph will be destroyed by the window
             graphWindow.Show();
 
             return graphWindow;

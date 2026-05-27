@@ -80,7 +80,6 @@ namespace Dajunctic
             EditorGUILayout.EndVertical();
         }
 
-
         void DrawSearch()
         {
             Rect r = GUILayoutUtility.GetRect(0, 26, GUILayout.ExpandWidth(true));

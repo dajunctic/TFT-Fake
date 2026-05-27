@@ -16,7 +16,6 @@ namespace Dajunctic
     {
         private SettingsData _settingsData;
 
-        // Current settings values
         private float _masterVolume = 1f;
         private float _musicVolume = 0.7f;
         private float _sfxVolume = 0.8f;
@@ -28,7 +27,6 @@ namespace Dajunctic
 
         private CursorState _currentCursorState = CursorState.Normal;
 
-        // PlayerPrefs keys
         private const string KEY_MASTER_VOLUME = "Settings.Audio.MasterVolume";
         private const string KEY_MUSIC_VOLUME = "Settings.Audio.MusicVolume";
         private const string KEY_SFX_VOLUME = "Settings.Audio.SFXVolume";
@@ -143,14 +141,13 @@ namespace Dajunctic
 
         private void ApplyMusicVolume()
         {
-            // If you have AudioMixer, set it here
-            // Otherwise, this can be used by your audio manager
+
             this.Raise(new AudioVolumeChangedEvent { VolumeType = "Music", Volume = _musicVolume });
         }
 
         private void ApplySFXVolume()
         {
-            // If you have AudioMixer, set it here
+            
             this.Raise(new AudioVolumeChangedEvent { VolumeType = "SFX", Volume = _sfxVolume });
         }
 
@@ -222,12 +219,11 @@ namespace Dajunctic
 
         public void SaveSettings()
         {
-            // Audio
+            
             PlayerPrefs.SetFloat(KEY_MASTER_VOLUME, _masterVolume);
             PlayerPrefs.SetFloat(KEY_MUSIC_VOLUME, _musicVolume);
             PlayerPrefs.SetFloat(KEY_SFX_VOLUME, _sfxVolume);
 
-            // Graphics
             PlayerPrefs.SetInt(KEY_QUALITY, _qualityLevel);
             PlayerPrefs.SetInt(KEY_RESOLUTION_WIDTH, Screen.width);
             PlayerPrefs.SetInt(KEY_RESOLUTION_HEIGHT, Screen.height);
@@ -235,7 +231,6 @@ namespace Dajunctic
             PlayerPrefs.SetInt(KEY_VSYNC, _vSync ? 1 : 0);
             PlayerPrefs.SetInt(KEY_TARGET_FPS, _targetFrameRate);
 
-            // Gameplay
             PlayerPrefs.SetInt(KEY_CAMERA_SHAKE, _cameraShake ? 1 : 0);
             PlayerPrefs.SetInt(KEY_DAMAGE_NUMBERS, _showDamageNumbers ? 1 : 0);
 
@@ -251,17 +246,14 @@ namespace Dajunctic
                 return;
             }
 
-            // Audio - use _settingsData defaults if not found
             _masterVolume = PlayerPrefs.GetFloat(KEY_MASTER_VOLUME, _settingsData.defaultMasterVolume);
             _musicVolume = PlayerPrefs.GetFloat(KEY_MUSIC_VOLUME, _settingsData.defaultMusicVolume);
             _sfxVolume = PlayerPrefs.GetFloat(KEY_SFX_VOLUME, _settingsData.defaultSFXVolume);
 
-            // Graphics
             _qualityLevel = PlayerPrefs.GetInt(KEY_QUALITY, _settingsData.defaultQualityLevel);
             _vSync = PlayerPrefs.GetInt(KEY_VSYNC, _settingsData.defaultVSync ? 1 : 0) == 1;
             _targetFrameRate = PlayerPrefs.GetInt(KEY_TARGET_FPS, _settingsData.defaultTargetFrameRate);
 
-            // Gameplay
             _cameraShake = PlayerPrefs.GetInt(KEY_CAMERA_SHAKE, _settingsData.defaultCameraShake ? 1 : 0) == 1;
             _showDamageNumbers = PlayerPrefs.GetInt(KEY_DAMAGE_NUMBERS, _settingsData.defaultShowDamageNumbers ? 1 : 0) == 1;
         }
@@ -280,17 +272,15 @@ namespace Dajunctic
 
         private void ApplyAllSettings()
         {
-            // Audio
+            
             ApplyMasterVolume();
             ApplyMusicVolume();
             ApplySFXVolume();
 
-            // Graphics
             QualitySettings.SetQualityLevel(_qualityLevel, true);
             QualitySettings.vSyncCount = _vSync ? 1 : 0;
             Application.targetFrameRate = _targetFrameRate;
 
-            // Mouse cursor
             ApplyCursor();
         }
 
@@ -321,7 +311,6 @@ namespace Dajunctic
         #endregion
     }
 
-    // Events
     public struct SettingsChangedEvent : IEvent
     {
         public string SettingType;

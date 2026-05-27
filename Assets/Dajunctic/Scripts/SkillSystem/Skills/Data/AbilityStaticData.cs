@@ -8,6 +8,5 @@ namespace Dajunctic.SkillSystem.Data
     {
         [SerializeField] public AbilityType abilityType;
 
-       
     }
 }

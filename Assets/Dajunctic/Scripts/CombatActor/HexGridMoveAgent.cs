@@ -25,7 +25,7 @@ namespace Dajunctic
 
         public void Initialize()
         {
-            // Find HexAreaView in parent or scene if not assigned
+            
             _hexArea = GetComponentInParent<HexAreaView>();
             if (_hexArea == null)
             {
@@ -69,9 +69,6 @@ namespace Dajunctic
         {
             transform.position += amount;
         }
-
-
-
 
         public void MovePosition(Vector3 position, float moveSpeed, float rotateSpeed, float stoppingDistance)
         {
@@ -128,7 +125,7 @@ namespace Dajunctic
 
                 foreach (var neighbor in _hexArea.Data.GetNeighbors(current))
                 {
-                    float tentativeGScore = gScore[current] + 1; // Distance between hexes is 1
+                    float tentativeGScore = gScore[current] + 1; 
                     if (!gScore.ContainsKey(neighbor) || tentativeGScore < gScore[neighbor])
                     {
                         cameFrom[neighbor] = current;
@@ -147,7 +144,7 @@ namespace Dajunctic
 
         private float Heuristic(Vector2Int a, Vector2Int b)
         {
-            // Hex distance
+            
             return (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.x + a.y - b.x - b.y) + Mathf.Abs(a.y - b.y)) / 2f;
         }
 
@@ -201,7 +198,6 @@ namespace Dajunctic
         }
     }
 
-    // Simple PriorityQueue implementation
     public class PriorityQueue<TElement, TPriority>
     {
         private List<(TElement element, TPriority priority)> elements = new List<(TElement, TPriority)>();

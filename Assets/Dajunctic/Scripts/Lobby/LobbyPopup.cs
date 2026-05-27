@@ -13,12 +13,11 @@ namespace Dajunctic
         [SerializeField] GameObject notLoginGroup;
         [SerializeField] GameObject loggedInGroup;
 
-        // Not Login Group
         [SerializeField] TMP_InputField ipInputField;
         [SerializeField] TMP_InputField playerNameInputField;
         [SerializeField] GameObject hostButton;
         [SerializeField] GameObject clientButton;
-        // Login Group
+        
         [SerializeField] TMP_Text ipAddress;
         [SerializeField] GameObject waitingTxt;
         [SerializeField] GameObject startGameButton;
@@ -33,13 +32,11 @@ namespace Dajunctic
         {
             if (ipInputField != null) ipInputField.text = "127.0.0.1";
 
-            // Xoá bất kỳ child còn sót lại trong container
             for (var i = playerListContainer.childCount - 1; i >= 0; i--)
             {
                 Destroy(playerListContainer.GetChild(i).gameObject);
             }
 
-            // Đảm bảo luôn có Dummy scene chạy ngầm để FishNet không crash khi Unload LobbyScene
             UnityEngine.SceneManagement.SceneManager.LoadSceneAsync("Dummy", UnityEngine.SceneManagement.LoadSceneMode.Additive);
 
             OnChanged();
@@ -47,7 +44,7 @@ namespace Dajunctic
 
         public override void ListenEvents()
         {
-            // Lắng nghe khi LobbyNetworkManager spawn xong
+            
             LobbyNetworkManager.OnManagerSpawned += OnManagerReady;
 
             if (LobbyNetworkManager.Instance != null)
@@ -88,18 +85,16 @@ namespace Dajunctic
 
         private void SubscribeToPlayerList()
         {
-            // Gỡ trước để tránh duplicate
+            
             LobbyNetworkManager.Instance.Players.OnChange -= OnPlayerListChanged;
             LobbyNetworkManager.Instance.Players.OnChange += OnPlayerListChanged;
         }
 
         private void OnPlayerListChanged(SyncListOperation op, int index, LobbyPlayerData oldItem, LobbyPlayerData newItem, bool asServer)
         {
-            // Bất kỳ thay đổi nào (thêm/xoá/sửa) đều rebuild UI
+            
             if (isLogin) UpdateLobby();
         }
-
-        // ── Host / Join ──────────────────────────────────────────────────────────
 
         public void HostGame()
         {
@@ -135,11 +130,10 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>Parse "ip" or "ip:port" from the input field.</summary>
         private void ParseIpPort(out string ip, out ushort port)
         {
             string raw = ipInputField != null ? ipInputField.text.Trim() : "127.0.0.1";
-            port = 7770; // Tugboat default
+            port = 7770; 
 
             int colonIdx = raw.LastIndexOf(':');
             if (colonIdx >= 0 && ushort.TryParse(raw.Substring(colonIdx + 1), out ushort parsedPort))
@@ -153,7 +147,6 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>Apply IP and port to Tugboat transport before connecting.</summary>
         private void ApplyTransportSettings(string ip, ushort port)
         {
             var transport = InstanceFinder.NetworkManager?.TransportManager?.Transport;
@@ -183,7 +176,7 @@ namespace Dajunctic
                 string sceneName = homeScene != null && homeScene.RuntimeKeyIsValid() ? homeScene.RuntimeKey.ToString() : "HomeScene";
 #endif
                 var sld = new FishNet.Managing.Scened.SceneLoadData(sceneName);
-                sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.None; // Tránh lỗi unload scene cuối cùng
+                sld.ReplaceScenes = FishNet.Managing.Scened.ReplaceOption.None; 
                 
                 InstanceFinder.SceneManager.LoadGlobalScenes(sld);
             }
@@ -191,16 +184,15 @@ namespace Dajunctic
 
         private void OnHomeSceneLoaded(FishNet.Managing.Scened.SceneLoadEndEventArgs args)
         {
-            // Kiểm tra xem đã load xong HomeScene chưa
+            
             foreach (var scene in args.LoadedScenes)
             {
                 if (scene.name.Contains("HomeScene"))
                 {
                     InstanceFinder.SceneManager.OnLoadEnd -= OnHomeSceneLoaded;
-                    // Bây giờ HomeScene đã load xong (không còn là scene cuối cùng nữa), có thể unload LauncherScene an toàn
-                    AddressableUtils.UnloadCurrentScene();
                     
-                    // Xóa Dummy scene
+                    AddressableUtils.UnloadCurrentScene();
+
                     UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync("Dummy");
                     break;
                 }
@@ -209,7 +201,7 @@ namespace Dajunctic
 
         private void OnClientConnectionState(ClientConnectionStateArgs args)
         {
-            // When client fails to connect (e.g. port busy, host unreachable), reset to login screen
+            
             if (args.ConnectionState == LocalConnectionState.Stopped && isLogin && !InstanceFinder.IsServerStarted)
             {
                 isLogin = false;
@@ -220,11 +212,9 @@ namespace Dajunctic
 
         private void OnServerConnectionState(ServerConnectionStateArgs args)
         {
-            // Server started successfully — refresh UI to show Start Game button
+            
             if (isLogin) OnChanged();
         }
-
-        // ── UI ──────────────────────────────────────────────────────────────────
 
         private void OnChanged()
         {
@@ -260,7 +250,7 @@ namespace Dajunctic
 
         private void UpdateLobby()
         {
-            // Xoá UI cũ
+            
             foreach (var ui in lobbyPlayerUIs)
             {
                 if (ui != null) Destroy(ui.gameObject);
@@ -269,7 +259,6 @@ namespace Dajunctic
 
             if (LobbyNetworkManager.Instance == null) return;
 
-            // Duyệt SyncList
             foreach (var data in LobbyNetworkManager.Instance.Players)
             {
                 var player = new LobbyPlayer(data.ClientId, data.PlayerName, data.PlayerIndex, data.IsHost);

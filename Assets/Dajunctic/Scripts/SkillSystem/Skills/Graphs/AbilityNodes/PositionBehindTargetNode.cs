@@ -13,4 +13,3 @@ namespace Dajunctic.SkillSystem.Logic
         [GraphProcessor.Output] public Vector3 outDirection;
     }
 }
-

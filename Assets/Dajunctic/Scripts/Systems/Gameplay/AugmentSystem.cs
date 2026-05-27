@@ -13,7 +13,7 @@ namespace Dajunctic
 
         public async Task LoadDataAsync()
         {
-            // In a real project, load all AugmentData via Addressables
+            
             await Task.CompletedTask;
         }
 
@@ -37,8 +37,7 @@ namespace Dajunctic
         public void ShowAugmentSelection()
         {
             Debug.Log("<color=orange>AugmentSystem: Showing Augment Selection!</color>");
-            // Trigger UI Popup (Phase 3 UI work)
-            // this.Raise(new ShowPopupEvent { PopupType = typeof(AugmentPopup) });
+
         }
 
         public void SelectAugment(AugmentData data)
@@ -50,9 +49,7 @@ namespace Dajunctic
 
         private void ApplyAugmentEffect(AugmentData data)
         {
-           
-            
-            // Additional effects (Trait boosts, HP) would be implemented here
+
         }
 
         public void Shutdown()

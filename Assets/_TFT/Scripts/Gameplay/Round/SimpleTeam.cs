@@ -2,10 +2,7 @@ using System.Collections.Generic;
 
 namespace Dajunctic
 {
-    /// <summary>
-    /// ICombatTeam wrapper đơn giản dùng cho PvE wave.
-    /// Champion nhận team này làm EnemyTeam để BT tìm được DummyActor.
-    /// </summary>
+
     public class SimpleTeam : ICombatTeam
     {
         private readonly List<IDamageTaker> _members = new List<IDamageTaker>();

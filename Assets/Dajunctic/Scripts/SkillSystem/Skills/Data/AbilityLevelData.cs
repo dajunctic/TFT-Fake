@@ -7,7 +7,6 @@ using GraphProcessor;
 using UnityEditor;
 #endif
 
-
 namespace Dajunctic.SkillSystem.Data
 {
     [Serializable]
@@ -102,4 +101,3 @@ namespace Dajunctic.SkillSystem.Data
         Energy,
     }
 }
-

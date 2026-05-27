@@ -17,7 +17,7 @@ namespace Dajunctic
         [Range(0f, 1f)] public float defaultSFXVolume = 0.8f;
 
         [Header("Default Graphics Settings")]
-        public int defaultQualityLevel = 2; // Medium
+        public int defaultQualityLevel = 2; 
         public int defaultTargetFrameRate = 60;
         public bool defaultVSync = true;
 

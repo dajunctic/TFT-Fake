@@ -122,7 +122,7 @@ namespace Dajunctic
 
         void Update()
         {
-            // Tick();
+            
         }
 
         public virtual void Tick()

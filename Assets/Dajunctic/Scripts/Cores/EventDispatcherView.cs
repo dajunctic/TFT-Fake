@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace Dajunctic
 {
     public class EventDispatcherView : Singleton<EventDispatcherView>

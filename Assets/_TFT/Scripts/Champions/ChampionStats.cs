@@ -41,7 +41,7 @@ namespace Dajunctic
 
             StartingMana = new BaseStat(s.startingMana);
             MaxMana = new BaseStat(s.maxMana);
-            ManaPerAttack = new BaseStat(10); // Default TFT value
+            ManaPerAttack = new BaseStat(10); 
 
             Omnivamp = new BaseStat(0);
             DamageReduction = new BaseStat(0);

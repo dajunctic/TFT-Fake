@@ -60,7 +60,6 @@ namespace Dajunctic
         {
             if (!_isShowing) return;
 
-            // Check if mouse is over the tooltip OR the triggering icon
             bool overTooltip = RectTransformUtility.RectangleContainsScreenPoint(_rectTransform, Input.mousePosition, 
                 _parentCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _parentCanvas.worldCamera);
             
@@ -106,39 +105,22 @@ namespace Dajunctic
             Vector2 panelSize = _rectTransform.rect.size;
             Vector2 canvasSize = _canvasRectTransform.rect.size;
             Vector2 pivot = _rectTransform.pivot;
-            
-            // Goal: Place the RIGHT edge of the tooltip to the LEFT of the cursor
-            // targetPos is the anchoredPosition (the pivot point)
-            // pivot.x = 0 means targetPos is the left edge
-            // pivot.x = 1 means targetPos is the right edge
-            // pivot.x = 0.5 means targetPos is the center
-            
-            // To put the right edge at (cursor.x - offset.x):
-            // RightEdge = targetPos.x + (1 - pivot.x) * panelSize.x
-            // targetPos.x = (cursor.x - offset.x) - (1 - pivot.x) * panelSize.x
-            
+
             float targetX = (cursorLocalPoint.x - offset.x) - (1 - pivot.x) * panelSize.x;
-            
-            // Center the tooltip vertically relative to cursor, accounting for pivot
-            // CenterY = targetPos.y + (0.5 - pivot.y) * panelSize.y
-            // targetPos.y = cursor.y - (0.5 - pivot.y) * panelSize.y
+
             float targetY = cursorLocalPoint.y - (0.5f - pivot.y) * panelSize.y;
 
             Vector2 targetPos = new Vector2(targetX, targetY);
 
-            // Check boundaries (clamping)
             float leftEdge = targetPos.x - pivot.x * panelSize.x;
             float canvasLeft = -canvasSize.x * 0.5f;
-            
-            // If it goes off the left edge, flip to the right side
+
             if (leftEdge < canvasLeft) 
             {
-                // LeftEdge of tooltip = cursor.x + offset.x
-                // targetPos.x - pivot.x * panelSize.x = cursor.x + offset.x
+
                 targetPos.x = cursorLocalPoint.x + offset.x + pivot.x * panelSize.x;
             }
 
-            // Vertical clamping
             float halfCanvasHeight = canvasSize.y * 0.5f;
             float topEdge = targetPos.y + (1 - pivot.y) * panelSize.y;
             float bottomEdge = targetPos.y - pivot.y * panelSize.y;
@@ -147,12 +129,11 @@ namespace Dajunctic
                 targetPos.y -= (topEdge - halfCanvasHeight + 10f);
             if (bottomEdge < -halfCanvasHeight)
                 targetPos.y += (-halfCanvasHeight - bottomEdge + 10f);
-            
-            // Re-check left/right flip with more margin to avoid overlap
+
             float currentLeftEdge = targetPos.x - pivot.x * panelSize.x;
             if (currentLeftEdge < -canvasSize.x * 0.5f)
             {
-                // Move it sufficiently to the right of the trigger icon
+                
                 targetPos.x = cursorLocalPoint.x + offset.x + 40f + pivot.x * panelSize.x;
             }
 
@@ -166,15 +147,12 @@ namespace Dajunctic
             _isShowing = true;
             SetVisible(true);
 
-            // Set icon
             if (traitIcon != null && trait.Icon != null)
                 traitIcon.sprite = trait.Icon;
 
-            // Set name
             if (traitNameText != null)
                 traitNameText.text = trait.DisplayName;
 
-            // Build description text
             if (traitDescriptionText != null)
             {
                 var activeTier = trait.Tiers
@@ -186,16 +164,13 @@ namespace Dajunctic
                 traitDescriptionText.text = desc;
             }
 
-            // Build tier milestones text
             if (tierDescriptionText != null)
             {
                 tierDescriptionText.text = BuildTierText(trait, count);
             }
 
-            // Populate champion icons
             PopulateChampionIcons(trait);
 
-            // Immediately position at current mouse
             UpdatePosition(Input.mousePosition);
         }
 
@@ -210,7 +185,7 @@ namespace Dajunctic
             if (_canvasGroup == null) return;
             _canvasGroup.alpha = visible ? 1f : 0f;
             _canvasGroup.interactable = visible; 
-            _canvasGroup.blocksRaycasts = visible; // Enable raycasts when visible to detect mouse exit
+            _canvasGroup.blocksRaycasts = visible; 
         }
 
         private string BuildTierText(TraitData trait, int currentCount)
@@ -307,7 +282,6 @@ namespace Dajunctic
         }
     }
 
-    // Events for trait hover
     public struct TraitHoverEvent : IEvent
     {
         public TraitData Trait;

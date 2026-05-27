@@ -41,8 +41,7 @@ namespace Dajunctic
 
         protected override void Awake()
         {
-            // Bypass BaseView.Awake() to prevent the "initialize" flag from firing Initialize() too early.
-            // This ensures network values (CombatActorData, StarLevel) are set before HpView is spawned.
+
             if (Application.isPlaying && TickerView.Instance != null)
             {
                 ticker = TickerView.Instance.ticker;
@@ -94,7 +93,7 @@ namespace Dajunctic
 
             if (GameSystemManager.Instance.Bench.TrySnapToBench(finalPos, out Vector2Int newBenchCoord, out int benchArenaId))
             {
-                // For now, only allow dropping on own bench if it's our unit
+                
                 if (benchArenaId == OwnerID)
                     HandleBenchDrop(newBenchCoord, benchArenaId);
                 else
@@ -171,7 +170,6 @@ namespace Dajunctic
             GameSystemManager.Instance.Field.RegisterHeroToTile(this, newFieldCoord, arenaId);
             FinalizePlacement(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, newFieldCoord), arenaId);
 
-            // Nếu đang trong pha Combat PvE, gán EnemyTeam ngay để BT tìm được target
             if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat
                 && PveWaveSpawner.Instance != null)
             {
@@ -190,10 +188,6 @@ namespace Dajunctic
             if (GameSystemManager.Instance.Field != null) GameSystemManager.Instance.Field.UnregisterHero(this);
         }
 
-        /// <summary>
-        /// Move the occupant to where THIS unit was before dragging.
-        /// RegisterHeroToTile handles cross-zone coord cleanup automatically.
-        /// </summary>
         private void SwapOccupant(ChampionActor occupant, int arenaId)
         {
             if (IsOnBench)
@@ -221,7 +215,7 @@ namespace Dajunctic
         public void ResetPosition()
         {
             _isDragging = false;
-            // Restore original IDs
+            
             CurrentBenchCoord = _originalBenchCoord;
             CurrentFieldCoord = _originalFieldCoord;
 
@@ -264,8 +258,6 @@ namespace Dajunctic
                     }
                 }
 
-                // if (GameSystemManager.Instance.Economy != null) GameSystemManager.Instance.Economy.AddGold(refundGold);
-
                 Debug.Log($"Sold {heroData.displayName} ({StarLevel}★) for {refundGold} gold");
                 this.Raise(new HeroSoldEvent { Hero = heroData, GoldRefunded = refundGold });
                 Destroy(gameObject);
@@ -276,9 +268,6 @@ namespace Dajunctic
             }
         }
 
-        /// <summary>
-        /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9 
-        /// </summary>
         public int GetSellValue()
         {
             if (CombatActorData is ChampionData heroData)
@@ -288,9 +277,6 @@ namespace Dajunctic
             return 0;
         }
 
-        /// <summary>
-        /// Calculate sell value: 1★ = rarity, 2★ = rarity×3, 3★ = rarity×9
-        /// </summary>
         public int GetSellValue(ChampionData heroData)
         {
             if (StarLevel == 1) return heroData.rarity;
@@ -370,6 +356,5 @@ namespace Dajunctic
             base.OnDestroy();
         }
     }
-
 
 }

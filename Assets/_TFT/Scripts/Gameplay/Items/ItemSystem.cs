@@ -54,7 +54,7 @@ namespace Dajunctic
 
         private void SpawnItemOnBench(ItemData item, int slotIndex)
         {
-            if (GameplayPopup.Instance == null) return; // Don't spawn if UI is closed
+            if (GameplayPopup.Instance == null) return; 
 
             var benchPositions = GameplayPopup.Instance.ItemBenchPositions;
             if (_data == null || _data.draggableItemPrefab == null)
@@ -71,10 +71,8 @@ namespace Dajunctic
 
             Transform parentSlot = benchPositions[slotIndex];
 
-            // Instantiate perfectly inside the UI slot
             DraggableItem instance = Instantiate(_data.draggableItemPrefab, parentSlot);
 
-            // Reset local position and scale for UI elements
             instance.transform.localPosition = Vector3.zero;
             instance.transform.localScale = Vector3.one;
 
@@ -111,7 +109,6 @@ namespace Dajunctic
 
                 _itemBench.RemoveAt(index);
 
-                // Rearrange remaining items
                 RearrangeBench();
 
                 this.Raise(new ItemBenchChangedEvent());
@@ -140,20 +137,17 @@ namespace Dajunctic
             ItemData item = instance.ItemData;
             if (item == null) return false;
 
-            // Logic for giving/combining items
-            // 1. Get the hero's item container
             ItemContainer container = hero.GetComponent<ItemContainer>();
             if (container == null)
             {
                 container = hero.gameObject.AddComponent<ItemContainer>();
             }
-            // Always ensure it's initialized with the hero reference
+            
             container.Initialize(hero);
 
-            // 2. Try to add or combine
             if (container.TryAddItem(item, _data != null ? _data.recipeDatabase : null))
             {
-                // Find and remove from bench by instance to handle duplicates correctly
+                
                 int index = _spawnedItems.IndexOf(instance);
                 if (index != -1)
                 {
@@ -161,7 +155,6 @@ namespace Dajunctic
                     _spawnedItems.RemoveAt(index);
                 }
 
-                // Item successfully consumed
                 Destroy(instance.gameObject);
 
                 RearrangeBench();
@@ -189,7 +182,7 @@ namespace Dajunctic
 
         private void Update()
         {
-            // Kiểm tra xem có đang focus vào UI Input không
+            
             if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
             {
                 var input = EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>();
@@ -199,10 +192,9 @@ namespace Dajunctic
                 if (inputLegacy != null && inputLegacy.isFocused) return;
             }
 
-            // Press 'I' to spawn a random item for testing
             if (Input.GetKeyDown(KeyCode.I))
             {
-                // Debug.LogError("Spawning random item for testing...");
+                
                 DebugSpawnRandomItem();
             }
         }

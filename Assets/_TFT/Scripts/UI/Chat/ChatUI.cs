@@ -25,10 +25,8 @@ namespace Dajunctic
         private List<ChatMessageUI> _activeMessages = new List<ChatMessageUI>();
         private bool _isFocused;
 
-        /// <summary>true = fully open (user explicitly opened, input active); false = fully closed.</summary>
         private bool _isOpen;
 
-        /// <summary>true = temporarily visible due to incoming message; will auto-hide.</summary>
         private bool _isAutoShowing;
 
         private Coroutine _autoHideCoroutine;
@@ -41,7 +39,6 @@ namespace Dajunctic
             inputField.onDeselect.AddListener(_ => OnInputFocus(false));
             inputField.onSubmit.AddListener(OnSubmit);
 
-            // Start closed
             _isOpen = false;
             _isAutoShowing = false;
             UpdateLayout();
@@ -67,20 +64,20 @@ namespace Dajunctic
 
                 if (!isVisible)
                 {
-                    // Hoàn toàn ẩn → mở ra
+                    
                     OpenManually();
                 }
                 else if (string.IsNullOrWhiteSpace(inputField.text))
                 {
-                    // Đang hiển thị (bất kỳ dạng nào) + Enter + không có text → ẩn đi
+                    
                     CloseChat();
                 }
                 else if (!_isOpen)
                 {
-                    // Auto-showing và có text → mở để gõ tiếp
+                    
                     OpenManually();
                 }
-                // else: đang mở + focused + có text → OnSubmit xử lý
+                
             }
         }
 
@@ -90,14 +87,10 @@ namespace Dajunctic
             inputField.Select();
         }
 
-        // ── Message received ─────────────────────────────────────────────────
-
         private void OnMessageReceived(ChatMessageEvent evt)
         {
             AddMessage(evt.Message);
 
-            // Auto-show when closed and the message is from another player
-            // (skip System messages so the welcome message doesn't force-open the UI)
             if (!_isOpen && evt.Message.Type != ChatMessageType.System)
             {
                 AutoShow();
@@ -132,14 +125,11 @@ namespace Dajunctic
             }
         }
 
-        // ── Auto-show (read-only, timed) ─────────────────────────────────────
-
         private void AutoShow()
         {
             _isAutoShowing = true;
             UpdateLayout();
 
-            // Reset timer on each new incoming message
             if (_autoHideCoroutine != null) StopCoroutine(_autoHideCoroutine);
             _autoHideCoroutine = StartCoroutine(AutoHideCoroutine());
         }
@@ -148,7 +138,6 @@ namespace Dajunctic
         {
             yield return new WaitForSeconds(autoHideDelay);
 
-            // Only hide if the user hasn't manually opened the chat
             if (!_isOpen)
             {
                 _isAutoShowing = false;
@@ -157,11 +146,9 @@ namespace Dajunctic
             _autoHideCoroutine = null;
         }
 
-        // ── Manual open ──────────────────────────────────────────────────────
-
         private void OpenManually()
         {
-            // Cancel auto-hide — user is taking control
+            
             if (_autoHideCoroutine != null)
             {
                 StopCoroutine(_autoHideCoroutine);
@@ -173,8 +160,6 @@ namespace Dajunctic
             UpdateLayout();
             FocusChat();
         }
-
-        // ── Submit (Enter key while focused) ─────────────────────────────────
 
         private void OnSubmit(string text)
         {
@@ -209,15 +194,12 @@ namespace Dajunctic
             _isFocused = focused;
         }
 
-        // ── Layout ───────────────────────────────────────────────────────────
-
         private void UpdateLayout()
         {
             bool visible = _isOpen || _isAutoShowing;
 
             chatGroup.alpha = visible ? 1f : 0f;
 
-            // Input is only interactive when the user explicitly opened the chat
             chatGroup.interactable = _isOpen;
             chatGroup.blocksRaycasts = _isOpen;
         }

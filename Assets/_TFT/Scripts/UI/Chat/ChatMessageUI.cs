@@ -19,9 +19,9 @@ namespace Dajunctic
         {
             return type switch
             {
-                ChatMessageType.System => "#FFD700", // Gold
-                ChatMessageType.Whisper => "#FF00FF", // Magenta
-                _ => "#00FFFF" // Cyan/Global
+                ChatMessageType.System => "#FFD700", 
+                ChatMessageType.Whisper => "#FF00FF", 
+                _ => "#00FFFF" 
             };
         }
     }

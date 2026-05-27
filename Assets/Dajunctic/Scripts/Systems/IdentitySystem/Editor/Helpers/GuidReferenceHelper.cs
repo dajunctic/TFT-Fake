@@ -138,7 +138,6 @@ namespace Dajunctic
                         }
                     }
 
-                    
                 }
             }
         }
@@ -175,7 +174,6 @@ namespace Dajunctic
         {
             var idToAssetsMap = new Dictionary<string, List<Object>>();
 
-            // Collect all AssetIds
             var assetGuids = AssetDatabase.FindAssets($"t:{typeof(AssetId).FullName}").Distinct().ToArray();
             foreach (var guid in assetGuids)
             {
@@ -200,7 +198,6 @@ namespace Dajunctic
                 }
             }
 
-            // Collect all DummyIds
             var dbGuids = AssetDatabase.FindAssets($"t:{typeof(IdDatabase).FullName}").Distinct().ToArray();
             foreach (var guid in dbGuids)
             {
@@ -224,7 +221,6 @@ namespace Dajunctic
                 }
             }
 
-            // Report duplicates
             foreach (var kvp in idToAssetsMap.Where(kvp => kvp.Value.Count > 1))
             {
                 var distinctAssets = kvp.Value.Distinct().ToList();

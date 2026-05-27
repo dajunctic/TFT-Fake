@@ -27,7 +27,6 @@ namespace Dajunctic
             }
         }
 
-
         public static async Task LoadSceneAsync(AssetReference sceneRef, Action onCompleted=null, Action<float> onProgress=null, Action onFailed=null)
         {
             if (currentSceneHandle.IsValid())

@@ -7,11 +7,7 @@ using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
 {
-    /// <summary>
-    /// A node type that only run 1 time each time <see cref="IAbilityEntity"/> play.
-    /// All inNode must be completed to run.
-    /// Notify all outNode when completed.
-    /// </summary>
+
     [System.Serializable]
     public abstract class AbilityNode: BaseNode
     {
@@ -180,9 +176,6 @@ namespace Dajunctic.SkillSystem.Logic
 
         protected virtual void StopInternal() { }
 
-        /// <summary>
-        /// Always call when a ability stop
-        /// </summary>
         public virtual void OnAbilityStop() { }
 
         public void Cleanup()
@@ -222,4 +215,3 @@ namespace Dajunctic.SkillSystem.Logic
         }
     }
 }
-

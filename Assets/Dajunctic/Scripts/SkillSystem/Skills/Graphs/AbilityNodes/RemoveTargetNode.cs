@@ -12,4 +12,3 @@ namespace Dajunctic.SkillSystem.Logic
         [GraphProcessor.Output] public List<IDamageTaker> outTargets;
     }
 }
-
