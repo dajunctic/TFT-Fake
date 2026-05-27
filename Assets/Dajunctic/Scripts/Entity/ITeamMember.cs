@@ -1,7 +1,8 @@
 namespace Dajunctic
 {
-    public interface ITeamMemeber
+    public interface ITeamMember
     {
-        public Team CombatTeam{ get; }
+        Team CombatTeam { get; }
+        ICombatTeam EnemyTeam { get; }
     }
 }
