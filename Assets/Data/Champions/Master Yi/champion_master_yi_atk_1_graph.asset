@@ -168,14 +168,14 @@ MonoBehaviour:
         computeOrder: 0
         position:
           serializedVersion: 2
-          x: -280.95657
-          y: -185.95653
-          width: 193.00002
+          x: -270
+          y: -184
+          width: 193
           height: 166
         expanded: 0
         debug: 0
         nodeLock: 0
-        radius: 1
+        radius: 2
         targets: []
         mainTarget:
           rid: -2

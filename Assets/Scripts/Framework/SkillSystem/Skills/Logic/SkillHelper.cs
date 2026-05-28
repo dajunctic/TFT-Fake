@@ -28,12 +28,12 @@ namespace Dajunctic.SkillSystem.Logic
                 )
                 {
                     var pos = allTargets[i].Position;
-                    if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                    if (Mathf.Abs(pos.y - finderPosition.y) > Mathf.Abs(minHeighCheck))
                     {
                         continue;
                     }
                     var dist =
-                        MathUtils.SqrDistance(finderPosition, pos) - allTargets[i].CombatRadius;
+                        MathUtils.Distance(finderPosition, pos) - allTargets[i].CombatRadius;
                     if (maxDist < dist)
                     {
                         maxDist = dist;
@@ -47,29 +47,68 @@ namespace Dajunctic.SkillSystem.Logic
         public static IDamageTaker FindNearestTarget(
             Vector3 finderPosition,
             List<IDamageTaker> allTargets,
-            float minHeighCheck = GameConfig.MIN_HEIGH_CHECK
+            float minHeighCheck = GameConfig.MIN_HEIGH_CHECK,
+            bool enableDebug = false
         )
         {
+            if (enableDebug)
+            {
+                UnityEngine.Debug.Log($"[FindNearestTarget] FinderPosition: {finderPosition}, Targets Count: {allTargets.Count}, minHeighCheck: {minHeighCheck}");
+            }
+
             _cachedDamageTaker = null;
             var minDist = Mathf.Infinity;
             for (var i = 0; i < allTargets.Count; i++)
             {
-                if (allTargets[i] != null && allTargets[i].CanBeTarget)
+                var target = allTargets[i];
+                if (target != null && target.CanBeTarget)
                 {
-                    var pos = allTargets[i].Position;
-                    if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                    var pos = target.Position;
+                    var heightDiff = Mathf.Abs(pos.y - finderPosition.y);
+                    var allowedHeight = Mathf.Abs(minHeighCheck);
+                    
+                    if (heightDiff > allowedHeight)
                     {
+                        if (enableDebug)
+                        {
+                            UnityEngine.Debug.Log($"  -> Target index {i} ({target.Id}) REJECTED by height check. HeightDiff: {heightDiff} > {allowedHeight}");
+                        }
                         continue;
                     }
-                    var dist =
-                        MathUtils.SqrDistance(finderPosition, pos) - allTargets[i].CombatRadius;
+                    
+                    var rawDist = MathUtils.Distance(finderPosition, pos);
+                    var dist = rawDist - target.CombatRadius;
+                    
+                    if (enableDebug)
+                    {
+                        UnityEngine.Debug.Log($"  -> Target index {i} ({target.Id}): Position: {pos}, CombatRadius: {target.CombatRadius}, LinearDistance: {rawDist}, FinalDist: {dist}");
+                    }
+
                     if (minDist > dist)
                     {
                         minDist = dist;
-                        _cachedDamageTaker = allTargets[i];
+                        _cachedDamageTaker = target;
+                        
+                        if (enableDebug)
+                        {
+                            UnityEngine.Debug.Log($"     [New Nearest] Target index {i} ({target.Id}) is now the closest with distance {dist}");
+                        }
+                    }
+                }
+                else
+                {
+                    if (enableDebug && target != null)
+                    {
+                        UnityEngine.Debug.Log($"  -> Target index {i} ({target.Id}) is not valid (CanBeTarget is false)");
                     }
                 }
             }
+            
+            if (enableDebug)
+            {
+                UnityEngine.Debug.Log($"[FindNearestTarget] Selected target: {(_cachedDamageTaker != null ? _cachedDamageTaker.Id : "NONE")}");
+            }
+
             return _cachedDamageTaker;
         }
 
@@ -268,7 +307,7 @@ namespace Dajunctic.SkillSystem.Logic
                     continue;
                 }
                 var pos = team.Members[i].Position;
-                if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                if (Mathf.Abs(pos.y - finderPosition.y) > Mathf.Abs(minHeighCheck))
                 {
                     continue;
                 }
@@ -311,7 +350,7 @@ namespace Dajunctic.SkillSystem.Logic
                     continue;
                 }
                 var pos = team.Members[i].Position;
-                if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                if (Mathf.Abs(pos.y - finderPosition.y) > Mathf.Abs(minHeighCheck))
                 {
                     continue;
                 }
@@ -360,7 +399,7 @@ namespace Dajunctic.SkillSystem.Logic
                     continue;
                 }
                 var pos = team.Members[i].Position;
-                if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                if (Mathf.Abs(pos.y - finderPosition.y) > Mathf.Abs(minHeighCheck))
                 {
                     continue;
                 }
@@ -421,7 +460,7 @@ namespace Dajunctic.SkillSystem.Logic
                 }
                 var pos = team.Members[i].Position;
                 var radius = team.Members[i].CombatRadius;
-                if (Mathf.Abs(pos.y - center.y) > minHeighCheck)
+                if (Mathf.Abs(pos.y - center.y) > Mathf.Abs(minHeighCheck))
                 {
                     continue;
                 }
@@ -484,13 +523,13 @@ namespace Dajunctic.SkillSystem.Logic
                     continue;
                 }
                 var pos = team.Members[i].Position;
-                if (Mathf.Abs(pos.y - finderPosition.y) > minHeighCheck)
+                if (Mathf.Abs(pos.y - finderPosition.y) > Mathf.Abs(minHeighCheck))
                 {
                     continue;
                 }
                 var dist =
-                    MathUtils.SqrDistance(finderPosition, pos) - team.Members[i].CombatRadius;
-                if (dist >= innerRange * innerRange && dist <= outerRange * outerRange)
+                    MathUtils.Distance(finderPosition, pos) - team.Members[i].CombatRadius;
+                if (dist >= innerRange && dist <= outerRange)
                 {
                     if (excepts == null || !excepts.Contains(team.Members[i]))
                     {
