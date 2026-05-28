@@ -15,7 +15,7 @@ namespace Dajunctic.SkillSystem.Logic
         protected List<IDamageTaker> _cachedTargets = new List<IDamageTaker>();
         protected IDamageTaker _cachedMainTarget;
 
-        protected IDamageTaker GetMainTarget()
+        protected virtual IDamageTaker GetMainTarget()
         {
             FindTargetInRadius();
             _cachedMainTarget = SkillHelper.FindNearestTarget(Owner.AsTransform().Position, _cachedTargets);
