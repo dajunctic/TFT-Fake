@@ -138,7 +138,7 @@ namespace Dajunctic
             SyncEntity();
         }
 
-        void EvaluateGambits()
+        protected virtual void EvaluateGambits()
         {
             if (_activeGambits.Count == 0)
             {
@@ -389,7 +389,7 @@ namespace Dajunctic
             _energy = Stats.StartingMana.Value;
         }
 
-        public void TakeDamage(CombineDamage combineDamage)
+        public virtual void TakeDamage(CombineDamage combineDamage)
         {
             float finalDamage = 0f;
 
@@ -523,6 +523,11 @@ namespace Dajunctic
             }
 
             TakeDamage(combineDamage);
+
+            // Invoke C# event and raise global damage event
+            OnDamageTakenEvent?.Invoke(damage);
+            this.Raise(new DamageTakenGlobalEvent { Target = this, Damage = damage, FinalDamage = finalDamage });
+
             return finalDamage;
         }
 

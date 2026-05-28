@@ -116,5 +116,31 @@ namespace Dajunctic
                 }
             }
         }
+
+        [ObserversRpc(RunLocally = true, BufferLast = true)]
+        public void RpcUpdateCoordinates(Vector2Int benchCoord, Vector2Int fieldCoord, Vector3 position)
+        {
+            if (_actor == null) _actor = GetComponent<ChampionActor>();
+            if (_actor == null) return;
+
+            if (GameSystemManager.Instance != null)
+            {
+                if (benchCoord.x != -1)
+                {
+                    GameSystemManager.Instance.Bench?.RegisterHeroToTile(_actor, benchCoord, _actor.OwnerID);
+                }
+                else if (fieldCoord.x != -1)
+                {
+                    GameSystemManager.Instance.Field?.RegisterHeroToTile(_actor, fieldCoord, _actor.OwnerID);
+                }
+            }
+
+            _actor.Teleport(position, false);
+            if (_actor.MoveAgent != null)
+            {
+                _actor.MoveAgent.SetEnable(true);
+                _actor.MoveAgent.Warp(position);
+            }
+        }
     }
 }

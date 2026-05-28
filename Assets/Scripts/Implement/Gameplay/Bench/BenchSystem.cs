@@ -41,6 +41,15 @@ namespace Dajunctic
             _arenas.Clear();
         }
 
+        public List<ChampionActor> GetHeroesOnBench(int ownerId)
+        {
+            if (_heroesOnArenas.TryGetValue(ownerId, out var heroes))
+            {
+                return heroes.Values.Where(h => h != null).ToList();
+            }
+            return new List<ChampionActor>();
+        }
+
         public bool HasEmptySlot(int ownerId)
         {
             return GetFirstEmptyTileCoord(ownerId).y >= 0;

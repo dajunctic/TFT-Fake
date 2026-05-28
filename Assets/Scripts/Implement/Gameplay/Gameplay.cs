@@ -126,6 +126,18 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Combat)
             {
+                var playerSystem = GameSystemManager.Instance.Player;
+                if (playerSystem != null)
+                {
+                    foreach (var player in playerSystem.Players)
+                    {
+                        if (player.HP > 0)
+                        {
+                            AutoDeployBenchUnits(player.Id);
+                        }
+                    }
+                }
+
                 var roundData = RoundSys?.CurrentRoundData;
                 bool isPvE = roundData != null &&
                              (roundData.roundType == RoundType.PvE_Minion ||
@@ -271,6 +283,56 @@ namespace Dajunctic
                     playerSystem.ApplyDamage(pair.GuestId, damage);
                     Debug.Log($"[Gameplay] Player {pair.GuestId} lost PvP as guest. Taking {damage} damage.");
                 }
+            }
+        }
+
+        private void AutoDeployBenchUnits(int ownerId)
+        {
+            var benchSystem = GameSystemManager.Instance.Bench;
+            var fieldSystem = GameSystemManager.Instance.Field;
+            var playerSystem = GameSystemManager.Instance.Player;
+            if (benchSystem == null || fieldSystem == null || playerSystem == null) return;
+
+            var playerSync = playerSystem.GetPlayerSync(ownerId);
+            if (playerSync == null) return;
+
+            int level = playerSync.Level.Value;
+            int currentOnField = fieldSystem.GetUnitCount(ownerId);
+            if (currentOnField >= level) return;
+
+            int needed = level - currentOnField;
+            var benchHeroes = benchSystem.GetHeroesOnBench(ownerId);
+            if (benchHeroes.Count == 0) return;
+
+            var arena = fieldSystem.GetArena(ownerId);
+            if (arena == null || arena.FieldArea == null || arena.FieldArea.Data == null) return;
+
+            var allFieldTiles = arena.FieldArea.Data.ActiveTiles.Select(t => t.coordinates).ToList();
+            var emptyFieldTiles = allFieldTiles.Where(c => fieldSystem.GetHeroAtTile(ownerId, c) == null).ToList();
+
+            int deployedCount = 0;
+            for (int i = 0; i < benchHeroes.Count && deployedCount < needed && i < emptyFieldTiles.Count; i++)
+            {
+                var actor = benchHeroes[i];
+                var targetCoord = emptyFieldTiles[i];
+
+                fieldSystem.RegisterHeroToTile(actor, targetCoord, ownerId);
+
+                Vector3 targetPos = arena.GetFieldWorldPosition(targetCoord);
+                actor.Teleport(targetPos, false);
+                if (actor.MoveAgent != null)
+                {
+                    actor.MoveAgent.SetEnable(true);
+                    actor.MoveAgent.Warp(targetPos);
+                }
+
+                var netSync = actor.GetComponent<ChampionNetworkSync>();
+                if (netSync != null)
+                {
+                    netSync.RpcUpdateCoordinates(new Vector2Int(-1, -1), targetCoord, targetPos);
+                }
+
+                deployedCount++;
             }
         }
     }

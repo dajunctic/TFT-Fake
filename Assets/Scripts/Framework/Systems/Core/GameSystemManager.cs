@@ -29,6 +29,7 @@ namespace Dajunctic
         public AISystem AI { get; private set; }
         public ChatSystem Chat { get; private set; }
         public TravelSystem Travel { get; private set; }
+        public FloatingTextSystem FloatingText { get; private set; }
 
         public bool AllSystemsReady { get; private set; }
 
@@ -75,6 +76,7 @@ namespace Dajunctic
             AI = CreateSystem<AISystem>();
             Chat = CreateSystem<ChatSystem>();
             Travel = CreateSystem<TravelSystem>();
+            FloatingText = CreateSystem<FloatingTextSystem>();
 
             Debug.Log("<color=cyan>GameSystemManager: Systems created.</color>");
         }
@@ -107,6 +109,7 @@ namespace Dajunctic
             await AI.LoadDataAsync();
             await Chat.LoadDataAsync();
             await Travel.LoadDataAsync();
+            await FloatingText.LoadDataAsync();
 
             Debug.Log("<color=cyan>GameSystemManager: All data loaded.</color>");
         }

@@ -14,6 +14,23 @@ namespace Dajunctic
 
         public void SetInfiniteHp(bool value) => infiniteHp = value;
 
+        public override void Initialize()
+        {
+            if (Initialized) return;
+            base.Initialize();
+
+            var hpView = GetComponentInChildren<HpView>(true);
+            if (hpView != null)
+            {
+                hpView.Initialize(this, 1);
+                hpView.gameObject.SetActive(true);
+            }
+            else
+            {
+                this.Raise(new SpawnHpViewEvent { owner = this, starLevel = 1 });
+            }
+        }
+
         protected override void SetupTree()
         {
             
@@ -34,12 +51,17 @@ namespace Dajunctic
             
         }
 
-        public new void TakeDamage(CombineDamage combineDamage)
+        public override void TakeDamage(CombineDamage combineDamage)
         {
             if (infiniteHp)
             {
                 Debug.Log($"<color=orange>[Dummy] {name}</color> hit for " +
                           $"<b>{combineDamage.damage:F1}</b> {combineDamage.damageType}  (HP ∞)");
+                base.TakeDamage(combineDamage);
+                if (Hp <= 0)
+                {
+                    ForceSetHp(MaxHp);
+                }
                 return;
             }
 

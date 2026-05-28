@@ -151,9 +151,7 @@ namespace Dajunctic
             if (float.IsNaN(ratio)) ratio = 0;
             if (hpProgress != null)
             {
-                Vector3 scale = hpProgress.transform.localScale;
-                scale.x = Mathf.Clamp01(ratio);
-                hpProgress.transform.localScale = scale;
+                hpProgress.fillAmount = Mathf.Clamp01(ratio);
             }
         }
 
@@ -162,9 +160,7 @@ namespace Dajunctic
             if (float.IsNaN(ratio)) ratio = 0;
             if (energyProgress != null)
             {
-                Vector3 scale = energyProgress.transform.localScale;
-                scale.x = Mathf.Clamp01(ratio);
-                energyProgress.transform.localScale = scale;
+                energyProgress.fillAmount = Mathf.Clamp01(ratio);
             }
         }
 

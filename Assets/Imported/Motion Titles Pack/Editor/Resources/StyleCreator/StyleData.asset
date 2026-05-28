@@ -1,0 +1,161 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a68f89386b5a8364ca1345d264a42085, type: 3}
+  m_Name: StyleData
+  m_EditorClassIdentifier: 
+  ccEnabled: {fileID: 2800000, guid: f6a9dcbe32813eb4ab1b3a29e4a024dd, type: 3}
+  ccDisabled: {fileID: 2800000, guid: 06c2a7c66a00a7b488e2c44a137b0558, type: 3}
+  cwEnabled: {fileID: 2800000, guid: ce41d81814815da4491e4946e75829f4, type: 3}
+  cwDisabled: {fileID: 2800000, guid: b6523cce0748ca843b11522ebc64b399, type: 3}
+  chEnabled: {fileID: 2800000, guid: 4685e67bc682b2e4b95eed15ee7e1111, type: 3}
+  chDisabled: {fileID: 2800000, guid: 3a0a2b0a0c12c8d418ea86cee66f89f2, type: 3}
+  styles:
+  - styleTitle: '#1 (Double Reveal)'
+    videoPreviewURL: https://i.imgur.com/RfKjPCj.mp4
+    stylePreview: {fileID: 2800000, guid: 127404cd4bedb3e419df507b4c9498b7, type: 3}
+    stylePrefab: {fileID: 8007578088666519653, guid: cd4cce1bfdfba414b8cbf4176e535f33, type: 3}
+    customContent: 1
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#2 (Vertical Reveal)'
+    videoPreviewURL: https://i.imgur.com/vlDa0oK.mp4
+    stylePreview: {fileID: 2800000, guid: a93df5a5cabae024bb3721ddddc540e1, type: 3}
+    stylePrefab: {fileID: 3600316704913000171, guid: 87fcf2a6ddb01f746a85fe4486249f05, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 1
+  - styleTitle: '#3 (Overhead)'
+    videoPreviewURL: https://i.imgur.com/aSInBJg.mp4
+    stylePreview: {fileID: 2800000, guid: 6f78bf6cef8d330439f899355caf9a91, type: 3}
+    stylePrefab: {fileID: 7017099631547401388, guid: a54eb855e43b70542baa40e5a1cf92f2, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#4 (Double Masked)'
+    videoPreviewURL: https://i.imgur.com/Lj4LOmm.mp4
+    stylePreview: {fileID: 2800000, guid: b0eb2d01ad4b51941b25f44b48fd5612, type: 3}
+    stylePrefab: {fileID: 2936849059875824114, guid: 869dfe858b606064b89ae408abc70725, type: 3}
+    customContent: 0
+    customizableWidth: 1
+    customizableHeight: 0
+  - styleTitle: '#5 (Simple Reverse)'
+    videoPreviewURL: https://i.imgur.com/8yTrQHS.mp4
+    stylePreview: {fileID: 2800000, guid: dc59a57222cd42245b51d1eb8847ec70, type: 3}
+    stylePrefab: {fileID: 7875639107210413494, guid: b0d9d0e3e6a623e489d38a644c31d032, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 1
+  - styleTitle: '#6 (One By One)'
+    videoPreviewURL: https://i.imgur.com/NZlLlya.mp4
+    stylePreview: {fileID: 2800000, guid: a54b299ac907d37498e43f1e99ea4ff7, type: 3}
+    stylePrefab: {fileID: 9078247168265783485, guid: 5be947247fe814343bbbef5a0f7bad2d, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#7 (Masked Sub)'
+    videoPreviewURL: https://i.imgur.com/p4tlrCP.mp4
+    stylePreview: {fileID: 2800000, guid: 2669147d7d7843f4e8a1b6754420475e, type: 3}
+    stylePrefab: {fileID: 7699506479904736628, guid: b162eeb6f6ea25345857b032ca9f1cde, type: 3}
+    customContent: 0
+    customizableWidth: 1
+    customizableHeight: 0
+  - styleTitle: '#8 (Masked Sub Vol. 2)'
+    videoPreviewURL: https://i.imgur.com/w1BbhS8.mp4
+    stylePreview: {fileID: 2800000, guid: 834f23f1a211d3d47b9b4bf6cbaea7e5, type: 3}
+    stylePrefab: {fileID: 11293779275187447, guid: 902f57e953664d3498bb111ead8ec74c, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#9 (Hamburger)'
+    videoPreviewURL: https://i.imgur.com/XwFkA72.mp4
+    stylePreview: {fileID: 2800000, guid: fc550ae05d009984782a60762e1f2805, type: 3}
+    stylePrefab: {fileID: 8747809221265491226, guid: 042664d3bada9944ba1b1a609edc4fc4, type: 3}
+    customContent: 0
+    customizableWidth: 1
+    customizableHeight: 0
+  - styleTitle: '#10 (Mystery Box)'
+    videoPreviewURL: https://i.imgur.com/0AphG4G.mp4
+    stylePreview: {fileID: 2800000, guid: 6f7701f74d944d84480bd28663e39515, type: 3}
+    stylePrefab: {fileID: 8162386531001599335, guid: 259ad2fdb3d58aa4cb6296c6c5ed24d8, type: 3}
+    customContent: 1
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#11 (Running)'
+    videoPreviewURL: https://i.imgur.com/GvgcRLQ.mp4
+    stylePreview: {fileID: 2800000, guid: 6f1ae918db6646a4f8942a1becb7e3d2, type: 3}
+    stylePrefab: {fileID: 6970155144271566335, guid: c98b7660507c34341b4394e512c659c4, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 1
+  - styleTitle: '#12 (Split Text)'
+    videoPreviewURL: https://i.imgur.com/963Ox6j.mp4
+    stylePreview: {fileID: 2800000, guid: 6ae8e5a291b01ca45b3c4b06f7ee931d, type: 3}
+    stylePrefab: {fileID: 8561887820860978392, guid: 9d0d22fde9ae4884aba33deb56e2e9fc, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#13 (Triple Order)'
+    videoPreviewURL: https://i.imgur.com/lUFPwg4.mp4
+    stylePreview: {fileID: 2800000, guid: 1e23d5337fd5ee34d848a1bdcf813bbb, type: 3}
+    stylePrefab: {fileID: 1354669710124693205, guid: d5a0bf2c333fa424c883abbda7678e35, type: 3}
+    customContent: 0
+    customizableWidth: 1
+    customizableHeight: 0
+  - styleTitle: '#14 (Wide Ball)'
+    videoPreviewURL: https://i.imgur.com/GHT9cOW.mp4
+    stylePreview: {fileID: 2800000, guid: 03fd117c0d214d0499682306bd78ca8c, type: 3}
+    stylePrefab: {fileID: 7192623498200214964, guid: da0b39eeeb35425498827aacd8830aa2, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#15 (Lower Third)'
+    videoPreviewURL: https://i.imgur.com/7FlES5q.mp4
+    stylePreview: {fileID: 2800000, guid: b884589bd8b38de4ebfd06e9c9bae7e7, type: 3}
+    stylePrefab: {fileID: 4028813497790731650, guid: b5613b1363e099f499c23ea63ac930d4, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 1
+  - styleTitle: '#16 (Thin Circle)'
+    videoPreviewURL: https://i.imgur.com/9WjCHoU.mp4
+    stylePreview: {fileID: 2800000, guid: d5b31c9ee96de8d44bcae96f314e3253, type: 3}
+    stylePrefab: {fileID: 2205740147323148554, guid: cf4a944925b06f14c8577b8cc045b552, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 1
+  - styleTitle: '#17 (Socials)'
+    videoPreviewURL: https://i.imgur.com/fYF5X7c.mp4
+    stylePreview: {fileID: 2800000, guid: 064f307bb29c18946bfd4747774c81ee, type: 3}
+    stylePrefab: {fileID: 5540146596708396953, guid: b803564492cd9ab498d25ad32864fdd1, type: 3}
+    customContent: 1
+    customizableWidth: 1
+    customizableHeight: 0
+  - styleTitle: '#18 (Quote)'
+    videoPreviewURL: https://i.imgur.com/LM98Zwx.mp4
+    stylePreview: {fileID: 2800000, guid: dc59d5a77120d7942a62659d8928ee4b, type: 3}
+    stylePrefab: {fileID: 8460303180949702964, guid: 2150c8c555c987b48b6a5445196e7612, type: 3}
+    customContent: 1
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#19 (Single Line)'
+    videoPreviewURL: https://i.imgur.com/dN8dEZA.mp4
+    stylePreview: {fileID: 2800000, guid: f67574decbd930947994bc3e22455ff1, type: 3}
+    stylePrefab: {fileID: 650231250597432943, guid: e3de6d162f86409469ba675d1476061b, type: 3}
+    customContent: 0
+    customizableWidth: 0
+    customizableHeight: 0
+  - styleTitle: '#20 (Make It Double)'
+    videoPreviewURL: https://i.imgur.com/hovA1TE.mp4
+    stylePreview: {fileID: 2800000, guid: e9d6443447e19f846be7726de580f305, type: 3}
+    stylePrefab: {fileID: 5944563502955313480, guid: 56b04e74ff8accb40aba1a6ae18ac0b7, type: 3}
+    customContent: 0
+    customizableWidth: 1
+    customizableHeight: 0

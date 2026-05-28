@@ -346,6 +346,12 @@ namespace Dajunctic
             }
         }
 
+        protected override void EvaluateGambits()
+        {
+            if (IsOnBench) return;
+            base.EvaluateGambits();
+        }
+
         public override void ListenEvents()
         {
             base.ListenEvents();

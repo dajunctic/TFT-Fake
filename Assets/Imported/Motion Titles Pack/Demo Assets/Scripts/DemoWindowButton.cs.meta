@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d2d53a156eac4d041947a0551eed1ec1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 195031
+  packageName: Motion Titles Pack
+  packageVersion: 2.0.1
+  assetPath: Assets/Motion Titles Pack/Demo Assets/Scripts/DemoWindowButton.cs
+  uploadId: 916260

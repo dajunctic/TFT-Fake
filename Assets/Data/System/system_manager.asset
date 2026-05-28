@@ -24,12 +24,6 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 1
-  economySystemData:
-    m_AssetGUID: 4d2986a0fec15934ea4a0a82042d53b6
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 1
   itemSystemData:
     m_AssetGUID: 89d82905d0debe64a87945cc5f12aa23
     m_SubObjectName: 
@@ -68,6 +62,12 @@ MonoBehaviour:
     m_EditorAssetChanged: 1
   travelSystemData:
     m_AssetGUID: 62f2f5289e150a843847b056d0e52e55
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 1
+  floatingTextSystemData:
+    m_AssetGUID: 348020004f23d5b4882f228bc2a60bab
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 

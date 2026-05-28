@@ -17,5 +17,6 @@ namespace Dajunctic
         public AssetReferenceT<RoundSystemData> roundSystemData;
         public AssetReferenceT<PlayerSystemData> playerSystemData;
         public AssetReferenceT<TravelSystemData> travelSystemData;
+        public AssetReferenceT<FloatingTextSystemData> floatingTextSystemData;
     }
 }

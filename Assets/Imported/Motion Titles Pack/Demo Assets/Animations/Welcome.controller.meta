@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d6613e4767e0b8c45a86480700edcfa3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 195031
+  packageName: Motion Titles Pack
+  packageVersion: 2.0.1
+  assetPath: Assets/Motion Titles Pack/Demo Assets/Animations/Welcome.controller
+  uploadId: 916260

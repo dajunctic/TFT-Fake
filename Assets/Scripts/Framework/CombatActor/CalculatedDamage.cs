@@ -13,6 +13,7 @@ namespace Dajunctic
         public float FloatTrueDamage;
         public DamageType DamageType;
         public DamageAttribute Attributes;
+        public bool IsCritical;
     }
 
     public class DamageCombined
@@ -70,6 +71,40 @@ namespace Dajunctic
                 {
                     calc.FloatTrueDamage = calc.FloatNormalDamage;
                     calc.FloatNormalDamage = 0;
+                }
+
+                // Roll critical strike if the dealer is a CombatActor
+                if (source != null && source.damageDealer is CombatActor actor)
+                {
+                    float critChance = actor.Stats?.CriticalStrikeChance?.Value ?? 0f;
+                    float criticalChanceBonus = 0f;
+                    float criticalDamageBonus = 0f;
+
+                    if (configObj != null)
+                    {
+                        var typeObj = configObj.GetType();
+                        var criticalField = typeObj.GetField("critical", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                        if (criticalField != null)
+                        {
+                            var critConfig = criticalField.GetValue(configObj);
+                            if (critConfig != null)
+                            {
+                                var chanceBonusField = critConfig.GetType().GetField("criticalChanceBonus", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                                var damageBonusField = critConfig.GetType().GetField("criticalDamageBonus", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                                if (chanceBonusField != null) criticalChanceBonus = Convert.ToSingle(chanceBonusField.GetValue(critConfig));
+                                if (damageBonusField != null) criticalDamageBonus = Convert.ToSingle(damageBonusField.GetValue(critConfig));
+                            }
+                        }
+                    }
+
+                    float totalCritChance = critChance + criticalChanceBonus;
+                    if (UnityEngine.Random.value <= totalCritChance)
+                    {
+                        calc.IsCritical = true;
+                        float critMultiplier = (actor.Stats?.CriticalStrikeDamage?.Value ?? 1.4f) + criticalDamageBonus;
+                        calc.FloatNormalDamage *= critMultiplier;
+                        calc.FloatTrueDamage *= critMultiplier;
+                    }
                 }
             }
             return calc;
