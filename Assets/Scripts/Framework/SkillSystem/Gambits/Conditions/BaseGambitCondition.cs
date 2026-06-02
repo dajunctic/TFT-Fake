@@ -76,7 +76,7 @@ namespace Dajunctic.SkillSystem.Gambits
             var actor = CombatActor as CombatActor;
             if (actor == null) return false;
 
-            var allActors = UnityEngine.Object.FindObjectsByType<CombatActor>(FindObjectsSortMode.None);
+            var allActors = Dajunctic.CombatActor.ActiveActors;
             foreach (var target in allActors)
             {
                 if (target.Hp <= 0 || !target.gameObject.activeInHierarchy || !target.CanBeTarget) continue;

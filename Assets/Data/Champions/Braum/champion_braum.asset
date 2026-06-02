@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
   m_Name: champion_braum
   m_EditorClassIdentifier: 
-  id: hero_braum
+  id: champion_braum
+  prefab: {fileID: 3990057042886062043, guid: c85444d49d433ef4694bf5484725db8a, type: 3}
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -20,23 +21,38 @@ MonoBehaviour:
     radius: 0.25
     acceleration: 16
     movementType: 0
-  attribute:
-    maxHp: 1000
-    physicalArmor: 0
-    magicalArmor: 0
-  skillAttribute:
-    energy: 0
-  combatStat:
-    radius: 1
-    atk: 1
-    atkSpd: 1
-    atkRange: 6
-    criticalChance: 1
-    criticalDmg: 10
-  skills:
-  - {fileID: 11400000, guid: 9049a490418db1a48a265b8d3600b5dc, type: 2}
+  stats:
+    maxHp: 500
+    armor: 20
+    magicResist: 20
+    attackDamage: 50
+    abilityPower: 100
+    attackSpeed: 0.65
+    attackRange: 1
+    critChance: 0.25
+    critDamage: 1.4
+    maxMana: 100
+    startingMana: 0
+  gambits:
+  - targetType: 0
+    condition:
+      rid: 7769114037021573502
+    action:
+      rid: 7769114037021573503
   displayName: Braum
-  rarity: 2
   shopIcon: {fileID: 21300000, guid: dc9c92113ff75a74387274543c7080c3, type: 3}
-  traits: []
-  prefab: {fileID: 3990057042886062043, guid: c85444d49d433ef4694bf5484725db8a, type: 3}
+  rarity: 1
+  traits:
+  - {fileID: 11400000, guid: 9b33dd32fad15214d9d76b75215b3156, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7769114037021573502
+      type: {class: NearestGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 1
+        customRange: 20
+    - rid: 7769114037021573503
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 11400000, guid: d9d2875e661ffc44290c2d593b575f00, type: 2}

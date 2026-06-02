@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff0cfd69bf7b4b469c3c19234f70524d, type: 3}
-  m_Name: champion_master_yi_atk_1_graph
+  m_Name: champion_trump_atk_1_graph
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.SkillGraph
   serializedNodes: []
   nodes:
@@ -104,7 +104,7 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: 335, y: 324, z: 0}
+  position: {x: 382, y: 297, z: 0}
   scale: {x: 1, y: 1, z: 1}
   references:
     version: 2
@@ -175,7 +175,7 @@ MonoBehaviour:
         expanded: 0
         debug: 0
         nodeLock: 0
-        radius: 2
+        radius: 1.5
         targets: []
         mainTarget:
           rid: -2

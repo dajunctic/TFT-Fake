@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff7f5923772d00547b820451e7d9b5e4, type: 3}
   m_Name: champion_trump
   m_EditorClassIdentifier: 
-  id: hero_donald_trump
+  id: champion_trump
+  prefab: {fileID: 7579838385617486944, guid: 69d47e3aa931c764b9be3df47c425624, type: 3}
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -20,23 +21,39 @@ MonoBehaviour:
     radius: 0.25
     acceleration: 16
     movementType: 0
-  attribute:
-    maxHp: 1000
-    physicalArmor: 0
-    magicalArmor: 0
-  skillAttribute:
-    energy: 0
-  combatStat:
-    radius: 1
-    atk: 1
-    atkSpd: 1
-    atkRange: 6
-    criticalChance: 1
-    criticalDmg: 10
-  skills:
-  - {fileID: 11400000, guid: e0be69a6e12a9c34d855119b5882efe3, type: 2}
+  stats:
+    maxHp: 500
+    armor: 20
+    magicResist: 20
+    attackDamage: 50
+    abilityPower: 100
+    attackSpeed: 0.65
+    attackRange: 1
+    critChance: 0.25
+    critDamage: 1.4
+    maxMana: 100
+    startingMana: 0
+  gambits:
+  - targetType: 0
+    condition:
+      rid: 7769114037021573307
+    action:
+      rid: 7769114037021573308
   displayName: Donald Trump
-  rarity: 2
   shopIcon: {fileID: 21300000, guid: c4d62b8c9fa36754b984eff1f7065f2c, type: 3}
-  traits: []
-  prefab: {fileID: 7579838385617486944, guid: 69d47e3aa931c764b9be3df47c425624, type: 3}
+  rarity: 2
+  traits:
+  - {fileID: 11400000, guid: 885f782b018d9674ea93dc29489fab4c, type: 2}
+  - {fileID: 11400000, guid: 97d58ec8a5b4e2c489ea1ecb8d0bdee5, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7769114037021573307
+      type: {class: NearestGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 1
+        customRange: 20
+    - rid: 7769114037021573308
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 11400000, guid: bfa3aacef3349a44aae7315525759ddc, type: 2}

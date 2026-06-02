@@ -10,6 +10,8 @@ namespace Dajunctic
 {
     public class CombatActor : BaseView, ICombatActor, ISkillOwner, ITeamMember
     {
+        public static readonly List<CombatActor> ActiveActors = new();
+
         [SerializeField, Child] protected Animator animator;
         [SerializeField, Child(Flag.Optional | Flag.IncludeInactive)] protected MidPoint midPoint;
         [SerializeField, Child(Flag.Optional | Flag.IncludeInactive)] protected HeadPoint headPoint;
@@ -72,6 +74,11 @@ namespace Dajunctic
             if (Initialized) return;
             base.Initialize();
             _viewLoaded = true;
+
+            if (!ActiveActors.Contains(this))
+            {
+                ActiveActors.Add(this);
+            }
 
             Position = CachedTransform.position;
             _lastPosition = Position;
@@ -173,11 +180,13 @@ namespace Dajunctic
 
         public override void Cleanup()
         {
+            ActiveActors.Remove(this);
             base.Cleanup();
         }
 
         protected virtual void OnDestroy()
         {
+            ActiveActors.Remove(this);
             this.Raise(new DespawnHpViewEvent { owner = this });
         }
 

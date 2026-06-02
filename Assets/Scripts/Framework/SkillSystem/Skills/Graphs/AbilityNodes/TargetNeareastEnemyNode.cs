@@ -10,17 +10,14 @@ namespace Dajunctic.SkillSystem.Logic
         protected override IDamageTaker GetMainTarget()
         {
             FindTargetInRadius();
-            Debug.LogError("TargetNearestEnemyNode: _cachedTargets.Count" + _cachedTargets.Count);
 
-            _cachedMainTarget = SkillHelper.FindNearestTarget(Owner.AsTransform().Position, _cachedTargets, enableDebug: true);
+            _cachedMainTarget = SkillHelper.FindNearestTarget(Owner.AsTransform().Position, _cachedTargets, enableDebug: false);
             
             _cachedTargets.Clear();
             if (_cachedMainTarget != null)
             {
                 _cachedTargets.Add(_cachedMainTarget);
             }
-
-            Debug.LogError(_cachedTargets.Count);
             
             return _cachedMainTarget;
         }
