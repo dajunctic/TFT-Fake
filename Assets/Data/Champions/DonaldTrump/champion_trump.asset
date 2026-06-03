@@ -41,7 +41,7 @@ MonoBehaviour:
       rid: 7769114037021573308
   displayName: Donald Trump
   shopIcon: {fileID: 21300000, guid: c4d62b8c9fa36754b984eff1f7065f2c, type: 3}
-  rarity: 2
+  rarity: 1
   traits:
   - {fileID: 11400000, guid: 885f782b018d9674ea93dc29489fab4c, type: 2}
   - {fileID: 11400000, guid: 97d58ec8a5b4e2c489ea1ecb8d0bdee5, type: 2}

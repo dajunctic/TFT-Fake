@@ -132,6 +132,28 @@ namespace Dajunctic
             return $"{StageNumber}-{RoundNumber}";
         }
 
+        /// <summary>
+        /// Called on client to sync round state from server.
+        /// </summary>
+        public void SetRoundState(int stageNumber, int roundNumber)
+        {
+            if (_data == null || _data.stages.Count == 0) return;
+
+            int stageIdx = _data.stages.FindIndex(s => s.stageNumber == stageNumber);
+            if (stageIdx < 0) return;
+
+            _currentStageIndex = stageIdx;
+            _currentRoundIndex = roundNumber - 1;
+            UpdateCurrentData();
+
+            this.Raise(new RoundAdvancedEvent
+            {
+                StageNumber = StageNumber,
+                RoundNumber = RoundNumber,
+                RoundData = CurrentRoundData
+            });
+        }
+
         public void Shutdown()
         {
         }

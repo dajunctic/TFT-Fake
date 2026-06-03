@@ -115,6 +115,8 @@ namespace Dajunctic
             if (MoveAgent != null)
             {
                 MoveAgent.ToggleMoveCollision(false);
+                // Đặt avoidancePriority = 99 (ít quan trọng nhất) để tướng không né tránh linh thú
+                MoveAgent.ChangePriority(99);
                 
                 RewarpMoveAgent();
             }

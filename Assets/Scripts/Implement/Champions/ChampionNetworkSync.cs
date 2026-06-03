@@ -22,6 +22,7 @@ namespace Dajunctic
             if (_actor != null)
             {
                 _actor.OnHpChanged += OnHpChangedServer;
+                _actor.OnDamageTakenEvent += OnDamageTakenServer;
             }
         }
 
@@ -31,6 +32,50 @@ namespace Dajunctic
             if (_actor != null)
             {
                 _actor.OnHpChanged -= OnHpChangedServer;
+                _actor.OnDamageTakenEvent -= OnDamageTakenServer;
+            }
+        }
+
+        private void OnDamageTakenServer(CalculatedDamage damage)
+        {
+            if (damage == null) return;
+            float baseDmg = damage.FloatTrueDamage > 0f ? damage.FloatTrueDamage : damage.FloatNormalDamage;
+            DamageType type = damage.FloatTrueDamage > 0f ? DamageType.TrueDamage : damage.DamageType;
+            float finalDamage = baseDmg;
+            if (_actor != null && _actor.Stats != null)
+            {
+                switch (type)
+                {
+                    case DamageType.PhysicalDamage:
+                        finalDamage = baseDmg * (100f / (100f + _actor.Stats.Armor.Value));
+                        break;
+                    case DamageType.MagicalDamage:
+                        finalDamage = baseDmg * (100f / (100f + _actor.Stats.MagicResist.Value));
+                        break;
+                }
+            }
+            RpcShowDamage(finalDamage, type, damage.IsCritical);
+        }
+
+        [ObserversRpc(RunLocally = false)]
+        public void RpcShowDamage(float finalDamage, DamageType type, bool isCrit)
+        {
+            if (_actor == null) _actor = GetComponent<ChampionActor>();
+            if (_actor != null)
+            {
+                var calc = new CalculatedDamage
+                {
+                    FloatNormalDamage = finalDamage,
+                    DamageType = type,
+                    IsCritical = isCrit
+                };
+                
+                this.Raise(new DamageTakenGlobalEvent
+                {
+                    Target = _actor,
+                    Damage = calc,
+                    FinalDamage = finalDamage
+                });
             }
         }
 

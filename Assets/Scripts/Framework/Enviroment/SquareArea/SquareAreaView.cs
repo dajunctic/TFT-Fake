@@ -14,6 +14,12 @@ namespace Dajunctic
         
         private Color NormalColor = Color.cyan;
 
+        /// <summary>
+        /// The arena owner ID this bench belongs to. Set by Arena when initializing.
+        /// -1 means unassigned (will always show tiles for backward compatibility).
+        /// </summary>
+        public int OwnerArenaId { get; set; } = -1;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -61,6 +67,9 @@ namespace Dajunctic
 
         public void OnDragStart()
         {
+            // Only show tiles for the local player's bench
+            var localPlayer = GameSystemManager.Instance?.Player?.LocalPlayer;
+            if (localPlayer == null || localPlayer.Id != OwnerArenaId) return;
             SetTilesVisible(true);
         }
 

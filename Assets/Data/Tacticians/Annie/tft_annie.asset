@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: tft_annie
   m_EditorClassIdentifier: 
   id: tft_annie
+  prefab: {fileID: 4723916307773563682, guid: 36b6f219aad91fd44a04bb1a0575a930, type: 3}
   movement:
     moveSpeed: 2.5
     rotateSpeed: 4
@@ -32,10 +33,12 @@ MonoBehaviour:
     critDamage: 1.4
     maxMana: 100
     startingMana: 0
-  skills: []
+  gambits: []
   displayName: Annie
   animalType: 
   icon: {fileID: 0}
-  prefab: {fileID: 4723916307773563682, guid: 36b6f219aad91fd44a04bb1a0575a930, type: 3}
   tier: 1
   isBoss: 0
+  references:
+    version: 2
+    RefIds: []

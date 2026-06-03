@@ -413,6 +413,10 @@ namespace Dajunctic
                 cam.target = data.Tactician.transform;
                 cam.SnapToTarget();
 
+                // Don't teleport Tactician during combat — it would land on the battle area
+                if (Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat)
+                    return;
+
                 var playerSystem = this.GetSystem<PlayerSystem>();
                 if (playerSystem != null && playerSystem.LocalPlayer != null)
                 {

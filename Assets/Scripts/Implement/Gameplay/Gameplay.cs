@@ -37,6 +37,22 @@ namespace Dajunctic
         protected void Awake()
         {
             Instance = this;
+            _currentPhase.OnChange += OnPhaseChangedCallback;
+        }
+
+        private void OnDestroy()
+        {
+            _currentPhase.OnChange -= OnPhaseChangedCallback;
+            if (Instance == this) Instance = null;
+        }
+
+        private void OnPhaseChangedCallback(GameplayPhase prev, GameplayPhase next, bool asServer)
+        {
+            if (!asServer)
+            {
+                OnPhaseChanged?.Invoke(next);
+                this.Raise(new GameplayPhaseChangedEvent { Phase = next });
+            }
         }
 
         public void Initialize()
@@ -103,7 +119,14 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Planning)
             {
-                
+                foreach (var actor in CombatActor.ActiveActors.ToArray())
+                {
+                    if (actor != null)
+                    {
+                        actor.ForceSetHp(actor.MaxHp);
+                    }
+                }
+
                 if (GameSystemManager.Instance.Travel != null)
                 {
                     GameSystemManager.Instance.Travel.ReturnAllUnits();
@@ -153,11 +176,7 @@ namespace Dajunctic
                 {
                     
                     PveSpawner.ClearAllEnemies();
-                    if (GameSystemManager.Instance.Travel != null)
-                    {
-                        GameSystemManager.Instance.Travel.GenerateMatchmaking();
-                        GameSystemManager.Instance.Travel.ExecuteTravelCards();
-                    }
+                    // PvP travel is handled by TravelSystem.OnPhaseChanged (via GameplayPhaseChangedEvent)
                 }
             }
 
@@ -196,6 +215,9 @@ namespace Dajunctic
             if (RoundSys != null)
             {
                 RoundSys.AdvanceRound();
+
+                // Sync round state to all clients
+                SyncRoundStateRpc(RoundSys.StageNumber, RoundSys.RoundNumber);
                 
                 if (RoundSys.CurrentRoundData != null && RoundSys.CurrentRoundData.roundType == RoundType.Carousel)
                 {
@@ -209,6 +231,16 @@ namespace Dajunctic
             else
             {
                 StartPhaseServer(GameplayPhase.Planning);
+            }
+        }
+
+        [ObserversRpc(RunLocally = false)]
+        private void SyncRoundStateRpc(int stageNumber, int roundNumber)
+        {
+            var roundSystem = GameSystemManager.Instance?.Round;
+            if (roundSystem != null)
+            {
+                roundSystem.SetRoundState(stageNumber, roundNumber);
             }
         }
 

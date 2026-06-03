@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: tft_anya
   m_EditorClassIdentifier: 
   id: tft_anya
+  prefab: {fileID: 4136254893814224470, guid: fc22b4dbdd06f0d4aaf0deff3fcc57c7, type: 3}
   movement:
     moveSpeed: 2.5
     rotateSpeed: 4
@@ -32,10 +33,12 @@ MonoBehaviour:
     critDamage: 1.4
     maxMana: 100
     startingMana: 0
-  skills: []
+  gambits: []
   displayName: Anya
   animalType: 
   icon: {fileID: 0}
-  prefab: {fileID: 4136254893814224470, guid: fc22b4dbdd06f0d4aaf0deff3fcc57c7, type: 3}
   tier: 1
   isBoss: 0
+  references:
+    version: 2
+    RefIds: []

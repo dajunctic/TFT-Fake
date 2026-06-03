@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: champion_master_yi
   m_EditorClassIdentifier: 
   id: champion_master_yi
+  prefab: {fileID: 5056634818722811979, guid: c32f2aaa61a9bf24f868af3d937d9d6e, type: 3}
   movement:
     moveSpeed: 3
     rotateSpeed: 4
     height: 1.2
-    radius: 0.25
+    radius: 0.5
     acceleration: 16
     movementType: 0
   stats:
@@ -41,7 +42,6 @@ MonoBehaviour:
   displayName: Master Yi
   shopIcon: {fileID: 21300000, guid: 4c78455ec3d4a624abfac3c0a53ef722, type: 3}
   rarity: 1
-  prefab: {fileID: 5056634818722811979, guid: c32f2aaa61a9bf24f868af3d937d9d6e, type: 3}
   traits:
   - {fileID: 11400000, guid: d8981683762691a48a8a16c75c1df629, type: 2}
   - {fileID: 11400000, guid: 97d58ec8a5b4e2c489ea1ecb8d0bdee5, type: 2}

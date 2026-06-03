@@ -38,6 +38,7 @@ namespace Dajunctic
 
             if (next != -1)
             {
+                if (BenchArea != null) BenchArea.OwnerArenaId = next;
                 RegisterToSystems();
             }
         }
@@ -45,7 +46,11 @@ namespace Dajunctic
         public override void OnStartClient()
         {
             base.OnStartClient();
-            if (OwnerID != -1) RegisterToSystems();
+            if (OwnerID != -1)
+            {
+                if (BenchArea != null) BenchArea.OwnerArenaId = OwnerID;
+                RegisterToSystems();
+            }
         }
 
         public void SetOwnerServer(int ownerId, string ownerName)
@@ -55,7 +60,11 @@ namespace Dajunctic
             
             if (FieldArea != null) FieldArea.Initialize();
             if (GuestFieldArea != null) GuestFieldArea.Initialize();
-            if (BenchArea != null) BenchArea.Initialize();
+            if (BenchArea != null)
+            {
+                BenchArea.OwnerArenaId = ownerId;
+                BenchArea.Initialize();
+            }
             SpawnChampionCountUI();
 
             RegisterToSystems();
@@ -67,7 +76,11 @@ namespace Dajunctic
             OwnerName = ownerName;
             if (FieldArea != null) FieldArea.Initialize();
             if (GuestFieldArea != null) GuestFieldArea.Initialize();
-            if (BenchArea != null) BenchArea.Initialize();
+            if (BenchArea != null)
+            {
+                BenchArea.OwnerArenaId = ownerId;
+                BenchArea.Initialize();
+            }
             SpawnChampionCountUI();
         }
 

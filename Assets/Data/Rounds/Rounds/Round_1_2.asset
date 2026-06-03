@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1f992560f8fb5942857f7760be77e96, type: 3}
   m_Name: Round_1_2
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundData
-  roundType: 1
-  planningDuration: 30
-  combatDuration: 30
+  roundType: 0
   displayName: Minions
   icon: {fileID: 21300000, guid: 3a1bd38f3d48bfd4ea2a58768c6f2bc5, type: 3}
   bonusGold: 0
   hasAugment: 0
+  planningDuration: 30
+  combatDuration: 30
+  spawnPattern: 0
+  enemyWave: []
+  endWhenEnemiesDead: 0

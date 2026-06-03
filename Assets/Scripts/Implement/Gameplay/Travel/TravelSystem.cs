@@ -81,7 +81,10 @@ namespace Dajunctic
                 Vector3 guestSpawnPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
                 SpawnPortal(guestSpawnPos);
 
-                var guestUnits = _manager.Field.GetAllHeroes().Where(u => u.OwnerID == pair.GuestId).ToList();
+                var guestUnits = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Where(u => u.OwnerID == pair.GuestId && u.IsOnField)
+                    .ToList();
                 
                 foreach (var unit in guestUnits)
                 {
@@ -104,17 +107,37 @@ namespace Dajunctic
 
                     unit.Teleport(spawnPos, true);
 
+                    // Enable MoveAgent so unit can pathfind on the new arena
+                    if (unit.MoveAgent != null)
+                        unit.MoveAgent.SetEnable(true);
+
+                    // Mark as opponent so gambit conditions recognize as enemy
+                    unit.SetTeam(Team.Opponent);
+
+                    // Sync travel position to all clients
+                    var netSync = unit.GetComponent<ChampionNetworkSync>();
+                    if (netSync != null)
+                        netSync.RpcUpdateCoordinates(unit.CurrentBenchCoord, unit.CurrentFieldCoord, spawnPos);
+
                     _manager.Field.RegisterGuestHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
                 }
 
-                var guestData = _manager.Player.Players.FirstOrDefault(p => p.Id == pair.GuestId);
-                if (guestData != null && guestData.Tactician != null)
-                {
-                    var tactician = guestData.Tactician;
-                    _travelingUnits[tactician] = (pair.GuestId, tactician.CachedTransform.position, Vector2Int.zero, false);
-                    
-                    tactician.Teleport(guestSpawnPos, true);
-                }
+                // === Set enemy teams for PvP combat ===
+                var homeUnits = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Where(u => u.OwnerID == pair.HomeId && u.IsOnField)
+                    .ToList();
+
+                var homeTeam = new SimpleTeam();
+                var guestTeam = new SimpleTeam();
+
+                foreach (var u in homeUnits) homeTeam.Add(u);
+                foreach (var u in guestUnits) guestTeam.Add(u);
+
+                foreach (var u in homeUnits) u.SetEnemyTeam(guestTeam);
+                foreach (var u in guestUnits) u.SetEnemyTeam(homeTeam);
+
+                Debug.Log($"[TravelSystem] PvP: Home {pair.HomeId} ({homeUnits.Count} units) vs Guest {pair.GuestId} ({guestUnits.Count} units)");
             }
         }
 
@@ -135,6 +158,13 @@ namespace Dajunctic
                         Vector3 homePos = originalArena.GetFieldWorldPosition(originalCoord);
                         champion.Teleport(homePos, true);
                         _manager.Field.RegisterHeroToTile(champion, originalCoord, originalArenaId);
+
+                        // Restore team and clear enemy team
+                        champion.SetTeam(Team.Player);
+                        champion.SetEnemyTeam(null);
+                        var netSync = champion.GetComponent<ChampionNetworkSync>();
+                        if (netSync != null)
+                            netSync.RpcUpdateCoordinates(champion.CurrentBenchCoord, champion.CurrentFieldCoord, homePos);
                     }
                     else
                     {

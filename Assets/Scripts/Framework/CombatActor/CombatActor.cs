@@ -111,6 +111,19 @@ namespace Dajunctic
         {
             base.Tick();
 
+            bool isServer = FishNet.InstanceFinder.IsServerStarted;
+            bool isClient = FishNet.InstanceFinder.IsClientStarted;
+            bool isPureClient = !isServer && isClient;
+            bool isCombatPhase = Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat;
+
+            if (isPureClient && isCombatPhase)
+            {
+                if (MoveAgent != null && MoveAgent.Initialized && MoveAgent.IsEnabled)
+                {
+                    MoveAgent.SetEnable(false);
+                }
+            }
+
             if (MoveAgent != null && !MoveAgent.Initialized)
             {
                 MoveAgent = null;
@@ -120,7 +133,7 @@ namespace Dajunctic
                 InitializeMoveAgent();
             }
 
-            if (Hp > 0 && !IsCasting)
+            if ((!Application.isPlaying || isServer) && Hp > 0 && !IsCasting)
             {
                 EvaluateGambits();
             }
@@ -370,10 +383,19 @@ namespace Dajunctic
 
         protected virtual void SyncEntity()
         {
-            CachedTransform.position = Position;
-            if (Forward != Vector3.zero)
+            bool isServer = !Application.isPlaying || FishNet.InstanceFinder.IsServerStarted;
+            if (isServer)
             {
-                CachedTransform.rotation = Quaternion.LookRotation(Forward);
+                CachedTransform.position = Position;
+                if (Forward != Vector3.zero)
+                {
+                    CachedTransform.rotation = Quaternion.LookRotation(Forward);
+                }
+            }
+            else
+            {
+                Position = CachedTransform.position;
+                Forward = CachedTransform.forward;
             }
         }
 

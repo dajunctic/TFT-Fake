@@ -18,7 +18,7 @@ namespace Dajunctic
         private bool _isDragging = false;
         public bool IsOnBench => CurrentBenchCoord.x != -1;
         public bool IsOnField => CurrentFieldCoord.x != -1;
-        public override bool CanBeTarget => IsOnField;
+        public override bool CanBeTarget => IsOnField && Alive;
 
         private Vector2Int _originalBenchCoord;
         private Vector2Int _originalFieldCoord;
@@ -193,12 +193,22 @@ namespace Dajunctic
             if (IsOnBench)
             {
                 GameSystemManager.Instance.Bench.RegisterHeroToTile(occupant, CurrentBenchCoord, arenaId);
-                occupant.Teleport(GameSystemManager.Instance.Bench.GetWorldPosition(arenaId, CurrentBenchCoord), true);
+                var swapPos = GameSystemManager.Instance.Bench.GetWorldPosition(arenaId, CurrentBenchCoord);
+                occupant.Teleport(swapPos, true);
+
+                var occupantSync = occupant.GetComponent<ChampionNetworkSync>();
+                if (occupantSync != null)
+                    occupantSync.RpcUpdateCoordinates(occupant.CurrentBenchCoord, occupant.CurrentFieldCoord, swapPos);
             }
             else if (IsOnField)
             {
                 GameSystemManager.Instance.Field.RegisterHeroToTile(occupant, CurrentFieldCoord, arenaId);
-                occupant.Teleport(GameSystemManager.Instance.Field.GetWorldPosition(arenaId, CurrentFieldCoord), true);
+                var swapPos = GameSystemManager.Instance.Field.GetWorldPosition(arenaId, CurrentFieldCoord);
+                occupant.Teleport(swapPos, true);
+
+                var occupantSync = occupant.GetComponent<ChampionNetworkSync>();
+                if (occupantSync != null)
+                    occupantSync.RpcUpdateCoordinates(occupant.CurrentBenchCoord, occupant.CurrentFieldCoord, swapPos);
             }
         }
 
@@ -210,6 +220,11 @@ namespace Dajunctic
                 MoveAgent.SetEnable(true);
                 MoveAgent.Warp(pos);
             }
+
+            // Sync position to all clients
+            var netSync = GetComponent<ChampionNetworkSync>();
+            if (netSync != null)
+                netSync.RpcUpdateCoordinates(CurrentBenchCoord, CurrentFieldCoord, pos);
         }
 
         public void ResetPosition()
