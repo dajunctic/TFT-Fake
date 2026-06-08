@@ -75,8 +75,7 @@ namespace Dajunctic
                 Debug.LogWarning("ChangeHealth should only be called on the server!");
                 return;
             }
-            Heath.Value += amount;
-            
+            Heath.Value = Mathf.Max(0, Heath.Value + amount);
         }
 
         public void ChangeGold(int amount)
@@ -86,8 +85,7 @@ namespace Dajunctic
                 Debug.LogWarning("ChangeGold should only be called on the server!");
                 return;
             }
-            Gold.Value += amount;
-            
+            Gold.Value = Mathf.Max(0, Gold.Value + amount);
         }
 
         public void ChangeLevel(int amount)

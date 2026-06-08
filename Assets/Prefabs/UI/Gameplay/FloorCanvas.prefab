@@ -57,7 +57,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 2100000, guid: fe79ca04b4e15b3409dbb506c4ffd578, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 0.11792451, g: 1, b: 0.9834075, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -251,7 +251,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.173}
+  m_AnchoredPosition: {x: 0, y: 0.17297363}
   m_SizeDelta: {x: 1080, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2742027252477949510
@@ -299,7 +299,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &6135631070314413655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,9 +329,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f7b65685537406468545aa658ed2e42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ArenaChampionCountUI
-  _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 0}
-  _networkObjectCache: {fileID: 0}
   _championCountText: {fileID: 88188588264430584}
   _canvasGroup: {fileID: 7162733605837727975}
   _iconImage: {fileID: 2770010176440185176}

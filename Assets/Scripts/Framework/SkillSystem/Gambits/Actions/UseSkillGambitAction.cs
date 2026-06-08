@@ -98,7 +98,21 @@ namespace Dajunctic.SkillSystem.Gambits
             TriggerComplete();
 
             if (CombatActor is CombatActor combatActor)
+            {
                 combatActor.SetCasting(false);
+
+                // Check if this was an ability (triggered by full mana) or auto-attack
+                if (Condition is FullManaGambitCondition)
+                {
+                    // Ability cast complete — reset mana to starting mana
+                    combatActor.ResetMana();
+                }
+                else
+                {
+                    // Auto-attack complete — attacker gains mana (TFT mechanic)
+                    combatActor.GainMana(combatActor.Stats?.ManaPerAttack?.Value ?? 10f);
+                }
+            }
         }
     }
 }

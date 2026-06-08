@@ -116,7 +116,7 @@ namespace Dajunctic
             bool isPureClient = !isServer && isClient;
             bool isCombatPhase = Gameplay.Instance != null && Gameplay.Instance.CurrentPhase == GameplayPhase.Combat;
 
-            if (isPureClient && isCombatPhase)
+            if (isPureClient && isCombatPhase && !(this is TacticianActor))
             {
                 if (MoveAgent != null && MoveAgent.Initialized && MoveAgent.IsEnabled)
                 {
@@ -264,24 +264,11 @@ namespace Dajunctic
         {
             if (MoveAgent != null || !IsViewLoaded) return;
 
-            switch (ActorMovementType)
-            {
-                case ActorMovementType.Navmesh:
-                    MoveAgent = NavMeshMoveAgent.Pool.GetOrCreate($"na_{DataId}");
-                    break;
-                case ActorMovementType.Obstacle:
-                    MoveAgent = NavMeshMoveAgent.Pool.GetOrCreate($"no_{DataId}");
-                    break;
-                case ActorMovementType.Transform:
-                    MoveAgent = new TransformMoveAgent();
-                    break;
-                case ActorMovementType.HexGrid:
-                    MoveAgent = gameObject.AddComponent<HexGridMoveAgent>();
-                    break;
-                default:
-                    MoveAgent = new TransformMoveAgent();
-                    break;
-            }
+            // All actors use HexGridMoveAgent (no NavMesh)
+            var hexAgent = gameObject.GetComponent<HexGridMoveAgent>();
+            if (hexAgent == null) hexAgent = gameObject.AddComponent<HexGridMoveAgent>();
+            MoveAgent = hexAgent;
+
             MoveAgent.Initialize();
             MoveAgent.SetEnable(false);
             MoveAgent.SetType("Humanoid");
@@ -321,11 +308,6 @@ namespace Dajunctic
             if (MoveAgent != null)
             {
                 ForceStop();
-                if (checkNavMesh && NavMesh.SamplePosition(position, out var hit, 5f, NavMesh.AllAreas))
-                {
-                    position = hit.position;
-                }
-
                 MoveAgent.Warp(position);
                 Position = position;
                 _lastPosition = position;
@@ -420,6 +402,32 @@ namespace Dajunctic
             _energy = Stats.StartingMana.Value;
         }
 
+        public void GainMana(float amount)
+        {
+            if (!Alive) return;
+            _energy = Mathf.Min(_energy + amount, MaxEnergy);
+        }
+
+        public void ResetMana()
+        {
+            _energy = Stats != null ? Stats.StartingMana.Value : 0f;
+        }
+
+        public void ResetForNewRound()
+        {
+            gameObject.SetActive(true);
+            CancelInvoke();
+            InterruptAction();
+            ForceStop();
+            ForceSetHp(MaxHp);
+            ResetMana();
+            SetCasting(false);
+            SetTarget(null);
+            SetEnemyTeam(null);
+            SetTeam(Team.Player);
+            if (MoveAgent != null) MoveAgent.SetEnable(true);
+        }
+
         public virtual void TakeDamage(CombineDamage combineDamage)
         {
             float finalDamage = 0f;
@@ -453,6 +461,17 @@ namespace Dajunctic
         private void Die()
         {
             Debug.Log($"{gameObject.name} is death!");
+            InterruptAction();
+            ForceStop();
+            if (MoveAgent != null) MoveAgent.SetEnable(false);
+            PlayAnim("Death");
+            this.Raise(new UnitDiedEvent { Unit = this });
+            Invoke(nameof(DeactivateAfterDeath), 1.5f);
+        }
+
+        private void DeactivateAfterDeath()
+        {
+            gameObject.SetActive(false);
         }
 
         #endregion
@@ -520,12 +539,12 @@ namespace Dajunctic
 
         public void SetStaggerReduction(float v)
         {
-            throw new NotImplementedException();
+            // Stagger reduction not yet implemented
         }
 
         public void ClearTarget()
         {
-            throw new NotImplementedException();
+            CurrentTarget = null;
         }
 
         public float GetHit(CalculatedDamage damage)
@@ -554,6 +573,13 @@ namespace Dajunctic
             }
 
             TakeDamage(combineDamage);
+
+            // Defender gains mana when hit (TFT mechanic)
+            if (Alive)
+            {
+                float manaGain = Stats?.ManaPerAttack?.Value ?? 10f;
+                GainMana(manaGain * 0.5f);
+            }
 
             // Invoke C# event and raise global damage event
             OnDamageTakenEvent?.Invoke(damage);
@@ -677,5 +703,10 @@ namespace Dajunctic
     {
         public string id;
         public Transform point;
+    }
+
+    public struct UnitDiedEvent : IEvent
+    {
+        public CombatActor Unit;
     }
 }

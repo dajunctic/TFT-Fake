@@ -37,6 +37,20 @@ namespace Dajunctic
 
         public IReadOnlyList<Arena> GetAllArenas() => _arenas;
 
+        public List<ChampionActor> GetUnitsOnArena(int arenaId)
+        {
+            var list = new List<ChampionActor>();
+            if (_heroesOnArenas.TryGetValue(arenaId, out var homeHeroes))
+            {
+                list.AddRange(homeHeroes.Values.Where(h => h != null));
+            }
+            if (_guestHeroesOnArenas.TryGetValue(arenaId, out var guestHeroes))
+            {
+                list.AddRange(guestHeroes.Values.Where(h => h != null));
+            }
+            return list;
+        }
+
         public IEnumerable<ChampionActor> GetHeroesOnField(int ownerId)
         {
             if (_heroesOnArenas.TryGetValue(ownerId, out var heroes))
@@ -145,6 +159,12 @@ namespace Dajunctic
             }
 
             _manager.Traits?.RefreshTraits();
+        }
+
+        public void ClearAllGuestHeroes()
+        {
+            foreach (var dict in _guestHeroesOnArenas.Values)
+                dict.Clear();
         }
 
         public ChampionActor GetHeroAtTile(int arenaId, Vector2Int coord)

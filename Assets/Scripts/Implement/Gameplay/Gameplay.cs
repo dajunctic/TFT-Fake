@@ -80,9 +80,27 @@ namespace Dajunctic
             StartPhaseServer(GameplayPhase.Planning);
         }
 
+        private float _combatCheckTimer;
+
         void Update()
         {
             if (!IsServerInitialized) return; 
+
+            // Check if combat should end early (one team eliminated)
+            if (_currentPhase.Value == GameplayPhase.Combat)
+            {
+                _combatCheckTimer -= Time.deltaTime;
+                if (_combatCheckTimer <= 0f)
+                {
+                    _combatCheckTimer = 0.5f;
+                    if (CheckCombatFinished())
+                    {
+                        _timer.Value = 0;
+                        OnTimerCompleteServer();
+                        return;
+                    }
+                }
+            }
 
             if (_timer.Value > 0)
             {
@@ -92,6 +110,39 @@ namespace Dajunctic
                     OnTimerCompleteServer();
                 }
             }
+        }
+
+        private bool CheckCombatFinished()
+        {
+            var roundData = RoundSys?.CurrentRoundData;
+            bool isPvE = roundData != null &&
+                         (roundData.roundType == RoundType.PvE_Minion ||
+                          roundData.roundType == RoundType.PvE_Boss);
+
+            if (isPvE)
+            {
+                return PveSpawner.GetTotalAliveEnemies() <= 0;
+            }
+
+            var travelSystem = GameSystemManager.Instance?.Travel;
+            if (travelSystem == null) return false;
+
+            var combatPairs = travelSystem.GetCombatPairs();
+            if (combatPairs == null || combatPairs.Count == 0) return false;
+
+            foreach (var pair in combatPairs)
+            {
+                bool homeAlive = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Any(u => u.OwnerID == pair.HomeId && u.IsOnField && u.Alive && u.gameObject.activeInHierarchy);
+                bool guestAlive = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Any(u => u.OwnerID == pair.GuestId && u.Alive && u.gameObject.activeInHierarchy);
+
+                if (homeAlive && guestAlive)
+                    return false;
+            }
+            return true;
         }
 
         private void StartPhaseServer(GameplayPhase phase)
@@ -119,17 +170,19 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Planning)
             {
+                // Return all traveling units to their home arenas first
+                if (GameSystemManager.Instance.Travel != null)
+                {
+                    GameSystemManager.Instance.Travel.ReturnAllUnits();
+                }
+
+                // Reset all combat actors for new round (heal, reactivate, reset mana)
                 foreach (var actor in CombatActor.ActiveActors.ToArray())
                 {
                     if (actor != null)
                     {
-                        actor.ForceSetHp(actor.MaxHp);
+                        actor.ResetForNewRound();
                     }
-                }
-
-                if (GameSystemManager.Instance.Travel != null)
-                {
-                    GameSystemManager.Instance.Travel.ReturnAllUnits();
                 }
 
                 var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
@@ -149,6 +202,7 @@ namespace Dajunctic
 
             if (phase == GameplayPhase.Combat)
             {
+                _combatCheckTimer = 2f; // Wait 2s before checking combat end
                 var playerSystem = GameSystemManager.Instance.Player;
                 if (playerSystem != null)
                 {
@@ -212,6 +266,14 @@ namespace Dajunctic
 
         private void AdvanceToNextRound()
         {
+            // Apply end-of-round income and passive XP to all players (TFT mechanic)
+            var playerSyncs = FindObjectsByType<PlayerDataSync>(FindObjectsSortMode.None);
+            foreach (var sync in playerSyncs)
+            {
+                sync.ApplyEndRoundIncome();
+                sync.ChangeExp(2); // Passive +2 XP per round
+            }
+
             if (RoundSys != null)
             {
                 RoundSys.AdvanceRound();
@@ -289,31 +351,51 @@ namespace Dajunctic
         {
             var playerSystem = GameSystemManager.Instance.Player;
             var travelSystem = GameSystemManager.Instance.Travel;
-            var fieldSystem = GameSystemManager.Instance.Field;
-            if (playerSystem == null || travelSystem == null || fieldSystem == null) return;
+            if (playerSystem == null || travelSystem == null) return;
 
             var combatPairs = travelSystem.GetCombatPairs();
             int stageDamage = (RoundSys != null) ? RoundSys.StageNumber + 1 : 2;
 
             foreach (var pair in combatPairs)
             {
-                var allUnitsOnArena = fieldSystem.GetAllHeroes().Where(u =>
-                    fieldSystem.GetHeroAtTile(pair.HomeId, u.CurrentFieldCoord) == u).ToList();
+                // Query active champion actors for this combat pair
+                var homeUnits = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Where(u => u.OwnerID == pair.HomeId && u.Alive && u.gameObject.activeInHierarchy)
+                    .ToList();
+                var guestUnits = CombatActor.ActiveActors
+                    .OfType<ChampionActor>()
+                    .Where(u => u.OwnerID == pair.GuestId && u.Alive && u.gameObject.activeInHierarchy)
+                    .ToList();
 
-                var homeUnits = allUnitsOnArena.Where(u => u.OwnerID == pair.HomeId).ToList();
-                var guestUnits = allUnitsOnArena.Where(u => u.OwnerID == pair.GuestId).ToList();
+                var homeSync = playerSystem.GetPlayerSync(pair.HomeId);
+                var guestSync = playerSystem.GetPlayerSync(pair.GuestId);
 
                 if (homeUnits.Count == 0 && guestUnits.Count > 0)
                 {
-                    int damage = stageDamage + guestUnits.Count;
+                    // Home player lost — damage based on surviving unit cost (TFT mechanic)
+                    int unitDamage = guestUnits.Sum(u => (u.CombatActorData as ChampionData)?.rarity ?? 1);
+                    int damage = stageDamage + unitDamage;
                     playerSystem.ApplyDamage(pair.HomeId, damage);
-                    Debug.Log($"[Gameplay] Player {pair.HomeId} lost PvP. Taking {damage} damage.");
+                    if (homeSync != null) homeSync.RegisterResult(false);
+                    if (guestSync != null) guestSync.RegisterResult(true);
+                    Debug.Log($"[Gameplay] Player {pair.HomeId} lost PvP. Taking {damage} damage (stage:{stageDamage} + units:{unitDamage}).");
                 }
                 else if (guestUnits.Count == 0 && homeUnits.Count > 0)
                 {
-                    int damage = stageDamage + homeUnits.Count;
+                    // Guest player lost
+                    int unitDamage = homeUnits.Sum(u => (u.CombatActorData as ChampionData)?.rarity ?? 1);
+                    int damage = stageDamage + unitDamage;
                     playerSystem.ApplyDamage(pair.GuestId, damage);
-                    Debug.Log($"[Gameplay] Player {pair.GuestId} lost PvP as guest. Taking {damage} damage.");
+                    if (guestSync != null) guestSync.RegisterResult(false);
+                    if (homeSync != null) homeSync.RegisterResult(true);
+                    Debug.Log($"[Gameplay] Player {pair.GuestId} lost PvP as guest. Taking {damage} damage (stage:{stageDamage} + units:{unitDamage}).");
+                }
+                else
+                {
+                    // Draw or both wiped
+                    if (homeSync != null) homeSync.RegisterResult(false);
+                    if (guestSync != null) guestSync.RegisterResult(false);
                 }
             }
         }

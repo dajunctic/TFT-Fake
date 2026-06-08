@@ -110,9 +110,8 @@ namespace Dajunctic
         {
             if (evt.Phase == GameplayPhase.Planning)
             {
-
-                if (_isShopLocked)
-                    SetShopLock(false);
+                // Don't auto-unlock shop — player's lock preference should persist
+                // Shop only unlocks when player manually toggles it
             }
         }
 

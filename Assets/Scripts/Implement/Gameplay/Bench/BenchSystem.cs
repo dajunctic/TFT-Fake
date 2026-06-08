@@ -219,10 +219,7 @@ namespace Dajunctic
                 if (hero.MoveAgent != null)
                 {
                     hero.MoveAgent.SetEnable(false);
-                    if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
-                    {
-                        navMeshAgent.Cleanup();
-                    }
+                    hero.MoveAgent.Cleanup();
                     hero.MoveAgent = null;
                 }
                 hero.InterruptAction();
@@ -297,10 +294,7 @@ namespace Dajunctic
                 if (hero.MoveAgent != null)
                 {
                     hero.MoveAgent.SetEnable(false);
-                    if (hero.MoveAgent is NavMeshMoveAgent navMeshAgent)
-                    {
-                        navMeshAgent.Cleanup();
-                    }
+                    hero.MoveAgent.Cleanup();
                     hero.MoveAgent = null;
                 }
                 hero.InterruptAction();

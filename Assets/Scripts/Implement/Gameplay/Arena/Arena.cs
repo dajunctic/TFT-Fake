@@ -26,11 +26,6 @@ namespace Dajunctic
         private void Awake()
         {
             _ownerId.OnChange += OnOwnerIdChanged;
-            var surface = GetComponent<NavMeshSurface>();
-            if (surface != null)
-            {
-                surface.BuildNavMesh();
-            }
         }
 
         private void OnOwnerIdChanged(int prev, int next, bool asServer)

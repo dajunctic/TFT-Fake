@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using GraphProcessor;
 
 namespace Dajunctic.SkillSystem.Logic
@@ -39,13 +38,6 @@ namespace Dajunctic.SkillSystem.Logic
             }
 
             _curPosition = target.AsTransform().Position + direction * distance;
-            var curY = _curPosition.y;
-
-            if (NavMesh.Raycast(target.AsTransform().Position + offsetRaycast, _curPosition + offsetRaycast, out var hit, NavMesh.AllAreas))
-            {
-                _curPosition = hit.position;
-                _curPosition.y = curY;
-            }
 
             _curDistance = Vector3.Distance(target.Position, _curPosition);
             Completed();

@@ -34,6 +34,8 @@ namespace Dajunctic
 
         private void OnPhaseChanged(GameplayPhaseChangedEvent evt)
         {
+            if (!FishNet.InstanceFinder.IsServerStarted) return;
+
             if (evt.Phase == GameplayPhase.Combat)
             {
                 GenerateMatchmaking();
@@ -61,8 +63,9 @@ namespace Dajunctic
                 }
                 else
                 {
-                    
-                    int randomEnemyId = shuffled[Random.Range(0, shuffled.Count - 1)].Id;
+                    // Odd player out — pick a random ghost opponent (exclude self)
+                    var possibleOpponents = shuffled.Where(p => p.Id != shuffled[i].Id).ToList();
+                    int randomEnemyId = possibleOpponents[Random.Range(0, possibleOpponents.Count)].Id;
                     _combatPairs.Add(new CombatPair { HomeId = shuffled[i].Id, GuestId = randomEnemyId, IsGhost = true });
                 }
             }
@@ -122,6 +125,25 @@ namespace Dajunctic
                     _manager.Field.RegisterGuestHeroToTile(unit, unit.CurrentFieldCoord, pair.HomeId);
                 }
 
+                var guestPlayer = _manager.Player.Players.FirstOrDefault(p => p.Id == pair.GuestId);
+                if (guestPlayer != null && guestPlayer.Tactician != null)
+                {
+                    TacticianActor tactician = guestPlayer.Tactician;
+                    Vector3 tacticianSpawnPos = homeArena.GuestSpawnPoint != null ? homeArena.GuestSpawnPoint.position : homeArena.transform.position;
+                    
+                    _travelingUnits[tactician] = (pair.GuestId, tactician.CachedTransform.position, Vector2Int.zero, false);
+                    
+                    var netMove = tactician.GetComponent<TacticianNetworkMovement>();
+                    if (netMove != null)
+                    {
+                        netMove.RpcServerTeleport(tacticianSpawnPos, false, false);
+                    }
+                    else
+                    {
+                        tactician.Teleport(tacticianSpawnPos, false);
+                    }
+                }
+
                 // === Set enemy teams for PvP combat ===
                 var homeUnits = CombatActor.ActiveActors
                     .OfType<ChampionActor>()
@@ -168,11 +190,29 @@ namespace Dajunctic
                     }
                     else
                     {
-                        unit.Teleport(originalPos, true);
+                        if (unit is TacticianActor tactician)
+                        {
+                            var netMove = tactician.GetComponent<TacticianNetworkMovement>();
+                            if (netMove != null)
+                            {
+                                netMove.RpcServerTeleport(originalPos, true, false);
+                            }
+                            else
+                            {
+                                tactician.Teleport(originalPos, true);
+                            }
+                        }
+                        else
+                        {
+                            unit.Teleport(originalPos, true);
+                        }
                     }
                 }
             }
             _travelingUnits.Clear();
+
+            // Clear guest tracking in FieldSystem
+            _manager.Field?.ClearAllGuestHeroes();
         }
 
         private void SpawnPortal(Vector3 pos)

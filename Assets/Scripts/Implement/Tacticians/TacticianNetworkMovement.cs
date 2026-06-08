@@ -28,6 +28,15 @@ namespace Dajunctic
             _hasDestination = true;
         }
 
+        [ObserversRpc(RunLocally = true, BufferLast = true)]
+        public void RpcServerTeleport(Vector3 position, bool checkNavMesh, bool fx)
+        {
+            if (_actor == null) return;
+            _hasDestination = false;
+            _syncedDestination = Vector3.positiveInfinity;
+            _actor.Teleport(position, checkNavMesh, fx);
+        }
+
         [ServerRpc]
         public void CmdTeleport(Vector3 position, bool checkNavMesh, bool fx)
         {

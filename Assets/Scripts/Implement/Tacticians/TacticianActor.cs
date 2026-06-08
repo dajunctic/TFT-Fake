@@ -22,7 +22,7 @@ namespace Dajunctic
             set => base.OwnerID = value;
         }
 
-        protected override ActorMovementType ActorMovementType => ActorMovementType.Navmesh;
+        protected override ActorMovementType ActorMovementType => ActorMovementType.HexGrid;
 
         private Transform _cameraTransform;
         private Camera _camera;
@@ -183,8 +183,6 @@ namespace Dajunctic
             if (Physics.Raycast(ray, out RaycastHit hitInfo))
             {
                 var targetPosition = hitInfo.point;
-                bool onNavMesh = UnityEngine.AI.NavMesh.SamplePosition(targetPosition, out UnityEngine.AI.NavMeshHit navHit, 5f, UnityEngine.AI.NavMesh.AllAreas);
-                if (onNavMesh) targetPosition = navHit.position;
 
                 RewarpMoveAgent();
 

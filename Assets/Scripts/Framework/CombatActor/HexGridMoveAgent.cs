@@ -10,7 +10,7 @@ namespace Dajunctic
         public bool Initialized => _initialized;
         public bool IsEnabled { get; private set; }
         public bool CanMove => true;
-        public bool IsMoving => _currentPath != null && _currentPath.Count > 0;
+        public bool IsMoving => _isMovingDirect || (_currentPath != null && _currentPathIndex < _currentPath.Count);
         public Vector3 Position => transform.position;
         public Vector3 Forward => transform.forward;
         public Vector3 Velocity { get; private set; }
@@ -23,20 +23,29 @@ namespace Dajunctic
         private float _stoppingDistance;
         private Vector3 _targetDestination;
 
+        // Direct movement (fallback when no hex area)
+        private bool _isMovingDirect;
+        private Vector3 _directTarget;
+
+        /// <summary>
+        /// Explicitly set the hex area for A* pathfinding.
+        /// When null, MovePosition falls back to direct movement.
+        /// </summary>
+        public void SetHexArea(HexAreaView area)
+        {
+            _hexArea = area;
+        }
+
         public void Initialize()
         {
-            
-            _hexArea = GetComponentInParent<HexAreaView>();
-            if (_hexArea == null)
-            {
-                _hexArea = FindFirstObjectByType<HexAreaView>();
-            }
+            // Don't auto-find hex area — it will be set explicitly via SetHexArea()
             _initialized = true;
         }
 
         public void Cleanup()
         {
             _initialized = false;
+            _hexArea = null;
         }
 
         public void SetEnable(bool enable)
@@ -57,11 +66,13 @@ namespace Dajunctic
             transform.position = position;
             _targetDestination = position;
             _currentPath = null;
+            _isMovingDirect = false;
         }
 
         public void ForceStop()
         {
             _currentPath = null;
+            _isMovingDirect = false;
             Velocity = Vector3.zero;
         }
 
@@ -82,10 +93,27 @@ namespace Dajunctic
                 return;
             }
 
-            if (_targetDestination != position)
+            if (_hexArea != null && _hexArea.Data != null)
             {
-                _targetDestination = position;
-                CalculatePath(position);
+                // Hex A* pathfinding mode
+                if (_targetDestination != position)
+                {
+                    _targetDestination = position;
+                    CalculatePath(position);
+                    // If A* fails (e.g., target on different hex area), fall back to direct
+                    if (_currentPath == null || _currentPath.Count == 0)
+                    {
+                        _directTarget = position;
+                        _isMovingDirect = true;
+                    }
+                }
+            }
+            else
+            {
+                // Direct movement (no hex area — free-roam like tactician)
+                _directTarget = position;
+                _isMovingDirect = true;
+                _currentPath = null;
             }
         }
 
@@ -144,7 +172,6 @@ namespace Dajunctic
 
         private float Heuristic(Vector2Int a, Vector2Int b)
         {
-            
             return (Mathf.Abs(a.x - b.x) + Mathf.Abs(a.x + a.y - b.x - b.y) + Mathf.Abs(a.y - b.y)) / 2f;
         }
 
@@ -162,29 +189,63 @@ namespace Dajunctic
 
         private void Update()
         {
-            if (!IsEnabled || _currentPath == null || _currentPathIndex >= _currentPath.Count) return;
+            if (!IsEnabled) return;
 
-            Vector2Int targetHex = _currentPath[_currentPathIndex];
-            Vector3 targetPos = _hexArea.Data.HexToWorld(_hexArea.CachedTransform.position, targetHex);
-            targetPos.y = transform.position.y;
-
-            float step = _moveSpeed * Time.deltaTime;
-            Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, step);
-            Velocity = (newPos - transform.position) / Time.deltaTime;
-            transform.position = newPos;
-
-            if (Velocity != Vector3.zero)
+            // Hex pathfinding mode
+            if (_currentPath != null && _currentPathIndex < _currentPath.Count)
             {
-                RotateDirection(Velocity.normalized, _rotateSpeed, Time.deltaTime, false);
-            }
-
-            if (Vector3.Distance(transform.position, targetPos) < 0.05f)
-            {
-                _currentPathIndex++;
-                if (_currentPathIndex >= _currentPath.Count)
+                if (_hexArea == null || _hexArea.Data == null)
                 {
-                    _currentPath = null;
+                    ForceStop();
+                    return;
+                }
+
+                Vector2Int targetHex = _currentPath[_currentPathIndex];
+                Vector3 targetPos = _hexArea.Data.HexToWorld(_hexArea.CachedTransform.position, targetHex);
+                targetPos.y = transform.position.y;
+
+                float step = _moveSpeed * Time.deltaTime;
+                Vector3 newPos = Vector3.MoveTowards(transform.position, targetPos, step);
+                Velocity = (newPos - transform.position) / Time.deltaTime;
+                transform.position = newPos;
+
+                if (Velocity != Vector3.zero)
+                {
+                    RotateDirection(Velocity.normalized, _rotateSpeed, Time.deltaTime, false);
+                }
+
+                if (Vector3.Distance(transform.position, targetPos) < 0.05f)
+                {
+                    _currentPathIndex++;
+                    if (_currentPathIndex >= _currentPath.Count)
+                    {
+                        _currentPath = null;
+                        Velocity = Vector3.zero;
+                    }
+                }
+            }
+            // Direct movement mode (fallback — used by tactician or cross-grid combat)
+            else if (_isMovingDirect)
+            {
+                float step = _moveSpeed * Time.deltaTime;
+                Vector3 direction = _directTarget - transform.position;
+                direction.y = 0;
+
+                if (direction.magnitude <= _stoppingDistance)
+                {
+                    _isMovingDirect = false;
                     Velocity = Vector3.zero;
+                    return;
+                }
+
+                Vector3 newPos = Vector3.MoveTowards(transform.position, _directTarget, step);
+                newPos.y = transform.position.y; // Keep same height
+                Velocity = (newPos - transform.position) / Time.deltaTime;
+                transform.position = newPos;
+
+                if (Velocity.sqrMagnitude > 0.001f)
+                {
+                    RotateDirection(Velocity.normalized, _rotateSpeed, Time.deltaTime, false);
                 }
             }
         }
