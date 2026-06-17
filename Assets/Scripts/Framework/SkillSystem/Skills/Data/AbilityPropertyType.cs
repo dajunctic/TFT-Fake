@@ -256,6 +256,7 @@ namespace Dajunctic.SkillSystem.Data
     {
         [SerializeField] public DamageScale damageScale;
         [SerializeField] public float hpRecover;
+        [SerializeField] public float apRatio;
 
         public HealConfig GetData()
         {
@@ -423,6 +424,7 @@ namespace Dajunctic.SkillSystem.Data
         DamageSourceMagicResist,
         DamageSourceRemainHp,
         DamageTakerRemainHp,
+        DamageSourceAp,
     }
     
     [Serializable]

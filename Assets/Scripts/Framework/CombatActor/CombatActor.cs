@@ -590,8 +590,15 @@ namespace Dajunctic
 
         public void Heal(IDamageDealer dealer, float amount, bool extra1 = false, bool extra2 = false, bool extra3 = false)
         {
+            float prevHp = _hp;
             _hp = Mathf.Clamp(_hp + amount, 0f, MaxHp);
+            float actualHeal = _hp - prevHp;
             OnHpChanged?.Invoke(MaxHp > 0f ? _hp / MaxHp : 1f);
+
+            if (actualHeal > 0f)
+            {
+                this.Raise(new HealGlobalEvent { Target = this, FinalHeal = actualHeal });
+            }
         }
 
         public void ForceSetHp(float hp)

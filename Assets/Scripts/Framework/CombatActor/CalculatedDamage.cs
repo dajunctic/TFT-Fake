@@ -62,6 +62,10 @@ namespace Dajunctic
                 {
                     calc.FloatNormalDamage = source.atk * rawDmg;
                 }
+                else if (scaleStr == "DamageSourceAp" && source != null)
+                {
+                    calc.FloatNormalDamage = source.ap * rawDmg;
+                }
                 else
                 {
                     calc.FloatNormalDamage = rawDmg;
@@ -118,6 +122,7 @@ namespace Dajunctic
         public float magicResist;
         public float maxHp;
         public float currentHp;
+        public float ap;
         public IDamageDealer damageDealer;
         public object debuffFocus;
         
@@ -133,6 +138,7 @@ namespace Dajunctic
                     magicResist = actor.Stats?.MagicResist?.Value ?? 0f;
                     maxHp = actor.MaxHp;
                     currentHp = actor.Hp;
+                    ap = actor.Stats?.AbilityPower?.Value ?? 0f;
                 }
             }
         }

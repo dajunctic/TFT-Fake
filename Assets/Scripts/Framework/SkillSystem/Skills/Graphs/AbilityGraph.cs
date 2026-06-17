@@ -17,6 +17,7 @@ namespace Dajunctic.SkillSystem.Logic
         TAbilityEntity _ability;
         AbilityNode[] _nodes;
         ActionNode[] _actionNodes;
+        PropertyNode[] _propertyNodes;
         EntryNode _entry;
         ExitNode _exit;
         bool _isPlaying;
@@ -32,12 +33,22 @@ namespace Dajunctic.SkillSystem.Logic
             {
                 node.SetOwner(owner);
             }
+
+            foreach (var node in _propertyNodes)
+            {
+                node.SetOwner(owner);
+            }
         }
 
         public void SetAbility(TAbilityEntity ability)
         {
             _ability = ability;
             foreach (var node in _nodes)
+            {
+                node.SetAbility(_ability);
+            }
+
+            foreach (var node in _propertyNodes)
             {
                 node.SetAbility(_ability);
             }
@@ -49,10 +60,16 @@ namespace Dajunctic.SkillSystem.Logic
 
             _nodes = nodes.OfType<AbilityNode>().ToArray();
             _actionNodes = nodes.OfType<ActionNode>().ToArray();
+            _propertyNodes = nodes.OfType<PropertyNode>().ToArray();
             _entry = nodes.OfType<EntryNode>().FirstOrDefault();
             _exit = nodes.OfType<ExitNode>().FirstOrDefault();
 
             foreach (var node in _nodes)
+            {
+                node.Initialize();
+            }
+
+            foreach (var node in _propertyNodes)
             {
                 node.Initialize();
             }
@@ -65,6 +82,11 @@ namespace Dajunctic.SkillSystem.Logic
             _isPlaying = true;
 
             foreach (var node in _nodes)
+            {
+                node.Reset();
+            }
+
+            foreach (var node in _propertyNodes)
             {
                 node.Reset();
             }
@@ -101,6 +123,12 @@ namespace Dajunctic.SkillSystem.Logic
             {
                 node.Cleanup();
             }
+
+            foreach (var node in _propertyNodes)
+            {
+                node.Cleanup();
+            }
+            _propertyNodes = null;
             _nodes = null;
             _actionNodes = null;
         }

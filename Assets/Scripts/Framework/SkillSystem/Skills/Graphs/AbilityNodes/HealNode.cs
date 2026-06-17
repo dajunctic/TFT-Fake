@@ -46,12 +46,15 @@ namespace Dajunctic.SkillSystem.Logic
                         damageSource.currentHp,
                         target.MaxHp,
                         target.Hp,
-                        0,
+                        damageSource.ap,
                         false
                     );
+
+                    scaledHpRecover += inHeal.apRatio * damageSource.ap;
+
                     scaledHpRecover = PhFormula.CalculateShieldOrHeal(
                         scaledHpRecover,
-                        Owner.AsCombatStatOwner().BuffPower
+                        Owner.AsCombatStatOwner() != null ? Owner.AsCombatStatOwner().BuffPower : 1f
                     );
 
                     target.Heal(

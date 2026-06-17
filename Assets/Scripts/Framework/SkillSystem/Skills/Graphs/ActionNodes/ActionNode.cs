@@ -14,7 +14,7 @@ namespace Dajunctic.SkillSystem.Logic
         int priority = 0;
 
         [GraphProcessor.Output(name = "Self")]
-        IActionNode self;
+        public IActionNode self;
 
         public IAbilityOwner Owner { get; private set; }
         protected int Skin;
@@ -27,7 +27,7 @@ namespace Dajunctic.SkillSystem.Logic
 
         Coroutine _coroutine;
 
-        public override string name => "Action Node";
+        public override string name => GetType().Name;
 
         protected override void Enable()
         {
