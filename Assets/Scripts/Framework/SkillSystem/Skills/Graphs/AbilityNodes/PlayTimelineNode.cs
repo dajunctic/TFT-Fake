@@ -2,62 +2,40 @@ using GraphProcessor;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Playables;
+using Dajunctic;
 
 namespace Dajunctic.SkillSystem.Logic
 {
     [System.Serializable, NodeMenuItem("Ability/PlayTimeline")]
     public class PlayTimelineNode : AbilityNode
     {
-        [GraphProcessor.Input(name = "timelineAsset")] public PlayableAsset timelineAsset;
+        [SerializeField, GuidReference("tl", typeof(IDummyId))] public string timelineId;
         [GraphProcessor.Input(name = "waitTillFinished")] public bool waitTillFinished = true;
 
         protected override void PlayInternal()
         {
-            var inTimelineAsset = GetInputValue(nameof(timelineAsset), timelineAsset);
+            var activeId = timelineId;
             var inWaitTillFinished = GetInputValue(nameof(waitTillFinished), waitTillFinished);
 
-            var actor = (Owner as MonoBehaviour) ?? (Owner.AsCombatActor() as MonoBehaviour);
-            PlayableDirector director = null;
-            if (actor != null)
+            if (string.IsNullOrEmpty(activeId))
             {
-                director = actor.GetComponent<PlayableDirector>();
+                Completed();
+                return;
             }
 
+            var actor = (Owner as MonoBehaviour) ?? (Owner.AsCombatActor() as MonoBehaviour);
             var netSync = actor != null ? actor.GetComponent<ChampionNetworkSync>() : null;
 
             if (netSync != null && netSync.IsServerStarted)
             {
-                
-                netSync.RpcPlayTimeline(inTimelineAsset != null ? inTimelineAsset.name : string.Empty);
-
-                if (director != null && inTimelineAsset != null)
-                {
-                    director.playableAsset = inTimelineAsset;
-                }
+                netSync.RpcPlayTimeline(activeId);
 
                 if (inWaitTillFinished)
                 {
-                    StartCoroutine();
-                }
-                else
-                {
-                    Completed();
-                }
-            }
-            else
-            {
-                
-                if (director != null)
-                {
-                    if (inTimelineAsset != null)
+                    var asset = PoolView.Instance.GetTimelineAsset(activeId);
+                    if (asset != null)
                     {
-                        director.playableAsset = inTimelineAsset;
-                    }
-                    director.Play();
-
-                    if (inWaitTillFinished)
-                    {
-                        StartCoroutine();
+                        StartCoroutine(asset.duration);
                     }
                     else
                     {
@@ -66,40 +44,40 @@ namespace Dajunctic.SkillSystem.Logic
                 }
                 else
                 {
-                    Debug.LogWarning("PlayTimelineNode: PlayableDirector not found on Owner.");
+                    Completed();
+                }
+            }
+            else
+            {
+                EventDispatcherView.Instance.Raise(new PlayTimelineEvent { timelineId = activeId, owner = Owner });
+
+                if (inWaitTillFinished)
+                {
+                    var asset = PoolView.Instance.GetTimelineAsset(activeId);
+                    if (asset != null)
+                    {
+                        StartCoroutine(asset.duration);
+                    }
+                    else
+                    {
+                        Completed();
+                    }
+                }
+                else
+                {
                     Completed();
                 }
             }
         }
 
-        protected override IEnumerator IECoroutine()
+        private void StartCoroutine(double duration)
         {
-            var actor = (Owner as MonoBehaviour) ?? (Owner.AsCombatActor() as MonoBehaviour);
-            var netSync = actor != null ? actor.GetComponent<ChampionNetworkSync>() : null;
-            bool isServer = netSync != null && netSync.IsServerStarted;
+            this.StartGlobalCoroutine(IECoroutine(duration));
+        }
 
-            PlayableDirector director = null;
-            if (actor != null)
-            {
-                director = actor.GetComponent<PlayableDirector>();
-            }
-
-            if (director != null)
-            {
-                if (isServer && director.playableAsset != null)
-                {
-                    
-                    yield return new WaitForSeconds((float)director.playableAsset.duration);
-                }
-                else
-                {
-                    
-                    while (director.state == PlayState.Playing)
-                    {
-                        yield return null;
-                    }
-                }
-            }
+        private IEnumerator IECoroutine(double duration)
+        {
+            yield return new WaitForSeconds((float)duration);
             Completed();
         }
     }

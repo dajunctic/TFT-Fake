@@ -36,6 +36,11 @@ MonoBehaviour:
   gambits:
   - targetType: 0
     condition:
+      rid: 7769114376571191627
+    action:
+      rid: 7769114376571191628
+  - targetType: 0
+    condition:
       rid: 2806570989226033433
     action:
       rid: 2806570989226033434
@@ -62,3 +67,12 @@ MonoBehaviour:
       type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
       data:
         skillGraph: {fileID: 11400000, guid: 1c3a6a8e89c1bb0499ef72f9ee4aca11, type: 2}
+    - rid: 7769114376571191627
+      type: {class: FullManaGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 0
+        customRange: 10
+    - rid: 7769114376571191628
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 11400000, guid: 43eaaa55720a70c4b925f5facdd821b6, type: 2}

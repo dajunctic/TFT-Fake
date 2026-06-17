@@ -87,5 +87,12 @@ namespace Dajunctic
             missileView.StartFly();
             return missileView;
         }
+
+        public UnityEngine.Playables.PlayableAsset GetTimelineAsset(string timelineId)
+        {
+            if (poolData.timelineLists == null) return null;
+            var entry = poolData.timelineLists.Find(t => t.Id == timelineId);
+            return entry?.timelineAsset;
+        }
     }
 }

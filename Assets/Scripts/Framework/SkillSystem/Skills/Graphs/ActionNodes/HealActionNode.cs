@@ -31,17 +31,26 @@ namespace Dajunctic.SkillSystem.Logic
             var inHeal = GetInputValue(nameof(heal), heal);
             var inHitAction = GetInputValues(nameof(hitAction), hitAction);
 
-            var data = ((ISubActionSource)source).GetData();
-            var damageSource = data.DamageSource;
+            Data data = null;
+            if (source is ISubActionSource subSource)
+            {
+                data = subSource.GetData();
+            }
+
+            var damageSource = data != null ? data.DamageSource : (Owner != null ? Owner.GetDamageSource() : new DamageSource());
 
             var inTargets =
                 GetInputValue<List<IDamageTaker>>(nameof(targets))?.ToList()
                 ?? new List<IDamageTaker>();
-            foreach (var target in data.DamageTakers)
+
+            if (data != null && data.DamageTakers != null)
             {
-                if (!inTargets.Contains(target))
+                foreach (var target in data.DamageTakers)
                 {
-                    inTargets.Add(target);
+                    if (!inTargets.Contains(target))
+                    {
+                        inTargets.Add(target);
+                    }
                 }
             }
 
@@ -69,6 +78,8 @@ namespace Dajunctic.SkillSystem.Logic
                         scaledHpRecover,
                         1f
                     );
+
+                    Debug.LogError($"[HealActionNode] Target: {(target as CombatActor)?.gameObject?.name}, scaledHpRecover: {scaledHpRecover}, inHeal.hpRecover: {inHeal.hpRecover}, apRatio: {inHeal.apRatio}, ap: {damageSource.ap}, target.Hp: {target.Hp}/{target.MaxHp}");
 
                     target.Heal(
                         damageSource.damageDealer,

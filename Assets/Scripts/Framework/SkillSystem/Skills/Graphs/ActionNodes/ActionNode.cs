@@ -38,6 +38,7 @@ namespace Dajunctic.SkillSystem.Logic
         public IActionNode CreateCopy()
         {
             var copy = (ActionNode)this.MemberwiseClone();
+            copy.Blueprint = this;
             copy.Owner = Owner;
             copy.graph = graph;
             if (Owner != null) copy.Skin = Owner.Skin;

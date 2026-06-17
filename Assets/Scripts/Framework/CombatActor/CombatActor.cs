@@ -595,9 +595,17 @@ namespace Dajunctic
             float actualHeal = _hp - prevHp;
             OnHpChanged?.Invoke(MaxHp > 0f ? _hp / MaxHp : 1f);
 
-            if (actualHeal > 0f)
+            // extra2 is healOnFull, extra3 is triggerHealEvent
+            bool shouldRaiseEvent = extra3;
+            if (actualHeal <= 0f && !extra2)
             {
-                this.Raise(new HealGlobalEvent { Target = this, FinalHeal = actualHeal });
+                shouldRaiseEvent = false;
+            }
+
+            if (shouldRaiseEvent && (actualHeal > 0f || amount > 0f))
+            {
+                float healValue = actualHeal > 0f ? actualHeal : amount;
+                this.Raise(new HealGlobalEvent { Target = this, FinalHeal = healValue });
             }
         }
 

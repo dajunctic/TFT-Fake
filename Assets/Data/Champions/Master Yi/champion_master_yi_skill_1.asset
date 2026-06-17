@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf7a84b476e24105983099369ddfdc7a, type: 3}
-  m_Name: champion_master_yi_atk_2
+  m_Name: champion_master_yi_skill_1
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Data.SkillEntityDataAsset
   Data:
     id: 
@@ -27,7 +27,7 @@ MonoBehaviour:
       - -1
       initialCooldown:
       - 0
-      initialEnergy: 200
+      initialEnergy: 50
       maxPlayCount: -1
   references:
     version: 2

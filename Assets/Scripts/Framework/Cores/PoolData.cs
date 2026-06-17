@@ -14,6 +14,7 @@ namespace Dajunctic
 
         [SerializeField] public List<FxEntity> fxLists;
         [SerializeField] public List<MissileEntity> missileLists;
+        [SerializeField] public List<TimelineEntity> timelineLists;
             
     }
 
@@ -29,6 +30,13 @@ namespace Dajunctic
     {
         [SerializeField, GuidReference("missile", typeof(IDummyId))] public string Id;
         [SerializeField] public MissileView missilePrefab;
+    }
+
+    [Serializable]
+    public class TimelineEntity
+    {
+        [SerializeField, GuidReference("tl", typeof(IDummyId))] public string Id;
+        [SerializeField] public UnityEngine.Playables.PlayableAsset timelineAsset;
     }
 
 }

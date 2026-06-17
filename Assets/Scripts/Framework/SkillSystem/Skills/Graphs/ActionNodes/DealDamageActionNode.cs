@@ -44,8 +44,13 @@ namespace Dajunctic.SkillSystem.Logic
         {
             if (!IsInitialized) return;
 
-            var data = ((ISubActionSource)source).GetData();
-            _damageSource = data.DamageSource;
+            Data data = null;
+            if (source is ISubActionSource subSource)
+            {
+                data = subSource.GetData();
+            }
+
+            _damageSource = data != null ? data.DamageSource : (Owner != null ? Owner.GetDamageSource() : new DamageSource());
             _damageTakers.Clear();
             var inAttackId = GetInputValue<long>(nameof(commonAttackId));
             if (inAttackId == -1)
@@ -54,7 +59,10 @@ namespace Dajunctic.SkillSystem.Logic
             }
 
             var inTargets = GetInputValue(nameof(targets), targets).ToList();
-            inTargets.AddRange(data.DamageTakers);
+            if (data != null && data.DamageTakers != null)
+            {
+                inTargets.AddRange(data.DamageTakers);
+            }
 
             var inDamageConfig = GetInputValue(nameof(damageConfig), damageConfig);
 

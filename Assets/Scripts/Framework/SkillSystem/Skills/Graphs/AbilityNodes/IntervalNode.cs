@@ -1,8 +1,10 @@
 using GraphProcessor;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Dajunctic.SkillSystem.Logic
 {
@@ -22,8 +24,8 @@ namespace Dajunctic.SkillSystem.Logic
 
         protected override IEnumerator IECoroutine()
         {
-            var inDuration = GetInputValue(nameof(duration), duration);
-            var inInterval = GetInputValue(nameof(interval), interval);
+            var inDuration = duration;
+            var inInterval = interval;
 
             if (tickOnStart)
             {
@@ -38,6 +40,7 @@ namespace Dajunctic.SkillSystem.Logic
                 TriggerTickNodes();
             }
 
+            Debug.LogError("19001508");
             Completed();
         }
 

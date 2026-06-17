@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff0cfd69bf7b4b469c3c19234f70524d, type: 3}
-  m_Name: champion_master_yi_atk_2_graph
+  m_Name: champion_master_yi_skill_1_graph
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.SkillGraph
   serializedNodes: []
   nodes:
   - rid: 2806570943738545101
-  - rid: 2806570989226033284
   - rid: 2806570989226033438
   - rid: 7769114331359478468
   - rid: 7769114376571191438
   - rid: 7769114376571191439
   - rid: 7769114376571191486
+  - rid: 7769114376571191626
+  - rid: 7769114376571191813
   edges:
   - GUID: c2c54fd0-cf1e-4630-9205-f47a41ad3e54
     owner: {fileID: 11400000}
@@ -62,6 +63,38 @@ MonoBehaviour:
     outputFieldName: outNode
     inputPortIdentifier: 
     outputPortIdentifier: 
+  - GUID: efc0b253-d97d-4897-ac4c-36fc8d5d88b4
+    owner: {fileID: 11400000}
+    inputNodeGUID: c8bcb43a-a1af-4e54-a7c3-fac34bfa61ee
+    outputNodeGUID: d5448a1c-2200-454f-8da0-80dade4a4d74
+    inputFieldName: heal
+    outputFieldName: value
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: c0356d29-2bd6-4e8c-8a51-c17809964257
+    owner: {fileID: 11400000}
+    inputNodeGUID: 84c48b26-12ff-47f3-80cd-a3446889c6e7
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: d7a7867d-aa00-449f-8fae-26f0534d4c17
+    owner: {fileID: 11400000}
+    inputNodeGUID: b22dba60-fa26-4864-8dac-b70eebcc9fb6
+    outputNodeGUID: 84c48b26-12ff-47f3-80cd-a3446889c6e7
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 68d90c9d-5d39-4002-ac24-671a614fd9d9
+    owner: {fileID: 11400000}
+    inputNodeGUID: 28f1dd51-9a51-4c3e-8ee4-780548ba5511
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
   groups: []
   stackNodes: []
   pinnedElements:
@@ -89,8 +122,8 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: 496, y: 515, z: 0}
-  scale: {x: 1.15, y: 1.15, z: 1}
+  position: {x: 513, y: 448, z: 0}
+  scale: {x: 0.8695652, y: 0.8695652, z: 1}
   references:
     version: 2
     RefIds:
@@ -111,27 +144,12 @@ MonoBehaviour:
         expanded: 0
         debug: 0
         nodeLock: 0
-    - rid: 2806570989226033284
-      type: {class: ExitNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
-      data:
-        nodeCustomName: 
-        GUID: 5e9728cd-c057-40d1-ad4b-162c28839616
-        computeOrder: 1
-        position:
-          serializedVersion: 2
-          x: 694.20013
-          y: -74.55001
-          width: 102.99994
-          height: 98.99999
-        expanded: 0
-        debug: 0
-        nodeLock: 0
     - rid: 2806570989226033438
       type: {class: PlayAnimationNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
       data:
         nodeCustomName: 
         GUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
-        computeOrder: 2
+        computeOrder: 1
         position:
           serializedVersion: 2
           x: -10.652166
@@ -149,7 +167,7 @@ MonoBehaviour:
       data:
         nodeCustomName: 
         GUID: 50eec706-272c-45bd-a437-dda47155869e
-        computeOrder: 3
+        computeOrder: 2
         position:
           serializedVersion: 2
           x: -219
@@ -170,10 +188,10 @@ MonoBehaviour:
         computeOrder: 5
         position:
           serializedVersion: 2
-          x: 170.78264
-          y: -249
+          x: 196.90172
+          y: -296.34595
           width: 162.99995
-          height: 155
+          height: 154.99998
         expanded: 0
         debug: 0
         nodeLock: 0
@@ -207,7 +225,7 @@ MonoBehaviour:
       data:
         nodeCustomName: 
         GUID: b22dba60-fa26-4864-8dac-b70eebcc9fb6
-        computeOrder: 6
+        computeOrder: 7
         position:
           serializedVersion: 2
           x: 458.95654
@@ -217,3 +235,44 @@ MonoBehaviour:
         expanded: 0
         debug: 0
         nodeLock: 0
+    - rid: 7769114376571191626
+      type: {class: HealConfigPropertyNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: d5448a1c-2200-454f-8da0-80dade4a4d74
+        computeOrder: 3
+        position:
+          serializedVersion: 2
+          x: -361.73914
+          y: -372.16522
+          width: 286.00003
+          height: 170.00002
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        propertyName: 
+        fallbackValue:
+          damageScale: 10
+          hpRecover: 50
+          apRatio: 0.5
+        value:
+          damageScale: 0
+          hpRecover: 0
+          apRatio: 0
+    - rid: 7769114376571191813
+      type: {class: PlayTimelineNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 84c48b26-12ff-47f3-80cd-a3446889c6e7
+        computeOrder: 6
+        position:
+          serializedVersion: 2
+          x: -14.979198
+          y: 232.89037
+          width: 190.00003
+          height: 119.000015
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        timelineId: tl_master_yi_skill_1
+        waitTillFinished: 1

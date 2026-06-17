@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1f992560f8fb5942857f7760be77e96, type: 3}
   m_Name: Round_1_1
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.RoundData
-  roundType: 0
+  roundType: 1
   displayName: Minions
   icon: {fileID: 21300000, guid: 3a1bd38f3d48bfd4ea2a58768c6f2bc5, type: 3}
   bonusGold: 0

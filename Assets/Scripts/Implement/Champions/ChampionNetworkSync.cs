@@ -141,24 +141,16 @@ namespace Dajunctic
         }
 
         [ObserversRpc(RunLocally = true)]
-        public void RpcPlayTimeline(string timelineAssetName)
+        public void RpcPlayTimeline(string timelineId)
         {
             if (_actor == null) _actor = GetComponent<ChampionActor>();
             if (_actor != null)
             {
-                var director = _actor.GetComponent<UnityEngine.Playables.PlayableDirector>();
-                if (director != null)
-                {
-                    if (!string.IsNullOrEmpty(timelineAssetName))
-                    {
-                        var asset = Resources.Load<UnityEngine.Playables.PlayableAsset>($"Timelines/{timelineAssetName}");
-                        if (asset != null)
-                        {
-                            director.playableAsset = asset;
-                        }
-                    }
-                    director.Play();
-                }
+                this.Raise(new PlayTimelineEvent 
+                { 
+                    timelineId = timelineId, 
+                    owner = _actor 
+                });
             }
         }
 
