@@ -12,6 +12,7 @@ namespace Dajunctic
         [SerializeField] private Color physicalColor = new Color(0.9f, 0.3f, 0.26f); // Orange Red
         [SerializeField] private Color magicalColor = new Color(0.23f, 0.51f, 0.96f); // Indigo Blue
         [SerializeField] private Color trueColor = new Color(0.98f, 0.75f, 0.14f); // Golden Yellow
+        [SerializeField] private Color healColor = new Color(0.2f, 0.85f, 0.3f); // Vibrant Green
         [SerializeField] private float normalScale = 1.0f;
         [SerializeField] private float normalDuration = 1.0f;
         
@@ -127,6 +128,83 @@ namespace Dajunctic
                 // Mild vibration for normal hits
                 tweenSequence.Join(transform.DOPunchPosition(new Vector3(0.05f, 0f, 0f), 0.3f, 5, 0.5f));
             }
+
+            // Scale down slightly and fade out at the end
+            float fadeStartTime = duration * 0.5f;
+            float fadeDuration = duration - fadeStartTime;
+            
+            tweenSequence.Insert(fadeStartTime, textMesh.DOFade(0f, fadeDuration));
+            tweenSequence.Insert(fadeStartTime, transform.DOScale(targetScale * 0.8f, fadeDuration));
+
+            // Despawn when completed
+            tweenSequence.OnComplete(() =>
+            {
+                Despawn();
+            });
+        }
+
+        public void SetupHeal(float healAmount)
+        {
+            if (textMesh == null)
+            {
+                textMesh = GetComponent<TextMeshPro>();
+                if (textMesh == null) textMesh = GetComponentInChildren<TextMeshPro>();
+            }
+
+            if (textMesh == null)
+            {
+                Debug.LogError("[FloatingText] TextMeshPro component is missing!");
+                Despawn();
+                return;
+            }
+
+            // Clean up any old tween sequences if spawned again from pool
+            if (tweenSequence != null && tweenSequence.IsActive())
+            {
+                tweenSequence.Kill();
+            }
+
+            // Set initial state
+            transform.localScale = Vector3.one;
+            textMesh.alpha = 1f;
+
+            // Format heal display: e.g. "+50"
+            int roundedHeal = Mathf.RoundToInt(healAmount);
+            string formattedText = $"+{roundedHeal}";
+
+            // Heal styling
+            float targetScale = normalScale;
+            float duration = normalDuration;
+            Color textColor = healColor;
+
+            textMesh.fontStyle = FontStyles.Bold;
+            textMesh.outlineWidth = 0f;
+
+            textMesh.text = formattedText;
+            textMesh.color = textColor;
+
+            // Face the main camera
+            Camera mainCam = Camera.main;
+            if (mainCam != null)
+            {
+                transform.rotation = mainCam.transform.rotation;
+            }
+
+            // Scale to target base scale first
+            transform.localScale = Vector3.one * targetScale;
+
+            // Juice up the animations using DOTween!
+            tweenSequence = DOTween.Sequence();
+
+            // Scale punch/pop on spawn
+            tweenSequence.Append(transform.DOPunchScale(Vector3.one * (targetScale * 0.4f), 0.2f, 10, 1f));
+
+            // Float Upwards smoothly
+            float floatDistance = 1.5f;
+            tweenSequence.Join(transform.DOMoveY(transform.position.y + floatDistance, duration).SetEase(Ease.OutQuad));
+
+            // Mild vibration
+            tweenSequence.Join(transform.DOPunchPosition(new Vector3(0.05f, 0f, 0f), 0.3f, 5, 0.5f));
 
             // Scale down slightly and fade out at the end
             float fadeStartTime = duration * 0.5f;

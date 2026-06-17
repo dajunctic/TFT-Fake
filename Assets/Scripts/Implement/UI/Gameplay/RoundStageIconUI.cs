@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Dajunctic
 {
-    public class RoundStageIconUI : MonoBehaviour
+    public class RoundStageIconUI : PoolableObject
     {
         [Header("References")]
         [SerializeField] private Image iconImage;

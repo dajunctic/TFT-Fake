@@ -14,18 +14,39 @@ namespace Dajunctic
 
         private List<RoundStageIconUI> _icons = new List<RoundStageIconUI>();
 
+        private void Awake()
+        {
+            // Destroy editor placeholders under container on load
+            if (container != null)
+            {
+                for (int i = container.childCount - 1; i >= 0; i--)
+                {
+                    Destroy(container.GetChild(i).gameObject);
+                }
+            }
+        }
+
         public void UpdateStage(StageData stageData, int currentRoundNumber)
         {
             if (stageData == null) return;
 
-            for(var i = 0; i < container.childCount; i++)
+            // Despawn extra icons if any
+            while (_icons.Count > stageData.rounds.Count)
             {
-                Destroy(container.GetChild(i).gameObject);
+                int lastIdx = _icons.Count - 1;
+                var icon = _icons[lastIdx];
+                _icons.RemoveAt(lastIdx);
+                if (icon != null)
+                {
+                    icon.Despawn();
+                }
             }
 
+            // Ensure we have enough icons in the pool
             while (_icons.Count < stageData.rounds.Count)
             {
-                var icon = Instantiate(iconPrefab, container);
+                var icon = PoolableObject.Pool.Spawn(iconPrefab, container.position, Quaternion.identity);
+                icon.transform.SetParent(container, false);
                 _icons.Add(icon);
             }
 
@@ -33,22 +54,14 @@ namespace Dajunctic
 
             for (int i = 0; i < _icons.Count; i++)
             {
-                if (i < stageData.rounds.Count)
-                {
-                    _icons[i].gameObject.SetActive(true);
-                    bool isCurrent = (i + 1) == currentRoundNumber;
-                    bool isPassed = (i + 1) < currentRoundNumber;
+                bool isCurrent = (i + 1) == currentRoundNumber;
+                bool isPassed = (i + 1) < currentRoundNumber;
+                
+                RoundData data = (roundSystem != null) 
+                    ? roundSystem.GetRoundData(stageData.stageNumber - 1, i) 
+                    : stageData.rounds[i];
                     
-                    RoundData data = (roundSystem != null) 
-                        ? roundSystem.GetRoundData(stageData.stageNumber - 1, i) 
-                        : stageData.rounds[i];
-                        
-                    _icons[i].Setup(data, isCurrent, isPassed);
-                }
-                else
-                {
-                    _icons[i].gameObject.SetActive(false);
-                }
+                _icons[i].Setup(data, isCurrent, isPassed);
             }
         }
     }

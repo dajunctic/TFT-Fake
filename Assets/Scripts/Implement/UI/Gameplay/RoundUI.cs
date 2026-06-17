@@ -60,7 +60,11 @@ namespace Dajunctic
                 stageBar.UpdateStage(RoundSystem.CurrentStageData, RoundSystem.RoundNumber);
             }
 
-            stageBg.sizeDelta = new Vector2(offset + roundList.RectTransform.sizeDelta.x, stageBg.sizeDelta.y);
+            if (roundList != null)
+            {
+                UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(roundList.RectTransform);
+                stageBg.sizeDelta = new Vector2(offset + roundList.RectTransform.sizeDelta.x, stageBg.sizeDelta.y);
+            }
         }
     }
 }
