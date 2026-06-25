@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: champion_kim_jong_un
   m_EditorClassIdentifier: 
   id: champion_kim_jong_un
+  prefab: {fileID: 7384916206326369437, guid: dd20e6c97a424564dbeab1dcd67cc57e, type: 3}
   movement:
     moveSpeed: 3
     rotateSpeed: 4
@@ -32,10 +33,26 @@ MonoBehaviour:
     critDamage: 1.4
     maxMana: 100
     startingMana: 0
-  skills:
-  - {fileID: 0}
+  gambits:
+  - targetType: 0
+    condition:
+      rid: 7769114512835215877
+    action:
+      rid: 7769114512835215878
   displayName: Kim Jong Un
+  shopIcon: {fileID: 21300000, guid: c87e993277360734c82a6b492ea9ae83, type: 3}
   rarity: 1
-  shopIcon: {fileID: 0}
-  traits: []
-  prefab: {fileID: 0}
+  traits:
+  - {fileID: 11400000, guid: d8981683762691a48a8a16c75c1df629, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7769114512835215877
+      type: {class: NearestGambitCondition, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        rangeType: 0
+        customRange: 10
+    - rid: 7769114512835215878
+      type: {class: UseSkillGambitAction, ns: Dajunctic.SkillSystem.Gambits, asm: Assembly-CSharp}
+      data:
+        skillGraph: {fileID: 11400000, guid: e6c617fffb766cf49b59a427a15cdbfb, type: 2}

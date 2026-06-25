@@ -32,3 +32,6 @@ MonoBehaviour:
   missileLists:
   - Id: missile_trump_atk_1
     missilePrefab: {fileID: 7856822411453443140, guid: ae611380fccf2304ab93d83d3901fa4e, type: 3}
+  - Id: missile_kim_jong_un_atk_1
+    missilePrefab: {fileID: 7856822411453443140, guid: 920293f2c7c8e064e82565e616a1b21f, type: 3}
+  timelineLists: []

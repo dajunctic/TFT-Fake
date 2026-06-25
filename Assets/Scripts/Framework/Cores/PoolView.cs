@@ -84,7 +84,6 @@ namespace Dajunctic
 
             var missileView = PoolableObject.Pool.Spawn(entry.missilePrefab, missileData.launcher, Quaternion.identity);
             missileView.InitData(missileData);
-            missileView.StartFly();
             return missileView;
         }
 

@@ -1,0 +1,306 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff0cfd69bf7b4b469c3c19234f70524d, type: 3}
+  m_Name: champion_kim_jong_un_atk_1_graph
+  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.SkillSystem.Logic.SkillGraph
+  serializedNodes: []
+  nodes:
+  - rid: 2806570943738545100
+  - rid: 2806570943738545101
+  - rid: 2806570989226033284
+  - rid: 2806570989226033432
+  - rid: 2806570989226033438
+  - rid: 7769114512835215781
+  - rid: 7769114512835215782
+  - rid: 7769114512835215830
+  edges:
+  - GUID: 7dfb98c9-4c5c-45ee-b5ec-72388df8cc04
+    owner: {fileID: 11400000}
+    inputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: c2c54fd0-cf1e-4630-9205-f47a41ad3e54
+    owner: {fileID: 11400000}
+    inputNodeGUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+    outputNodeGUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 5ef3c0b9-7155-4553-8a0b-d3fe14ac6d5f
+    owner: {fileID: 11400000}
+    inputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    outputNodeGUID: fca72292-ada4-4d2f-a5cb-9c83a5ec2b91
+    inputFieldName: mainTarget
+    outputFieldName: mainTarget
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: a10df1f1-b508-4e43-82c8-53791099c535
+    owner: {fileID: 11400000}
+    inputNodeGUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+    outputNodeGUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 9f8cb31a-3b5a-4653-a40b-fd7a50aa97f4
+    owner: {fileID: 11400000}
+    inputNodeGUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+    outputNodeGUID: 59e2fca0-f726-4fbd-a70e-bda5e6cbbaf4
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 12ec77b4-0053-45f1-8267-dff361aef7f9
+    owner: {fileID: 11400000}
+    inputNodeGUID: 59e2fca0-f726-4fbd-a70e-bda5e6cbbaf4
+    outputNodeGUID: 26fc8427-bad4-48b8-b287-1352c2f89e1b
+    inputFieldName: flyAction
+    outputFieldName: self
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 822e241d-1145-422e-946f-23f8f9aa4f58
+    owner: {fileID: 11400000}
+    inputNodeGUID: 59e2fca0-f726-4fbd-a70e-bda5e6cbbaf4
+    outputNodeGUID: 5efaf638-adf7-4f6d-a27e-586e6ec6ad16
+    inputFieldName: hitAction
+    outputFieldName: self
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  - GUID: 64ded093-b652-495a-9156-e4af98246b2d
+    owner: {fileID: 11400000}
+    inputNodeGUID: 59e2fca0-f726-4fbd-a70e-bda5e6cbbaf4
+    outputNodeGUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+    inputFieldName: inNode
+    outputFieldName: outNode
+    inputPortIdentifier: 
+    outputPortIdentifier: 
+  groups: []
+  stackNodes: []
+  pinnedElements:
+  - position:
+      serializedVersion: 2
+      x: 232
+      y: 51
+      width: 130
+      height: 163
+    opened: 0
+    editorType:
+      serializedType: GraphProcessor.ProcessorView, com.alelievr.NodeGraphProcessor.Editor,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - position:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 150
+      height: 200
+    opened: 0
+    editorType:
+      serializedType: GraphProcessor.ExposedParameterView, com.alelievr.NodeGraphProcessor.Editor,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  exposedParameters: []
+  serializedParameterList: []
+  stickyNotes: []
+  nodeInspectorReference: {fileID: 0}
+  position: {x: 398, y: 418, z: 0}
+  scale: {x: 0.7561437, y: 0.7561437, z: 1}
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 2806570943738545100
+      type: {class: TrackingNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 77214d61-0156-4aa2-b1f0-68956e2f49ab
+        computeOrder: 2
+        position:
+          serializedVersion: 2
+          x: 129.73914
+          y: -66.43477
+          width: 163.00003
+          height: 137.00003
+        expanded: 1
+        debug: 0
+        nodeLock: 0
+        mainTarget:
+          rid: -2
+        duration: 0.3
+        rotateSpeed: 10
+    - rid: 2806570943738545101
+      type: {class: EntryNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 10de43fa-2924-4c5a-b098-8d81b4d12bb3
+        computeOrder: 1
+        position:
+          serializedVersion: 2
+          x: -194.6087
+          y: 5.9130445
+          width: 102.99999
+          height: 99.00003
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+    - rid: 2806570989226033284
+      type: {class: ExitNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 5e9728cd-c057-40d1-ad4b-162c28839616
+        computeOrder: 7
+        position:
+          serializedVersion: 2
+          x: 694.20013
+          y: -74.55001
+          width: 102.99994
+          height: 98.99999
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+    - rid: 2806570989226033432
+      type: {class: TargetNearestEnemyNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: fca72292-ada4-4d2f-a5cb-9c83a5ec2b91
+        computeOrder: 0
+        position:
+          serializedVersion: 2
+          x: -270
+          y: -184
+          width: 193
+          height: 166
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        radius: 10
+        targets: []
+        mainTarget:
+          rid: -2
+    - rid: 2806570989226033438
+      type: {class: PlayAnimationNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 49098e52-eba6-4c29-8df5-e51ca9642b3c
+        computeOrder: 3
+        position:
+          serializedVersion: 2
+          x: 132.6087
+          y: 130.13043
+          width: 177
+          height: 154.99997
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        animName: atk_1
+        transitionDuration: 0.1
+        waitTillFinished: 1
+    - rid: 7769114512835215781
+      type: {class: ShootNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 59e2fca0-f726-4fbd-a70e-bda5e6cbbaf4
+        computeOrder: 6
+        position:
+          serializedVersion: 2
+          x: 342.8791
+          y: -340.24014
+          width: 239.99994
+          height: 223.00006
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        launcherPosition: {x: 0, y: 1, z: 0}
+        destinationPosition: {x: 0, y: 0, z: 0}
+        missileId: missile_kim_jong_un_atk_1
+        waitCompleted: 1
+    - rid: 7769114512835215782
+      type: {class: FlyStraightActionNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 26fc8427-bad4-48b8-b287-1352c2f89e1b
+        computeOrder: 5
+        position:
+          serializedVersion: 2
+          x: 18
+          y: -423
+          width: 205
+          height: 132
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        priority: 0
+        speed: 10
+        stoppingDistance: 0.1
+        anchorType: 1
+    - rid: 7769114512835215830
+      type: {class: DealDamageActionNode, ns: Dajunctic.SkillSystem.Logic, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: 5efaf638-adf7-4f6d-a27e-586e6ec6ad16
+        computeOrder: 4
+        position:
+          serializedVersion: 2
+          x: 45.695637
+          y: -260.26086
+          width: 181.00003
+          height: 146.99998
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        priority: 0
+        damageConfig:
+          damageType: 0
+          damageScale: 0
+          canNotReflect: 0
+          damage: 0
+          trueDamage: 0
+          extraDamages: []
+          critical:
+            criticalChanceBonus: 0
+            criticalDamageBonus: 0
+          stun:
+            duration: 0
+          freeze:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          airBorne:
+            duration: 0
+            unlimited: 0
+            heightStep: 0
+          burn:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          poison:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          bleed:
+            duration: 0
+            damageScale: 0
+            totalDamage: 0
+          confuse:
+            duration: 0
+          silence:
+            duration: 0
+          taunt:
+            duration: 0
+          fear:
+            duration: 0
+          disarm:
+            duration: 0
+          metaData: 

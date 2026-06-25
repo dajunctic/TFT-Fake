@@ -11,16 +11,16 @@ namespace Dajunctic.SkillSystem.Logic
     [System.Serializable]
     public abstract class AbilityNode: BaseNode
     {
-        [GraphProcessor.Output(name = "Self")]
+        [Output(name = "Self")]
         public AbilityNode self;
 
-        [GraphProcessor.Input(name = "In", allowMultiple = true)]
+        [Input(name = "In", allowMultiple = true)]
         public AbilityNode inNode;
 
-        [GraphProcessor.Output(name = "Out")]
+        [Output(name = "Out")]
         public AbilityNode outNode;
 
-        protected IAbilityOwner Owner;
+        public IAbilityOwner Owner;
         protected int Skin;
         protected IActionNodeSystem ActionNodeSystem;
         protected IAbilityEntity Ability;
