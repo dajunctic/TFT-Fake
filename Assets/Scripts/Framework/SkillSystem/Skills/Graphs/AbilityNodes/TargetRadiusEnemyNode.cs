@@ -5,7 +5,7 @@ using GraphProcessor;
 namespace Dajunctic.SkillSystem.Logic
 {
     [System.Serializable, NodeMenuItem("Ability/TargetRadiusEnemy")]
-    public class TargetRadiusEnemyNode : AbilityNode
+    public class TargetRadiusEnemyNode : AbilityNode, IHasRange
     {
 
         [SerializeField] protected float radius;
@@ -27,6 +27,8 @@ namespace Dajunctic.SkillSystem.Logic
 
             SkillHelper.FindTargetsInRadius(Owner.AsTeamMember().EnemyTeam, Owner.AsTransform().Position, 1.5f, radius, null, _cachedTargets, 5);
         }
+
+        public float GetRange() => radius;
 
     }
 }

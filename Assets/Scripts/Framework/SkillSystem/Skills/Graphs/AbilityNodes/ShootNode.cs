@@ -31,11 +31,9 @@ namespace Dajunctic.SkillSystem.Logic
             var inLauncher = GetInputValue<Vector3>(nameof(launcherPosition), launcherPosition);
             var inDestination = GetInputValue<Vector3>(nameof(destinationPosition), destinationPosition);
 
-            // Default launcher position to owner position if not specified
-            if (inLauncher == Vector3.zero && Owner != null && Owner.AsTransform() != null)
-            {
-                inLauncher = Owner.AsTransform().Position;
-            }
+          
+            inLauncher = Owner.AsTransform().TransformPoint(inLauncher);
+            inDestination =  Owner.AsTransform().TransformPoint(inDestination);
 
             _activeMissiles.Clear();
             _activeMissileCount = 0;

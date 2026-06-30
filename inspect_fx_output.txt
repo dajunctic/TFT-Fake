@@ -1,0 +1,66 @@
+=== FX PREFAB GEOMETRY INSPECTION ===
+
+Prefab: Assets/Prefabs/UI/Gameplay/fx/fx_1_star_merge.prefab
+  - GameObject: fx_1_star_merge (Active: True)
+    Component: UnityEngine.Transform
+    Component: Dajunctic.FxView
+    - GameObject: Buff_03a (Active: True)
+      Component: UnityEngine.Transform
+      Component: UnityEngine.ParticleSystem, MaxParticles: 0, RateOverTime: 10, RateOverDistance: 0
+        PSR RenderMode: None
+        PSR Materials:
+          - [Missing Material]
+      Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Ground Light (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.ParticleSystem, MaxParticles: 1000, RateOverTime: 10, RateOverDistance: 0
+          PSR RenderMode: HorizontalBillboard
+          PSR Materials:
+            - Buff_03a_PointGlowBig_02 (Shader: Particles/Standard Unlit)
+        Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Vertical Lights (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.ParticleSystem, MaxParticles: 1000, RateOverTime: 0, RateOverDistance: 0
+          PSR RenderMode: Stretch
+          PSR Materials:
+            - Buff_03a_PointGlowBig_01 (Shader: Particles/Standard Unlit)
+        Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Orbiting Wind (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.ParticleSystem, MaxParticles: 1000, RateOverTime: 6, RateOverDistance: 0
+          PSR RenderMode: None
+          PSR Materials:
+            - [Missing Material]
+            - Buff_03a_Trail_01 (Shader: Particles/Standard Unlit)
+        Component: UnityEngine.ParticleSystemRenderer
+
+Prefab: Assets/Prefabs/UI/Gameplay/Portal/fx_default_portal.prefab
+  - GameObject: fx_default_portal (Active: True)
+    Component: UnityEngine.Transform
+    Component: Dajunctic.FxView
+    - GameObject: EvilPortal (Active: True)
+      Component: UnityEngine.Transform
+      Component: UnityEngine.ParticleSystem, MaxParticles: 3000, RateOverTime: 8, RateOverDistance: 0
+        PSR RenderMode: None
+        PSR Materials:
+          - Glow (Shader: Universal Render Pipeline/Particles/Unlit)
+          - Glow (Shader: Universal Render Pipeline/Particles/Unlit)
+      Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Sparks (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.ParticleSystem, MaxParticles: 3000, RateOverTime: 65, RateOverDistance: 0
+          PSR RenderMode: Stretch
+          PSR Materials:
+            - Circle (Shader: Universal Render Pipeline/Particles/Unlit)
+        Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Backdrop (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.ParticleSystem, MaxParticles: 1000, RateOverTime: 0, RateOverDistance: 0
+          PSR RenderMode: Mesh, Mesh: Quad (Verts: 4, Tris: 2)
+          PSR Materials:
+            - PortalBackdropPrecise (Shader: Universal Render Pipeline/Particles/Unlit)
+        Component: UnityEngine.ParticleSystemRenderer
+      - GameObject: Point Light (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.Light
+        Component: UnityEngine.Rendering.Universal.UniversalAdditionalLightData

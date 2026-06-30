@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,14 +17,14 @@ namespace Dajunctic
 
         public static DragManager Instance { get; private set; }
 
-        public static event System.Action<IDraggable> OnGlobalDragStart;
-        public static event System.Action<IDraggable> OnGlobalDragEnd;
+        public static event Action<IDraggable> OnGlobalDragStart;
+        public static event Action<IDraggable> OnGlobalDragEnd;
 
         private void Awake()
         {
             Instance = this;
 
-            var targets = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+            var targets = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
             foreach (var target in targets)
             {
                 if (target is IDragTarget dragTarget)

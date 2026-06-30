@@ -129,7 +129,6 @@ namespace Dajunctic
                 case StatType.AttackDamage: return stats.AttackDamage;
                 case StatType.AbilityPower: return stats.AbilityPower;
                 case StatType.AttackSpeed: return stats.AttackSpeed;
-                case StatType.AttackRange: return stats.AttackRange;
                 case StatType.CriticalStrikeChance: return stats.CriticalStrikeChance;
                 case StatType.CriticalStrikeDamage: return stats.CriticalStrikeDamage;
                 case StatType.StartingMana: return stats.StartingMana;

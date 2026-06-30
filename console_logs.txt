@@ -1,0 +1,3 @@
+event: message
+data: {"jsonrpc":"2.0","id":2,"result":{"content":[{"type":"text","text":"{\"success\":true,\"message\":\"Attempted to execute menu item: 'Tools/Inspect Play Mode'. Check Unity logs for confirmation or errors.\",\"error\":null,\"data\":null,\"hint\":null}"}],"structuredContent":{"success":true,"message":"Attempted to execute menu item: 'Tools/Inspect Play Mode'. Check Unity logs for confirmation or errors.","error":null,"data":null,"hint":null},"isError":false}}
+

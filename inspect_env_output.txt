@@ -1,0 +1,21 @@
+=== ENVIRONMENT PREFAB GEOMETRY INSPECTION ===
+
+Prefab: Assets/Prefabs/Enviroment/Map/default_arena.prefab
+      - GameObject: Cliff_TFT_cliff_0 (Active: True)
+        MeshFilter Mesh: Cliff_TFT_cliff_0 (Verts: 1407, Tris: 661)
+      - GameObject: Object009_TFT_stone_0 (Active: True)
+        MeshFilter Mesh: Object009_TFT_stone_0 (Verts: 3883, Tris: 2108)
+      - GameObject: Object037_TFT_rock_0 (Active: True)
+        MeshFilter Mesh: Object037_TFT_rock_0 (Verts: 1711, Tris: 597)
+      - GameObject: Oper_Material #25_0 (Active: True)
+        MeshFilter Mesh: Oper_Material #25_0 (Verts: 19459, Tris: 7050)
+      - GameObject: Plane001_TFT_plane_0 (Active: True)
+        MeshFilter Mesh: Plane001_TFT_plane_0 (Verts: 456, Tris: 343)
+      - GameObject: stone_TFT_rock_0 (Active: True)
+        MeshFilter Mesh: stone_TFT_rock_0 (Verts: 772, Tris: 337)
+  TOTAL PREFAB GEOMETRY: Verts: 27688, Tris: 11096
+
+Prefab: Assets/Prefabs/Enviroment/Carousel/default_carousel.prefab
+    - GameObject: AncientRuneStone (Active: True)
+      MeshFilter Mesh:  (Verts: 441258, Tris: 764398)
+  TOTAL PREFAB GEOMETRY: Verts: 441258, Tris: 764398

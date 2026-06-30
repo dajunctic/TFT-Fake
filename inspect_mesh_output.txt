@@ -1,0 +1,73 @@
+=== ALL CHAMPION PREFABS MESH INSPECTION ===
+
+Prefab: Assets/Prefabs/Champions/Braum/Braum.prefab
+  SkinnedMeshRenderer: skinned_mesh, Mesh: , Vertices: 8837, Triangles: 13392
+  Total prefab triangles: 13392
+
+Prefab: Assets/Prefabs/Champions/Briar/Briar.prefab
+  SkinnedMeshRenderer: _gltfNode_0, Mesh: , Vertices: 6250, Triangles: 13755
+  SkinnedMeshRenderer: _gltfNode_1, Mesh: , Vertices: 1417, Triangles: 3589
+  SkinnedMeshRenderer: _gltfNode_2, Mesh: , Vertices: 38, Triangles: 94
+  SkinnedMeshRenderer: _gltfNode_3, Mesh: , Vertices: 752, Triangles: 1822
+  SkinnedMeshRenderer: _gltfNode_4, Mesh: , Vertices: 547, Triangles: 1060
+  SkinnedMeshRenderer: _gltfNode_5, Mesh: , Vertices: 3484, Triangles: 8404
+  SkinnedMeshRenderer: _gltfNode_6, Mesh: , Vertices: 4131, Triangles: 10104
+  Total prefab triangles: 38828
+
+Prefab: Assets/Prefabs/Champions/Dajunctic/dajunctic.prefab
+  SkinnedMeshRenderer: avaturn_body, Mesh: avaturn_body, Vertices: 9986, Triangles: 10384
+  SkinnedMeshRenderer: avaturn_glasses_0, Mesh: avaturn_glasses_0, Vertices: 981, Triangles: 1160
+  SkinnedMeshRenderer: avaturn_glasses_1, Mesh: avaturn_glasses_1, Vertices: 98, Triangles: 100
+  SkinnedMeshRenderer: avaturn_glasses_2, Mesh: avaturn_glasses_2, Vertices: 44, Triangles: 52
+  SkinnedMeshRenderer: avaturn_hair_0, Mesh: avaturn_hair_0, Vertices: 1549, Triangles: 1696
+  SkinnedMeshRenderer: avaturn_hair_1, Mesh: avaturn_hair_1, Vertices: 3917, Triangles: 4001
+  SkinnedMeshRenderer: avaturn_shoes_0, Mesh: avaturn_shoes_0, Vertices: 4164, Triangles: 5364
+  SkinnedMeshRenderer: avaturn_look_0, Mesh: avaturn_look_0, Vertices: 3410, Triangles: 5409
+  Total prefab triangles: 28166
+
+Prefab: Assets/Prefabs/Champions/DonaldTrump/missile/missile_trump_atk_1.prefab
+  MeshFilter: 10000dol, Mesh: Box001, Vertices: 24, Triangles: 12
+  Total prefab triangles: 12
+
+Prefab: Assets/Prefabs/Champions/DonaldTrump/trump.prefab
+  SkinnedMeshRenderer: cloth, Mesh: cloth, Vertices: 2838, Triangles: 4068
+  SkinnedMeshRenderer: hair_new, Mesh: hair_new, Vertices: 732, Triangles: 948
+  SkinnedMeshRenderer: hands, Mesh: hands, Vertices: 1608, Triangles: 2742
+  SkinnedMeshRenderer: head, Mesh: head, Vertices: 3403, Triangles: 6145
+  SkinnedMeshRenderer: tie, Mesh: tie, Vertices: 111, Triangles: 102
+  Total prefab triangles: 14005
+
+Prefab: Assets/Prefabs/Champions/Kayn/fx/fx_kayn_atk_1_hit.prefab
+  Total prefab triangles: 0
+
+Prefab: Assets/Prefabs/Champions/Kayn/Kayn.prefab
+  SkinnedMeshRenderer: Object_6, Mesh: Object_6, Vertices: 4464, Triangles: 7031
+  SkinnedMeshRenderer: Object_7, Mesh: Object_7, Vertices: 4971, Triangles: 7564
+  SkinnedMeshRenderer: Object_8, Mesh: Object_8, Vertices: 3391, Triangles: 5406
+  SkinnedMeshRenderer: Object_9, Mesh: Object_9, Vertices: 461, Triangles: 682
+  Total prefab triangles: 20683
+
+Prefab: Assets/Prefabs/Champions/KimJongUn/kim_jong_un.prefab
+  SkinnedMeshRenderer: mesh_0_0, Mesh: mesh_0_0, Vertices: 5715, Triangles: 8488
+  MeshFilter: Sci_fi_Pistol1, Mesh: Sci_fi_Pistol1, Vertices: 2076, Triangles: 2665
+  MeshFilter: Sci_fi_Pistol1, Mesh: Sci_fi_Pistol1, Vertices: 2076, Triangles: 2665
+  Total prefab triangles: 13818
+
+Prefab: Assets/Prefabs/Champions/KimJongUn/missile/missile_kim_jong_un_atk_1.prefab
+  MeshFilter: 10000dol, Mesh: Box001, Vertices: 24, Triangles: 12
+  Total prefab triangles: 12
+
+Prefab: Assets/Prefabs/Champions/Master Yi/fx/fx_master_yi_atk_1_hit.prefab
+  Total prefab triangles: 0
+
+Prefab: Assets/Prefabs/Champions/Master Yi/master_yi.prefab
+  SkinnedMeshRenderer: Mesh_0, Mesh: Mesh_0, Vertices: 6158, Triangles: 9144
+  Total prefab triangles: 9144
+
+Prefab: Assets/Prefabs/Champions/Ronaldo/ronaldo.prefab
+  SkinnedMeshRenderer: Mesh_0, Mesh: Mesh_0, Vertices: 6158, Triangles: 9144
+  Total prefab triangles: 9144
+
+Prefab: Assets/Prefabs/Champions/Yasuo/Yasuo.prefab
+  SkinnedMeshRenderer: skinned_mesh, Mesh: , Vertices: 6181, Triangles: 9361
+  Total prefab triangles: 9361

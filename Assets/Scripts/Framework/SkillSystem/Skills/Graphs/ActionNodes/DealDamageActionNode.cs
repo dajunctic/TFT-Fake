@@ -9,10 +9,9 @@ namespace Dajunctic.SkillSystem.Logic
     [System.Serializable, NodeMenuItem("Action/DealDamageAction")]
     public class DealDamageActionNode : ActionNode, IMissileActionNode
     {
-        [GraphProcessor.Input] long commonAttackId = -1;
-        [GraphProcessor.Input(name = "damageConfig")] public DamageConfig damageConfig;
-        [GraphProcessor.Input(name = "targets")] public List<IDamageTaker> targets;
-        [GraphProcessor.Input(name = "hitAction")] public IActionNode hitAction;
+        public DamageConfig damageConfig;
+        [Input(name = "targets")] public List<IDamageTaker> targets;
+        [Input(name = "hitAction")] public IActionNode hitAction;
 
         HashSet<IDamageTaker> _damageTakers;
         DamageSource _damageSource;
@@ -52,25 +51,25 @@ namespace Dajunctic.SkillSystem.Logic
 
             _damageSource = data != null ? data.DamageSource : (Owner != null ? Owner.GetDamageSource() : new DamageSource());
             _damageTakers.Clear();
-            var inAttackId = GetInputValue<long>(nameof(commonAttackId));
-            if (inAttackId == -1)
-            {
-                inAttackId = AttackIdGenerator.GetAttackId();
-            }
 
-            var inTargets = GetInputValue(nameof(targets), targets).ToList();
+            var inTargets = new List<IDamageTaker>();
+
             if (data != null && data.DamageTakers != null)
             {
                 inTargets.AddRange(data.DamageTakers);
             }
 
-            var inDamageConfig = GetInputValue(nameof(damageConfig), damageConfig);
+            if (targets != null)
+            {
+                var inputTargets = GetInputValue(nameof(targets), targets).ToList();
+                inTargets.AddRange(inputTargets);
+            } 
 
             foreach (var damageTaker in inTargets)
             {
                 if (damageTaker != null && damageTaker.Alive && _damageTakers.Add(damageTaker))
                 {
-                    var damage = new DamageCombined(inAttackId, _damageSource, inDamageConfig);
+                    var damage = new DamageCombined("id", _damageSource, damageConfig);
                     _damage = damageTaker.GetHit(damage);
 
                     OnHit(damageTaker);
@@ -103,5 +102,5 @@ namespace Dajunctic.SkillSystem.Logic
         {
             Data GetData();
         }
-}
+    }
 }

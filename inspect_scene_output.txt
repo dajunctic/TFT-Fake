@@ -1,0 +1,86 @@
+=== SCENE GEOMETRY INSPECTION ===
+Scene: Assets/Scenes/HomeScene.unity
+  - AncientRuneStone (Active: True)
+    MeshFilter Mesh:  (Verts: 441258, Tris: 764398)
+      Materials:
+        -  (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - cloth (Active: False)
+          SkinnedMeshRenderer Mesh: cloth (Verts: 2838, Tris: 4068)
+            Materials:
+              - cloth (Shader: Universal Render Pipeline/Lit)
+        - hair_new (Active: False)
+          SkinnedMeshRenderer Mesh: hair_new (Verts: 732, Tris: 948)
+            Materials:
+              - hair (Shader: Universal Render Pipeline/Lit)
+        - hands (Active: False)
+          SkinnedMeshRenderer Mesh: hands (Verts: 1608, Tris: 2742)
+            Materials:
+              - hands (Shader: Universal Render Pipeline/Lit)
+        - head (Active: False)
+          SkinnedMeshRenderer Mesh: head (Verts: 3403, Tris: 6145)
+            Materials:
+              - face (Shader: Universal Render Pipeline/Lit)
+              - eyes (Shader: Universal Render Pipeline/Lit)
+        - tie (Active: False)
+          SkinnedMeshRenderer Mesh: tie (Verts: 111, Tris: 102)
+            Materials:
+              - tie (Shader: Universal Render Pipeline/Lit)
+        - avaturn_body (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_body (Verts: 9986, Tris: 10384)
+            Materials:
+              - avaturn_body_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_glasses_0 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_glasses_0 (Verts: 981, Tris: 1160)
+            Materials:
+              - avaturn_glasses_0_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_glasses_1 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_glasses_1 (Verts: 98, Tris: 100)
+            Materials:
+              - avaturn_glasses_1_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_glasses_2 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_glasses_2 (Verts: 44, Tris: 52)
+            Materials:
+              - avaturn_glasses_2_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_hair_0 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_hair_0 (Verts: 1549, Tris: 1696)
+            Materials:
+              - avaturn_hair_0_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_hair_1 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_hair_1 (Verts: 3917, Tris: 4001)
+            Materials:
+              - avaturn_hair_1_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_shoes_0 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_shoes_0 (Verts: 4164, Tris: 5364)
+            Materials:
+              - avaturn_shoes_0_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+        - avaturn_look_0 (Active: False)
+          SkinnedMeshRenderer Mesh: avaturn_look_0 (Verts: 3410, Tris: 5409)
+            Materials:
+              - avaturn_look_0_material (Shader: Shader Graphs/glTF-pbrMetallicRoughness)
+- champion_kim_jong_un (Active: False)
+    - chibi_kimjongun (Active: False)
+      - mesh_0_0 (Active: False)
+        SkinnedMeshRenderer Mesh: mesh_0_0 (Verts: 5715, Tris: 8488)
+          Materials:
+            - mat_0_0mat (Shader: Universal Render Pipeline/Lit)
+                        - Sci_fi_Pistol1 (Active: False)
+                          MeshFilter Mesh: Sci_fi_Pistol1 (Verts: 2076, Tris: 2665)
+                            Materials:
+                              - SciFiPistol01 (Shader: Universal Render Pipeline/Lit)
+                          - Sci_fi_Pistol1 (Active: False)
+                            MeshFilter Mesh: Sci_fi_Pistol1 (Verts: 2076, Tris: 2665)
+                              Materials:
+                                - SciFiPistol01 (Shader: Universal Render Pipeline/Lit)
+- Nuke (Active: False)
+  - Nuke (Active: False)
+    - pCube571 (Active: False)
+      MeshFilter Mesh: pCube571 (Verts: 919, Tris: 1262)
+        Materials:
+          - Nuke (Shader: Universal Render Pipeline/Lit)
+- Plane (Active: False)
+  MeshFilter Mesh: Plane (Verts: 121, Tris: 200)
+    Materials:
+      - Lit (Shader: Universal Render Pipeline/Lit)
+
+TOTAL SCENE TRIANGLES: 821849
+TOTAL SCENE VERTICES: 485006

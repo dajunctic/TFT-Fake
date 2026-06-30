@@ -77,7 +77,6 @@ GameObject:
   - component: {fileID: 4702493526188415639}
   - component: {fileID: 4989696822353567574}
   - component: {fileID: 5561191962919816373}
-  - component: {fileID: 8231736888831609695}
   - component: {fileID: 8785435186881521801}
   m_Layer: 3
   m_Name: trump
@@ -166,7 +165,7 @@ MonoBehaviour:
   <PredictedOwner>k__BackingField: {fileID: 0}
   NetworkBehaviours:
   - {fileID: 5561191962919816373}
-  - {fileID: 8231736888831609695}
+  - {fileID: 0}
   InitializedParentNetworkBehaviour: {fileID: 0}
   InitializedNestedNetworkObjects: []
   RuntimeParentNetworkBehaviour: {fileID: 0}
@@ -218,21 +217,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChampionNetworkSync
   _componentIndexCache: 0
-  _addedNetworkObject: {fileID: 4989696822353567574}
-  _networkObjectCache: {fileID: 4989696822353567574}
---- !u!114 &8231736888831609695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7579838385617486944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf5e7f1b2d1518847a62e1a645a73949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Dajunctic.ChampionNetworkSync
-  _componentIndexCache: 1
   _addedNetworkObject: {fileID: 4989696822353567574}
   _networkObjectCache: {fileID: 4989696822353567574}
 --- !u!114 &8785435186881521801

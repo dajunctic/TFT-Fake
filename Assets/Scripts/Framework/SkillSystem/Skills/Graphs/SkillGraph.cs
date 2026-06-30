@@ -13,6 +13,23 @@ namespace Dajunctic.SkillSystem.Logic
         public IDamageTaker GetPlayingTrackingTarget() { return null; }
         protected override void BindTarget(IDamageTaker target) { }
         public void ClearTarget() { }
-        public float GetRange() { return 0f; }
+        public float GetRange()
+        {
+            float minRange = 0f;
+            bool found = false;
+            foreach (var node in nodes)
+            {
+                if (node is IHasRange rangeNode)
+                {
+                    float r = rangeNode.GetRange();
+                    if (!found || r < minRange)
+                    {
+                        minRange = r;
+                        found = true;
+                    }
+                }
+            }
+            return found ? minRange : 0f;
+        }
     }
 }

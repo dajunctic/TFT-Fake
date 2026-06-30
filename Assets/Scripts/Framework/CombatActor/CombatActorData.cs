@@ -39,7 +39,6 @@ public class ActorBaseStats
     public float attackDamage = 50f;
     public float abilityPower = 100f;
     public float attackSpeed = 0.65f;
-    public float attackRange = 1f;
     public float critChance = 0.25f;
     public float critDamage = 1.4f;
 

@@ -1,0 +1,211 @@
+=== KIM JONG UN PREFAB COMPONENTS INSPECTION ===
+Prefab Path: Assets/Prefabs/Champions/KimJongUn/kim_jong_un.prefab
+- GameObject: kim_jong_un (Active: True)
+  Component: UnityEngine.Transform
+  Component: FishNet.Object.NetworkObject
+  Component: UnityEngine.CapsuleCollider
+  Component: Dajunctic.ChampionActor
+  Component: Dajunctic.ChampionNetworkSync
+  Component: Dajunctic.ChampionNetworkSync
+  Component: FishNet.Component.Transforming.NetworkTransform
+  - GameObject: hp_view (Active: True)
+    Component: UnityEngine.RectTransform
+    Component: UnityEngine.Canvas
+    Component: UnityEngine.UI.CanvasScaler
+    Component: UnityEngine.UI.GraphicRaycaster
+    Component: Dajunctic.Billboard
+    Component: Dajunctic.HpView
+    - GameObject: hp_bar (Active: True)
+      Component: UnityEngine.RectTransform
+      Component: UnityEngine.CanvasRenderer
+      Component: UnityEngine.UI.Image
+      - GameObject: mana_progress (Active: True)
+        Component: UnityEngine.RectTransform
+        Component: UnityEngine.CanvasRenderer
+        Component: UnityEngine.UI.Image
+      - GameObject: hp_progress (Active: True)
+        Component: UnityEngine.RectTransform
+        Component: UnityEngine.CanvasRenderer
+        Component: UnityEngine.UI.Image
+    - GameObject: items (Active: True)
+      Component: UnityEngine.RectTransform
+      Component: UnityEngine.UI.HorizontalLayoutGroup
+      - GameObject: item_in_hp_ui (Active: True)
+        Component: UnityEngine.RectTransform
+        Component: UnityEngine.CanvasRenderer
+        Component: UnityEngine.UI.Image
+      - GameObject: item_in_hp_ui (1) (Active: True)
+        Component: UnityEngine.RectTransform
+        Component: UnityEngine.CanvasRenderer
+        Component: UnityEngine.UI.Image
+      - GameObject: item_in_hp_ui (2) (Active: True)
+        Component: UnityEngine.RectTransform
+        Component: UnityEngine.CanvasRenderer
+        Component: UnityEngine.UI.Image
+  - GameObject: airborne (Active: True)
+    Component: UnityEngine.Transform
+    - GameObject: chibi_kimjongun (Active: True)
+      Component: UnityEngine.Transform
+      Component: UnityEngine.Animator
+      Component: Dajunctic.AnimatorEventListener
+      - GameObject: mesh_0_0 (Active: True)
+        Component: UnityEngine.Transform
+        Component: UnityEngine.SkinnedMeshRenderer, Mesh: mesh_0_0 (Verts: 5715, Tris: 8488)
+          Materials:
+            - mat_0_0mat (Shader: Universal Render Pipeline/Lit)
+      - GameObject: mixamorig:Hips (Active: True)
+        Component: UnityEngine.Transform
+        - GameObject: mixamorig:LeftUpLeg (Active: True)
+          Component: UnityEngine.Transform
+          - GameObject: mixamorig:LeftLeg (Active: True)
+            Component: UnityEngine.Transform
+            - GameObject: mixamorig:LeftFoot (Active: True)
+              Component: UnityEngine.Transform
+              - GameObject: mixamorig:LeftToeBase (Active: True)
+                Component: UnityEngine.Transform
+                - GameObject: mixamorig:LeftToe_End (Active: True)
+                  Component: UnityEngine.Transform
+        - GameObject: mixamorig:RightUpLeg (Active: True)
+          Component: UnityEngine.Transform
+          - GameObject: mixamorig:RightLeg (Active: True)
+            Component: UnityEngine.Transform
+            - GameObject: mixamorig:RightFoot (Active: True)
+              Component: UnityEngine.Transform
+              - GameObject: mixamorig:RightToeBase (Active: True)
+                Component: UnityEngine.Transform
+                - GameObject: mixamorig:RightToe_End (Active: True)
+                  Component: UnityEngine.Transform
+        - GameObject: mixamorig:Spine (Active: True)
+          Component: UnityEngine.Transform
+          - GameObject: mixamorig:Spine1 (Active: True)
+            Component: UnityEngine.Transform
+            - GameObject: mixamorig:Spine2 (Active: True)
+              Component: UnityEngine.Transform
+              - GameObject: mixamorig:LeftShoulder (Active: True)
+                Component: UnityEngine.Transform
+                - GameObject: mixamorig:LeftArm (Active: True)
+                  Component: UnityEngine.Transform
+                  - GameObject: mixamorig:LeftForeArm (Active: True)
+                    Component: UnityEngine.Transform
+                    - GameObject: mixamorig:LeftHand (Active: True)
+                      Component: UnityEngine.Transform
+                      - GameObject: mixamorig:LeftHandIndex1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:LeftHandIndex2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:LeftHandIndex3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:LeftHandIndex4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:LeftHandMiddle1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:LeftHandMiddle2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:LeftHandMiddle3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:LeftHandMiddle4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:LeftHandPinky1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:LeftHandPinky2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:LeftHandPinky3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:LeftHandPinky4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:LeftHandRing1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:LeftHandRing2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:LeftHandRing3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:LeftHandRing4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:LeftHandThumb1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:LeftHandThumb2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:LeftHandThumb3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:LeftHandThumb4 (Active: True)
+                              Component: UnityEngine.Transform
+                    - GameObject: GameObject (1) (Active: True)
+                      Component: UnityEngine.Transform
+                      - GameObject: Sci-Fi Pistol_Prefab (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: Sci_fi_Pistol1 (Active: True)
+                          Component: UnityEngine.Transform
+                          Component: UnityEngine.MeshFilter, Mesh: Sci_fi_Pistol1 (Verts: 2076, Tris: 2665)
+                          Component: UnityEngine.MeshRenderer
+                            Materials:
+                              - SciFiPistol01 (Shader: Universal Render Pipeline/Lit)
+              - GameObject: mixamorig:Neck (Active: True)
+                Component: UnityEngine.Transform
+                - GameObject: mixamorig:Head (Active: True)
+                  Component: UnityEngine.Transform
+                  - GameObject: mixamorig:HeadTop_End (Active: True)
+                    Component: UnityEngine.Transform
+                    - GameObject: head_point (Active: True)
+                      Component: UnityEngine.Transform
+                      Component: Dajunctic.HeadPoint
+              - GameObject: mixamorig:RightShoulder (Active: True)
+                Component: UnityEngine.Transform
+                - GameObject: mixamorig:RightArm (Active: True)
+                  Component: UnityEngine.Transform
+                  - GameObject: mixamorig:RightForeArm (Active: True)
+                    Component: UnityEngine.Transform
+                    - GameObject: mixamorig:RightHand (Active: True)
+                      Component: UnityEngine.Transform
+                      - GameObject: mixamorig:RightHandIndex1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:RightHandIndex2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:RightHandIndex3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:RightHandIndex4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:RightHandMiddle1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:RightHandMiddle2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:RightHandMiddle3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:RightHandMiddle4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:RightHandPinky1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:RightHandPinky2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:RightHandPinky3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:RightHandPinky4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:RightHandRing1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:RightHandRing2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:RightHandRing3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:RightHandRing4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: mixamorig:RightHandThumb1 (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: mixamorig:RightHandThumb2 (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: mixamorig:RightHandThumb3 (Active: True)
+                            Component: UnityEngine.Transform
+                            - GameObject: mixamorig:RightHandThumb4 (Active: True)
+                              Component: UnityEngine.Transform
+                      - GameObject: GameObject (Active: True)
+                        Component: UnityEngine.Transform
+                        - GameObject: Sci-Fi Pistol_Prefab (Active: True)
+                          Component: UnityEngine.Transform
+                          - GameObject: Sci_fi_Pistol1 (Active: True)
+                            Component: UnityEngine.Transform
+                            Component: UnityEngine.MeshFilter, Mesh: Sci_fi_Pistol1 (Verts: 2076, Tris: 2665)
+                            Component: UnityEngine.MeshRenderer
+                              Materials:
+                                - SciFiPistol01 (Shader: Universal Render Pipeline/Lit)
+            - GameObject: mid_point (Active: True)
+              Component: UnityEngine.Transform
+              Component: Dajunctic.MidPoint

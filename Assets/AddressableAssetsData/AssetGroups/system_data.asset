@@ -35,11 +35,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4d2986a0fec15934ea4a0a82042d53b6
-    m_Address: economy_system_data
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ddafa738c010464b898f41ad9bba65e
     m_Address: player_system_data
     m_ReadOnly: 0

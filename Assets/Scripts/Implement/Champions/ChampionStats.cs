@@ -11,7 +11,6 @@ namespace Dajunctic
         public IStat AttackDamage { get; }
         public IStat AbilityPower { get; }
         public IStat AttackSpeed { get; }
-        public IStat AttackRange { get; }
         public IStat CriticalStrikeChance { get; }
         public IStat CriticalStrikeDamage { get; }
         public IStat ArmorPenetration { get; }
@@ -34,7 +33,6 @@ namespace Dajunctic
             AttackDamage = new BaseStat(s.attackDamage);
             AbilityPower = new BaseStat(s.abilityPower);
             AttackSpeed = new BaseStat(s.attackSpeed);
-            AttackRange = new BaseStat(s.attackRange);
 
             CriticalStrikeChance = new BaseStat(s.critChance);
             CriticalStrikeDamage = new BaseStat(s.critDamage);
@@ -59,7 +57,6 @@ namespace Dajunctic
             AttackDamage.RemoveAllModifiersFromSource(source);
             AbilityPower.RemoveAllModifiersFromSource(source);
             AttackSpeed.RemoveAllModifiersFromSource(source);
-            AttackRange.RemoveAllModifiersFromSource(source);
             CriticalStrikeChance.RemoveAllModifiersFromSource(source);
             CriticalStrikeDamage.RemoveAllModifiersFromSource(source);
             StartingMana.RemoveAllModifiersFromSource(source);

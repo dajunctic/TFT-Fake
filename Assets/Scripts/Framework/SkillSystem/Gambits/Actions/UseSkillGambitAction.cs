@@ -46,7 +46,8 @@ namespace Dajunctic.SkillSystem.Gambits
             var actor = CombatActor as CombatActor;
             if (actor != null && Target != null)
             {
-                float attackRange = actor.CombatActorData != null ? actor.CombatActorData.stats.attackRange : 1.5f;
+                float graphRange = skillGraph != null ? skillGraph.GetRange() : 0f;
+                float attackRange = graphRange > 0f ? graphRange : 1.5f;
                 float targetRadius = 0.25f;
                 if (Target is CombatActor targetActor && targetActor.CombatActorData != null)
                 {

@@ -14,10 +14,13 @@ namespace Dajunctic
             {
                 SpawnPrefabs();
             }
+            else if (InstanceFinder.ServerManager != null)
+            {
+                InstanceFinder.ServerManager.OnServerConnectionState += ServerManager_OnServerConnectionState;
+            }
             else
             {
-                
-                InstanceFinder.ServerManager.OnServerConnectionState += ServerManager_OnServerConnectionState;
+                Debug.LogWarning("[HomeSceneSpawner] InstanceFinder.ServerManager is null. Cannot subscribe to connection events.");
             }
         }
 

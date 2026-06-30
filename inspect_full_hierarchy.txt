@@ -1,0 +1,611 @@
+=== SCENE HIERARCHY DUMP ===
+Scene: Assets/Scenes/HomeScene.unity
+- Main Camera (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: Camera
+  Component: AudioListener
+  Component: UniversalAdditionalCameraData
+  Component: FollowCamera
+- Directional Light (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: Light
+  Component: UniversalAdditionalLightData
+- Global Volume (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: Volume
+- EventSystem (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: EventSystem
+  Component: InputSystemUIInputModule
+- Navmesh (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: NavMeshSurface
+- FieldSystem (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: DragManager
+- EmotionSystemView (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: EmotionSystemView
+  - Pi UI Canvas (ActiveSelf: True, ActiveInHierarchy: True)
+    Component: RectTransform
+    Component: Canvas
+    Component: CanvasScaler
+    Component: GraphicRaycaster
+    Component: PiUIManager
+    - Pi Menu (ActiveSelf: True, ActiveInHierarchy: True)
+      Component: RectTransform
+      Component: PiUI
+      - PiCut (ActiveSelf: False, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+        Component: PiPiece
+        Component: Outline
+        - Icon (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: RectTransform
+          Component: CanvasRenderer
+          Component: Image
+        - Name (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: RectTransform
+          Component: CanvasRenderer
+          Component: Text
+    - Text (ActiveSelf: False, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: CanvasRenderer
+      Component: Text
+    - Text (1) (ActiveSelf: False, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: CanvasRenderer
+      Component: Text
+- InputManager (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: InputManager
+- default_carousel (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: CarouselArena
+  - AncientRuneStone (ActiveSelf: True, ActiveInHierarchy: True)
+    Component: Transform
+    Component: MeshFilter, Mesh:  (Tris: 764398)
+    Component: MeshRenderer
+  - center (ActiveSelf: True, ActiveInHierarchy: True)
+    Component: Transform
+    Component: SphereCollider
+- donald_trump (ActiveSelf: False, ActiveInHierarchy: False)
+  Component: Transform
+  Component: CapsuleCollider
+  Component: ChampionActor
+  Component: NetworkObject
+  Component: ChampionNetworkSync
+  Component: ChampionNetworkSync
+  Component: NetworkTransform
+  - airborne (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: Transform
+    - donald_trump (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - donald_trump (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+        Component: Animator
+        Component: AnimatorEventListener
+        - cloth (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: cloth (Tris: 4068)
+        - hair_new (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: hair_new (Tris: 948)
+        - hands (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: hands (Tris: 2742)
+        - head (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: head (Tris: 6145)
+          - head_point (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            Component: HeadPoint
+        - mixamorig:Hips (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          - mixamorig:LeftUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:LeftLeg (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:LeftFoot (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:LeftToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:LeftToe_End (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+          - mixamorig:RightUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:RightLeg (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:RightFoot (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:RightToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:RightToe_End (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+          - mixamorig:Spine (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:Spine1 (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:Spine2 (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:LeftShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:LeftArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - mixamorig:LeftForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - mixamorig:LeftHand (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                - mixamorig:Neck (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:Head (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - mixamorig:HeadTop_End (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                - mixamorig:RightShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:RightArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - mixamorig:RightForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - mixamorig:RightHand (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+              - mid_point (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                Component: MidPoint
+        - tie (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: tie (Tris: 102)
+  - hp_view (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: RectTransform
+    Component: Canvas
+    Component: CanvasScaler
+    Component: GraphicRaycaster
+    Component: Billboard
+    Component: HpView
+    - hp_bar (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: CanvasRenderer
+      Component: Image
+      - mana_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - hp_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+    - items (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: HorizontalLayoutGroup
+      - item_in_hp_ui (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (1) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (2) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+- dajunctic (ActiveSelf: False, ActiveInHierarchy: False)
+  Component: Transform
+  Component: CapsuleCollider
+  Component: ChampionActor
+  [Null Component]
+  Component: NetworkObject
+  Component: ChampionNetworkSync
+  Component: ChampionNetworkSync
+  - hp_view (1) (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: RectTransform
+    Component: Canvas
+    Component: CanvasScaler
+    Component: GraphicRaycaster
+    Component: Billboard
+    Component: HpView
+    - hp_bar (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: CanvasRenderer
+      Component: Image
+      - mana_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - hp_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+    - items (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: HorizontalLayoutGroup
+      - item_in_hp_ui (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (1) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (2) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+  - airborne (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: Transform
+    - dajunctic (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - dajunctic (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+        Component: Animator
+        - Hips (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          - LeftUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - LeftLeg (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - LeftFoot (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - LeftToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+          - RightUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - RightLeg (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - RightFoot (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - RightToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+          - Spine (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - Spine1 (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - Spine2 (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - Neck (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - Head (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - head_point (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      Component: HeadPoint
+                - LeftShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - LeftArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - LeftForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - LeftHand (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - LeftHandIndex1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - LeftHandIndex2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - LeftHandIndex3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - LeftHandMiddle1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - LeftHandMiddle2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - LeftHandMiddle3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - LeftHandPinky1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - LeftHandPinky2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - LeftHandPinky3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - LeftHandRing1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - LeftHandRing2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - LeftHandRing3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - LeftHandThumb1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - LeftHandThumb2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - LeftHandThumb3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                - RightShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - RightArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - RightForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - RightHand (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - RightHandIndex1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - RightHandIndex2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - RightHandIndex3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - RightHandMiddle1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - RightHandMiddle2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - RightHandMiddle3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - RightHandPinky1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - RightHandPinky2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - RightHandPinky3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - RightHandRing1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - RightHandRing2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - RightHandRing3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                        - RightHandThumb1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - RightHandThumb2 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - RightHandThumb3 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+              - mid_point (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                Component: MidPoint
+        - avaturn_body (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_body (Tris: 10384)
+        - avaturn_glasses_0 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_glasses_0 (Tris: 1160)
+        - avaturn_glasses_1 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_glasses_1 (Tris: 100)
+        - avaturn_glasses_2 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_glasses_2 (Tris: 52)
+        - avaturn_hair_0 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_hair_0 (Tris: 1696)
+        - avaturn_hair_1 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_hair_1 (Tris: 4001)
+        - avaturn_shoes_0 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_shoes_0 (Tris: 5364)
+        - avaturn_look_0 (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          Component: SkinnedMeshRenderer, Mesh: avaturn_look_0 (Tris: 5409)
+- champion_kim_jong_un (ActiveSelf: False, ActiveInHierarchy: False)
+  Component: Transform
+  Component: NetworkObject
+  Component: CapsuleCollider
+  Component: ChampionActor
+  Component: ChampionNetworkSync
+  Component: ChampionNetworkSync
+  Component: NetworkTransform
+  - hp_view (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: RectTransform
+    Component: Canvas
+    Component: CanvasScaler
+    Component: GraphicRaycaster
+    Component: Billboard
+    Component: HpView
+    - hp_bar (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: CanvasRenderer
+      Component: Image
+      - mana_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - hp_progress (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+    - items (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: RectTransform
+      Component: HorizontalLayoutGroup
+      - item_in_hp_ui (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (1) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+      - item_in_hp_ui (2) (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: RectTransform
+        Component: CanvasRenderer
+        Component: Image
+  - airborne (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: Transform
+    - chibi_kimjongun (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      Component: Animator
+      Component: AnimatorEventListener
+      - mesh_0_0 (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+        Component: SkinnedMeshRenderer, Mesh: mesh_0_0 (Tris: 8488)
+      - mixamorig:Hips (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+        - mixamorig:LeftUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          - mixamorig:LeftLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:LeftFoot (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:LeftToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:LeftToe_End (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+        - mixamorig:RightUpLeg (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          - mixamorig:RightLeg (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:RightFoot (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:RightToeBase (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:RightToe_End (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+        - mixamorig:Spine (ActiveSelf: True, ActiveInHierarchy: False)
+          Component: Transform
+          - mixamorig:Spine1 (ActiveSelf: True, ActiveInHierarchy: False)
+            Component: Transform
+            - mixamorig:Spine2 (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              - mixamorig:LeftShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:LeftArm (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:LeftForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - mixamorig:LeftHand (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - mixamorig:LeftHandIndex1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:LeftHandIndex2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:LeftHandIndex3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:LeftHandIndex4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:LeftHandMiddle1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:LeftHandMiddle2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:LeftHandMiddle3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:LeftHandMiddle4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:LeftHandPinky1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:LeftHandPinky2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:LeftHandPinky3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:LeftHandPinky4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:LeftHandRing1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:LeftHandRing2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:LeftHandRing3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:LeftHandRing4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:LeftHandThumb1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:LeftHandThumb2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:LeftHandThumb3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:LeftHandThumb4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                    - GameObject (1) (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - Sci-Fi Pistol_Prefab (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - Sci_fi_Pistol1 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          Component: MeshFilter, Mesh: Sci_fi_Pistol1 (Tris: 2665)
+                          Component: MeshRenderer
+              - mixamorig:Neck (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:Head (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:HeadTop_End (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - head_point (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      Component: HeadPoint
+              - mixamorig:RightShoulder (ActiveSelf: True, ActiveInHierarchy: False)
+                Component: Transform
+                - mixamorig:RightArm (ActiveSelf: True, ActiveInHierarchy: False)
+                  Component: Transform
+                  - mixamorig:RightForeArm (ActiveSelf: True, ActiveInHierarchy: False)
+                    Component: Transform
+                    - mixamorig:RightHand (ActiveSelf: True, ActiveInHierarchy: False)
+                      Component: Transform
+                      - mixamorig:RightHandIndex1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:RightHandIndex2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:RightHandIndex3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:RightHandIndex4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:RightHandMiddle1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:RightHandMiddle2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:RightHandMiddle3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:RightHandMiddle4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:RightHandPinky1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:RightHandPinky2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:RightHandPinky3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:RightHandPinky4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:RightHandRing1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:RightHandRing2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:RightHandRing3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:RightHandRing4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - mixamorig:RightHandThumb1 (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - mixamorig:RightHandThumb2 (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - mixamorig:RightHandThumb3 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            - mixamorig:RightHandThumb4 (ActiveSelf: True, ActiveInHierarchy: False)
+                              Component: Transform
+                      - GameObject (ActiveSelf: True, ActiveInHierarchy: False)
+                        Component: Transform
+                        - Sci-Fi Pistol_Prefab (ActiveSelf: True, ActiveInHierarchy: False)
+                          Component: Transform
+                          - Sci_fi_Pistol1 (ActiveSelf: True, ActiveInHierarchy: False)
+                            Component: Transform
+                            Component: MeshFilter, Mesh: Sci_fi_Pistol1 (Tris: 2665)
+                            Component: MeshRenderer
+            - mid_point (ActiveSelf: True, ActiveInHierarchy: False)
+              Component: Transform
+              Component: MidPoint
+- Nuke (ActiveSelf: False, ActiveInHierarchy: False)
+  Component: Transform
+  - Nuke (ActiveSelf: True, ActiveInHierarchy: False)
+    Component: Transform
+    - pCube568 (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - transform30 (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+    - pCube569 (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - transform29 (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+    - pCube570 (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - transform32 (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+    - pCube571 (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      Component: MeshFilter, Mesh: pCube571 (Tris: 1262)
+      Component: MeshRenderer
+    - pCylinder1 (ActiveSelf: True, ActiveInHierarchy: False)
+      Component: Transform
+      - transform31 (ActiveSelf: True, ActiveInHierarchy: False)
+        Component: Transform
+- Plane (ActiveSelf: False, ActiveInHierarchy: False)
+  Component: Transform
+  Component: MeshFilter, Mesh: Plane (Tris: 200)
+  Component: MeshRenderer
+  Component: MeshCollider
+- HomeSceneSpawner (ActiveSelf: True, ActiveInHierarchy: True)
+  Component: Transform
+  Component: HomeSceneSpawner

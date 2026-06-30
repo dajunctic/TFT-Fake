@@ -5,7 +5,7 @@ using GraphProcessor;
 namespace Dajunctic.SkillSystem.Logic
 {
     [System.Serializable, NodeMenuItem("Ability/TargetRandomEnemy")]
-    public class TargetRandomEnemyNode : AbilityNode
+    public class TargetRandomEnemyNode : AbilityNode, IHasRange
     {
         [SerializeField] protected float radius = 10f;
         [SerializeField] protected int count = 1;
@@ -29,6 +29,8 @@ namespace Dajunctic.SkillSystem.Logic
             }
             return _cachedMainTarget;
         }
+
+        public float GetRange() => radius;
 
         protected void FindRandomTargets()
         {

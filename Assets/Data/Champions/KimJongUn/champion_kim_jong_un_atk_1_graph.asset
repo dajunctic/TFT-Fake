@@ -114,7 +114,7 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: 398, y: 418, z: 0}
+  position: {x: 436, y: 440, z: 0}
   scale: {x: 0.7561437, y: 0.7561437, z: 1}
   references:
     version: 2
@@ -265,7 +265,7 @@ MonoBehaviour:
           damageType: 0
           damageScale: 0
           canNotReflect: 0
-          damage: 0
+          damage: 1
           trueDamage: 0
           extraDamages: []
           critical:
